@@ -38,7 +38,7 @@ const CollectorMain = ({ totalWeight, selectedDate }) => {
                   </svg>
                 </h3>
               </div>
-              <h3 className="m-0 relative text-inherit font-bold font-vietnam text-gray-900 text-left inline-block min-w-[89px]">
+              <h3 className="m-0 relative text-inherit font-bold font-vietnam text-gray-950 text-left inline-block min-w-[89px]">
                 Collectors
               </h3>
             </div>
@@ -104,10 +104,10 @@ const CollectorMain = ({ totalWeight, selectedDate }) => {
           </div>
 
           {/* Batch Box Data Inputs */}
-          <BatchBox batchId="ID" weight="12.4kg" status="Fresh" date="13 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
-          <BatchBox batchId="ID" weight="12.4kg" status="Near Expiry" date="14 March 2024" time="02:45PM" duration="00:05:43" selectedDate={selectedDate} />
-          <BatchBox batchId="ID" weight="12.4kg" status="Exceeded" date="15 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
-          <BatchBox batchId="ID" weight="12.4kg" status="Expired" date="16 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
+          <BatchBox batchId="1" weight="12.4kg" status="Fresh" date="13 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
+          <BatchBox batchId="2" weight="12.4kg" status="Near Expiry" date="14 March 2024" time="02:45PM" duration="00:05:43" selectedDate={selectedDate} />
+          <BatchBox batchId="3" weight="12.4kg" status="Exceeded" date="15 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
+          <BatchBox batchId="4" weight="12.4kg" status="Expired" date="16 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
         </div>
       </main>
 
