@@ -102,22 +102,24 @@ export default function CentraHome() {
                             </div>
                             <div className="flex">
                                 <Link to="/collector">
-                                <div className= "mt-3 mr-3 rounded-lg flex justify-center items-center" style={{ width: "110px", height: "100px", backgroundColor: "#5D9EA4"}}>
-                                    <img src={collector} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-6" />
-                                    <p className="text-white text-center font-semibold">Collector</p>
-                                </div>
+                                <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#5D9EA4"}}>
+                                    <img src={collector} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Collector</p>
+                                </div>  
                                 </Link>
-
+                                
                                 <Link to="/processor">
-                                <div className="bg-white mt-3 rounded-lg flex justify-center items-center" style={{ width: "110px", height: "100px", backgroundColor: "#4D946D" }}>
-                                    <p className="text-white text-center font-semibold">Processor</p>
-                                </div>
+                                <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#4D946D"}}>
+                                    <img src={processor} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Processor</p>
+                                </div> 
                                 </Link>
 
                                 <Link to="/shipping">
-                                <div className="bg-white mt-3 ml-3 rounded-lg flex justify-center items-center" style={{ width: "110px", height: "100px", backgroundColor: "#606060" }}>
-                                    <p className="text-white text-center font-semibold">Shipping</p>
-                                </div>
+                                <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#606060"}}>
+                                    <img src={shipping} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Shipping</p>
+                                </div> 
                                 </Link>
                             </div>
                         </div>
@@ -128,46 +130,52 @@ export default function CentraHome() {
                             <div>
                                 <h2 className="text-gray-600 font-bold">Machine Stock Status</h2>
                             </div>
+
                             <div className="bg-white mt-3 rounded-lg">
-                                <div className="flex flex-col items-center justify-center">
+                                <div className="flex flex-col items-start w-full">
                                     <div className="relative">
-                                        <p className="absolute mt-3 top-0 left-0 px-3 py-1 bg-black text-white rounded-full font-semibold">1</p>
-                                        <div style={{ position: 'relative', width: '200px', height: '200px' }}>
+                                        <p className="absolute ml-8 mt-5 px-3 py-1 bg-black text-white rounded-full font-semibold">1</p>
+                                        <div className="ml-20" style={{ position: 'relative', width: '200px', height: '200px' }}>
                                             <Doughnut data={wetLeavesDataMachine1} options={gaugeOptions} />
                                             <div style={{ position: 'absolute', top:'60%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span> {/* Placeholder label */}                                    
+                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span>
                                             </div>
                                             <div style={{ position: 'absolute', top:'72%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span> {/* Placeholder label */}
-                                            </div>
-                                            <hr className="border-t- border-gray-300"/>
-                                        </div> 
-                                    </div>
-                                    <div className="relative">
-                                        <p className="absolute mt-3 top-0 left-0 px-3 py-1 bg-black text-white rounded-full font-semibold">2</p>
-                                        <div style={{ position: 'relative', width: '200px', height: '200px' }}>
-                                            <Doughnut data={wetLeavesDataMachine1} options={gaugeOptions} />
-                                            <div style={{ position: 'absolute', top:'60%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span> {/* Placeholder label */}                                    
-                                            </div>
-                                            <div style={{ position: 'absolute', top:'72%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span> {/* Placeholder label */}
+                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span>
                                             </div>
                                         </div> 
                                     </div>
-                                    {/* {line here} */}
+                                    <hr className="border-t border-gray-300" style={{ width: '100%' }} />
+                                </div>
+                                <div className="flex flex-col items-start w-full">
                                     <div className="relative">
-                                        <p className="absolute mt-3 top-0 left-0 px-3 py-1 bg-black text-white rounded-full font-semibold">3</p>
-                                        <div style={{ position: 'relative', width: '200px', height: '200px' }}>
+                                        <p className="absolute ml-8 mt-5  px-3 py-1 bg-black text-white rounded-full font-semibold">1</p>
+                                        <div className="ml-20"  style={{ position: 'relative', width: '200px', height: '200px' }}>
                                             <Doughnut data={wetLeavesDataMachine1} options={gaugeOptions} />
                                             <div style={{ position: 'absolute', top:'60%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span> {/* Placeholder label */}                                    
+                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span>
                                             </div>
                                             <div style={{ position: 'absolute', top:'72%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span> {/* Placeholder label */}
+                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span>
                                             </div>
                                         </div> 
                                     </div>
+                                    <hr className="border-t border-gray-300" style={{ width: '100%' }} />
+                                </div>
+                                <div className="flex flex-col items-start w-full">
+                                    <div className="relative">
+                                        <p className="absolute ml-8 mt-5  px-3 py-1 bg-black text-white rounded-full font-semibold">1</p>
+                                        <div className="ml-20"  style={{ position: 'relative', width: '200px', height: '200px' }}>
+                                            <Doughnut data={wetLeavesDataMachine1} options={gaugeOptions} />
+                                            <div style={{ position: 'absolute', top:'60%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                                                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>10kg</span>
+                                            </div>
+                                            <div style={{ position: 'absolute', top:'72%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                                                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>/30kg</span>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <hr className="border-t border-gray-300" style={{ width: '100%' }} />
                                 </div>
                             </div>
                         </div>
