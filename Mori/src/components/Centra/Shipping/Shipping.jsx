@@ -57,24 +57,45 @@ const Shipping = () => {
   // Dummy data for Shipped tab
   const shipmentData = [
     {
-      id: "12",
+      id: "98478",
+      status: "Missing",
+      batches: [10201, 10273, 10279, 10330, 10345],
+      totalWeight: 72.3,
+      collected: "15 March 2024",
+      time: "07:00 PM",
+    },
+    {
+      id: "34523",
       status: "Shipped",
-      batches: [10201, 10273, 10279],
-      totalWeight: 72.3,
+      batches: [10205, 10284],
+      totalWeight: 85.5,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
     {
-      id: "13",
-      status: "To Receive",
-      batches: [10212, 12931, 12315, 12750, 83412, 12746, 32161],
-      totalWeight: 0.5,
+      id: "23498",
+      status: "To Deliver",
+      batches: [10199, 10288, 10305, 10348],
+      totalWeight: 60.2,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
     {
-      id: "20",
+      id: "89572",
       status: "Completed",
-      batches: [10201, 10273, 10279],
-      totalWeight: 72.3,
+      batches: [10211],
+      totalWeight: 90.1,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
-    // Add more shipments if needed
+    {
+      id: "56839",
+      status: "Missing",
+      batches: [10215, 10297, 10315, 10350, 10360, 10370],
+      totalWeight: 75.0,
+      collected: "13 March 2024",
+      time: "02:45 PM",
+    },
   ];
 
   return (
@@ -201,7 +222,7 @@ const Shipping = () => {
             onClick={() => setActiveTab("toShip")}
             className={`absolute w-1/2 box-border flex flex-row items-center justify-center py-2 px-2.5 font-vietnam font-bold select-none ${
               activeTab === "toShip"
-                ? "border-b-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2]"
+                ? "border-b-[2px] border-solid border-black text-black"
                 : "border-b-[1px] border-solid border-black/25 text-black/25 cursor-pointer hover:border-gray-400 hover:text-gray-400"
             }`}
           >
@@ -211,7 +232,7 @@ const Shipping = () => {
             onClick={() => setActiveTab("shipped")}
             className={`absolute left-1/2 box-border w-1/2 flex flex-row items-center justify-center py-2 px-2.5 font-vietnam font-bold select-none ${
               activeTab === "shipped"
-                ? "border-b-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2]"
+                ? "border-b-[2px] border-solid border-black text-black"
                 : "border-b-[1px] border-solid border-black/25 text-black/25 cursor-pointer hover:border-gray-400 hover:text-gray-400"
             }`}
           >
@@ -242,10 +263,10 @@ const Shipping = () => {
       {activeTab === "shipped" && (
         <main className="w-full flex flex-col overflow-x-hidden">
           {/* FILTERS */}
-          <div className="grid grid-cols-2 gap-2 mt-7">
+          <div className="grid grid-cols-2 gap-3 mt-7">
             {/* Sort */}
             <div
-              className="flex items-center justify-between box-border border-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2] text-xs py-1 px-3 ml-7 font-vietnam"
+              className="flex items-center justify-between box-border border border-solid border-black text-black text-xs py-1 px-3 ml-3 font-vietnam"
               style={{ height: "clamp(50px, 9vw, 65px)" }}
             >
               <div
@@ -256,6 +277,7 @@ const Shipping = () => {
                 <p className="mt-1">Newest to Oldest</p>
               </div>
               <svg
+                style={{ filter: "brightness(0) saturate(100%)" }}
                 width="14"
                 height="9"
                 viewBox="0 0 14 9"
@@ -271,7 +293,7 @@ const Shipping = () => {
 
             {/* Channel Filter */}
             <div
-              className="flex items-center justify-between box-border border-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2] text-xs py-1 px-3 mr-7 font-vietnam"
+              className="flex items-center justify-between box-border border border-solid border-black text-black text-xs py-1 px-3 mr-3 font-vietnam"
               style={{ height: "clamp(50px, 9vw, 65px)" }}
             >
               <div
@@ -282,6 +304,7 @@ const Shipping = () => {
                 <p className="mt-1">All</p>
               </div>
               <svg
+                style={{ filter: "brightness(0) saturate(100%)" }}
                 width="14"
                 height="9"
                 viewBox="0 0 14 9"
@@ -310,6 +333,8 @@ const Shipping = () => {
                 status={shipment.status}
                 batches={shipment.batches}
                 totalWeight={shipment.totalWeight}
+                collected={shipment.collected}
+                time={shipment.time}
               />
             ))}
           </div>

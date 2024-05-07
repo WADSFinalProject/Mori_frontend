@@ -36,7 +36,7 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
 
   return (
     <div
-      className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-1.5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
+      className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
       // onclick go to shipment details page
       onClick={null}
     >
