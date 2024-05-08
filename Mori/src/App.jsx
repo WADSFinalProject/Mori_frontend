@@ -14,6 +14,8 @@ import ShipDetails from './components/Centra/Shipping/ShipDetails'
 import RegisterAccount from './components/Admin/RegisterAccount'
 import HarborHome from './components/HarborGuard/HarborHome'
 import CentraNotif from './components/Centra/CentraNotif'
+import ConfirmShipment from './components/HarborGuard/ConfirmShipment'
+
 
 function App() {
   return (
@@ -33,6 +35,7 @@ function App() {
         <Route path="/registerAccount" element={<RegisterAccount />} />
         <Route path="/harborHome" element={<HarborHome />} />
         <Route path="/centranotif" element={<CentraNotif />} />
+        <Route path="/confirmshipment" element={<ConfirmShipment />} />
       </Routes>
     </Router>
   );
