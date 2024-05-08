@@ -1,14 +1,37 @@
-import React from "react";
 import { useWindowSize } from "react-use";
 import BatchBox from "./BatchBox";
 import DropDown from "./DropDown";
+import EditBatch from "./EditBatch"; // Import the EditBatch component
+import React, { useState, useEffect } from "react";
 
-const CollectorMain = ({ totalWeight, selectedDate }) => {
+
+const CollectorMain = ({ totalWeight }) => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
-  // Check if the window width is greater than a mobile device width (e.g., 640px)
   const isMobile = width <= 640;
   const footerHeight = 40;
+  
+   // Define date, weight, and time
+   const [date, setDate] = useState("");
+   const [weight, setWeight] = useState(""); 
+   const [time, setTime] = useState(""); 
+
+   const [batchData, setBatchData] = useState([]);
+   const [selectedDate, setSelectedDate] = useState(null);
+ 
+  
+   useEffect(() => {
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => setBatchData(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+
+
+  const handleClose = () => {
+
+  };
 
   return (
     <div className="collector-main-container h-screen bg-[#F0F0F0] overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border gap-[24px] leading-[normal] tracking-[normal] ml-auto mr-auto overflow-y-auto">
@@ -85,7 +108,7 @@ const CollectorMain = ({ totalWeight, selectedDate }) => {
       <main className="self-stretch flex flex-row items-start justify-start pb-12 pt-0 px-6 box-border max-w-full text-left text-lg text-black font-vietnam overflow-y-auto">
         <div className="flex-1 flex flex-col items-start justify-start gap-[8px] max-w-full">
           {/* Total Weight */}
-          <div className="mb-2 flex justify-between items-center w-[342px] h-20 bg-white rounded-lg px-4">
+          <div className="w-full mb-2 flex justify-between items-center w-[342px] h-20 bg-white rounded-lg px-4">
             <div className="flex flex-col">
               <span className="text-black text-sm font-bold font-['Be Vietnam Pro'] leading-[15px]">Total weight</span>
               <span className="text-black text-sm font-medium font-['Be Vietnam']">of leaves collected</span>
@@ -99,15 +122,25 @@ const CollectorMain = ({ totalWeight, selectedDate }) => {
           <hr className="w-full h-0 border-2 border-gray-300" />
 
           {/* Filter By Button */}
-          <div className="mt-3 mb-3">
-            <DropDown />
+          <div className="w-full mt-3 mb-3">
+            <DropDown className="w-full" />
           </div>
 
-          {/* Batch Box Data Inputs */}
-          <BatchBox batchId="1" weight="12.4kg" status="Fresh" date="13 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
-          <BatchBox batchId="2" weight="12.4kg" status="Near Expiry" date="14 March 2024" time="02:45PM" duration="00:05:43" selectedDate={selectedDate} />
-          <BatchBox batchId="3" weight="12.4kg" status="Exceeded" date="15 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
-          <BatchBox batchId="4" weight="12.4kg" status="Expired" date="16 March 2024" time="02:45PM" duration="00:00:00" selectedDate={selectedDate} />
+          {/* Render BatchBox components using fetched data
+          {batchData.map(batch => (
+            <BatchBox
+              key={batch.batchId}
+              batchId={batch.batchId}
+              weight={batch.weight}
+              status={batch.status}
+              date={batch.date}
+              time={batch.time}
+              duration={batch.duration}
+              selectedDate={selectedDate}
+            />
+          ))} */}
+
+          {/* <EditBatch onClose={handleClose} batchData={{}} date={date} weight={weight} time={time} /> */}
         </div>
       </main>
 
