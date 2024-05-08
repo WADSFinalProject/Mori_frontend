@@ -103,21 +103,21 @@ export default function CentraHome() {
                             <div className="flex">
                                 <Link to="/collector">
                                 <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#5D9EA4"}}>
-                                    <img src={collector} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <img src={collector} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
                                     <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Collector</p>
                                 </div>  
                                 </Link>
                                 
                                 <Link to="/processor">
                                 <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#4D946D"}}>
-                                    <img src={processor} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <img src={processor} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
                                     <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Processor</p>
                                 </div> 
                                 </Link>
 
                                 <Link to="/shipping">
                                 <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#606060"}}>
-                                    <img src={shipping} alt="mori logo" className="absolute top-2 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
+                                    <img src={shipping} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
                                     <p className="text-white text-center font-semibold absolute bottom-3 left-2" style={{ marginBottom: "5px", marginLeft: "5px" }}>Shipping</p>
                                 </div> 
                                 </Link>

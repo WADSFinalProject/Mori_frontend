@@ -1,13 +1,36 @@
-import React from "react";
-import { useWindowSize } from 'react-use'; // Import useWindowSize hook from react-use library
+import React, { useState } from "react";
+import { useWindowSize } from 'react-use'; 
 import hamburgBlack from '../../assets/hamburgBlack.png'; 
 import settingsLogo from '../../assets/settingsLogo.png'; 
 import { Link } from "react-router-dom";
 
 
-export default function CentraHome() {
+export default function CentraNotif() {
     const { width } = useWindowSize(); 
     const isMobile = width <= 640;
+
+    // Define state variables for filter status and notifications
+    const [showRead, setShowRead] = useState(true); // Initially show read notifications
+    const [showUnread, setShowUnread] = useState(true); // Initially show unread notifications
+    const [notifications, setNotifications] = useState([
+        // Your list of notifications goes here
+        // Each notification should have a 'color' property
+    ]);
+
+    // Function to filter notifications based on color
+    const filterNotifications = (notification) => {
+        if (showRead && showUnread) {
+            return true; // Show all notifications if both filters are active
+        } else if (showRead) {
+            return notification.color !== "#CCE8EA"; // Show unread notifications
+        } else if (showUnread) {
+            return notification.color === "#CCE8EA"; // Show read notifications
+        }
+        return false; // Hide all notifications if both filters are inactive
+    };
+
+    // Filtered notifications based on filter settings
+    const filteredNotifications = notifications.filter(filterNotifications);
 
 
     return (
@@ -147,7 +170,6 @@ export default function CentraHome() {
                             </div>
                         </div>
                     </div>
-
 
                 </div>
                 
