@@ -52,6 +52,20 @@ export default function CentraNotif() {
                             <img src={settingsLogo} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
                             </div>
                         </div>
+                        <div className="flex">
+                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
+                                <p className="text-gray-300">All</p>
+                            </div>
+                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
+                                <p className="text-gray-300">Read</p>
+                            </div>
+                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
+                                <p className="text-gray-300">Unread</p>
+                            </div>
+                        </div>
+
+
+
                     </div>
 
                     {/* notif cards */}
