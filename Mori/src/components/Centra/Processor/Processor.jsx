@@ -5,8 +5,8 @@ import bell from '../../../assets/bell.png';
 import hamburg from '../../../assets/hamburg.png'; 
 import back from '../../../assets/back.png'; 
 import { Pie } from 'react-chartjs-2';
-import Chart from 'chart.js/auto'; // Import Chart from 'chart.js/auto'
-import { Doughnut } from 'react-chartjs-2'; //
+import Chart from 'chart.js/auto'; 
+import { Doughnut } from 'react-chartjs-2'; 
 
 
 const gaugeOptions = {
@@ -26,9 +26,9 @@ const gaugeOptions = {
     events: [],
   };
 
-  const ChartWithBox = ({ data, label, backgroundColor, labelStyle }) => (
+  const ChartWithBox = ({ data, label, labelStyle }) => (
     <div className="chart-box-container rounded-lg shadow font-vietnam" style={{
-      backgroundColor: backgroundColor,
+      backgroundColor: '#f0f0f0', 
       width: '150px',
       height: '170px',
       position: 'relative',
@@ -41,7 +41,7 @@ const gaugeOptions = {
         fontSize: '13px',
         paddingLeft: '20px',
         paddingRight: '20px',
-        ...labelStyle // Apply custom label style
+        ...labelStyle 
       }}>
         {label}
       </div>
@@ -63,34 +63,38 @@ const gaugeOptions = {
   
   
   
+  
 export default function Processor() {
     const { width } = useWindowSize();
     const isMobile = width <= 640;
     const [activeTab, setActiveTab] = useState('drying'); // State to manage active tab
     const [dryingMachines, setDryingMachines] = useState([
-      { number: 1, status: 'FULL' },
-      { number: 2, status: 'EMPTY' },
-      { number: 3, status: 'EMPTY' }
+      { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '1 hour ago' },
+      { number: 2, status: 'FULL', currentLoad: 30, capacity: 30, lastUpdated: '2 hours ago' },
+      { number: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '30 minutes ago' }
     ]);
+  
     const [flouringMachines, setFlouringMachines] = useState([
-      { number: 1, status: 'EMPTY' },
-      { number: 2, status: 'FULL' },
-      { number: 3, status: 'EMPTY' }
+      { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '45 minutes ago' },
+      { number: 2, status: 'FULL', currentLoad: 10, capacity: 30, lastUpdated: '3 hours ago' },
+      { number: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '1 hour ago' }
     ]);
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
+    
 
     const wetLeavesData = {
         labels: ['Unprocessed Wet Leaves', 'Empty'],
         datasets: [
           {
             data: [10, 90], 
-            backgroundColor: ['#FFFF', '#00000040'],
-            borderColor: ['#FFFF', '#00000040'],
+            backgroundColor: ['#538455', '#86B788'],
+            borderColor: ['#538455', '#86B788'],
             borderWidth: 1,
             circumference: 360,
-            rotation: -90,
+            rotation: 0,
             cutout: '75%',
           },
         ],
@@ -100,11 +104,11 @@ export default function Processor() {
         datasets: [
             {
                 data: [20, 90], 
-                backgroundColor: ['#000000', '#00000040'],
-                borderColor: ['#000000', '#00000040'],
+                backgroundColor: ['#838453', '#B2B472'],
+                borderColor: ['#838453', '#B2B472'],
                 borderWidth: 1,
                 circumference: 360,
-                rotation: -90,
+                rotation: 0,
                 cutout: '75%',
             },
         ],
@@ -114,11 +118,11 @@ export default function Processor() {
         datasets: [
           {
             data: [10, 90], 
-            backgroundColor: ['#FFFF', '#00000040'],
-            borderColor: ['#FFFF', '#00000040'],
+            backgroundColor: ['#838453', '#B2B472'],
+            borderColor: ['#838453', '#B2B472'],
             borderWidth: 1,
             circumference: 360,
-            rotation: -90,
+            rotation: 0,
             cutout: '75%',
           },
         ],
@@ -127,12 +131,12 @@ export default function Processor() {
         labels: ['floured Leaves', 'Empty'],
         datasets: [
           {
-            data: [10, 90], 
-            backgroundColor: ['#000000', '#00000040'],
-            borderColor: ['#000000', '#00000040'],
+            data: [30, 90], 
+            backgroundColor: ['#704B40', '#B78F82'],
+            borderColor: ['#704B40', '#B78F82'],
             borderWidth: 1,
             circumference: 360,
-            rotation: -90,
+            rotation: 0,
             cutout: '75%',
           },
         ],
@@ -152,40 +156,66 @@ export default function Processor() {
           );
         });
       };
-      const MachineCard = ({ machine, extraMarginClass }) => (
-        <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`} style={{ width: 'auto', flexGrow: 1, minWidth: '300px', minHeight: '100px', maxWidth: 'none' }}>
-        <div className="machine-info flex justify-between w-full mb-2">
-            <span className="font-bold text-xl">Machine {machine.number}</span>
-            <div className={`status-circle flex items-center justify-center rounded-full h-6 w-14 font-vietnam font-semibold text-xs ${machine.status === 'FULL' ? 'text-black' : 'text-black'}`} style={{
-              backgroundColor: machine.status === 'FULL' ? '#A1C598' : '#C59898'
-            }}>
-              <span className="status-text" style={{ fontSize: '9px' }}>{machine.status}</span> {/* Adjust font size inline */}
+      
+      const MachineCard = ({ machine, extraMarginClass }) => {
+        // Determine the color based on the current load
+        let chartColor = '#99D0D580'; // Default color when less than half
+        if (machine.currentLoad === machine.capacity) {
+          chartColor = '#0F3F43'; // Color when full
+        } else if (machine.currentLoad > machine.capacity / 2) {
+          chartColor = '#5D9EA4'; // Color when more than half
+        }
+      
+        // Determine the link based on the active tab
+        const linkTo = activeTab === 'drying' ? `/dryingmachine/${machine.number}` : `/flouringmachine/${machine.number}`;
+      
+        return (
+          <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`} style={{ width: 'auto', flexGrow: 1, minWidth: '300px', minHeight: '100px', maxWidth: 'none', position: 'relative' }}>
+            <div className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center" style={{ position: 'absolute', left: '15px', top: '15px' }}>
+              <span className="font-bold text-sm">{machine.number}</span>
+            </div>
+            <div className="machine-info flex justify-center items-center w-full mb-2">
+              <div className="chart-container" style={{ width: '150px', height: '120px', position: 'relative' }}>
+                <Doughnut
+                  data={{
+                    labels: ['Current Load', 'Capacity'],
+                    datasets: [{
+                      data: [machine.currentLoad, machine.capacity - machine.currentLoad],
+                      backgroundColor: [chartColor, '#EFEFEF'], // Dynamically set chart color
+                      borderWidth: 0
+                    }]
+                  }}
+                  options={gaugeOptions}
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
+                  <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{machine.currentLoad} kg</span>
+                  <span className="font-vietnam font-bold" style={{ fontSize: '12px', lineHeight: '1.2', marginBottom: '-30px' }}>{`/ ${machine.capacity} kg`}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              style={{ backgroundColor: '#000000', width: '100%', borderRadius: '15px', fontSize: '12px' }}
+              disabled={machine.currentLoad === 0}
+            >
+              <Link to={linkTo} className="flex items-center justify-center h-full w-full">
+                START PROCESS
+              </Link>
+            </button>
+            {/* Last updated timestamp */}
+            <div className="last-updated" style={{ position: 'absolute', top: '5px', right: '5px', fontSize: '10px', color: '#666666' }}>
+              <div>Last updated:</div> {/* This line is not bold */}
+              <div style={{ fontWeight: 'bold' }}>{machine.lastUpdated}</div> {/* This line is bold */}
             </div>
           </div>
-          <button 
-            className={`start-btn text-white py-0.5 px-14 rounded-full mt-2 ${machine.status === 'EMPTY' ? 'opacity-50 cursor-not-allowed' : ''}`} 
-            style={{ backgroundColor: '#6D7DD2' }} 
-            disabled={machine.status === 'EMPTY'}
-          >
-            START PROCESS
-          </button>
-        </div>
-      );
+        );
+      };
       
       
-      
-      
-      
-  
-      
-      
-      
-      
-      
-      
-
-    return (
-        <div >
+       
+    
+   return (
+        <div className="bg-000000">
           {isMobile ? (
             <div>
               <div className="p-4 shadow-md flex justify-between items-center bg-white ml-4">
@@ -220,14 +250,15 @@ export default function Processor() {
               <div className="flex flex-col items-center justify-center space-y-4">
                 {activeTab === 'drying' ? (
           <div className="flex justify-center gap-4" >
-                    <ChartWithBox data={wetLeavesData} label="Total of unprocessed wet leaves" backgroundColor="#828282" 
+                    <ChartWithBox data={wetLeavesData} label="Unprocessed Wet Leaves" backgroundColor="#828282" 
                     labelStyle={{
-                      color: 'white', 
-                        
+                      color: 'black', 
+                      top: '20px'
+  
                       }} />
                     <ChartWithBox
                       data={driedLeavesData}
-                      label="Total of dried leaves"
+                      label="Processed Dried leaves"
                       backgroundColor="#d9d9d9"
                       labelStyle={{
                         top: '20px'
@@ -237,11 +268,13 @@ export default function Processor() {
                   </div>
                 ) : (
                     <div className="flex justify-center gap-4">
-                    <ChartWithBox data={Unfloureddriedleaves} label="Total of Unfloured dried leaves" backgroundColor="#828282" 
+                    <ChartWithBox data={Unfloureddriedleaves} label="Unfloured Dried Leaves" backgroundColor="#828282" 
                     labelStyle={{
-                      color: 'white', 
+                      color: 'black', 
+                      top: '20px'
+
                       }} />
-                    <ChartWithBox data={flouredleaves} label="Total of Floured leaves" backgroundColor="#d9d9d9"
+                    <ChartWithBox data={flouredleaves} label="Floured Leaves" backgroundColor="#d9d9d9"
                     labelStyle={{
                       top: '20px'
                       }}  />
