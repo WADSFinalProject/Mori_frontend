@@ -12,7 +12,7 @@ import CollectorMain from './components/Centra/Collector/CollectorMain';
 import Processor from './components/Centra/Processor/Processor'
 import ShipDetails from './components/Centra/Shipping/ShipDetails'
 import RegisterAccount from './components/Admin/RegisterAccount'
-import HarborHome from './components/HarborGuard/HarborHome'
+import HarborHome from './components/HarborGuard/Home/HarborHome'
 import CentraNotif from './components/Centra/CentraNotif'
 
 function App() {

@@ -4,10 +4,6 @@ import moriLogo from "../../../assets/moriWhite.png";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
 import bg from "../../../assets/usercardBG.png";
-import collector from "../../../assets/collectorLogo.png";
-import processor from "../../../assets/processorLogo.png";
-import shipping from "../../../assets/shippingLogo.png";
-import { Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import StatusComponent from "./StatusComponent";
 
