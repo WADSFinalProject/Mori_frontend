@@ -9,13 +9,15 @@ import Shipping from './components/Centra/Shipping/Shipping'
 import CentraNavigation from './components/Centra/CentraNavigation'
 import EditBatch from './components/Centra/Collector/EditBatch';
 import CollectorMain from './components/Centra/Collector/CollectorMain';
-import Processor from './components/Centra/Processor/Processor'
 import ShipDetails from './components/Centra/Shipping/ShipDetails'
 import RegisterAccount from './components/Admin/RegisterAccount'
 import HarborHome from './components/HarborGuard/HarborHome'
 import CentraNotif from './components/Centra/CentraNotif'
+import HarborNavigation from './components/HarborGuard/HarborNavigation'
+import DryingMachine from './components/Centra/Processor/DryingMachine'
+import FlouringMachine from './components/Centra/Processor/FlouringMachine'
+import Processor from './components/Centra/Processor/Processor'
 import ConfirmShipment from './components/HarborGuard/ConfirmShipment'
-import Processor from './components/Centra/Processor/Processor';
 import ShipDetails from './components/Centra/Shipping/ShipDetails';
 import RegisterAccount from './components/Admin/RegisterAccount';
 import HarborHome from './components/HarborGuard/HarborHome';
@@ -44,6 +46,8 @@ function App() {
         <Route path="/confirmshipment" element={<ConfirmShipment />} />
         <Route path="/arrangeshipment" element={<ArrangeShipment />} />
         <Route path="/harbornavigation" element={<HarborNavigation />} />
+        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
+        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
       </Routes>
     </Router>
   );
