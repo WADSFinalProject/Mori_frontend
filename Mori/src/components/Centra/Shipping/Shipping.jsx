@@ -15,6 +15,9 @@ const Shipping = () => {
   const [maxScrollHeight, setMaxScrollHeight] = useState(0);
   const [activeTab, setActiveTab] = useState("toShip");
 
+  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState("new-old");
+
   useEffect(() => {
     const availableHeight = height - (headerHeight + footerHeight);
     setMaxScrollHeight(availableHeight);
@@ -57,25 +60,68 @@ const Shipping = () => {
   // Dummy data for Shipped tab
   const shipmentData = [
     {
-      id: "12",
+      id: "98478",
+      status: "Missing",
+      batches: [10201, 10273, 10279, 10330, 10345],
+      totalWeight: 72.3,
+      collected: "15 March 2024",
+      time: "07:00 PM",
+    },
+    {
+      id: "34523",
       status: "Shipped",
-      batches: [10201, 10273, 10279],
-      totalWeight: 72.3,
+      batches: [10205, 10284],
+      totalWeight: 85.5,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
     {
-      id: "13",
-      status: "To Receive",
-      batches: [10212, 12931, 12315, 12750, 83412, 12746, 32161],
-      totalWeight: 0.5,
+      id: "23498",
+      status: "To Deliver",
+      batches: [10199, 10288, 10305, 10348],
+      totalWeight: 60.2,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
     {
-      id: "20",
+      id: "89572",
       status: "Completed",
-      batches: [10201, 10273, 10279],
-      totalWeight: 72.3,
+      batches: [10211],
+      totalWeight: 90.1,
+      collected: "13 March 2024",
+      time: "02:45 PM",
     },
-    // Add more shipments if needed
+    {
+      id: "56839",
+      status: "Missing",
+      batches: [10215, 10297, 10315, 10350, 10360, 10370],
+      totalWeight: 75.0,
+      collected: "13 March 2024",
+      time: "02:45 PM",
+    },
   ];
+
+  // Filter the data based on the selected filter
+  const filteredData = shipmentData.filter((shipment) => {
+    if (filter === "all") return true;
+    return shipment.status.toLowerCase() === filter.replace("-", " ");
+  });
+
+  // Sort the filtered data
+  const sortedData = filteredData.sort((a, b) => {
+    switch (sort) {
+      case "new-old":
+        return new Date(b.collected) - new Date(a.collected);
+      case "old-new":
+        return new Date(a.collected) - new Date(b.collected);
+      case "heavy-light":
+        return b.totalWeight - a.totalWeight;
+      case "light-heavy":
+        return a.totalWeight - b.totalWeight;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="max-w-[640px] h-screen relative bg-slate-50 overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border leading-[normal] tracking-[normal] ml-auto mr-auto">
@@ -201,7 +247,7 @@ const Shipping = () => {
             onClick={() => setActiveTab("toShip")}
             className={`absolute w-1/2 box-border flex flex-row items-center justify-center py-2 px-2.5 font-vietnam font-bold select-none ${
               activeTab === "toShip"
-                ? "border-b-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2]"
+                ? "border-b-[2px] border-solid border-black text-black"
                 : "border-b-[1px] border-solid border-black/25 text-black/25 cursor-pointer hover:border-gray-400 hover:text-gray-400"
             }`}
           >
@@ -211,7 +257,7 @@ const Shipping = () => {
             onClick={() => setActiveTab("shipped")}
             className={`absolute left-1/2 box-border w-1/2 flex flex-row items-center justify-center py-2 px-2.5 font-vietnam font-bold select-none ${
               activeTab === "shipped"
-                ? "border-b-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2]"
+                ? "border-b-[2px] border-solid border-black text-black"
                 : "border-b-[1px] border-solid border-black/25 text-black/25 cursor-pointer hover:border-gray-400 hover:text-gray-400"
             }`}
           >
@@ -242,74 +288,56 @@ const Shipping = () => {
       {activeTab === "shipped" && (
         <main className="w-full flex flex-col overflow-x-hidden">
           {/* FILTERS */}
-          <div className="grid grid-cols-2 gap-2 mt-7">
-            {/* Sort */}
-            <div
-              className="flex items-center justify-between box-border border-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2] text-xs py-1 px-3 ml-7 font-vietnam"
-              style={{ height: "clamp(50px, 9vw, 65px)" }}
-            >
-              <div
-                className="flex-1 text-center"
-                style={{ fontSize: "clamp(12px, 2vw, 15px)" }}
-              >
-                <p className="font-semibold">Sort By</p>
-                <p className="mt-1">Newest to Oldest</p>
-              </div>
-              <svg
-                width="14"
-                height="9"
-                viewBox="0 0 14 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 8.02344C6.80208 8.02344 6.625 7.94792 6.46875 7.79688L0.421875 1.60938C0.354167 1.54167 0.302083 1.46615 0.265625 1.38281C0.229167 1.29427 0.210938 1.20052 0.210938 1.10156C0.210938 0.966146 0.242188 0.84375 0.304688 0.734375C0.367188 0.625 0.450521 0.539062 0.554688 0.476562C0.664062 0.414062 0.786458 0.382812 0.921875 0.382812C1.11979 0.382812 1.28906 0.450521 1.42969 0.585938L7.41406 6.70312H6.57812L12.5625 0.585938C12.7083 0.450521 12.8776 0.382812 13.0703 0.382812C13.2057 0.382812 13.3255 0.414062 13.4297 0.476562C13.5391 0.539062 13.625 0.625 13.6875 0.734375C13.75 0.84375 13.7812 0.966146 13.7812 1.10156C13.7812 1.29427 13.7109 1.46094 13.5703 1.60156L7.52344 7.79688C7.45573 7.86979 7.375 7.92708 7.28125 7.96875C7.19271 8.00521 7.09896 8.02344 7 8.02344Z"
-                  fill="#6D7DD2"
-                />
-              </svg>
+          <div className="grid grid-cols-2 gap-3 mt-7">
+            <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+              Sort By
+            </div>
+            <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+              Channel Filter
             </div>
 
-            {/* Channel Filter */}
-            <div
-              className="flex items-center justify-between box-border border-[2px] border-solid border-[#6d7dd2] text-[#6d7dd2] text-xs py-1 px-3 mr-7 font-vietnam"
-              style={{ height: "clamp(50px, 9vw, 65px)" }}
+            {/* Sort */}
+            <select
+              className="ml-3 bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
             >
-              <div
-                className="flex-1 text-center"
-                style={{ fontSize: "clamp(12px, 2vw, 15px)" }}
-              >
-                <p className="font-semibold">Channel Filter</p>
-                <p className="mt-1">All</p>
-              </div>
-              <svg
-                width="14"
-                height="9"
-                viewBox="0 0 14 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 8.02344C6.80208 8.02344 6.625 7.94792 6.46875 7.79688L0.421875 1.60938C0.354167 1.54167 0.302083 1.46615 0.265625 1.38281C0.229167 1.29427 0.210938 1.20052 0.210938 1.10156C0.210938 0.966146 0.242188 0.84375 0.304688 0.734375C0.367188 0.625 0.450521 0.539062 0.554688 0.476562C0.664062 0.414062 0.786458 0.382812 0.921875 0.382812C1.11979 0.382812 1.28906 0.450521 1.42969 0.585938L7.41406 6.70312H6.57812L12.5625 0.585938C12.7083 0.450521 12.8776 0.382812 13.0703 0.382812C13.2057 0.382812 13.3255 0.414062 13.4297 0.476562C13.5391 0.539062 13.625 0.625 13.6875 0.734375C13.75 0.84375 13.7812 0.966146 13.7812 1.10156C13.7812 1.29427 13.7109 1.46094 13.5703 1.60156L7.52344 7.79688C7.45573 7.86979 7.375 7.92708 7.28125 7.96875C7.19271 8.00521 7.09896 8.02344 7 8.02344Z"
-                  fill="#6D7DD2"
-                />
-              </svg>
-            </div>
+              <option value="new-old">Newest to Oldest</option>
+              <option value="old-new">Oldest to Newest</option>
+              <option value="heavy-light">Heaviest to Lightest</option>
+              <option value="light-heavy">Lightest to Heaviest</option>
+            </select>
+
+            {/* Channel Filter */}
+            <select
+              className="mr-3 bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="to-deliver">To Deliver</option>
+              <option value="shipped">Shipped</option>
+              <option value="completed">Completed</option>
+              <option value="missing">Missing</option>
+            </select>
           </div>
 
           <hr className="mt-4 mb-[-0.5px] w-full bg-zinc-300 h-1 border-none" />
 
-          {/* Batches */}
+          {/* Batches (Only show based on the filters) */}
           <div
             className="mb-[40px] overflow-y-auto"
             style={{ maxHeight: `${maxScrollHeight}px` }}
           >
-            {shipmentData.map((shipment) => (
+            {sortedData.map((shipment) => (
               <StatusComponent
                 key={shipment.id}
                 id={shipment.id}
                 status={shipment.status}
                 batches={shipment.batches}
                 totalWeight={shipment.totalWeight}
+                collected={shipment.collected}
+                time={shipment.time}
               />
             ))}
           </div>

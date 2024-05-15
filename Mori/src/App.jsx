@@ -17,6 +17,13 @@ import HarborNavigation from './components/HarborGuard/HarborNavigation'
 import DryingMachine from './components/Centra/Processor/DryingMachine'
 import FlouringMachine from './components/Centra/Processor/FlouringMachine'
 import Processor from './components/Centra/Processor/Processor'
+import ConfirmShipment from './components/HarborGuard/ConfirmShipment'
+import ShipDetails from './components/Centra/Shipping/ShipDetails';
+import RegisterAccount from './components/Admin/RegisterAccount';
+import HarborHome from './components/HarborGuard/HarborHome';
+import CentraNotif from './components/Centra/CentraNotif';
+import ArrangeShipment from './components/Centra/Shipping/ArrangeShipment';
+import HarborNavigation from './components/HarborGuard/HarborNavigation';
 
 function App() {
   return (
@@ -36,6 +43,8 @@ function App() {
         <Route path="/registerAccount" element={<RegisterAccount />} />
         <Route path="/harborHome" element={<HarborHome />} />
         <Route path="/centranotif" element={<CentraNotif />} />
+        <Route path="/confirmshipment" element={<ConfirmShipment />} />
+        <Route path="/arrangeshipment" element={<ArrangeShipment />} />
         <Route path="/harbornavigation" element={<HarborNavigation />} />
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
