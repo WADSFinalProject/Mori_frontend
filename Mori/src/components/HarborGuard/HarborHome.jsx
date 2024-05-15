@@ -37,7 +37,7 @@ import { Link } from "react-router-dom";
   };
   
 
-export default function CentraHome() {
+export default function HarborHome() {
     const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
     // Check if the window width is greater than a mobile device width (e.g., 640px)
