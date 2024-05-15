@@ -3,13 +3,10 @@ import { useWindowSize } from 'react-use'; // Import useWindowSize hook from rea
 import x from '../../assets/x.png'; 
 import { Link } from "react-router-dom";
 import homeNav from '../../assets/homeNav.png';
-import collectorNav from '../../assets/collectorNav.png';
-import processorNav from '../../assets/processorNav.png';
-import shippingNav from '../../assets/shippingNav.png';
 import helpNav from '../../assets/helpNav.png';
 import logoutNav from '../../assets/logoutNav.png';
 
-export default function CentraNavigation() {
+export default function HarborNavigation() {
     const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
     // Check if the window width is greater than a mobile device width (e.g., 640px)
@@ -49,27 +46,6 @@ export default function CentraNavigation() {
                             <Link to="/collector" className="flex items-center">
                                 <img src={homeNav} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Main Page</p>
-                            </Link>
-                        </div>
-
-                        <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/collector" className="flex items-center">
-                                <img src={collectorNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
-                                <p className="text-l ml-4 mt-3">Collector</p>
-                            </Link>
-                        </div>
-
-                        <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/processor" className="flex items-center">
-                                <img src={processorNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
-                                <p className="text-l ml-4 mt-3">Processor</p>
-                            </Link>
-                        </div>
-
-                        <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/shipping" className="flex items-center">
-                                <img src={shippingNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />   
-                                <p className="text-l ml-4 mt-3">Shipping</p>
                             </Link>
                         </div>
                     </div>

@@ -14,6 +14,14 @@ import ShipDetails from './components/Centra/Shipping/ShipDetails'
 import RegisterAccount from './components/Admin/RegisterAccount'
 import HarborHome from './components/HarborGuard/Home/HarborHome'
 import CentraNotif from './components/Centra/CentraNotif'
+import ConfirmShipment from './components/HarborGuard/ConfirmShipment'
+import Processor from './components/Centra/Processor/Processor';
+import ShipDetails from './components/Centra/Shipping/ShipDetails';
+import RegisterAccount from './components/Admin/RegisterAccount';
+import HarborHome from './components/HarborGuard/HarborHome';
+import CentraNotif from './components/Centra/CentraNotif';
+import ArrangeShipment from './components/Centra/Shipping/ArrangeShipment';
+import HarborNavigation from './components/HarborGuard/HarborNavigation';
 
 function App() {
   return (
@@ -33,6 +41,9 @@ function App() {
         <Route path="/registerAccount" element={<RegisterAccount />} />
         <Route path="/harborHome" element={<HarborHome />} />
         <Route path="/centranotif" element={<CentraNotif />} />
+        <Route path="/confirmshipment" element={<ConfirmShipment />} />
+        <Route path="/arrangeshipment" element={<ArrangeShipment />} />
+        <Route path="/harbornavigation" element={<HarborNavigation />} />
       </Routes>
     </Router>
   );
