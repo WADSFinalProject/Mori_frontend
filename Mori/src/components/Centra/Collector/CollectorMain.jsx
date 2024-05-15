@@ -1,19 +1,40 @@
-import React from "react";
 import { useWindowSize } from "react-use";
 import BatchBox from "./BatchBox";
 import DropDown from "./DropDown";
+import EditBatch from "./EditBatch"; // Import the EditBatch component
+import React, { useState, useEffect } from "react";
 
-const CollectorMain = ({totalWeight}) => {
+
+const CollectorMain = ({ totalWeight }) => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
-  // Check if the window width is greater than a mobile device width (e.g., 640px)
   const isMobile = width <= 640;
   const footerHeight = 40;
+  
+   // Define date, weight, and time
+   const [date, setDate] = useState("");
+   const [weight, setWeight] = useState(""); 
+   const [time, setTime] = useState(""); 
+
+   const [batchData, setBatchData] = useState([]);
+   const [selectedDate, setSelectedDate] = useState(null);
+ 
+  
+   useEffect(() => {
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => setBatchData(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+
+
+  const handleClose = () => {
+
+  };
 
   return (
-    <div className="max-w-[640px] h-screen relative bg-[#F0F0F0] overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border gap-[24px] leading-[normal] tracking-[normal] ml-auto mr-auto">
-      
-      
+    <div className="collector-main-container h-screen bg-[#F0F0F0] overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border gap-[24px] leading-[normal] tracking-[normal] ml-auto mr-auto overflow-y-auto">
       {/* Header */}
       <header className="self-stretch flex flex-col items-start justify-start gap-[24px] max-w-full text-left text-base text-black font-vietnam">
         <nav className="m-0 self-stretch flex flex-row items-start justify-start py-0 pr-6 pl-5 box-border max-w-full">
@@ -82,49 +103,49 @@ const CollectorMain = ({totalWeight}) => {
           </nav>
         </nav>
       </header>
-        
 
       {/* Collector Main Section */}
-      <main
-        className="self-stretch flex flex-row items-start justify-start pb-12 pt-0 px-6 box-border max-w-full text-left text-lg text-black font-vietnam overflow-y-auto"
-      >
-
+      <main className="self-stretch flex flex-row items-start justify-start pb-12 pt-0 px-6 box-border max-w-full text-left text-lg text-black font-vietnam overflow-y-auto">
         <div className="flex-1 flex flex-col items-start justify-start gap-[8px] max-w-full">
-
-        {/* Total Weight */}
-        <div className="mb-2 flex justify-between items-center w-[342px] h-20 bg-white rounded-lg px-4">
+          {/* Total Weight */}
+          <div className="w-full mb-2 flex justify-between items-center w-[342px] h-20 bg-white rounded-lg px-4">
             <div className="flex flex-col">
-                <span className="text-black text-base font-bold font-['Be Vietnam Pro'] leading-[18px]">Total weight</span>
-                <span className="text-black text-base font-medium font-['Be Vietnam']">of leaves collected</span>
+              <span className="text-black text-sm font-bold font-['Be Vietnam Pro'] leading-[15px]">Total weight</span>
+              <span className="text-black text-sm font-medium font-['Be Vietnam']">of leaves collected</span>
             </div>
             <div className="flex flex-col items-end">
-                <span className="text-black text-[40px] font-bold font-['Be Vietnam Pro']">54.6 <span className="text-black text-xl font-medium font-['Be Vietnam Pro']">kg</span> </span> 
+              <span className="text-black text-4xl font-bold font-['Be Vietnam Pro']">54.6 <span className="text-black text-xl font-medium font-['Be Vietnam Pro']">kg</span> </span>
             </div>
-        </div>
+          </div>
 
-        {/* Separator Line */}
-        <hr className="w-full h-0 border-2 border-gray-300" />
+          {/* Separator Line */}
+          <hr className="w-full h-0 border-2 border-gray-300" />
 
-        {/* Filter By Button */}
-        <div className="mt-2">
-            <DropDown></DropDown>
-        </div>
+          {/* Filter By Button */}
+          <div className="w-full mt-3 mb-3">
+            <DropDown className="w-full" />
+          </div>
 
-        {/* Batch Box Data Inputs */}
-        <BatchBox batchId="ID" weight="12.4kg" status="Fresh" date="13 March 2024" time="02:45PM" duration="00:00:00"/>
-          <BatchBox batchId="ID" weight="12.4kg" status="Near Expiry" date="13 March 2024" time="02:45PM" duration="00:05:43"/>
-          <BatchBox batchId="ID" weight="12.4kg" status="Exceeded" date="13 March 2024" time="02:45PM" duration="00:00:00"/>
-          <BatchBox batchId="ID" weight="12.4kg" status="Expired" date="13 March 2024" time="02:45PM" duration="00:00:00"/>
+          {/* Render BatchBox components using fetched data
+          {batchData.map(batch => (
+            <BatchBox
+              key={batch.batchId}
+              batchId={batch.batchId}
+              weight={batch.weight}
+              status={batch.status}
+              date={batch.date}
+              time={batch.time}
+              duration={batch.duration}
+              selectedDate={selectedDate}
+            />
+          ))} */}
+
+          {/* <EditBatch onClose={handleClose} batchData={{}} date={date} weight={weight} time={time} /> */}
         </div>
       </main>
 
       {/* Footer */}
-      {/* Footer */}
-
-      <footer
-        className="absolute bottom-0 w-full self-stretch bg-[#efefef] box-border flex flex-row items-start justify-start py-2.5 px-6 max-w-full text-left text-[15px] text-black font-vietnam border-t-[1px] border-solid border-[#828282]"
-        style={{ height: `${footerHeight}px` }}
-      >
+      <footer className="absolute bottom-0 w-full self-stretch bg-[#efefef] box-border flex flex-row items-start justify-start py-2.5 px-6 max-w-full text-left text-[15px] text-black font-vietnam border-t-[1px] border-solid border-[#828282]" style={{ height: `${footerHeight}px` }}>
         <div className="flex-1 flex flex-row items-start justify-between max-w-full gap-[20px]">
           <b className="relative leading-[19.33px] inline-block min-w-[84px]">
             <span>©</span>
@@ -137,7 +158,6 @@ const CollectorMain = ({totalWeight}) => {
           </div>
         </div>
       </footer>
-
     </div>
   );
 };
