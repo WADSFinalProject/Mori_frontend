@@ -1,27 +1,22 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; 
-import Login from './components/auth/Login';
-import SetPassword from './components/auth/SetPassword';
-import ResetPassword from './components/auth/ResetPassword';
-import ResetVerification from './components/auth/ResetVerification';
-import CentraHome from './components/Centra/CentraHome';
-import Shipping from './components/Centra/Shipping/Shipping'
-import CentraNavigation from './components/Centra/CentraNavigation'
-import EditBatch from './components/Centra/Collector/EditBatch';
-import CollectorMain from './components/Centra/Collector/CollectorMain';
-import Processor from './components/Centra/Processor/Processor'
-import ShipDetails from './components/Centra/Shipping/ShipDetails'
-import RegisterAccount from './components/Admin/RegisterAccount'
-import HarborHome from './components/HarborGuard/Home/HarborHome'
-import CentraNotif from './components/Centra/CentraNotif'
-import ConfirmShipment from './components/HarborGuard/ConfirmShipment'
-import Processor from './components/Centra/Processor/Processor';
-import ShipDetails from './components/Centra/Shipping/ShipDetails';
-import RegisterAccount from './components/Admin/RegisterAccount';
-import HarborHome from './components/HarborGuard/HarborHome';
-import CentraNotif from './components/Centra/CentraNotif';
-import ArrangeShipment from './components/Centra/Shipping/ArrangeShipment';
-import HarborNavigation from './components/HarborGuard/HarborNavigation';
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./components/auth/Login";
+import SetPassword from "./components/auth/SetPassword";
+import ResetPassword from "./components/auth/ResetPassword";
+import ResetVerification from "./components/auth/ResetVerification";
+import CentraHome from "./components/Centra/CentraHome";
+import Shipping from "./components/Centra/Shipping/Shipping";
+import CentraNavigation from "./components/Centra/CentraNavigation";
+import EditBatch from "./components/Centra/Collector/EditBatch";
+import CollectorMain from "./components/Centra/Collector/CollectorMain";
+import Processor from "./components/Centra/Processor/Processor";
+import ShipDetails from "./components/Centra/Shipping/ShipDetails";
+import RegisterAccount from "./components/Admin/RegisterAccount";
+import HarborHome from "./components/HarborGuard/Home/HarborHome";
+import CentraNotif from "./components/Centra/CentraNotif";
+import ConfirmShipment from "./components/HarborGuard/ConfirmShipment";
+import ArrangeShipment from "./components/Centra/Shipping/ArrangeShipment";
+import HarborNavigation from "./components/HarborGuard/HarborNavigation";
 
 function App() {
   return (

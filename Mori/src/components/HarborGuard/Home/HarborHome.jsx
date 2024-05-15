@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWindowSize } from "react-use"; // Import useWindowSize hook from react-use library
 import moriLogo from "../../../assets/moriWhite.png";
 import bell from "../../../assets/bell.png";
@@ -70,6 +70,40 @@ export default function CentraHome() {
   // Check if the window width is greater than a mobile device width (e.g., 640px)
   const isMobile = width <= 1024;
 
+  const [sortOption, setSortOption] = useState("new-old");
+  const [filterOption, setFilterOption] = useState("all");
+
+  const sortData = (data, sortOption) => {
+    switch (sortOption) {
+      case "new-old":
+        return data.sort(
+          (a, b) => new Date(b.collected) - new Date(a.collected)
+        );
+      case "old-new":
+        return data.sort(
+          (a, b) => new Date(a.collected) - new Date(b.collected)
+        );
+      case "heavy-light":
+        return data.sort((a, b) => b.totalWeight - a.totalWeight);
+      case "light-heavy":
+        return data.sort((a, b) => a.totalWeight - b.totalWeight);
+      default:
+        return data;
+    }
+  };
+
+  const filterData = (data, filterOption) => {
+    if (filterOption === "all") return data;
+    return data.filter(
+      (shipment) => shipment.status.toLowerCase() === filterOption.toLowerCase()
+    );
+  };
+
+  const sortedAndFilteredData = sortData(
+    filterData([...shipmentData], filterOption),
+    sortOption
+  );
+
   return (
     <div>
       {isMobile ? (
@@ -122,64 +156,42 @@ export default function CentraHome() {
 
           <main className="">
             {/* FILTERS */}
-            <div className="grid grid-cols-2 gap-3 mt-3">
-              {/* Sort */}
-              <div
-                className="flex items-center justify-between box-border border-[2px] border-solid border-black text-black text-xs py-1 px-3 ml-3 font-vietnam"
-                style={{ height: "clamp(50px, 9vw, 65px)" }}
-              >
-                <div
-                  className="flex-1 text-center"
-                  style={{ fontSize: "clamp(12px, 2vw, 15px)" }}
-                >
-                  <p className="font-semibold">Sort By</p>
-                  <p className="mt-1">Newest to Oldest</p>
-                </div>
-                <svg
-                  style={{ filter: "brightness(0) saturate(100%)" }}
-                  width="14"
-                  height="9"
-                  viewBox="0 0 14 9"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7 8.02344C6.80208 8.02344 6.625 7.94792 6.46875 7.79688L0.421875 1.60938C0.354167 1.54167 0.302083 1.46615 0.265625 1.38281C0.229167 1.29427 0.210938 1.20052 0.210938 1.10156C0.210938 0.966146 0.242188 0.84375 0.304688 0.734375C0.367188 0.625 0.450521 0.539062 0.554688 0.476562C0.664062 0.414062 0.786458 0.382812 0.921875 0.382812C1.11979 0.382812 1.28906 0.450521 1.42969 0.585938L7.41406 6.70312H6.57812L12.5625 0.585938C12.7083 0.450521 12.8776 0.382812 13.0703 0.382812C13.2057 0.382812 13.3255 0.414062 13.4297 0.476562C13.5391 0.539062 13.625 0.625 13.6875 0.734375C13.75 0.84375 13.7812 0.966146 13.7812 1.10156C13.7812 1.29427 13.7109 1.46094 13.5703 1.60156L7.52344 7.79688C7.45573 7.86979 7.375 7.92708 7.28125 7.96875C7.19271 8.00521 7.09896 8.02344 7 8.02344Z"
-                    fill="#6D7DD2"
-                  />
-                </svg>
+            <div className="grid grid-cols-2 gap-3 mt-7">
+              <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+                Sort By
+              </div>
+              <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+                Channel Filter
               </div>
 
-              {/* Channel Filter */}
-              <div
-                className="flex items-center justify-between box-border border-[2px] border-solid border-black text-black text-xs py-1 px-3 mr-3 font-vietnam"
-                style={{ height: "clamp(50px, 9vw, 65px)" }}
+              {/* Sort */}
+              <select
+                className="ml-3 bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
               >
-                <div
-                  className="flex-1 text-center"
-                  style={{ fontSize: "clamp(12px, 2vw, 15px)" }}
-                >
-                  <p className="font-semibold">Channel Filter</p>
-                  <p className="mt-1">All</p>
-                </div>
-                <svg
-                  style={{ filter: "brightness(0) saturate(100%)" }}
-                  width="14"
-                  height="9"
-                  viewBox="0 0 14 9"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7 8.02344C6.80208 8.02344 6.625 7.94792 6.46875 7.79688L0.421875 1.60938C0.354167 1.54167 0.302083 1.46615 0.265625 1.38281C0.229167 1.29427 0.210938 1.20052 0.210938 1.10156C0.210938 0.966146 0.242188 0.84375 0.304688 0.734375C0.367188 0.625 0.450521 0.539062 0.554688 0.476562C0.664062 0.414062 0.786458 0.382812 0.921875 0.382812C1.11979 0.382812 1.28906 0.450521 1.42969 0.585938L7.41406 6.70312H6.57812L12.5625 0.585938C12.7083 0.450521 12.8776 0.382812 13.0703 0.382812C13.2057 0.382812 13.3255 0.414062 13.4297 0.476562C13.5391 0.539062 13.625 0.625 13.6875 0.734375C13.75 0.84375 13.7812 0.966146 13.7812 1.10156C13.7812 1.29427 13.7109 1.46094 13.5703 1.60156L7.52344 7.79688C7.45573 7.86979 7.375 7.92708 7.28125 7.96875C7.19271 8.00521 7.09896 8.02344 7 8.02344Z"
-                    fill="#6D7DD2"
-                  />
-                </svg>
-              </div>
+                <option value="new-old">Newest to Oldest</option>
+                <option value="old-new">Oldest to Newest</option>
+                <option value="heavy-light">Heaviest to Lightest</option>
+                <option value="light-heavy">Lightest to Heaviest</option>
+              </select>
+
+              {/* Channel Filter */}
+              <select
+                className="mr-3 bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent"
+                value={filterOption}
+                onChange={(e) => setFilterOption(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="to deliver">To Deliver</option>
+                <option value="shipped">Shipped</option>
+                <option value="completed">Completed</option>
+                <option value="missing">Missing</option>
+              </select>
             </div>
 
             <div className="overflow-y-auto">
-              {shipmentData.map((shipment) => (
+              {sortedAndFilteredData.map((shipment) => (
                 <StatusComponent
                   key={shipment.id}
                   id={shipment.id}
