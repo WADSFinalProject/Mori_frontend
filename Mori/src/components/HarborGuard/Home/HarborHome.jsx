@@ -64,7 +64,7 @@ const gaugeOptions = {
   },
 };
 
-export default function CentraHome() {
+export default function HarborHome() {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
   // Check if the window width is greater than a mobile device width (e.g., 640px)
@@ -208,7 +208,7 @@ export default function CentraHome() {
           {/* Footer */}
           <footer className="sticky w-full bg-gray-200 text-black flex justify-between items-center h-10 px-3 bottom-0">
             <p className="font-semibold">@2024 AMIN</p>
-            <p className="font-semibold">CENTRA</p>
+            <p className="font-semibold">HARBOUR</p>
           </footer>
         </div>
       ) : (
