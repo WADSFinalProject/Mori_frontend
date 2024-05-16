@@ -25,58 +25,27 @@ const gaugeOptions = {
   events: [],
 };
 
-const ChartWithBox = ({ data, label, labelStyle }) => (
-  <div className="chart-box-container rounded-lg shadow font-vietnam" style={{ backgroundColor: '#f0f0f0', width: '150px', height: '170px', position: 'relative', marginTop: '20px' }}>
-    <div className="chart-box-label text-sm font-bold text-center" style={{ position: 'absolute', top: '10px', width: '100%', fontSize: '13px', paddingLeft: '20px', paddingRight: '20px', ...labelStyle }}>
-      {label}
-    </div>
-    <div className="chart-box-doughnut" style={{ position: 'absolute', top: '65%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px' }}>
-      <Doughnut data={data} options={gaugeOptions} />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-semibold">{data.datasets[0].data[0]}kg</span>
-      </div>
-    </div>
-  </div>
-);
-
 export default function CentraHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
 
-  const [activeTab, setActiveTab] = useState('drying');
-  const [dryingMachines, setDryingMachines] = useState([
+  const [machinesData, setMachines] = useState([
     { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '1 hour ago' },
     { number: 2, status: 'FULL', currentLoad: 30, capacity: 30, lastUpdated: '2 hours ago' },
     { number: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '30 minutes ago' },
   ]);
   
-  const [flouringMachines, setFlouringMachines] = useState([
-    { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '45 minutes ago' },
-    { number: 2, status: 'FULL', currentLoad: 10, capacity: 30, lastUpdated: '3 hours ago' },
-    { number: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '1 hour ago' },
-  ]);
-  
-
-  const handleTabClick = (tab) => setActiveTab(tab);
-
-  const wetLeavesData = { temperature: 25, humidity: 70 };
-const driedLeavesData = { temperature: 30, humidity: 20 };
-const Unfloureddriedleaves = { temperature: 28, humidity: 40 };
-const flouredleaves = { temperature: 32, humidity: 25 };
-
-
   const renderMachines = () => {
-    const machines = activeTab === 'drying' ? dryingMachines : flouringMachines;
-    return machines.map((machine, index) => (
-      <MachineCard key={machine.number} machine={machine} extraMarginClass={index === machines.length - 1 ? 'mb-10' : 'mb-4'} />
+    return machinesData.map((machine, index) => (
+      <MachineCard key={machine.number} machine={machine} extraMarginClass={index === machinesData.length - 1 ? 'mb-10' : 'mb-4'} />
     ));
   };
-
+  
   const MachineCard = ({ machine, extraMarginClass }) => {
     const chartColor = machine.currentLoad === machine.capacity ? '#0F3F43' : (machine.currentLoad > machine.capacity / 2 ? '#5D9EA4' : '#99D0D580');
-
-    const linkTo = activeTab === 'drying' ? `/dryingmachine/${machine.number}` : `/flouringmachine/${machine.number}`;
-
+  
+    const linkTo = `/dryingmachine/${machine.number}`;
+  
     return (
       <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`} style={{ width: 'auto', flexGrow: 1, minWidth: '300px', minHeight: '100px', maxWidth: 'none', position: 'relative' }}>
         <div className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center" style={{ position: 'absolute', left: '15px', top: '15px' }}>
@@ -98,6 +67,7 @@ const flouredleaves = { temperature: 32, humidity: 25 };
       </div>
     );
   };
+  
 
   return (
     <div>
@@ -158,7 +128,11 @@ const flouredleaves = { temperature: 32, humidity: 25 };
             </div>
           </div>
 
+            {/* Machine Stock Status */}
           <div className="p-5">
+          <div className="mt-">
+              <h2 className="text-gray-600 font-bold ">Machine Stock Status</h2>
+            </div>
             <div className="machine-status my-4">{renderMachines()}</div>
           </div>
 
