@@ -19,6 +19,7 @@ import ArrangeShipment from './components/Centra/Shipping/ArrangeShipment';
 import HarborNavigation from './components/HarborGuard/HarborNavigation';
 import DryingMachine from './components/Centra/Processor/DryingMachine';
 import FlouringMachine from './components/Centra/Processor/FlouringMachine';
+import HarborNotif from './components/HarborGuard/HarborNotif';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/harbornavigation" element={<HarborNavigation />} />
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
+        <Route path="/harbornotif" element={<HarborNotif />} />
       </Routes>
     </Router>
   );

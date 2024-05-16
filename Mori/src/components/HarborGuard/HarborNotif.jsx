@@ -5,7 +5,7 @@ import settingsLogo from '../../assets/settingsLogo.png';
 import { Link } from "react-router-dom";
 
 
-export default function CentraNotif() {
+export default function HarborNotif() {
     const { width } = useWindowSize(); 
     const isMobile = width <= 640;
 
@@ -53,12 +53,12 @@ export default function CentraNotif() {
                         </div>
 
                         {/* Unopened card */}
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CCE8EA" }}>
+                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CDE8D9" }}>
                             <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#5D9EA4" }}></div>
                             <div className="flex flex-col items-start w-full">
                                 <div className="relative">
-                                    <div className="ml-6 mt-5" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Flouring Machine #ID</strong> has started</p>
+                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
+                                        <p><strong>Package #ID</strong> has arrived</p>
                                         <p className="text-gray-500">
                                             <span>09:00 AM -</span>
                                             <span> 2 minutes ago</span>
@@ -68,12 +68,12 @@ export default function CentraNotif() {
                             </div>
                         </div>
 
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CCE8EA" }}>
+                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CDE8D9" }}>
                             <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#5D9EA4" }}></div>
                             <div className="flex flex-col items-start w-full">
                                 <div className="relative">
-                                    <div className="ml-6 mt-5" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Flouring Machine #ID</strong> has started</p>
+                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
+                                        <p><strong>Package #ID</strong> is being delivered by Franz Sinatra</p>
                                         <p className="text-gray-500">
                                             <span>09:00 AM -</span>
                                             <span> 2 minutes ago</span>
@@ -88,8 +88,8 @@ export default function CentraNotif() {
                             <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#FFF" }}></div>
                             <div className="flex flex-col items-start w-full">
                                 <div className="relative">
-                                    <div className="ml-6 mt-5" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Flouring Machine #ID</strong> has started</p>
+                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
+                                        <p><strong>Package #ID</strong> has arrived</p>
                                         <p className="text-gray-500">
                                             <span>09:00 AM -</span>
                                             <span> 2 minutes ago</span>
@@ -103,8 +103,8 @@ export default function CentraNotif() {
                             <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#FFF" }}></div>
                             <div className="flex flex-col items-start w-full">
                                 <div className="relative">
-                                    <div className="ml-6 mt-5" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Flouring Machine #ID</strong> has started</p>
+                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
+                                        <p><strong>Package #ID</strong> has been declared missing</p>
                                         <p className="text-gray-500">
                                             <span>09:00 AM -</span>
                                             <span> 2 minutes ago</span>
