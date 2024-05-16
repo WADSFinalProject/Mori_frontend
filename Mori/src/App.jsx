@@ -9,10 +9,10 @@ import Shipping from './components/Centra/Shipping/Shipping';
 import CentraNavigation from './components/Centra/CentraNavigation';
 import EditBatch from './components/Centra/Collector/EditBatch';
 import CollectorMain from './components/Centra/Collector/CollectorMain';
-import Processor from './components/Centra/Processor/Processor';
+import CentraProcessor from './components/Centra/Processor/CentraProcessor';
 import ShipDetails from './components/Centra/Shipping/ShipDetails';
 import RegisterAccount from './components/Admin/RegisterAccount';
-import HarborHome from './components/HarborGuard/HarborHome';
+import HarborHome from './components/HarborGuard/Home/HarborHome';
 import CentraNotif from './components/Centra/CentraNotif';
 import ConfirmShipment from './components/HarborGuard/ConfirmShipment';
 import ArrangeShipment from './components/Centra/Shipping/ArrangeShipment';
@@ -33,7 +33,7 @@ function App() {
         <Route path="/centranavigation" element={<CentraNavigation />} />
         <Route path="/EditBatch" element={<EditBatch />} />
         <Route path="/CollectorMain" element={<CollectorMain />} />
-        <Route path="/processor" element={<Processor />} />
+        <Route path="/centraprocessor" element={<CentraProcessor />} />
         <Route path="/shipdetails" element={<ShipDetails />} />
         <Route path="/registerAccount" element={<RegisterAccount />} />
         <Route path="/harborHome" element={<HarborHome />} />
