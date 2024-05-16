@@ -225,128 +225,221 @@ const Login = () => {
   return (
     <>
       {width < 768 ? (
-        <div className="max-w-[390px] h-screen bg-slate-50 overflow-hidden leading-normal tracking-normal ml-auto mr-auto">
-          <main>
-            <div className="w-full h-screen relative bg-login bg-no-repeat bg-cover bg-center before:content-[''] before:absolute before:inset-0 before:block before:bg-gradient-to-t before:from-[#10382D] before:from-35%">
-              {/* MAIN */}
-              <div className="w-full h-screen flex flex-col items-center relative top-[58%]">
-                <img
-                  className={`select-none transition-transform duration-500 ${
-                    showForm ? "scale-50 -translate-y-[22rem]" : ""
-                  }`}
-                  src="src\assets\login2\logo.svg"
-                ></img>
-                <button
-                  onClick={toggleForm}
-                  className="mt-5 rounded-full w-12 h-12 bg-white flex items-center justify-center hover:bg-gray-100"
-                >
-                  <img
-                    className="select-none"
-                    src="src\assets\login2\arrow.svg"
-                  ></img>
-                </button>
+  <div className="relative w-full h-screen overflow-hidden">
+    <div className="absolute w-full h-full bg-cover" style={{ backgroundImage: `url(${LaptopBG})` }}>
+      <div className="flex flex-col items-center justify-center h-full">
+        <div className={`flex mb-2 transition-transform duration-500 ease-out ${isClicked ? 'transform -translate-y-[calc(28vh+2rem)]' : ''}`}>
+          <img src={mori} alt="morimori logo" className="mr-2 h-12" />
+        </div>
+        {!showVerificationForm && !showCodeEntry && !success && (
+          <button onClick={handleLoginClick} className={`focus:outline-none ${isClicked ? 'hidden' : ''}`}>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mt-2">
+              <img src={ArrowRight} alt="arrow right" className="w-5 h-5" />
+            </div>
+          </button>
+        )}
+      </div>
+    </div>
+
+    {showVerificationForm ? (
+      <div className={`absolute bottom-0 left-0 w-full h-3/4 bg-white rounded-t-3xl transform transition-transform duration-500 ease-in-out ${showVerificationForm ? 'translate-y-[5%]' : 'translate-y-full'}`}>
+        <div className="flex items-center justify-center h-full">
+          <div className="w-full max-w-md p-4 mx-auto mb-32">
+            <h1 className="font-vietnam font-bold text-left text-3xl mt-4">Forgot Password</h1>
+            <form id="verification-form" className="space-y-4 mt-4" onSubmit={handleSendVerification}>
+              <div>
+                <label htmlFor="email" className="font-vietnam font-semibold text-lg block mb-1">Email</label>
+                <input
+                  id="email"
+                  placeholder="Enter Email"
+                  type="email"
+                  className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                />
               </div>
-  
-              {/* FORM CONTAINER */}
-              <div
-                className={`absolute h-[70%] w-full bg-white bottom-0 rounded-t-[20px] pt-11 px-6 transition-transform duration-500 ${
-                  showForm ? "translate-y-0" : "translate-y-full"
-                }`}
+              <button
+                type="submit"
+                className="mt-4 w-full h-8 bg-black rounded-xl text-white font-vietnam text-xs font-medium justify-center items-center hover:bg-black/85"
               >
-                <div className="flex w-[200%] overflow-hidden">
-                  {/* LOGIN FORM */}
-                  <div
-                    className={`w-full transition-transform duration-500 ease-in-out ${
-                      currentForm === "login"
-                        ? "translate-x-0"
-                        : "-translate-x-full"
-                    }`}
+                Send Verification
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    ) : showCodeEntry ? (
+      <div className={`absolute bottom-0 left-0 w-full h-3/4 bg-white rounded-t-3xl transform transition-transform duration-500 ease-in-out ${showCodeEntry ? 'translate-y-[5%]' : 'translate-y-full'}`}>
+        <div className="flex items-center justify-center h-full">
+          <div className="w-full max-w-md p-4 mx-auto mb-32">
+            <h1 className="font-vietnam font-bold text-center text-3xl mt-4">Verification Code</h1>
+            <p className="text-center mb-2">Enter your verification code that we sent through your email or phone number</p>
+            <div className="flex justify-center space-x-2 gap-2">
+              {verificationCode.map((code, index) => (
+                <input
+                  key={index}
+                  id={`code-${index}`}
+                  type="text"
+                  maxLength="1"
+                  value={code}
+                  onChange={(e) => handleCodeInputChange(index, e)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className="w-10 h-10 text-lg text-center border-2 border-gray-300"
+                  autoFocus={index === 0}
+                />
+              ))}
+            </div>
+            {invalidCode && (
+              <div className="text-xs font-vietnam font-medium mt-2 w-full text-center text-red-600">
+                Verification code invalid!
+              </div>
+            )}
+
+            <div className="flex flex-col items-center mt-2">
+              {timer > 0 ? (
+                <div className="text-base font-medium">{formatTime()}</div>
+              ) : (
+                <div className="flex items-center text-xs text-gray-500">
+                  <span className="text-base text-gray-500">Didn’t receive any code?</span>
+                  <button onClick={handleResendCode} className="ml-2 text-base font-bold text-black underline hover:text-gray-900 cursor-pointer">
+                    Resend Code
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={handleSubmit}
+                className="mt-2 px-16 py-1 bg-black text-white rounded hover:bg-gray-900"
+                style={{ width: "calc(100% - 1rem)" }}
+              >
+                SUBMIT
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : success ? (
+      <div className={`absolute bottom-0 left-0 w-full h-3/4 bg-white rounded-t-3xl transform transition-transform duration-500 ease-in-out ${success ? 'translate-y-[5%]' : 'translate-y-full'}`}>
+        <div className="flex items-center justify-center h-full">
+          <div className="w-full max-w-md p-4 mx-auto mb-32">
+            <h1 className="font-vietnam font-bold text-3xl text-left mt-4">Reset Password</h1>
+            <form id="reset-password-form" className="space-y-4 mt-4" onSubmit={handlePasswordReset}>
+              <div>
+                <label htmlFor="reset-password" className="font-vietnam font-semibold text-lg block mb-1">Enter New Password</label>
+                <div className="relative">
+                  <input
+                    id="reset-password"
+                    placeholder="Enter Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                  />
+                  <button
+                    onClick={() => setShowPassword(!showPassword)} 
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
-                    <h1 className="font-vietnam font-bold text-4xl">Login</h1>
-                    <h3 className="font-vietnam font-semibold text-xl mt-8 pb-1">
-                      Email
-                    </h3>
-                    <form id="login-form">
-                      <input
-                        placeholder="Enter Email"
-                        type="email"
-                        className="bg-transparent border-0 border-b-[2px] border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
-                      />
-                      <h3 className="font-vietnam font-semibold text-xl mt-8 pb-1">
-                        Password
-                      </h3>
-                      <input
-                        placeholder="Enter Password"
-                        type="password"
-                        className="bg-transparent border-0 border-b-[2px] border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
-                      />
-  
-                      <button
-                        type="submit"
-                        className="mt-8 w-full h-9 bg-black rounded-xl text-white font-vietnam text-sm font-medium justify-center items-center hover:bg-black/85"
-                      >
-                        LOGIN
-                      </button>
-                    </form>
-  
-                    <div className="mt-5 text-center">
-                      <a
-                        onClick={switchToVerification}
-                        className="underline font-vietnam text-sm text-black hover:text-black/60 cursor-pointer"
-                      >
-                        FORGOT PASSWORD
-                      </a>
-                    </div>
-                  </div>
-  
-                  {/* VERIFICATION FORM */}
-                  <div
-                    className={`w-full transition-transform duration-500 ease-in-out ${
-                      currentForm === "verification"
-                        ? "translate-x-0"
-                        : "translate-x-full"
-                    }`}
-                  >
-                    <h1 className="font-vietnam font-bold text-3xl">
-                      Verification Code
-                    </h1>
-                    <p className="font-vietnam font-medium text-xs mt-1">
-                      Enter your verification code that we sent through your email
-                      or phone number
-                    </p>
-  
-                    <form id="otp-form">
-                      <div className="flex items-center justify-center gap-x-10 mt-5">
-                        {inputs.map((value, index) => (
-                          <input
-                            key={index}
-                            ref={inputRefs.current[index]}
-                            type="text"
-                            className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-transparent border-[2.5px] border-zinc-300 rounded hover:border-slate-200 appearance-none p-2.5 outline-none focus:bg-white focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
-                            pattern="\d*"
-                            maxLength="1"
-                            onKeyDown={(e) => handleKeyDown(e, index)}
-                            onInput={(e) => handleInput(e, index)}
-                            onPaste={handlePaste}
-                            value={value}
-                          />
-                        ))}
-                      </div>
-  
-                      <button
-                        type="submit"
-                        className="mt-8 w-full h-9 bg-black rounded-xl text-white font-vietnam text-sm font-medium justify-center items-center hover:bg-black/85"
-                      >
-                        VERIFY
-                      </button>
-                    </form>
-                  </div>
+                    <img 
+                      src={showPassword ? hidepass : showpass}
+                      alt={showPassword ? "Hide Password" : "Show Password"}
+                      className="w-5 h-5"
+                    />
+                  </button>
+                  {passwordError && (
+                    <div className="text-red-500 text-sm">{passwordError}</div>
+                  )}
                 </div>
               </div>
-            </div>
-          </main>
+              <div>
+                <label htmlFor="reset-confirm-password" className="font-vietnam font-semibold text-lg block mb-1">Confirm New Password</label>
+                <div className="relative">
+                  <input
+                    id="reset-confirm-password"
+                    placeholder="Confirm Password"
+                    type={confirmPasswordInputType}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                  />
+                  <button
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <img 
+                      src={showConfirmPassword ? hidepass : showpass}
+                      alt={showConfirmPassword ? "Hide Password" : "Show Password"}
+                      className="w-5 h-5"
+                    />
+                  </button>
+                  {passwordError && (
+                    <div className="text-red-500 text-sm">{passwordError}</div>
+                  )}
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="mt-4 w-full h-8 bg-black rounded-xxl text-white font-vietnam text-xs font-medium justify-center items-center hover:bg-black/85"
+              >
+                Confirm
+              </button>
+            </form>
+          </div>
         </div>
-      ) : (
+      </div>
+    ) : (
+      <div className={`absolute bottom-0 left-0 w-full h-3/4 bg-white rounded-t-3xl transform transition-transform duration-500 ease-in-out ${isClicked ? 'translate-y-[5%]' : 'translate-y-full'}`}>
+        <div className="flex items-center justify-center h-full">
+          <div className="w-full max-w-md p-4 mx-auto">
+            <h1 className="font-vietnam font-bold text-4xl text-left ">Login</h1>
+            <form id="login-form" className="space-y-4 mt-4">
+              <div>
+                <label htmlFor="login-email" className="font-vietnam font-semibold text-lg block ">Email</label>
+                <input
+                  id="login-email"
+                  placeholder="Enter Email"
+                  type="email"
+                  className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="login-password" className="font-vietnam font-semibold text-lg block mb-1">Password</label>
+                <div className="relative">
+                  <input
+                    id="login-password"
+                    placeholder="Enter Password"
+                    type={passwordInputType}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                  />
+                  <button 
+                    onClick={togglePasswordVisibility} 
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    <img 
+                      src={showPassword ? hidepass : showpass} 
+                      alt={showPassword ? "Hide Password" : "Show Password"}
+                      className="w-5 h-5"
+                    />
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <button
+                  type="submit"
+                  className="w-full h-8 bg-black rounded-xl text-white font-vietnam text-xs font-medium justify-center items-center hover:bg-black/85"
+                >
+                  LOGIN
+                </button>
+                <a href="#" onClick={handleForgotPassword} className="text-ms font-medium text-center block mb-32 hover:underline hover:text-black mt-2">
+                  Forgot Password?
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+) : (
+
         // Render desktop version for screen widths equal to or greater than 768px
         <div className="relative w-full h-screen overflow-hidden">
         <div className="absolute w-full h-full bg-cover" style={{ backgroundImage: `url(${LaptopBG})` }}>
@@ -364,7 +457,7 @@ const Login = () => {
             </div>
             {!showVerificationForm && !showCodeEntry && !success && (
               <button onClick={handleLoginClick} className={`focus:outline-none ${isClicked ? 'hidden' : ''}`}>
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mt-2">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center ">
                   <img src={ArrowRight} alt="arrow right" className="w-6 h-6" />
                 </div>
               </button>
@@ -374,7 +467,7 @@ const Login = () => {
         
         {showVerificationForm ? (
           <div className="absolute top-0 left-0 h-full w-1/2 bg-white transform translate-x-0 transition-transform duration-500 ease-in-out">
-            <div className="flex items-center justify-center h-full">
+            <div className="flex  h-full">
               <div className="w-full max-w-md p-8">
                 <h1 className="font-vietnam font-bold text-center text-4xl">Forgot Password</h1>
                 <form id="verification-form" className="space-y-8 mt-8" onSubmit={handleSendVerification}>
