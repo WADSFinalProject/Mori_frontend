@@ -90,7 +90,7 @@ export default function XYZHome() {
           <header className="flex flex-col p-4 shadow-md" style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <Link to="/navigation">
+                <Link to="/XYZNavigation">
                   <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
                 </Link>
               </div>
