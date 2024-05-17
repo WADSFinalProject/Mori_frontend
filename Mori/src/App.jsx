@@ -21,8 +21,7 @@ import DryingMachine from './components/Centra/Processor/DryingMachine';
 import FlouringMachine from './components/Centra/Processor/FlouringMachine';
 import HarborNotif from './components/HarborGuard/HarborNotif';
 import ShippingInformation from './components/XYZ/Desktop/ShippingInformation';
-
-
+import XYZHome from './components/XYZ/Mobile/XYZHome';
 
 function App() {
   return (
@@ -49,6 +48,7 @@ function App() {
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
+        <Route path="/XYZHome" element={<XYZHome />} />
       </Routes>
     </Router>
   );
