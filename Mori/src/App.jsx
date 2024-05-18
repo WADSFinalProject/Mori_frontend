@@ -21,7 +21,8 @@ import DryingMachine from './components/Centra/Processor/DryingMachine';
 import FlouringMachine from './components/Centra/Processor/FlouringMachine';
 import HarborNotif from './components/HarborGuard/HarborNotif';
 import ShippingInformation from './components/XYZ/Desktop/ShippingInformation';
-
+import StockManagement from './components/XYZ/Mobile/StockManagement'
+import StockDetail from './components/XYZ/Mobile/StockDetails' 
 
 
 function App() {
@@ -49,6 +50,8 @@ function App() {
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
+        <Route path="/xyz-stockmanagement" element={<StockManagement />} />
+        <Route path="/stockdetail/:location" element={<StockDetail />} /> 
       </Routes>
     </Router>
   );
