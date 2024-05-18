@@ -104,9 +104,15 @@ export default function XYZHome() {
         <div className="bg-[#F0F0F0]">
         <header className="flex flex-col p-4 shadow-md" style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
             <div className="flex items-center justify-between mb-4">
+
                 <div className="flex items-center">
                 <Link to="/navigation">
                     <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
+
+              <div className="flex items-center">
+                <Link to="/XYZNavigation">
+                  <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
+
                 </Link>
                 </div>
                 <img src={moriLogo} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20" />
