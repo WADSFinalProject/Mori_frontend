@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/auth/Login";
@@ -23,9 +24,8 @@ import ShippingInformation from "./components/XYZ/Mobile/ShippingInformation";
 import SchedulePickup from "./components/XYZ/Mobile/SchedulePickup";
 import HarborNotif from "./components/HarborGuard/HarborNotif";
 import ShippingInformation from "./components/XYZ/Desktop/ShippingInformation";
-
-
-
+import XYZHome from './components/XYZ/Mobile/XYZHome';
+import XYZNavigation from './components/XYZ/Mobile/XYZNavigation';
 
 
 function App() {
@@ -60,6 +60,8 @@ function App() {
         />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
+        <Route path="/XYZHome" element={<XYZHome />} />
+        <Route path="/XYZNavigation" element={<XYZNavigation />} />
       </Routes>
     </Router>
   );
