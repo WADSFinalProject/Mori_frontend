@@ -12,7 +12,22 @@ import collector from '../../../assets/collectorLogo.png';
 import processor from '../../../assets/processorLogo.png';
 import shipping from '../../../assets/shippingLogo.png';
 import truck from '../../../assets/shippingTruck.png';
+import StatusComponent from "./StatusComponent";
+import rightArrow from '../../../assets/rightArrow.png';
+import arrowDown from '../../../assets/arrowDown.png';
 
+const shipmentData = [
+    {
+      id: "98478",
+      status: "Missing",
+      batches: [10201, 10273, 10279, 10330, 10345],
+      totalWeight: 72.3,
+      collected: "15 March 2024",
+      time: "07:00 PM",
+    },
+  ];
+
+  
 const gaugeOptions = {
   responsive: true,
   cutout: '80%',
@@ -87,38 +102,63 @@ export default function XYZHome() {
 
       {isMobile ? (
         <div className="bg-[#F0F0F0]">
-          <header className="flex flex-col p-4 shadow-md" style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
+        <header className="flex flex-col p-4 shadow-md" style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
             <div className="flex items-center justify-between mb-4">
+
+                <div className="flex items-center">
+                <Link to="/navigation">
+                    <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
+
               <div className="flex items-center">
                 <Link to="/XYZNavigation">
                   <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
+
                 </Link>
-              </div>
-              <img src={moriLogo} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20" />
-              <div className="flex">
+                </div>
+                <img src={moriLogo} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20" />
+                <div className="flex">
                 <img src={bell} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
-              </div>
+                </div>
             </div>
             <div className="flex flex-row gap-5 p-3">
-              <div className="w-16 h-16 bg-black rounded-full"></div>
-              <div className="">
+                <div className="w-16 h-16 bg-black rounded-full"></div>
+                <div className="">
                 <p className="text-lg text-white font-semibold">Selamat pagi,</p>
                 <p className="text-3xl text-white font-semibold">John Doe</p>
-              </div>
+                </div>
             </div>
-          </header>
+            <div className="mt-auto flex items-center justify-between px-10">
+                <div>
+                    <span className="text-white text-sm font-medium font-['Be Vietnam Pro']">Warehouse </span>
+                    <span className="text-white text-sm font-bold font-['Be Vietnam Pro']">Kupang</span>
+                    <span className="text-white text-sm font-medium font-['Be Vietnam Pro']"> Kecamatan </span>
+                    <span className="text-white text-sm font-bold font-['Be Vietnam Pro']">Semau</span>
+                </div>
+                <img src={arrowDown} alt="right arrow" />
+            </div>
 
-          {/* Current Stock Management */}
-          <div className="p-5">
-            <div className="mt-">
-              <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Current Stock Management</h2>
+        </header>
+
+            {/* Current Stock Management */}
+            <div className="p-5">
+            <div className="mt-[-10px]">
+                <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Current Stock Management</h2>
             </div>
             <div className="machine-status my-4">{renderMachines()}</div>
-          </div>
+            
+            {/* View all locations */}
+            <div className="mt-[-20px]">
+            <div className="mb-[10px] w-[342px] h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+                <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">View All</div>
+                <img src={rightArrow} alt="right arrow" className="w-[6.69px] h-[11.87px] relative" />
+            </div>
+            </div>
+
+            </div>
 
           {/* Quick Access */}
           <div className="p-5">
-            <div className="mt-[-40px]">
+            <div className="mt-[-30px]">
               <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Quick Access</h2>
             </div>
             <div className="flex">
@@ -150,19 +190,45 @@ export default function XYZHome() {
 
             {/* Recent Shipping Status */}
             <div className="pt-5">
-            <div className="mt-[20px]">
-              <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Recent Shipping Status</h2>
+            <div className="mt-[5px]">
+                <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Recent Shipping Status</h2>
+            </div>
+
+                <div className="overflow-y-auto">
+                {shipmentData.map((shipment) => (
+                    <StatusComponent
+                    key={shipment.id}
+                    id={shipment.id}
+                    status={shipment.status}
+                    batches={shipment.batches}
+                    totalWeight={shipment.totalWeight}
+                    collected={shipment.collected}
+                    time={shipment.time}
+                    />
+                ))}
+                </div>
+   
+            {/* View all locations */}
+            <div className="pt-5">
+            <div className="mt-[-15px]">
+            <div className="mb-[10px] w-[342px] h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+                <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">View All Locations</div>
+                <img src={rightArrow} alt="right arrow" className="w-[6.69px] h-[11.87px] relative" />
+            </div>
             </div>
             </div>
 
-          </div>
-          
+            </div>
+
+            </div>
 
           <footer className="bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
             <p className="font-semibold">@2024 AMIN</p>
             <p className="font-semibold">CENTRA</p>
           </footer>
         </div>
+
+        
       ) : (
         <div className="flex justify-center items-center h-screen mt-4 text-gray-600">
           Not available for this device.
