@@ -22,6 +22,8 @@ import DryingMachine from './components/Centra/Processor/DryingMachine';
 import FlouringMachine from './components/Centra/Processor/FlouringMachine';
 import HarborNotif from './components/HarborGuard/HarborNotif';
 import ShippingInformation from './components/XYZ/Desktop/ShippingInformation';
+import Dashboard from './components/XYZ/Laptop/Dashboard' 
+import StockBooking from './components/XYZ/Laptop/StockBooking' 
 import StockManagement from './components/XYZ/Mobile/StockManagement'
 import StockDetail from './components/XYZ/Mobile/StockDetails' 
 import XYZHome from './components/XYZ/Mobile/XYZHome';
@@ -60,6 +62,9 @@ function App() {
         />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
+          
+        <Route path="/xyz-dashboard" element={<Dashboard />} /> 
+        <Route path="/xyz-stock-booking" element={<StockBooking />} /> 
 
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} /> 
