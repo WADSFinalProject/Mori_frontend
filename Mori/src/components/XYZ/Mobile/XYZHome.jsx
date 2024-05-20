@@ -62,7 +62,6 @@ export default function XYZHome() {
     const [region, location] = machine.location.split(' ');
   
     return (
-
       <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`} style={{ width: 'auto', flexGrow: 1, minWidth: '300px', minHeight: '100px', maxWidth: 'none', position: 'relative' }}>
       {/* Machine Location Button */}
       <div className="machine-location w-[170px] h-[26px] px-2.5 py-1 bg-black rounded justify-start items-center gap-2 inline-flex text-white text-sm font-medium font-['Be Vietnam Pro']" style={{ position: 'absolute', left: '15px', top: '9px' }}>
@@ -104,20 +103,16 @@ export default function XYZHome() {
         <div className="bg-[#F0F0F0]">
         <header className="flex flex-col p-4 shadow-md" style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}>
             <div className="flex items-center justify-between mb-4">
-
-                <div className="flex items-center">
-                <Link to="/navigation">
-                    <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
-
               <div className="flex items-center">
                 <Link to="/XYZNavigation">
                   <img src={hamburg} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
-
                 </Link>
                 </div>
                 <img src={moriLogo} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20" />
                 <div className="flex">
-                <img src={bell} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
+                <Link to="/XYZNotif">
+                  <img src={bell} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
+                </Link>
                 </div>
             </div>
             <div className="flex flex-row gap-5 p-3">
@@ -162,14 +157,14 @@ export default function XYZHome() {
               <h2 className="text-black text-xl font-bold font-['Be Vietnam Pro']">Quick Access</h2>
             </div>
             <div className="flex">
+
             {/* Stock */}
-            
             <Link to="/collector">
             <div className="mt-3 mr-3 w-[166px] h-[74px] px-4 py-3 bg-stone-600 rounded-lg flex-col justify-start items-end inline-flex" style={{ position: 'relative', backgroundColor: '#5C612C' }}>
                 <img src={shipping} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
                 <div className="w-[18.65px] h-5 relative" />
-                <div className="self-stretch h-[50px] flex-col justify-start items-start gap-0.25 flex">
-                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']">Stock Management</div>
+                <div className="self-stretch h-[50px] flex-col justify-start items-start gap-0.1 flex" >
+                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Stock Management</div>
                 <div className="self-stretch text-white text-[8px] font-normal font-['Be Vietnam Pro']">2 Warehouse almost FULL</div>
                 </div>
             </div>
@@ -181,7 +176,7 @@ export default function XYZHome() {
                 <img src={truck} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
                 <div className="w-[18.65px] h-5 relative" />
                 <div className="self-stretch h-[50px] flex-col justify-start items-start gap-0.25 flex">
-                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']">Shipping Information</div>
+                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Shipping Information</div>
                 <div className="self-stretch text-white text-[8px] font-normal font-['Be Vietnam Pro']">4 Shipment Arriving</div>
                 </div>
             </div>
@@ -217,10 +212,10 @@ export default function XYZHome() {
             </div>
             </div>
             </div>
-
             </div>
-
             </div>
+            {/* Empty Space */}
+            <div style={{ height: '30px' }} /> {/* Adjust height as needed for empty space */}
 
           <footer className="bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
             <p className="font-semibold">@2024 AMIN</p>
