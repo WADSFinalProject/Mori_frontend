@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 
-const FlouringMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, totalWeight, lastUpdated, duration }) => {
+const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeight, totalWeight, lastUpdated, duration }) => {
   const totalTime = duration * 60; // duration in minutes, converted to seconds
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const fillPercentage = filledWeight / totalWeight;
@@ -79,7 +79,7 @@ const FlouringMachineBox = ({ machineNumber, driedDate, startTime, filledWeight,
         </div>
         <div className="ml-4 text-center">
           <h2 className="text-left text-black text-[22px] font-semibold font-['Be Vietnam Pro']">Machine {machineNumber}</h2>
-          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Dried <strong>{driedDate}</strong></div>
+          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Floured <strong>{flouredDate}</strong></div>
           <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Start <strong>{startTime}</strong></div>
         </div>
       </div>
@@ -104,7 +104,7 @@ const FlouringMachineBoxDashboard = () => {
       <div className="flex flex-wrap gap-11">
         <FlouringMachineBox
           machineNumber="1"
-          driedDate="13 March 2024"
+          flouredDate="13 March 2024"
           startTime="02:45 PM"
           filledWeight={24.1}
           totalWeight={30}
@@ -113,7 +113,7 @@ const FlouringMachineBoxDashboard = () => {
         />
         <FlouringMachineBox
           machineNumber="3"
-          driedDate="13 March 2024"
+          flouredDate="13 March 2024"
           startTime="02:45 PM"
           filledWeight={17.2}
           totalWeight={30}
@@ -122,7 +122,7 @@ const FlouringMachineBoxDashboard = () => {
         />
         <FlouringMachineBox
           machineNumber="2"
-          driedDate="13 March 2024"
+          flouredDate="13 March 2024"
           startTime="02:45 PM"
           filledWeight={30}
           totalWeight={30}
