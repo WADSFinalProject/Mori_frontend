@@ -28,6 +28,7 @@ import StockDetail from './components/XYZ/Mobile/StockDetails'
 import XYZHome from './components/XYZ/Mobile/XYZHome';
 import XYZNavigation from './components/XYZ/Mobile/XYZNavigation';
 import SchedulePickup from './components/XYZ/Mobile/SchedulePickup';
+import XYZDashboard from './components/XYZ/Laptop/Dashboard';
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
 
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
+        <Route path="/XYZDashboard" element={<XYZDashboard />} />
 
       </Routes>
     </Router>
