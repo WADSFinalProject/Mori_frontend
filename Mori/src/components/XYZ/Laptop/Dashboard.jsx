@@ -6,6 +6,15 @@ import ArrowDown from '../../../assets/XYZ/arrowdown.png';
 import notifIcon from '../../../assets/XYZ/notif.png';
 import nonotifIcon from '../../../assets/XYZ/nonotif.png';
 import DashboardMachineCard from './DashboardMachineCard';
+import LeavesStatusCard from './LeavesStatusCard';
+import PersonInChargeBox from './PersonInChargeBox';
+import FlouringMachine from '../../Centra/Processor/FlouringMachine';
+import FlouringScheduleBox from './FlouringScheduleBox';
+import DryingMachineBox from './DryingMachineBox';
+import DryingMachineBoxDashboard from './DryingMachineBox';
+import LeavesStatusDashboard from './LeavesStatusCard';
+import FlouringMachineBoxDashboard from './FlouringMachineBox';
+import FlouringMachineBox from './FlouringMachineBox';
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -373,7 +382,48 @@ const MainXYZ = () => {
           {activePage === 'Stock Booking' && <div>Stock Booking Content</div>}
           {activePage === 'Shipping Information' && <div>Shipping Information Content</div>}
           {activePage === 'Accepted Packages' && <div>Accepted Packages Content</div>}
-          {activePage === 'Monitoring Centra' && <div>Monitoring Centra Content</div>}
+          
+          {/* Monitoring Centra Page */}
+          {activePage === 'Monitoring Centra' && (
+            <div>
+              <div className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+                Centra Semang, Kupang
+              </div>
+
+              <div>
+                  <LeavesStatusDashboard />
+              </div>
+                
+              <div className="mt-6 flex gap-6">
+                <div className="flex-grow flex flex-col gap-6">
+                  <div className="flex gap-6">
+                    <PersonInChargeBox name="John Doe" email="john.doe@example.com" />
+                    <FlouringScheduleBox every={3} nearest={"2"} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+                Drying Machine
+              </div>
+
+              <div className="mt-6 flex gap-6">
+                  <DryingMachineBoxDashboard />
+              </div>
+
+              <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+                Flouring Machine
+              </div>
+
+              <div className="mt-6 flex gap-6">
+                  <FlouringMachineBoxDashboard />
+              </div>
+
+            </div>
+          )}
+
+
+          {/* Stock Management Page */}
           {activePage === 'Stock Management' && (
             <>
               <div className="flex justify-between items-center mb-4">
