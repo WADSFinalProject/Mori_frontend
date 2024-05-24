@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
+import ModalComponent from "./ModalComponent";
 
 const StockBooking = () => {
   const data = [
@@ -59,77 +60,75 @@ const StockBooking = () => {
       flouredDate: "11/17/24",
       weight: "29kg",
     },
-    {
-      id: 8,
-      batchId: "#10208",
-      shipmentId: "100029837245",
-      driedDate: "11/18/24",
-      flouredDate: "11/18/24",
-      weight: "30kg",
-    },
-    {
-      id: 9,
-      batchId: "#10209",
-      shipmentId: "100029837246",
-      driedDate: "11/19/24",
-      flouredDate: "11/19/24",
-      weight: "31kg",
-    },
-    {
-      id: 10,
-      batchId: "#10210",
-      shipmentId: "100029837247",
-      driedDate: "11/20/24",
-      flouredDate: "11/20/24",
-      weight: "32kg",
-    },
-    {
-      id: 11,
-      batchId: "#10211",
-      shipmentId: "100029837248",
-      driedDate: "11/21/24",
-      flouredDate: "11/21/24",
-      weight: "33kg",
-    },
-    {
-      id: 12,
-      batchId: "#10212",
-      shipmentId: "100029837249",
-      driedDate: "11/22/24",
-      flouredDate: "11/22/24",
-      weight: "34kg",
-    },
-    {
-      id: 13,
-      batchId: "#10213",
-      shipmentId: "100029837250",
-      driedDate: "11/23/24",
-      flouredDate: "11/23/24",
-      weight: "35kg",
-    },
-    {
-      id: 14,
-      batchId: "#10214",
-      shipmentId: "100029837251",
-      driedDate: "11/24/24",
-      flouredDate: "11/24/24",
-      weight: "36kg",
-    },
-    {
-      id: 15,
-      batchId: "#10215",
-      shipmentId: "100029837252",
-      driedDate: "11/25/24",
-      flouredDate: "11/25/24",
-      weight: "37kg",
-    },
   ];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBatches, setSelectedBatches] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+  const [sortKey, setSortKey] = useState("new-old");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    handleSortChange({ target: { value: "new-old" } }); // Initial sort
+  }, []);
+
+  useEffect(() => {
+    handleSearchAndSort();
+  }, [searchQuery]);
+
+  const handleSortChange = (e) => {
+    const sortValue = e.target.value;
+    setSortKey(sortValue);
+    handleSearchAndSort(sortValue);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchAndSort = (sortValue = sortKey) => {
+    let filteredData = data.filter(
+      (row) =>
+        row.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.shipmentId.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortValue === "new-old") {
+      filteredData.sort(
+        (a, b) => new Date(b.driedDate) - new Date(a.driedDate)
+      );
+    } else if (sortValue === "old-new") {
+      filteredData.sort(
+        (a, b) => new Date(a.driedDate) - new Date(b.driedDate)
+      );
+    } else if (sortValue === "heavy-light") {
+      filteredData.sort((a, b) => parseInt(b.weight) - parseInt(a.weight));
+    } else if (sortValue === "light-heavy") {
+      filteredData.sort((a, b) => parseInt(a.weight) - parseInt(b.weight));
+    }
+    setSortedData(filteredData);
+  };
+
+  const handleBookButtonClick = (checkedRows) => {
+    const selectedBatchIds = sortedData
+      .filter((row) => checkedRows.includes(row.id))
+      .map((row) => row.batchId);
+    setSelectedBatches(selectedBatchIds);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="w-[1072px] h-[876px] bg-transparent">
+    <div className="w-[1072px] bg-transparent">
       <div className="flex flex-col w-full gap-5 mt-8 mx-12">
-        <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-          Stock Booking
+        <div className="flex flex-row justify-between">
+          <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
+            Stock Booking
+          </div>
+          <button className="rounded-md bg-[#CD4848] text-white font-vietnam text-base font-medium py-2 px-7 hover:bg-[#CD4848]/85 hover:transition-colors">ACTIVE INVOICE</button>
         </div>
         <div className="flex flex-row w-full justify-between items-center">
           <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
@@ -137,6 +136,8 @@ const StockBooking = () => {
               type="text"
               className="grow border-none focus:border-none focus:ring-0 m-0 p-0 font-vietnam w-96"
               placeholder="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -156,28 +157,44 @@ const StockBooking = () => {
               Sort By:
             </div>
             {/* Sort */}
-            <select className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5">
+            <select
+              className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
+              value={sortKey}
+              onChange={handleSortChange}
+            >
               <option value="new-old">Newest to Oldest</option>
               <option value="old-new">Oldest to Newest</option>
               <option value="heavy-light">Heaviest to Lightest</option>
               <option value="light-heavy">Lightest to Heaviest</option>
             </select>
-
-            <div className="font-vietnam font-semibold text-md items-center">
-              Channel Filter:
-            </div>
-            <select className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5">
-              <option value="all">All</option>
-              <option value="to-deliver">To Deliver</option>
-              <option value="shipped">Shipped</option>
-              <option value="completed">Completed</option>
-              <option value="missing">Missing</option>
-            </select>
           </div>
         </div>
 
-        <TableComponent data={data} />
+        <TableComponent
+          data={sortedData}
+          onCheckedRowsChange={setSelectedBatches}
+        />
+
+        <hr className="w-full bg-[#bfbfbf] h-[2px] border-0 mt-5" />
+
+        <div className="flex justify-end mt-2 mb-7">
+          <button
+            className="bg-[#5c612c] rounded-md border-0 py-3 px-7 hover:bg-[#5c612c]/85 hover:transition-colors disabled:bg-black/20"
+            onClick={() => handleBookButtonClick(selectedBatches)}
+            disabled={selectedBatches.length === 0}
+          >
+            <div className="font-vietnam font-medium text-base text-white">
+              BOOK
+            </div>
+          </button>
+        </div>
       </div>
+
+      <ModalComponent
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        selectedBatches={selectedBatches}
+      />
     </div>
   );
 };
