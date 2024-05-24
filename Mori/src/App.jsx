@@ -29,6 +29,7 @@ import StockDetail from './components/XYZ/Mobile/StockDetails'
 import XYZHome from './components/XYZ/Mobile/XYZHome';
 import XYZNavigation from './components/XYZ/Mobile/XYZNavigation';
 import SchedulePickup from './components/XYZ/Mobile/SchedulePickup';
+import AcceptedPackages from './components/XYZ/Laptop/AcceptedPackages/AcceptedPackages';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
         <Route path="/arrangeshipment" element={<ArrangeShipment />} />
         <Route path="/harbornavigation" element={<HarborNavigation />} />
         <Route path="/schedulepickup" element={<SchedulePickup />} />
+        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
         <Route
           path="/dryingmachine/:machineNumber"
           element={<DryingMachine />}
