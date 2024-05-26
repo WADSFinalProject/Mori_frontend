@@ -1,13 +1,6 @@
 import React from "react";
 
-const StatusComponent = ({
-  id,
-  status,
-  batches,
-  totalWeight,
-  collected,
-  time,
-}) => {
+const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) => {
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "To Deliver":
@@ -49,28 +42,26 @@ const StatusComponent = ({
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
         <div>
-          <div className="m-0 font-medium font-vietnam text-lg select-none">
-            SHIPMENT
-          </div>
-          <div className="m-0 relative text-xl font-extrabold font-vietnam select-none">
+          <div className="m-0 font-medium font-vietnam text-lg">SHIPMENT</div>
+          <div className="m-0 relative text-xl font-extrabold font-vietnam">
             {id}
           </div>
         </div>
 
         {/* status when "To Receive" the bg is #F1E1A7 when "Completed" the bg is #A1C598 when "Shipped" the bg is #BEC8FA */}
         <div
-          className="rounded-md flex flex-row items-center justify-center py-2 px-3 text-xs select-none"
+          className="rounded-md flex flex-row items-center justify-center py-2 px-3 text-xs"
           style={{ backgroundColor: statusBackgroundColor }}
         >
           <div className="relative font-medium font-vietnam">{status}</div>
         </div>
       </div>
 
-      <div className="text-zinc-500 text-base font-vietnam select-none">
+      <div className="text-zinc-500 text-base font-vietnam">
         Collected <b>{collected}</b> at <b>{time}</b>
       </div>
 
-      <div className="self-stretch flex flex-row items-start justify-start py-1 px-1 gap-[8px] text-base text-[#404040] overflow-x-auto select-none">
+      <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 gap-[8px] text-base text-[#404040] overflow-x-auto">
         {batches.map((batchId) => (
           <div
             key={batchId}
@@ -83,8 +74,8 @@ const StatusComponent = ({
         ))}
       </div>
 
-      <div className="w-full flex flex-row items-start justify-between py-0.5 px-0 box-border text-black/25 select-none">
-        <p className="m-0 relative font-medium font-vietnam select-none">
+      <div className="w-full flex flex-row items-start justify-between py-0.5 px-0 box-border text-black/25">
+        <p className="m-0 relative font-medium font-vietnam">
           {batches.length} Batches
         </p>
         <b className="relative text-right text-black">
@@ -111,7 +102,7 @@ const StatusComponent = ({
             />
           </svg>
           <b
-            className="relative font-medium font-vietnam select-none"
+            className="relative font-medium font-vietnam"
             style={{ color: statusBackgroundColor }}
           >
             Preparing to ship
