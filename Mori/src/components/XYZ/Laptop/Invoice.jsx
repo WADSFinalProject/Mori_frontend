@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
+import qris from '../../../assets/qris.png';
+import gopay from '../../../assets/gopay.png';
+import ovo from '../../../assets/ovo.jpeg';
 
 const Invoice = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  const paymentLogos = {
+    'QRIS': qris,
+    'GOPAY': gopay,
+    'OVO': ovo
+  };
 
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
@@ -40,7 +49,7 @@ const Invoice = () => {
                 <p>Shipping</p>
                 <p>FREE</p>
               </div>
-              <div className="flex justify-between items-centertext-lg">
+              <div className="flex justify-between items-center text-lg">
                 <p>Total Amount Due</p>
                 <p className='font-bold'>Rp 1,100,000.00</p>
               </div>
@@ -54,7 +63,13 @@ const Invoice = () => {
                   <p className="text-left text-lg font-bold text-red-700">PAY BEFORE MAY 8, 2024 AT 03:27 A.M.</p>
                 </div>
                 <div className="text-left">
-                  <img src="bni-logo.png" alt="BNI" className="w-16 h-10 mb-4" />
+                  {selectedPaymentMethod && (
+                    <img
+                      src={paymentLogos[selectedPaymentMethod]}
+                      alt={selectedPaymentMethod}
+                      className="w-23 h-10 mb-4"
+                    />
+                  )}
                   <p className="mt-3 mb-3">Virtual Account Number</p>
                   <p className="text-lg font-bold">8808014592355271</p>
                   <p className='mt-3 mb-3'>Virtual Account Name</p>
@@ -73,39 +88,63 @@ const Invoice = () => {
                 <div className="space-y-4">
                   <div className="border p-4 rounded-md">
                     <div className="flex items-center">
-                      <input type="radio" name="payment" value="Credit Card/Debit Card" id="credit-card" className="mr-2" onChange={handlePaymentChange} />
-                      <label htmlFor="credit-card" className="flex items-center">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="QRIS"
+                        id="qris"
+                        className="mr-2"
+                        onChange={handlePaymentChange}
+                      />
+                      <label htmlFor="qris" className="flex items-center">
                         QRIS
                         <span className="ml-2 flex space-x-2">
-                          <img src="visa-logo.png" alt="Visa" className="w-8 h-5" />
+                          <img src={qris} alt="QRIS" className="w-13 h-5" />
                         </span>
                       </label>
                     </div>
                   </div>
                   <div className="border p-4 rounded-md">
                     <div className="flex items-center">
-                      <input type="radio" name="payment" value="Bank Transfer" id="bank-transfer" className="mr-2" onChange={handlePaymentChange} />
-                      <label htmlFor="bank-transfer" className="flex items-center">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="GOPAY"
+                        id="gopay"
+                        className="mr-2"
+                        onChange={handlePaymentChange}
+                      />
+                      <label htmlFor="gopay" className="flex items-center">
                         GOPAY
                         <span className="ml-2 flex space-x-2">
-                          <img src="bca-logo.png" alt="BCA" className="w-8 h-5" />
+                          <img src={gopay} alt="GOPAY" className="w-18 h-7" />
                         </span>
                       </label>
                     </div>
                   </div>
                   <div className="border p-4 rounded-md">
                     <div className="flex items-center">
-                      <input type="radio" name="payment" value="Virtual Account/E-Wallet" id="e-wallet" className="mr-2" onChange={handlePaymentChange} />
-                      <label htmlFor="e-wallet" className="flex items-center">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="OVO"
+                        id="ovo"
+                        className="mr-2"
+                        onChange={handlePaymentChange}
+                      />
+                      <label htmlFor="ovo" className="flex items-center">
                         OVO
                         <span className="ml-2 flex space-x-2">
-                          <img src="dana-logo.png" alt="Dana" className="w-8 h-5" />
+                          <img src={ovo} alt="OVO" className="w-13 h-4" />
                         </span>
                       </label>
                     </div>
                   </div>
                 </div>
-                <button onClick={handleSubmit} className="mt-6 bg-blue-500 text-white py-2 px-4 rounded">
+                <button
+                  onClick={handleSubmit}
+                  className="mt-6 bg-blue-500 text-white py-2 px-4 rounded"
+                >
                   Submit
                 </button>
               </div>
@@ -115,8 +154,6 @@ const Invoice = () => {
       </div>
     </div>
   );
-  
-  
 };
 
 export default Invoice;
