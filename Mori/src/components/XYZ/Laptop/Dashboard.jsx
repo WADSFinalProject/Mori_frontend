@@ -31,6 +31,13 @@ const MainXYZ = () => {
     ...userState,
     loginDate: new Date(),
     hasNotification: true,
+
+  const user = {
+    name: 'Randy',
+    loginDate: new Date(),
+    hasNotification: true,
+    email: 'Randy@gmail.com',
+    phone: '0818282212',
   };
 
   const formattedDate = user.loginDate.toLocaleDateString('en-GB', {
@@ -125,6 +132,10 @@ const MainXYZ = () => {
   return (
     <div className="flex">
       <div className="fixed flex flex-col w-64 h-screen bg-white shadow-lg">
+
+  return (
+    <div className="flex">
+      <div className="flex flex-col w-64 h-screen bg-white shadow-lg">
         <div className="flex items-center justify-center mt-10 mr-24">
           <img src={moriLogo} alt="Mori Logo" className="h-10" />
         </div>
@@ -199,7 +210,11 @@ const MainXYZ = () => {
           </ul>
         </nav>
       </div>
+
       <div className="flex-1 ml-64">
+
+      <div className="flex-1">
+
         <header className="flex items-center justify-between p-7 shadow-md bg-white fixed top-0 left-64 right-0 z-10">
           <div>
             <h1 className="text-2xl font-bold ml-3">Welcome back, {user.name}</h1>
@@ -212,7 +227,13 @@ const MainXYZ = () => {
                 alt="Notification Icon"
                 className="w-6 h-6 text-gray-600 mr-4"
               />
+
               {user.hasNotification && <span className=""></span>}
+
+              {user.hasNotification && (
+                <span className=""></span>
+              )}
+
             </button>
             <div className="mx-2 h-5 border-l border-gray-400"></div>
             <div className="ml-4 flex items-center">
@@ -370,10 +391,14 @@ const MainXYZ = () => {
             </div>
           )}
 
+
+          {activePage === 'Dashboard' && <div>Dashboard Content</div>}
+
           {activePage === 'Stock Booking' && <div>Stock Booking Content</div>}
           {activePage === 'Shipping Information' && <div>Shipping Information Content</div>}
           {activePage === 'Accepted Packages' && <div>Accepted Packages Content</div>}
           {activePage === 'Monitoring Centra' && <div>Monitoring Centra Content</div>}
+
           {activePage === 'Stock Management' && (
             <>
               <div className="flex justify-between items-center mb-4">
@@ -516,6 +541,10 @@ const MainXYZ = () => {
 )}
 
 
+
+          {activePage === 'Stock Management' && <div>Stock Management Content</div>}
+          {activePage === 'Help Center' && <div>Help Center Content</div>}
+          {activePage === 'Settings' && <div>Settings Content</div>}
         </main>
       </div>
     </div>
