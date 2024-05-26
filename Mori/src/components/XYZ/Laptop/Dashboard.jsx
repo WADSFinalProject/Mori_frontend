@@ -5,10 +5,32 @@ import semicircle from '../../../assets/XYZ/semicircle.png';
 import ArrowDown from '../../../assets/XYZ/arrowdown.png';
 import notifIcon from '../../../assets/XYZ/notif.png';
 import nonotifIcon from '../../../assets/XYZ/nonotif.png';
+import DashboardMachineCard from './DashboardMachineCard';
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState('Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState('Kupang');
+  const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
+
+  // Editable user state
+  const initialUserState = {
+    name: 'Randy',
+    email: 'rany@gmail.com',
+    phone: '0812828828282',
+    gender: 'Male',
+    birthdate: { day: '08', month: 'December', year: '2004' },
+    role: 'XYZ Admin',
+    location: 'Bekasi',
+  };
+
+  const [userState, setUserState] = useState(initialUserState);
+  const [tempUserState, setTempUserState] = useState(initialUserState);
+
+  const user = {
+    ...userState,
+    loginDate: new Date(),
+    hasNotification: true,
 
   const user = {
     name: 'Randy',
@@ -27,6 +49,89 @@ const MainXYZ = () => {
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
   };
+
+  const toggleWarehouseDropdown = () => {
+    setWarehouseDropdownVisible(!warehouseDropdownVisible);
+  };
+
+  const selectWarehouse = (warehouse) => {
+    setSelectedWarehouse(warehouse);
+    setWarehouseDropdownVisible(false);
+  };
+
+  const warehouses = ['Kupang', 'Warehouse 1', 'Warehouse 2']; // Add other warehouses as needed
+
+  const machinesByWarehouse = {
+    Kupang: [
+      { location: 'Kecamatan Semau', currentLoad: 31.1, capacity: 50, lastUpdated: '1 Minute Ago' },
+      { location: 'Kecamatan Kupang Barat', currentLoad: 50, capacity: 50, lastUpdated: '1 Minute Ago' },
+      { location: 'Kecamatan Amarasi', currentLoad: 31.1, capacity: 50, lastUpdated: '1 Minute Ago' },
+      
+    ],
+    'Warehouse 1': [
+      { location: 'Location 1', currentLoad: 20, capacity: 40, lastUpdated: '2 Minutes Ago' },
+      { location: 'Location 2', currentLoad: 30, capacity: 50, lastUpdated: '3 Minutes Ago' },
+    ],
+    'Warehouse 2': [
+      { location: 'Location A', currentLoad: 15, capacity: 30, lastUpdated: '4 Minutes Ago' },
+      { location: 'Location B', currentLoad: 25, capacity: 50, lastUpdated: '5 Minutes Ago' },
+    ],
+  };
+
+  const machines = machinesByWarehouse[selectedWarehouse];
+
+  // Variables for the dynamic content
+  const batchAvailable = 42;
+  const invoiceId = 'Invoice #102018';
+  const invoiceAmount = 'IDR 1,100,000.00';
+  const payBeforeDate = 'PAY BEFORE MAY 8, 2024';
+  const shippedCount = 2;
+  const toDeliverCount = 2;
+  const completedCount = 2;
+  const missingCount = 2;
+
+  // Generate date, month, and year options
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const years = Array.from({ length: 124 }, (_, i) => (new Date().getFullYear() - i).toString());
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTempUserState(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBirthdateChange = (e) => {
+    const { name, value } = e.target;
+    setTempUserState(prev => ({ ...prev, birthdate: { ...prev.birthdate, [name]: value } }));
+  };
+
+  const handleGenderChange = (e) => {
+    const { value } = e.target;
+    if (value === 'Male' && tempUserState.gender === 'Others') {
+      setTempUserState(prev => ({ ...prev, gender: 'Female' }));
+      setTimeout(() => setTempUserState(prev => ({ ...prev, gender: 'Male' })), 0);
+    } else if (value === 'Others' && tempUserState.gender === 'Male') {
+      setTempUserState(prev => ({ ...prev, gender: 'Female' }));
+      setTimeout(() => setTempUserState(prev => ({ ...prev, gender: 'Others' })), 0);
+    } else {
+      setTempUserState(prev => ({ ...prev, gender: value }));
+    }
+  };
+
+  const handleSaveChanges = () => {
+    setUserState(tempUserState);
+  };
+
+  const handleCancel = () => {
+    setTempUserState(userState);
+  };
+
+  return (
+    <div className="flex">
+      <div className="fixed flex flex-col w-64 h-screen bg-white shadow-lg">
 
   return (
     <div className="flex">
@@ -105,7 +210,11 @@ const MainXYZ = () => {
           </ul>
         </nav>
       </div>
+
+      <div className="flex-1 ml-64">
+
       <div className="flex-1">
+
         <header className="flex items-center justify-between p-7 shadow-md bg-white fixed top-0 left-64 right-0 z-10">
           <div>
             <h1 className="text-2xl font-bold ml-3">Welcome back, {user.name}</h1>
@@ -118,9 +227,13 @@ const MainXYZ = () => {
                 alt="Notification Icon"
                 className="w-6 h-6 text-gray-600 mr-4"
               />
+
+              {user.hasNotification && <span className=""></span>}
+
               {user.hasNotification && (
                 <span className=""></span>
               )}
+
             </button>
             <div className="mx-2 h-5 border-l border-gray-400"></div>
             <div className="ml-4 flex items-center">
@@ -150,11 +263,285 @@ const MainXYZ = () => {
           </div>
         </header>
         <main className="p-10 mt-24">
+          {activePage === 'Dashboard' && (
+            <div className="">
+              <h1 className="text-3xl font-bold mb-6">Overview</h1>
+              <div className="flex flex-wrap lg:flex-nowrap">
+                <div className="flex flex-col space-y-6 w-full lg:w-2/3">
+                  {/* First Card */}
+                  <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 md:p-8 lg:p-10 mb-4 lg:mb-0">
+                  <h3 className="text-2xl font-bold mb-4 flex items-center">
+                  <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="fill-current text-gray-500 "
+                        style={{ marginBottom: '-0.65em' }}
+  >
+                        <path d="M2.4098 13.6519C1.61633 13.6519 1.01633 13.4627 0.609796 13.0845C0.203265 12.7108 0 12.1593 0 11.4302V3.11084C0 2.37712 0.203265 1.8234 0.609796 1.44971C1.01633 1.07601 1.61633 0.88916 2.4098 0.88916H12.5192C13.3176 0.88916 13.9176 1.07601 14.3192 1.44971C14.7257 1.8234 14.929 2.37712 14.929 3.11084V6.9458C14.8163 6.92301 14.6988 6.90934 14.5763 6.90479C14.4588 6.89567 14.3388 6.89111 14.2163 6.89111C14.0939 6.89111 13.9714 6.89567 13.849 6.90479C13.7314 6.9139 13.609 6.92757 13.4816 6.9458V5.1001C13.4816 4.80387 13.3984 4.58057 13.2318 4.43018C13.0702 4.27979 12.8351 4.20459 12.5265 4.20459H2.3951C2.08653 4.20459 1.85143 4.27979 1.6898 4.43018C1.52816 4.58057 1.44735 4.80387 1.44735 5.1001V11.4165C1.44735 11.7127 1.52816 11.936 1.6898 12.0864C1.85143 12.2323 2.08653 12.3052 2.3951 12.3052H9.52163C9.56571 12.5467 9.63429 12.7814 9.72735 13.0093C9.82041 13.2371 9.93551 13.4513 10.0727 13.6519H2.4098ZM6.04653 6.57666C5.91918 6.57666 5.82857 6.55387 5.77469 6.5083C5.72082 6.46273 5.69388 6.3807 5.69388 6.26221V5.85889C5.69388 5.73584 5.72082 5.65153 5.77469 5.60596C5.82857 5.56038 5.91918 5.5376 6.04653 5.5376H6.48C6.61225 5.5376 6.70286 5.56038 6.75184 5.60596C6.80571 5.65153 6.83265 5.73584 6.83265 5.85889V6.26221C6.83265 6.3807 6.80571 6.46273 6.75184 6.5083C6.70286 6.55387 6.61225 6.57666 6.48 6.57666H6.04653ZM8.45633 6.57666C8.31918 6.57666 8.22612 6.55387 8.17714 6.5083C8.12816 6.46273 8.10367 6.3807 8.10367 6.26221V5.85889C8.10367 5.73584 8.12816 5.65153 8.17714 5.60596C8.22612 5.56038 8.31918 5.5376 8.45633 5.5376H8.88245C9.01469 5.5376 9.10531 5.56038 9.15429 5.60596C9.20816 5.65153 9.2351 5.73584 9.2351 5.85889V6.26221C9.2351 6.3807 9.20816 6.46273 9.15429 6.5083C9.10531 6.55387 9.01469 6.57666 8.88245 6.57666H8.45633ZM10.8514 6.57666C10.7192 6.57666 10.6261 6.55387 10.5722 6.5083C10.5233 6.46273 10.4988 6.3807 10.4988 6.26221V5.85889C10.4988 5.73584 10.5233 5.65153 10.5722 5.60596C10.6261 5.56038 10.7192 5.5376 10.8514 5.5376H11.2849C11.4171 5.5376 11.5078 5.56038 11.5567 5.60596C11.6057 5.65153 11.6302 5.73584 11.6302 5.85889V6.26221C11.6302 6.3807 11.6057 6.46273 11.5567 6.5083C11.5078 6.55387 11.4171 6.57666 11.2849 6.57666H10.8514ZM3.64408 8.771C3.51184 8.771 3.41878 8.75049 3.3649 8.70947C3.31592 8.6639 3.29143 8.57959 3.29143 8.45654V8.05322C3.29143 7.93473 3.31592 7.8527 3.3649 7.80713C3.41878 7.76156 3.51184 7.73877 3.64408 7.73877H4.07755C4.2098 7.73877 4.30041 7.76156 4.34939 7.80713C4.39837 7.8527 4.42286 7.93473 4.42286 8.05322V8.45654C4.42286 8.57959 4.39837 8.6639 4.34939 8.70947C4.30041 8.75049 4.2098 8.771 4.07755 8.771H3.64408ZM6.04653 8.771C5.91918 8.771 5.82857 8.75049 5.77469 8.70947C5.72082 8.6639 5.69388 8.57959 5.69388 8.45654V8.05322C5.69388 7.93473 5.72082 7.8527 5.77469 7.80713C5.82857 7.76156 5.91918 7.73877 6.04653 7.73877H6.48C6.61225 7.73877 6.70286 7.76156 6.75184 7.80713C6.80571 7.8527 6.83265 7.93473 6.83265 8.05322V8.45654C6.83265 8.57959 6.80571 8.6639 6.75184 8.70947C6.70286 8.75049 6.61225 8.771 6.48 8.771H6.04653ZM8.45633 8.771C8.31918 8.771 8.22612 8.75049 8.17714 8.70947C8.12816 8.6639 8.10367 8.57959 8.10367 8.45654V8.05322C8.10367 7.93473 8.12816 7.8527 8.17714 7.80713C8.22612 7.76156 8.31918 7.73877 8.45633 7.73877H8.88245C9.01469 7.73877 9.10531 7.76156 9.15429 7.80713C9.20816 7.8527 9.2351 7.93473 9.2351 8.05322V8.45654C9.2351 8.57959 9.20816 8.6639 9.15429 8.70947C9.10531 8.75049 9.01469 8.771 8.88245 8.771H8.45633ZM3.64408 10.979C3.51184 10.979 3.41878 10.9562 3.3649 10.9106C3.31592 10.8651 3.29143 10.7808 3.29143 10.6577V10.2544C3.29143 10.1359 3.31592 10.0539 3.3649 10.0083C3.41878 9.96273 3.51184 9.93994 3.64408 9.93994H4.07755C4.2098 9.93994 4.30041 9.96273 4.34939 10.0083C4.39837 10.0539 4.42286 10.1359 4.42286 10.2544V10.6577C4.42286 10.7808 4.39837 10.8651 4.34939 10.9106C4.30041 10.9562 4.2098 10.979 4.07755 10.979H3.64408ZM6.04653 10.979C5.91918 10.979 5.82857 10.9562 5.77469 10.9106C5.72082 10.8651 5.69388 10.7808 5.69388 10.6577V10.2544C5.69388 10.1359 5.72082 10.0539 5.77469 10.0083C5.82857 9.96273 5.91918 9.93994 6.04653 9.93994H6.48C6.61225 9.93994 6.70286 9.96273 6.75184 10.0083C6.80571 10.0539 6.83265 10.1359 6.83265 10.2544V10.6577C6.83265 10.7808 6.80571 10.8651 6.75184 10.9106C6.70286 10.9562 6.61225 10.979 6.48 10.979H6.04653ZM8.45633 10.979C8.31918 10.979 8.22612 10.9562 8.17714 10.9106C8.12816 10.8651 8.10367 10.7808 8.10367 10.6577V10.2544C8.10367 10.1359 8.12816 10.0539 8.17714 10.0083C8.22612 9.96273 8.31918 9.93994 8.45633 9.93994H8.88245C9.01469 9.93994 9.10531 9.96273 9.15429 10.0083C9.20816 10.0539 9.2351 10.1359 9.2351 10.2544V10.6577C9.2351 10.7808 9.20816 10.8651 9.15429 10.9106C9.10531 10.9562 9.01469 10.979 8.88245 10.979H8.45633ZM14.2163 14.896C13.6971 14.896 13.2098 14.8049 12.7543 14.6226C12.2988 14.4403 11.8971 14.1851 11.5494 13.8569C11.2016 13.5334 10.9273 13.1597 10.7265 12.7358C10.5306 12.312 10.4327 11.8586 10.4327 11.3755C10.4327 10.8924 10.5306 10.439 10.7265 10.0151C10.9273 9.59131 11.2016 9.21761 11.5494 8.89404C11.8971 8.56592 12.2988 8.31071 12.7543 8.12842C13.2098 7.94613 13.6971 7.85498 14.2163 7.85498C14.7355 7.85498 15.2229 7.94613 15.6784 8.12842C16.1339 8.31071 16.5355 8.56364 16.8833 8.88721C17.231 9.21077 17.5029 9.58675 17.6988 10.0151C17.8996 10.439 18 10.8924 18 11.3755C18 11.854 17.8996 12.3052 17.6988 12.729C17.5029 13.1574 17.2286 13.5334 16.8759 13.8569C16.5282 14.1805 16.1241 14.4334 15.6637 14.6157C15.2082 14.8026 14.7257 14.896 14.2163 14.896ZM14.2163 13.604C14.3682 13.604 14.4882 13.5607 14.5763 13.4741C14.6694 13.3875 14.7159 13.2759 14.7159 13.1392V11.8403H16.1118C16.2588 11.8403 16.3788 11.7993 16.4718 11.7173C16.5649 11.6307 16.6114 11.5168 16.6114 11.3755C16.6114 11.2342 16.5649 11.1226 16.4718 11.0405C16.3788 10.9539 16.2588 10.9106 16.1118 10.9106H14.7159V9.61182C14.7159 9.4751 14.6694 9.36344 14.5763 9.27686C14.4882 9.19027 14.3682 9.14697 14.2163 9.14697C14.0645 9.14697 13.942 9.19027 13.849 9.27686C13.7608 9.36344 13.7167 9.4751 13.7167 9.61182V10.9106H12.3208C12.1739 10.9106 12.0539 10.9539 11.9608 11.0405C11.8678 11.1226 11.8212 11.2342 11.8212 11.3755C11.8212 11.5168 11.8678 11.6307 11.9608 11.7173C12.0539 11.7993 12.1739 11.8403 12.3208 11.8403H13.7167V13.1392C13.7167 13.2759 13.7608 13.3875 13.849 13.4741C13.942 13.5607 14.0645 13.604 14.2163 13.604Z" />
+                      </svg>
+                      Stock Booking
+                    </h3>
+                    <div className="flex justify-between items-center mb-4 border border-gray-300 rounded-lg p-6">
+                      <div className="flex items-center text-xl font-semibold">
+                        <svg
+                          width="40"
+                          height="40"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="fill-current text-gray-500 "
+                          style={{ marginBottom: '-0.60em' }}
+
+                        >
+                          <path d="M8.00641 16.9359V9.35085L14.9409 5.3883C14.9803 5.53616 15 5.72344 15 5.95016V11.7092C15 12.2464 14.9088 12.6431 14.7265 12.8994C14.549 13.1507 14.2878 13.375 13.9428 13.5721L8.15426 16.8693C8.12962 16.8841 8.10498 16.8964 8.08033 16.9063C8.05569 16.9211 8.03105 16.9309 8.00641 16.9359ZM6.99359 16.9359C6.96895 16.9309 6.94431 16.9211 6.91966 16.9063C6.89995 16.8964 6.87777 16.8841 6.85313 16.8693L1.05717 13.5721C0.717102 13.375 0.45589 13.1507 0.273534 12.8994C0.0911779 12.6431 0 12.2464 0 11.7092V5.95016C0 5.72344 0.0197141 5.53616 0.0591424 5.3883L6.99359 9.35085V16.9359ZM7.5037 8.46371L0.532282 4.50856C0.64071 4.40999 0.778709 4.31388 0.946279 4.22024L3.65944 2.67514L10.6604 6.67465L7.5037 8.46371ZM11.688 6.09062L4.65747 2.09851L6.15821 1.24833C6.61656 0.982192 7.06506 0.849121 7.5037 0.849121C7.93741 0.849121 8.38344 0.982192 8.84179 1.24833L14.0611 4.22024C14.2238 4.31388 14.3593 4.40999 14.4677 4.50856L11.688 6.09062Z" />
+                        </svg>
+                        Batch Available
+                      </div>
+                      <div className="bg-[#E5F5F2] text-black rounded-lg px-6 py-3">
+                        <span className="text-2xl font-semibold">{batchAvailable}</span>
+                      </div>
+                    </div>
+                    <button onClick={() => setActivePage('Stock Booking')} className="w-full py-4 mt-4 text-center bg-gray-100 rounded-lg text-gray-700 font-medium hover:bg-gray-200">VIEW ALL</button>
+                  </div>
+
+                  {/* Second Card */}
+                  <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 md:p-8 lg:p-10 mt-4 lg:mt-6">
+                    <h3 className="text-2xl font-bold mb-4 flex items-center justify-between">
+                      <div className="flex items-center">
+                        <svg
+                          width="40"
+                          height="40"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="fill-current text-gray-500 "
+                          style={{ marginBottom: '-0.65em' }}
+
+                        >
+                          <path d="M9.20233 9.50878C9.33878 9.50878 9.45248 9.55312 9.54344 9.6418C9.6344 9.73048 9.67988 9.84134 9.67988 9.97437C9.67988 10.1074 9.6344 10.2207 9.54344 10.3143C9.45248 10.403 9.33878 10.4473 9.20233 10.4473H3.65364C3.51215 10.4473 3.39339 10.403 3.29738 10.3143C3.20641 10.2207 3.16093 10.1074 3.16093 9.97437C3.16093 9.84134 3.20641 9.73048 3.29738 9.6418C3.39339 9.55312 3.51215 9.50878 3.65364 9.50878H9.20233ZM9.20233 11.9845C9.33878 11.9845 9.45248 12.0313 9.54344 12.1249C9.6344 12.2186 9.67988 12.3319 9.67988 12.4649C9.67988 12.593 9.6344 12.7014 9.54344 12.7901C9.45248 12.8788 9.33878 12.9231 9.20233 12.9231H3.65364C3.51215 12.9231 3.39339 12.8788 3.29738 12.7901C3.20641 12.7014 3.16093 12.593 3.16093 12.4649C3.16093 12.3319 3.20641 12.2186 3.29738 12.1249C3.39339 12.0313 3.51215 11.9845 3.65364 11.9845H9.20233ZM2.46356 16.5C1.64995 16.5 1.03596 16.2955 0.621574 15.8866C0.207191 15.4777 0 14.8741 0 14.076V2.92402C0 2.13079 0.207191 1.52972 0.621574 1.12079C1.03596 0.706928 1.64995 0.5 2.46356 0.5H6.1172C6.43557 0.5 6.71351 0.522171 6.95102 0.566513C7.18853 0.605928 7.40836 0.682294 7.6105 0.795612C7.81263 0.904003 8.01982 1.06413 8.23207 1.27598L12.2041 5.21501C12.4264 5.43179 12.5932 5.64119 12.7044 5.84319C12.8206 6.04026 12.8989 6.25951 12.9394 6.50092C12.9798 6.73741 13 7.0281 13 7.37298V14.076C13 14.8692 12.7928 15.4703 12.3784 15.8792C11.964 16.2931 11.35 16.5 10.5364 16.5H2.46356ZM2.58484 15.0441H10.4152C10.7841 15.0441 11.0595 14.953 11.2414 14.7707C11.4233 14.5884 11.5143 14.3273 11.5143 13.9873V7.57252H7.42857C6.88785 7.57252 6.48358 7.44196 6.21574 7.18083C5.95296 6.91971 5.82157 6.52556 5.82157 5.99838V1.9485H2.59242C2.22352 1.9485 1.9481 2.04211 1.76618 2.22933C1.58426 2.41655 1.49329 2.68014 1.49329 3.02009V13.9873C1.49329 14.3273 1.58426 14.5884 1.76618 14.7707C1.9481 14.953 2.22099 15.0441 2.58484 15.0441ZM7.5726 6.294H11.3096L7.13295 2.14804V5.85797C7.13295 6.0107 7.16579 6.12156 7.23149 6.19053C7.30224 6.25951 7.41594 6.294 7.5726 6.294Z" />
+                        </svg>
+                        Active Invoice
+                      </div>
+                      <span className="text-red-500 font-medium">{payBeforeDate}</span>
+                    </h3>
+                    <div className="flex justify-between items-center mb-4 border border-gray-300 rounded-lg p-6">
+                      <div className="flex items-center text-xl font-semibold">
+                        
+                        {invoiceId}
+                      </div>
+                      <div className="bg-[#FDECEC] text-black rounded-lg px-6 py-3">
+                        <span className="text-2xl font-semibold">{invoiceAmount}</span>
+                      </div>
+                    </div>
+                    <button onClick={() => setActivePage('Stock Booking')} className="w-full py-4 mt-4 text-center bg-gray-100 rounded-lg text-gray-700 font-medium hover:bg-gray-200">VIEW</button>
+                  </div>
+                </div>
+
+                {/* Third Card */}
+                <div className="w-full lg:w-1/3 lg:ml-6 mt-6 lg:mt-0">
+                  <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 md:p-8 lg:p-10">
+                    <h3 className="text-2xl font-bold mb-4 flex items-center">
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="fill-current text-gray-500 mr-1"
+                        style={{ marginBottom: '-0.65em' }}
+
+                      >
+                        <path d="M1.56379 12.0678V7.44007C1.81703 7.55133 2.08083 7.63905 2.35518 7.70323C2.63374 7.76314 2.91865 7.79309 3.20988 7.79309C3.76701 7.79309 4.29039 7.68398 4.77999 7.46575C5.27382 7.24752 5.70856 6.94799 6.0842 6.56716C6.46407 6.18633 6.75952 5.74773 6.97056 5.25137C7.18582 4.75073 7.29345 4.218 7.29345 3.65317C7.29345 3.3408 7.25968 3.03699 7.19215 2.74174C7.12462 2.44649 7.02754 2.16622 6.90092 1.90092H11.7126C12.2781 1.90092 12.7066 2.05069 12.9978 2.35022C13.289 2.64547 13.4346 3.07764 13.4346 3.64675V11.8496C13.232 12.0678 13.078 12.3224 12.9725 12.6134C12.8669 12.9001 12.8142 13.2082 12.8142 13.5376C12.8142 13.6275 12.8205 13.7174 12.8332 13.8072H8.80025C8.81292 13.7216 8.81925 13.6339 8.81925 13.5441C8.81925 13.1846 8.75171 12.8487 8.61665 12.5364C8.48581 12.2197 8.30221 11.9437 8.06584 11.7084C7.8337 11.4687 7.56146 11.2826 7.24913 11.15C6.94102 11.013 6.6118 10.9446 6.26148 10.9446C5.90693 10.9446 5.57349 11.013 5.26116 11.15C4.95304 11.2826 4.68081 11.4687 4.44444 11.7084C4.2123 11.9437 4.0287 12.2197 3.89364 12.5364C3.76279 12.8487 3.69737 13.1846 3.69737 13.5441C3.69737 13.6339 3.7037 13.7216 3.71637 13.8072H3.28585C2.9102 13.8072 2.59365 13.7409 2.33618 13.6082C2.08294 13.4799 1.89089 13.2873 1.76005 13.0306C1.62921 12.7696 1.56379 12.4486 1.56379 12.0678ZM14.302 5.44393H15.9861C16.2984 5.44393 16.5643 5.48672 16.7838 5.5723C17.0033 5.65788 17.208 5.8055 17.3979 6.01517L19.5505 8.47987C19.7278 8.68098 19.8459 8.87354 19.905 9.05753C19.9683 9.23725 20 9.48543 20 9.80208V12.0678C20 12.6326 19.8565 13.0627 19.5695 13.3579C19.2825 13.6574 18.8604 13.8072 18.3033 13.8072H17.9171C17.9297 13.7174 17.9361 13.6275 17.9361 13.5376C17.9361 13.1782 17.8664 12.8423 17.7271 12.5299C17.5921 12.2133 17.4042 11.9373 17.1637 11.7019C16.9273 11.4623 16.653 11.2762 16.3406 11.1435C16.0325 11.0066 15.7012 10.9381 15.3466 10.9381C15.1567 10.9381 14.9731 10.9638 14.7958 11.0152C14.6186 11.0622 14.4539 11.1286 14.302 11.2141V5.44393ZM15.9418 9.53892H18.7781C18.7654 9.46618 18.7422 9.39771 18.7085 9.33353C18.6747 9.26934 18.6325 9.20944 18.5818 9.15381L16.6508 6.95869C16.5284 6.81748 16.4124 6.72762 16.3026 6.68911C16.1929 6.6506 16.0663 6.63135 15.9228 6.63135H15.3656V8.95484C15.3656 9.13455 15.4163 9.2779 15.5176 9.38488C15.6231 9.48757 15.7645 9.53892 15.9418 9.53892ZM6.26148 15.3926C5.92382 15.3926 5.6157 15.3091 5.33713 15.1423C5.06278 14.9754 4.8433 14.7507 4.6787 14.4683C4.51831 14.1902 4.43811 13.8821 4.43811 13.5441C4.43811 13.2017 4.51831 12.8915 4.6787 12.6134C4.8433 12.331 5.06278 12.1085 5.33713 11.9459C5.6157 11.779 5.92382 11.6955 6.26148 11.6955C6.59491 11.6955 6.89881 11.779 7.17316 11.9459C7.45173 12.1085 7.67331 12.331 7.83792 12.6134C8.00253 12.8915 8.08484 13.2017 8.08484 13.5441C8.08484 13.8821 8.00253 14.1902 7.83792 14.4683C7.67331 14.7507 7.45384 14.9754 7.17949 15.1423C6.90514 15.3091 6.59913 15.3926 6.26148 15.3926ZM15.372 15.3926C15.0385 15.3926 14.7325 15.3091 14.4539 15.1423C14.1796 14.9754 13.9601 14.7507 13.7955 14.4683C13.6309 14.1859 13.5486 13.8757 13.5486 13.5376C13.5486 13.1953 13.6309 12.8851 13.7955 12.607C13.9601 12.3245 14.1796 12.102 14.4539 11.9394C14.7325 11.7726 15.0385 11.6891 15.372 11.6891C15.7096 11.6891 16.0156 11.7726 16.29 11.9394C16.5643 12.102 16.7838 12.3245 16.9484 12.607C17.113 12.8851 17.1953 13.1953 17.1953 13.5376C17.1953 13.88 17.113 14.1902 16.9484 14.4683C16.788 14.7507 16.5685 14.9754 16.29 15.1423C16.0156 15.3091 15.7096 15.3926 15.372 15.3926ZM3.21621 6.91376C2.77725 6.91376 2.36362 6.83032 1.97531 6.66344C1.587 6.49228 1.24512 6.25693 0.949668 5.95741C0.654215 5.65788 0.422074 5.31128 0.253245 4.91761C0.0844149 4.52394 0 4.10246 0 3.65317C0 3.20387 0.0844149 2.78453 0.253245 2.39515C0.422074 2.00148 0.654215 1.65488 0.949668 1.35535C1.24512 1.05154 1.587 0.816198 1.97531 0.649318C2.36362 0.478158 2.77725 0.392578 3.21621 0.392578C3.65939 0.392578 4.07513 0.478158 4.46344 0.649318C4.85175 0.816198 5.19363 1.0494 5.48908 1.34893C5.78453 1.64846 6.01456 1.99506 6.17917 2.38873C6.348 2.78239 6.43242 3.20387 6.43242 3.65317C6.43242 4.09818 6.348 4.51752 6.17917 4.91119C6.01034 5.30486 5.77609 5.65146 5.47642 5.95099C5.18096 6.25052 4.83908 6.48586 4.45078 6.65702C4.06247 6.82818 3.65094 6.91376 3.21621 6.91376ZM1.71573 4.15381H3.25419C3.36393 4.15381 3.45468 4.1153 3.52643 4.03828C3.60241 3.96126 3.64039 3.86712 3.64039 3.75586V1.7533C3.64039 1.64632 3.60241 1.55646 3.52643 1.48372C3.45046 1.4067 3.35971 1.36819 3.25419 1.36819C3.14445 1.36819 3.0516 1.4067 2.97563 1.48372C2.89965 1.55646 2.86167 1.64632 2.86167 1.7533V3.36434H1.71573C1.61021 3.36434 1.51736 3.40285 1.43716 3.47987C1.36119 3.55689 1.3232 3.64889 1.3232 3.75586C1.3232 3.86284 1.36119 3.95698 1.43716 4.03828C1.51314 4.1153 1.60599 4.15381 1.71573 4.15381Z" />
+                      </svg>
+                      Shipping Information
+                    </h3>
+                    <div className="mb-4 border border-gray-300 rounded-lg p-6">
+                      <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
+                        <span className="font-bold text-xl">Shipped</span>
+                        <div className="bg-[#9AD1B3] text-black rounded-lg px-8 py-2">
+                          <span className="font-bold text-xl">{shippedCount}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
+                        <span className="font-bold text-xl">To Deliver</span>
+                        <div className="bg-[#4D946D] text-white rounded-lg px-8 py-2">
+                          <span className="font-bold text-xl">{toDeliverCount}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
+                        <span className="font-bold text-xl">Completed</span>
+                        <div className="bg-[#A7AD6F] text-white rounded-lg px-8 py-2">
+                          <span className="font-bold text-xl">{completedCount}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center mb-4 pb-3">
+                        <span className="font-bold text-xl">Missing</span>
+                        <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
+                          <span className="font-bold text-xl">{missingCount}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button onClick={() => setActivePage('Shipping Information')} className="w-full py-4 mt-4 text-center bg-gray-100 rounded-lg text-gray-700 font-medium hover:bg-gray-200">VIEW ALL</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+
           {activePage === 'Dashboard' && <div>Dashboard Content</div>}
+
           {activePage === 'Stock Booking' && <div>Stock Booking Content</div>}
           {activePage === 'Shipping Information' && <div>Shipping Information Content</div>}
           {activePage === 'Accepted Packages' && <div>Accepted Packages Content</div>}
           {activePage === 'Monitoring Centra' && <div>Monitoring Centra Content</div>}
+
+          {activePage === 'Stock Management' && (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Stock Management</h1>
+                <div className="relative">
+                  <button
+                    className="flex items-center text-[#A7AD6F] font-semibold"
+                    onClick={toggleWarehouseDropdown}
+                  >
+                    Warehouse {selectedWarehouse}
+                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                  </button>
+                  {warehouseDropdownVisible && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-20">
+                      {warehouses.map((warehouse) => (
+                        <button
+                          key={warehouse}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                          onClick={() => selectWarehouse(warehouse)}
+                        >
+                          {warehouse}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <DashboardMachineCard machines={machines} />
+            </>
+          )}
+          {activePage === 'Help Center' && <div>Help Center Content</div>}
+          {activePage === 'Settings' && (
+  <div className="">
+    <h1 className="text-3xl font-bold ">Edit Profile</h1>
+    <div className="bg-white  rounded-lg p-5">
+      <div className="grid grid-cols-1 gap-6">
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2 ">Name</label>
+          <input
+            type="text"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-lg"
+            name="name"
+            value={tempUserState.name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2 text-xl">Email</label>
+          <p className="text-gray-900">{tempUserState.email}</p>
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+          <p className="text-gray-900">{tempUserState.phone}</p>
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="male"
+              name="gender"
+              value="Male"
+              checked={tempUserState.gender === 'Male'}
+              onChange={handleGenderChange}
+              className="mr-2"
+            />
+            <label htmlFor="male" className="mr-4">Male</label>
+            <input
+              type="radio"
+              id="female"
+              name="gender"
+              value="Female"
+              checked={tempUserState.gender === 'Female'}
+              onChange={handleGenderChange}
+              className="mr-2"
+            />
+            <label htmlFor="female" className="mr-4">Female</label>
+            <input
+              type="radio"
+              id="others"
+              name="gender"
+              value="Others"
+              checked={tempUserState.gender === 'Others'}
+              onChange={handleGenderChange}
+              className="mr-2"
+            />
+            <label htmlFor="others">Others</label>
+          </div>
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Birthdate</label>
+          <div className="flex items-center">
+            <select
+              name="day"
+              className="border border-gray-300 rounded-lg px-3 py-2 mr-4"
+              value={tempUserState.birthdate.day}
+              onChange={handleBirthdateChange}
+            >
+              {days.map(day => (
+                <option key={day} value={day}>{day}</option>
+              ))}
+            </select>
+            <select
+              name="month"
+              className="border border-gray-300 rounded-lg px-3 py-2 mr-4"
+              value={tempUserState.birthdate.month}
+              onChange={handleBirthdateChange}
+            >
+              {months.map(month => (
+                <option key={month} value={month}>{month}</option>
+              ))}
+            </select>
+            <select
+              name="year"
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              value={tempUserState.birthdate.year}
+              onChange={handleBirthdateChange}
+            >
+              {years.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Role</label>
+          <p className="text-gray-900">{tempUserState.role}</p>
+        </div>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Location</label>
+          <p className="text-gray-900">{tempUserState.location}</p>
+        </div>
+      </div>
+      <div className="flex justify-center mt-6 ">
+        <button onClick={handleCancel} className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg">CANCEL</button>
+        <button onClick={handleSaveChanges} className="ml-3 px-4 py-2 text-white bg-[#852222] rounded-lg">SAVE CHANGES</button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
           {activePage === 'Stock Management' && <div>Stock Management Content</div>}
           {activePage === 'Help Center' && <div>Help Center Content</div>}
           {activePage === 'Settings' && <div>Settings Content</div>}
