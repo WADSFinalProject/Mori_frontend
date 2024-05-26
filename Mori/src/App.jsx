@@ -53,22 +53,16 @@ function App() {
         <Route path="/arrangeshipment" element={<ArrangeShipment />} />
         <Route path="/harbornavigation" element={<HarborNavigation />} />
         <Route path="/schedulepickup" element={<SchedulePickup />} />
-        <Route
-          path="/dryingmachine/:machineNumber"
-          element={<DryingMachine />}
-        />
-        <Route
-          path="/flouringmachine/:machineNumber"
-          element={<FlouringMachine />}
-        />
+        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
+        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
-          
         <Route path="/xyz-L" element={<Dashboard />} /> 
-
+        <Route path="/xyz-L" element={<Dashboard />} /> 
+        <Route path="/xyz-dashboard" element={<Dashboard />} /> 
+        <Route path="/xyz-stock-booking" element={<StockBooking />} /> 
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} /> 
-
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
         <Route path="/XYZDashboard" element={<XYZDashboard />} />
