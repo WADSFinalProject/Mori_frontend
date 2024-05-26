@@ -29,7 +29,7 @@ import XYZHome from './components/XYZ/Mobile/XYZHome';
 import XYZNavigation from './components/XYZ/Mobile/XYZNavigation';
 import SchedulePickup from './components/XYZ/Mobile/SchedulePickup';
 import XYZDashboard from './components/XYZ/Laptop/Dashboard';
-
+import Invoice from './components/XYZ/Laptop/Invoice';
 
 function App() {
   return (
@@ -60,13 +60,13 @@ function App() {
         <Route path="/xyz-L" element={<Dashboard />} /> 
         <Route path="/xyz-L" element={<Dashboard />} /> 
         <Route path="/xyz-dashboard" element={<Dashboard />} /> 
-        <Route path="/xyz-stock-booking" element={<StockBooking />} /> 
+        {/* <Route path="/xyz-stock-booking" element={<StockBooking />} />  */}
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} /> 
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
         <Route path="/XYZDashboard" element={<XYZDashboard />} />
-
+        <Route path="/invoice" element={<Invoice />} />
       </Routes>
     </Router>
   );
