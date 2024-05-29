@@ -59,6 +59,38 @@ const AcceptedPackages = () => {
       flouredDate: "11/17/24",
       weight: "29kg",
     },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
   ];
 
   const [sortedData, setSortedData] = useState([]);
@@ -152,9 +184,9 @@ const AcceptedPackages = () => {
           </div>
         </div>
 
-        <TableComponent
-          data={sortedData}
-        />
+        <div className="overflow-hidden">
+          <TableComponent data={sortedData} />
+        </div>
       </div>
     </div>
   );
