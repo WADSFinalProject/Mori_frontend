@@ -26,9 +26,9 @@ export const TableComponent = ({ data, onCheckedRowsChange }) => {
   };
 
   return (
-    <div className="overflow-x-auto rounded-md border-2 border-solid">
+    <div className="overflow-auto rounded-md border-2 border-solid max-h-96">
       <table className="w-full border-separate border-spacing-0">
-        <thead className="">
+        <thead className="bg-white sticky top-0 z-10">
           <tr>
             <th className="border-b-2 py-3 pl-5 flex justify-center">
               <input

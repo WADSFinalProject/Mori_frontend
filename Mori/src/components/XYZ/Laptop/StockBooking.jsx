@@ -60,6 +60,30 @@ const StockBooking = () => {
       flouredDate: "11/17/24",
       weight: "29kg",
     },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
+    {
+      id: 7,
+      batchId: "#10207",
+      shipmentId: "100029837244",
+      driedDate: "11/17/24",
+      flouredDate: "11/17/24",
+      weight: "29kg",
+    },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -128,7 +152,9 @@ const StockBooking = () => {
           <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
             Stock Booking
           </div>
-          <button className="rounded-md bg-[#CD4848] text-white font-vietnam text-base font-medium py-2 px-7 hover:bg-[#CD4848]/85 hover:transition-colors">ACTIVE INVOICE</button>
+          <button className="rounded-md bg-[#CD4848] text-white font-vietnam text-base font-medium py-2 px-7 hover:bg-[#CD4848]/85 hover:transition-colors">
+            ACTIVE INVOICE
+          </button>
         </div>
         <div className="flex flex-row w-full justify-between items-center">
           <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
@@ -170,10 +196,12 @@ const StockBooking = () => {
           </div>
         </div>
 
-        <TableComponent
-          data={sortedData}
-          onCheckedRowsChange={setSelectedBatches}
-        />
+        <div className="overflow-hidden">
+          <TableComponent
+            data={sortedData}
+            onCheckedRowsChange={setSelectedBatches}
+          />
+        </div>
 
         <hr className="w-full bg-[#bfbfbf] h-[2px] border-0 mt-5" />
 
