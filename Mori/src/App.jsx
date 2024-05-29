@@ -40,12 +40,12 @@ function App() {
         <Route path="/centrahome" element={<CentraHome />} />
         <Route path="/centrashipping" element={<Shipping />} />
         <Route path="/centranavigation" element={<CentraNavigation />} />
-        <Route path="/EditBatch" element={<EditBatch />} />
-        <Route path="/CollectorMain" element={<CollectorMain />} />
+        <Route path="/editbatch" element={<EditBatch />} />
+        <Route path="/collectormain" element={<CollectorMain />} />
         <Route path="/centraprocessor" element={<CentraProcessor />} />
         <Route path="/shipdetails" element={<ShipDetails />} />
-        <Route path="/registerAccount" element={<RegisterAccount />} />
-        <Route path="/harborHome" element={<HarborHome />} />
+        <Route path="/registeraccount" element={<RegisterAccount />} />
+        <Route path="/harborhome" element={<HarborHome />} />
         <Route path="/centranotif" element={<CentraNotif />} />
         <Route path="/confirmshipment" element={<ConfirmShipment />} />
         <Route path="/arrangeshipment" element={<ArrangeShipment />} />
