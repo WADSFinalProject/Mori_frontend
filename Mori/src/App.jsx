@@ -23,14 +23,14 @@ import FlouringMachine from './components/Centra/Processor/FlouringMachine';
 import HarborNotif from './components/HarborGuard/HarborNotif';
 import ShippingInformation from './components/XYZ/Mobile/ShippingInformation';
 import Dashboard from './components/XYZ/Laptop/Dashboard' 
-import StockBooking from './components/XYZ/Laptop/StockBooking' 
 import StockManagement from './components/XYZ/Mobile/StockManagement'
 import StockDetail from './components/XYZ/Mobile/StockDetails' 
 import XYZHome from './components/XYZ/Mobile/XYZHome';
 import XYZNavigation from './components/XYZ/Mobile/XYZNavigation';
 import SchedulePickup from './components/XYZ/Mobile/SchedulePickup';
 import AcceptedPackages from './components/XYZ/Laptop/AcceptedPackages/AcceptedPackages';
-
+import XYZDashboard from './components/XYZ/Laptop/Dashboard';
+import Invoice from './components/XYZ/Laptop/Invoice';
 
 function App() {
   return (
@@ -63,18 +63,20 @@ function App() {
           path="/flouringmachine/:machineNumber"
           element={<FlouringMachine />}
         />
+        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
+        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
-          
+        <Route path="/xyz-L" element={<Dashboard />} /> 
+        <Route path="/xyz-L" element={<Dashboard />} /> 
         <Route path="/xyz-dashboard" element={<Dashboard />} /> 
-        <Route path="/xyz-stock-booking" element={<StockBooking />} /> 
-
+        {/* <Route path="/xyz-stock-booking" element={<StockBooking />} />  */}
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} /> 
-
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
-
+        <Route path="/XYZDashboard" element={<XYZDashboard />} />
+        <Route path="/invoice" element={<Invoice />} />
       </Routes>
     </Router>
   );

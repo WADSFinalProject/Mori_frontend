@@ -37,7 +37,7 @@ export default function XYZNavigation() {
                         <p className="text-xl ml-2 mt-4 font-semibold">Divisions</p>
                         </div>
                         <div className="flex">
-                            <Link to="/centrahome"> 
+                            <Link to="/XYZHome"> 
                                 <img src={x} alt="back" className="text-6xl mt-4 mr-2 font-bold text-gray-700 w-5" />
                             </Link>
                         </div>
