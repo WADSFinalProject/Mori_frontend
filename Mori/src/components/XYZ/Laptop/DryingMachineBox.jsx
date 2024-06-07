@@ -99,39 +99,39 @@ const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, t
   );
 };
 
-const DryingMachineBoxDashboard = () => {
-    return (
-      <div className="flex flex-wrap gap-11">
-        <DryingMachineBox
-          machineNumber="1"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={24.1}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} // Duration in minutes
-        />
-        <DryingMachineBox
-          machineNumber="3"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={17.2}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} // Duration in minutes
-        />
-        <DryingMachineBox
-          machineNumber="2"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={30}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={20} // Duration in minutes
-        />
-      </div>
-    );
-  };
+// const DryingMachineBoxDashboard = () => {
+//     return (
+//       <div className="flex flex-wrap gap-11">
+//         <DryingMachineBox
+//           machineNumber="1"
+//           driedDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={24.1}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={0} // Duration in minutes
+//         />
+//         <DryingMachineBox
+//           machineNumber="3"
+//           driedDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={17.2}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={0} // Duration in minutes
+//         />
+//         <DryingMachineBox
+//           machineNumber="2"
+//           driedDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={30}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={20} // Duration in minutes
+//         />
+//       </div>
+//     );
+//   };
   
-  export default DryingMachineBoxDashboard;
+  export default DryingMachineBox;
   
