@@ -69,7 +69,7 @@ function App() {
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
         <Route path="/XYZHome" element={<XYZHome />} />
-        <Route path="/XYZHome" element={<XYZNotif />} />
+        <Route path="/XYZNotif" element={<XYZNotif />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
