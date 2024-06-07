@@ -5,6 +5,14 @@ import semicircle from '../../assets/XYZ/semicircle.png';
 import ArrowDown from '../../assets/XYZ/arrowdown.png';
 import notifIcon from '../../assets/XYZ/notif.png';
 import nonotifIcon from '../../assets/XYZ/nonotif.png';
+import LeavesStatusCard from './LeavesStatusCard';
+import PersonInChargeBox from './PersonInChargeBox';
+import FlouringScheduleBox from './FlouringScheduleBox';
+import DryingMachineBox from './DryingMachineBox';
+import DryingMachineBoxDashboard from './DryingMachineBox';
+import LeavesStatusDashboard from './LeavesStatusCard';
+import FlouringMachineBoxDashboard from './FlouringMachineBox';
+import FlouringMachineBox from './FlouringMachineBox';
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -164,31 +172,9 @@ const MainXYZ = () => {
           {/* Centra Details Page */}
           {activePage === 'Centra Details' && (
             <div>
-                <div className="flex justify-between items-center mb-4">
-                <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">Centra Semang, Kupang</h1>
-                <div className="relative">
-                  <button
-                    className="flex items-center text-[#A7AD6F] font-semibold"
-                    onClick={toggleWarehouseDropdown}
-                  >
-                    Warehouse {selectedWarehouse}
-                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
-                  </button>
-                  {warehouseDropdownVisible && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-20">
-                      {warehouses.map((warehouse) => (
-                        <button
-                          key={warehouse}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                          onClick={() => selectWarehouse(warehouse)}
-                        >
-                          {warehouse}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+               <div className="flex justify-between items-center mb-4">
+                 <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">Centra Semang, Kupang</h1>
                 </div>
-              </div>
 
               <div>
                   <LeavesStatusDashboard />
