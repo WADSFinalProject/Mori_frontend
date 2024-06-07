@@ -69,7 +69,6 @@ function App() {
         <Route path="/stockdetail/:location" element={<StockDetail />} />
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
-
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
