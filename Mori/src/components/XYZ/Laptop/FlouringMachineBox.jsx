@@ -99,38 +99,38 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
   );
 };
 
-const FlouringMachineBoxDashboard = () => {
-    return (
-      <div className="flex flex-wrap gap-11">
-        <FlouringMachineBox
-          machineNumber="1"
-          flouredDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={24.1}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} 
-        />
-        <FlouringMachineBox
-          machineNumber="3"
-          flouredDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={17.2}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} 
-        />
-        <FlouringMachineBox
-          machineNumber="2"
-          flouredDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={30}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={25} 
-        />
-      </div>
-    );
-};
+// const FlouringMachineBoxDashboard = () => {
+//     return (
+//       <div className="flex flex-wrap gap-11">
+//         <FlouringMachineBox
+//           machineNumber="1"
+//           flouredDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={24.1}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={0} 
+//         />
+//         <FlouringMachineBox
+//           machineNumber="3"
+//           flouredDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={17.2}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={0} 
+//         />
+//         <FlouringMachineBox
+//           machineNumber="2"
+//           flouredDate="13 March 2024"
+//           startTime="02:45 PM"
+//           filledWeight={30}
+//           totalWeight={30}
+//           lastUpdated="1 Minute Ago"
+//           duration={25} 
+//         />
+//       </div>
+//     );
+// };
 
-export default FlouringMachineBoxDashboard;
+export default FlouringMachineBox;
