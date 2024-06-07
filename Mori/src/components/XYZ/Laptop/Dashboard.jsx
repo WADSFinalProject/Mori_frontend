@@ -15,6 +15,7 @@ import DryingMachineBoxDashboard from './DryingMachineBox';
 import LeavesStatusDashboard from './LeavesStatusCard';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
 import FlouringMachineBox from './FlouringMachineBox';
+import XYZShippingInformation from '././XYZShippingInformation/XYZShippingInformation';
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -380,7 +381,10 @@ const MainXYZ = () => {
           )}
 
           {activePage === 'Stock Booking' && <div>Stock Booking Content</div>}
-          {activePage === 'Shipping Information' && <div>Shipping Information Content</div>}
+
+          {/* Shipping Information Page */}
+          {activePage === 'Shipping Information' && <XYZShippingInformation />}
+
           {activePage === 'Accepted Packages' && <div>Accepted Packages Content</div>}
           
           {/* Monitoring Centra Page */}
