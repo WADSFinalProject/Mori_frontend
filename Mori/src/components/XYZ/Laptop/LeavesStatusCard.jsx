@@ -74,6 +74,11 @@ const LeavesStatusDashboard = () => {
         { machineNumber: "2", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 17.2, totalWeight: 30, lastUpdated: "1 Minute Ago", duration: 0 },
         { machineNumber: "3", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 30, totalWeight: 30, lastUpdated: "1 Minute Ago", duration: 20 },
       ],
+      flouringMachines: [
+        { machineNumber: "1", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 24.1, totalWeight: 30, lastUpdated: "1 Minute Ago", duration: 0 },
+        { machineNumber: "2", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 17.2, totalWeight: 30, lastUpdated: "1 Minute Ago", duration: 0 },
+        { machineNumber: "3", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 30, totalWeight: 30, lastUpdated: "1 Minute Ago", duration: 20 },
+      ],
     },
     'Warehouse 1': {
       personInCharge: { name: 'Jane Smith', email: 'jane.smith@warehouse1.com' },
@@ -86,6 +91,12 @@ const LeavesStatusDashboard = () => {
         { machineNumber: "2", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 10.2, totalWeight: 20, lastUpdated: "5 Minutes Ago", duration: 30 },
         { machineNumber: "3", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 15, totalWeight: 25, lastUpdated: "3 Minutes Ago", duration: 0 },
       ],
+      flouringMachines: [
+        { machineNumber: "1", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 20.1, totalWeight: 25, lastUpdated: "2 Minutes Ago", duration: 10 },
+        { machineNumber: "2", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 10.2, totalWeight: 20, lastUpdated: "5 Minutes Ago", duration: 30 },
+        { machineNumber: "3", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 15, totalWeight: 25, lastUpdated: "3 Minutes Ago", duration: 0 },
+      ],
+
     },
     'Warehouse 2': {
       personInCharge: { name: 'Alice Johnson', email: 'alice.johnson@warehouse2.com' },
@@ -94,9 +105,14 @@ const LeavesStatusDashboard = () => {
       flouredLeaves: { totalWeight: 25.4, proportions: [15.4 / 25.4, 10.0 / 25.4], colors: ['#666666', '#E0EA74'], labels: ['To Ship', 'Floured Leaves'] },
       flouringSchedule: { every: 5, nearest: 1 },
       dryingMachines: [
-        { machineNumber: "1", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 29.1, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 5 },
-        { machineNumber: "2", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 25.2, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 15 },
-        { machineNumber: "3", driedDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 35, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 25 },
+        { machineNumber: "1", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 29.1, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 5 },
+        { machineNumber: "2", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 25.2, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 15 },
+        { machineNumber: "3", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 35, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 25 },
+      ],
+      flouringMachines: [
+        { machineNumber: "1", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 29.1, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 5 },
+        { machineNumber: "2", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 25.2, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 15 },
+        { machineNumber: "3", flouredDate: "13 March 2024", startTime: "02:45 PM", filledWeight: 35, totalWeight: 35, lastUpdated: "1 Minute Ago", duration: 25 },
       ],
     },
   };
@@ -115,7 +131,7 @@ const LeavesStatusDashboard = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">Centra Semang, {selectedWarehouse}</h1>
+        <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-[-5px]">Centra Semang, {selectedWarehouse}</h1>
         <div className="relative">
           <button
             className="flex items-center text-[#A7AD6F] font-semibold"
@@ -139,6 +155,7 @@ const LeavesStatusDashboard = () => {
           )}
         </div>
       </div>
+      
       <div className="flex flex-wrap gap-6">
         <div className="flex flex-wrap gap-6">
           <LeavesStatusCard
@@ -163,40 +180,81 @@ const LeavesStatusDashboard = () => {
             labels={selectedData.flouredLeaves.labels}
           />
         </div>
-
-        <div className="flex gap-6">
-          <PersonInChargeBox
-            name={selectedData.personInCharge.name}
-            email={selectedData.personInCharge.email}
-          />
-          <FlouringScheduleBox
-            every={selectedData.flouringSchedule.every}
-            nearest={selectedData.flouringSchedule.nearest}
-          />
-        </div>
-
+        
+       </div>
+            <div className="mt-6 flex gap-3 w-full">
+        <PersonInChargeBox
+          name={selectedData.personInCharge.name}
+          email={selectedData.personInCharge.email}
+        />
+        <FlouringScheduleBox
+          every={selectedData.flouringSchedule.every}
+          nearest={selectedData.flouringSchedule.nearest}
+        />
       </div>
 
-      <div className="mt-4 mb-[-20px] text-black text-[28px] font-extrabold font-['Be Vietnam Pro']">
-          Drying Machine
+      <div className="mt-4 mb-[-5px] text-black text-[28px] font-extrabold font-['Be Vietnam Pro']">
+        Drying Machine
       </div>
 
       <div className="mt-6 flex gap-6">
-        {selectedData.dryingMachines.map((machine, index) => (
-          <DryingMachineBox
-            key={index}
-            machineNumber={machine.machineNumber}
-            driedDate={machine.driedDate}
-            startTime={machine.startTime}
-            filledWeight={machine.filledWeight}
-            totalWeight={machine.totalWeight}
-            lastUpdated={machine.lastUpdated}
-            duration={machine.duration}
-          />
-        ))}
+        <div className="flex flex-wrap gap-6">
+          {selectedData.dryingMachines.map((machine, index) => (
+            <DryingMachineBox
+              key={index}
+              machineNumber={machine.machineNumber}
+              driedDate={machine.driedDate}
+              startTime={machine.startTime}
+              filledWeight={machine.filledWeight}
+              totalWeight={machine.totalWeight}
+              lastUpdated={machine.lastUpdated}
+              duration={machine.duration}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 mb-[-5px] text-black text-[28px] font-extrabold font-['Be Vietnam Pro']">
+        Flouring Machine
+      </div>
+
+      <div className="mt-6 flex gap-6">
+        <div className="flex flex-wrap gap-6">
+          {selectedData.flouringMachines.map((machine, index) => (
+            <FlouringMachineBox
+              key={index}
+              machineNumber={machine.machineNumber}
+              flouredDate={machine.flouredDate}
+              startTime={machine.startTime}
+              filledWeight={machine.filledWeight}
+              totalWeight={machine.totalWeight}
+              lastUpdated={machine.lastUpdated}
+              duration={machine.duration}
+            />
+          ))}
+        </div>
       </div>
       </div>
   );
 };
 
 export default LeavesStatusDashboard;
+
+
+
+{/* <div className="mt-6 flex gap-6">
+<div className="flex-grow flex flex-col gap-6">
+  <div className="flex gap-6">
+    <PersonInChargeBox name="John Doe" email="john.doe@example.com" />
+    <FlouringScheduleBox every={3} nearest={"2"} />
+  </div>
+</div>
+</div>
+
+<div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+Drying Machine
+</div>
+
+<div className="mt-6 flex gap-6">
+  <DryingMachineBoxDashboard />
+</div> */}

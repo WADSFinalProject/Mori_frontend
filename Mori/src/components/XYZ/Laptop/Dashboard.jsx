@@ -393,15 +393,6 @@ const MainXYZ = () => {
               <div>
                   <LeavesStatusDashboard />
               </div>
-
-              <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
-                Flouring Machine
-              </div>
-
-              <div className="mt-6 flex gap-6">
-                  <FlouringMachineBoxDashboard />
-              </div>
-
             </div>
           )}
 
