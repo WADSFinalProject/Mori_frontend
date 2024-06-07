@@ -33,6 +33,7 @@ export default {
     require("flowbite/plugin"),
     require('daisyui'),
   ],
+
   daisyui: {
     base: false,
     darkTheme: "light",
