@@ -74,9 +74,9 @@ const AdminShipmentDetails = () => {
       checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
     },
     {
-      id: 7,
+      id: 8,
       batchId: ['#10202', '#10200', '#10203'],
-      shipmentId: "100029837244",
+      shipmentId: "100029837246",
       driedDate: ["11/11/24", "12/12/24", "10/10/24"],
       flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
       weight: ["23kg", "24kg", "30kg"],
@@ -84,9 +84,9 @@ const AdminShipmentDetails = () => {
       checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
     },
     {
-      id: 7,
+      id: 9,
       batchId: "#10207",
-      shipmentId: "100029837244",
+      shipmentId: "100029837245",
       driedDate: "11/17/24",
       flouredDate: "11/17/24",
       weight: "29kg",
@@ -94,9 +94,9 @@ const AdminShipmentDetails = () => {
       checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
     },
     {
-      id: 7,
+      id: 10,
       batchId: ['#10202', '#10200', '#10203'],
-      shipmentId: "100029837244",
+      shipmentId: "100029837290",
       driedDate: ["11/11/24", "12/12/24", "10/10/24"],
       flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
       weight: ["23kg", "24kg", "30kg"],
@@ -104,9 +104,9 @@ const AdminShipmentDetails = () => {
       checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
     },
     {
-      id: 7,
+      id: 11,
       batchId: ['#10202', '#10200'],
-      shipmentId: "100029837244",
+      shipmentId: "100029837249",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
       weight: ["23kg", "24kg"],
@@ -118,30 +118,32 @@ const AdminShipmentDetails = () => {
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState("new-old");
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalShipments, setTotalShipments] = useState(0);
 
   useEffect(() => {
-    handleSortChange({ target: { value: "new-old" } }); // Initial sort
-  }, []);
+    // Calculate total shipments count
+    const uniqueShipmentIds = new Set(data.map(item => item.shipmentId));
+    setTotalShipments(uniqueShipmentIds.size);
 
-  useEffect(() => {
-    handleSearchAndSort();
-  }, [searchQuery]);
+    // Sort and filter data
+    handleSortChange(sortKey);
+  }, [data, sortKey]);
 
-  const handleSortChange = (e) => {
-    const sortValue = e.target.value;
+  const handleSortChange = (sortValue) => {
     setSortKey(sortValue);
-    handleSearchAndSort(sortValue);
+    handleSearchAndSort(searchQuery, sortValue);
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchQuery(value);
+    handleSearchAndSort(value, sortKey);
   };
 
-  const handleSearchAndSort = (sortValue = sortKey) => {
+  const handleSearchAndSort = (searchValue, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        // row.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.shipmentId.toLowerCase().includes(searchQuery.toLowerCase())
+        row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
     if (sortValue === "new-old") {
@@ -164,8 +166,16 @@ const AdminShipmentDetails = () => {
     <div className="w-[1072px] bg-transparent">
       <div className="flex flex-col w-full gap-5 mt-8 mx-12">
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-          Shipping Information
+          Shipment Details
         </div>
+
+        <div className="w-[293px] h-[108px] p-6 bg-[#00000033] rounded border border-black/opacity-20 justify-start items-center gap-4 inline-flex">
+        <div className="flex-col justify-start items-start gap-1 inline-flex">
+          <div className="text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Total Shipments</div>
+          <div className="text-black text-3xl font-semibold font-['Be Vietnam Pro']">{totalShipments} Shipments</div>
+        </div>
+         </div>
+
         <div className="flex flex-row w-full justify-between items-center">
           <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
             <input

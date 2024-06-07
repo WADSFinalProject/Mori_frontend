@@ -13,6 +13,7 @@ import DryingMachineBoxDashboard from './DryingMachineBox';
 import LeavesStatusDashboard from './LeavesStatusCard';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
 import FlouringMachineBox from './FlouringMachineBox';
+import AdminShipmentDetails from './AdminShipmentDetails/AdminShipmentDetails';
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -207,8 +208,11 @@ const MainXYZ = () => {
 
             </div>
           )}
+          
+          {/* Shipping Information Page */}
+          {activePage === 'Shipment Details' && <AdminShipmentDetails />}
 
-          {activePage === 'Shipment Details' && <div>Shipment Details Content</div>}
+
           {activePage === 'Harbor Guard' && <div>Harbor Guard Content</div>}
           {activePage === 'XYZ' && <div>XYZ Content</div>}
           {activePage === 'Users' && <div>Users Content</div>}
