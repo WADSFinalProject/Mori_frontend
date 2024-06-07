@@ -160,7 +160,68 @@ const MainXYZ = () => {
         </header>
         <main className="p-10 mt-24">
           {activePage === 'Dashboard' && <div>Dashboard Content</div>}
-          {activePage === 'Centra Details' && <div>Centra Details Content</div>}
+
+          {/* Centra Details Page */}
+          {activePage === 'Centra Details' && (
+            <div>
+                <div className="flex justify-between items-center mb-4">
+                <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">Centra Semang, Kupang</h1>
+                <div className="relative">
+                  <button
+                    className="flex items-center text-[#A7AD6F] font-semibold"
+                    onClick={toggleWarehouseDropdown}
+                  >
+                    Warehouse {selectedWarehouse}
+                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                  </button>
+                  {warehouseDropdownVisible && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-20">
+                      {warehouses.map((warehouse) => (
+                        <button
+                          key={warehouse}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                          onClick={() => selectWarehouse(warehouse)}
+                        >
+                          {warehouse}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                  <LeavesStatusDashboard />
+              </div>
+                
+              <div className="mt-6 flex gap-6">
+                <div className="flex-grow flex flex-col gap-6">
+                  <div className="flex gap-6">
+                    <PersonInChargeBox name="John Doe" email="john.doe@example.com" />
+                    <FlouringScheduleBox every={3} nearest={"2"} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+                Drying Machine
+              </div>
+
+              <div className="mt-6 flex gap-6">
+                  <DryingMachineBoxDashboard />
+              </div>
+
+              <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+                Flouring Machine
+              </div>
+
+              <div className="mt-6 flex gap-6">
+                  <FlouringMachineBoxDashboard />
+              </div>
+
+            </div>
+          )}
+
           {activePage === 'Shipment Details' && <div>Shipment Details Content</div>}
           {activePage === 'Harbor Guard' && <div>Harbor Guard Content</div>}
           {activePage === 'XYZ' && <div>XYZ Content</div>}
