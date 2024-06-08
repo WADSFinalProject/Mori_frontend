@@ -168,7 +168,7 @@ const AdminShipmentDetails = () => {
           Shipment Details
         </div>
 
-        <div className="flex flex-col p-4 rounded bg-[#CCE8EA] w-1/4 gap-1">
+        <div className="flex flex-col p-4 rounded bg-[#00000033] w-1/4 gap-1">
           <div className="text-[#828282] font-vietnam text-sm font-medium">
             Total Shipment
           </div>

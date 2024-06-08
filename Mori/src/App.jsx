@@ -35,6 +35,7 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
+import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
 
 function App() {
   return (
@@ -75,6 +76,8 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
+        <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+
       </Routes>
     </Router>
   );
