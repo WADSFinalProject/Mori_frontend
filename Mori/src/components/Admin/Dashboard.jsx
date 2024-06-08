@@ -16,6 +16,7 @@ import FlouringMachineBox from "./FlouringMachineBox";
 import AdminShipmentDetails from "./AdminShipmentDetails/AdminShipmentDetails";
 import CentraDetails from "./CentraDetails/CentraDetails";
 import XyzDetails from "./XYZ/XyzDetails";
+import HarbourDetails from "./HarbourGuard/HarbourDetails";
 import Invoice from "../XYZ/Laptop/Invoice";
 import DashboardContent from "./DashboardContent";
 
@@ -289,7 +290,7 @@ const MainXYZ = () => {
           {/* Shipping Information Page */}
           {activePage === "Shipment Details" && <AdminShipmentDetails />}
 
-          {activePage === "Harbor Guard" && <div>Harbor Guard Content</div>}
+          {activePage === "Harbor Guard" && <HarbourDetails />}
           {activePage === "XYZ" && <XyzDetails />}
           {activePage === "Users" && <div>Users Content</div>}
           {activePage === "Settings" && <div>Settings Content</div>}
