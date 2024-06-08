@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "harbourName": "Sunset Bay",
+    "location": "Alak",
+    "phone": "080816032859",
+    "openingHour": "06:00",
+    "closingHour": "18:00"
+  },
+  {
+    "id": 2,
+    "harbourName": "Crystal Cove",
+    "location": "Kelapa Lima",
+    "phone": "081816032859",
+    "openingHour": "07:00",
+    "closingHour": "17:00"
+  },
+  {
+    "id": 3,
+    "harbourName": "Mystic Harbor",
+    "location": "Kota Lama",
+    "phone": "082816032859",
+    "openingHour": "08:00",
+    "closingHour": "16:00"
+  },
+  {
+    "id": 4,
+    "harbourName": "Golden Shores",
+    "location": "Kota Raja",
+    "phone": "083816032859",
+    "openingHour": "09:00",
+    "closingHour": "15:00"
+  },
+  {
+    "id": 5,
+    "harbourName": "Whispering Waves",
+    "location": "Maulafa",
+    "phone": "084816032859",
+    "openingHour": "08:00",
+    "closingHour": "14:00"
+  },
+  {
+    "id": 6,
+    "harbourName": "Ocean Breeze",
+    "location": "Oebobo",
+    "phone": "085816032859",
+    "openingHour": "08:00",
+    "closingHour": "13:00"
+  },
+  {
+    "id": 7,
+    "harbourName": "Blue Lagoon",
+    "location": "Alak",
+    "phone": "086816032859",
+    "openingHour": "07:00",
+    "closingHour": "12:00"
+  },
+  {
+    "id": 8,
+    "harbourName": "Pearl Harbor",
+    "location": "Kelapa Lima",
+    "phone": "087816032859",
+    "openingHour": "07:00",
+    "closingHour": "17:00"
+  },
+  {
+    "id": 9,
+    "harbourName": "Serenity Bay",
+    "location": "Kota Lama",
+    "phone": "088816032859",
+    "openingHour": "08:00",
+    "closingHour": "15:00"
+  },
+  {
+    "id": 10,
+    "harbourName": "Harbor Haven",
+    "location": "Kota Raja",
+    "phone": "089816032859",
+    "openingHour": "09:00",
+    "closingHour": "16:00"
+  }
+]
