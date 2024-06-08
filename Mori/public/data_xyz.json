@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "warehouseName": "Warehouse 1",
+    "email": "email1@example.com",
+    "phone": "1234567890",
+    "location": "Maulafa",
+    "createdDate": "2024-01-01T12:34:56Z"
+  },
+  {
+    "id": 2,
+    "warehouseName": "Warehouse 2",
+    "email": "email2@example.com",
+    "phone": "0987654321",
+    "location": "Oebobo",
+    "createdDate": "2024-02-01T12:34:56Z"
+  },
+  {
+    "id": 3,
+    "warehouseName": "Warehouse 3",
+    "email": "email3@example.com",
+    "phone": "1122334455",
+    "location": "Maulafa",
+    "createdDate": "2024-03-01T12:34:56Z"
+  },
+  {
+    "id": 4,
+    "warehouseName": "Warehouse 4",
+    "email": "email4@example.com",
+    "phone": "5566778899",
+    "location": "Kelapa Lima",
+    "createdDate": "2024-04-01T12:34:56Z"
+  },
+  {
+    "id": 5,
+    "warehouseName": "Warehouse 5",
+    "email": "email5@example.com",
+    "phone": "6677889900",
+    "location": "Kota Lama",
+    "createdDate": "2024-05-01T12:34:56Z"
+  },
+  {
+    "id": 6,
+    "warehouseName": "Warehouse 6",
+    "email": "email6@example.com",
+    "phone": "7788990011",
+    "location": "Kota Raja",
+    "createdDate": "2024-06-01T12:34:56Z"
+  },
+  {
+    "id": 7,
+    "warehouseName": "Warehouse 7",
+    "email": "email7@example.com",
+    "phone": "8899001122",
+    "location": "Kelapa Lima",
+    "createdDate": "2024-07-01T12:34:56Z"
+  },
+  {
+    "id": 8,
+    "warehouseName": "Warehouse 8",
+    "email": "email8@example.com",
+    "phone": "9900112233",
+    "location": "Alak",
+    "createdDate": "2024-08-01T12:34:56Z"
+  },
+  {
+    "id": 9,
+    "warehouseName": "Warehouse 9",
+    "email": "email9@example.com",
+    "phone": "0011223344",
+    "location": "Alak",
+    "createdDate": "2024-09-01T12:34:56Z"
+  }
+]
