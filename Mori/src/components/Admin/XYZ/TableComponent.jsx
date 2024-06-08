@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TableComponent = ({ data }) => {
+export const TableComponent = ({ data, onEditClick }) => {
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
     return new Date(dateString).toLocaleDateString("en-GB", options);
@@ -65,7 +65,7 @@ export const TableComponent = ({ data }) => {
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
                 }`}
               >
-                Kecamatan <b>{row.location}</b>
+                {row.location}
               </td>
               <td
                 className={`font-medium text-[#828282] text-sm text-center py-4 ${
@@ -80,9 +80,9 @@ export const TableComponent = ({ data }) => {
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
-                <button
+                  <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={null}
+                    onClick={() => onEditClick(index)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -97,20 +97,6 @@ export const TableComponent = ({ data }) => {
                       />
                     </svg>
                   </button>
-                  {/* <button className="pl-[0.075rem] flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-6 h-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="8"
-                      height="12"
-                      viewBox="0 0 8 12"
-                      fill="none"
-                    >
-                      <path
-                        d="M7.34277 6C7.34277 6.08659 7.32454 6.16862 7.28809 6.24609C7.25619 6.31901 7.20833 6.38737 7.14453 6.45117L1.73047 11.749C1.60742 11.8721 1.45703 11.9336 1.2793 11.9336C1.16536 11.9336 1.06055 11.9062 0.964844 11.8516C0.869141 11.7969 0.793945 11.7217 0.739258 11.626C0.68457 11.5348 0.657227 11.43 0.657227 11.3115C0.657227 11.1429 0.716471 10.9948 0.834961 10.8672L5.81152 6L0.834961 1.13281C0.716471 1.00521 0.657227 0.857096 0.657227 0.688477C0.657227 0.569987 0.68457 0.465169 0.739258 0.374023C0.793945 0.27832 0.869141 0.203125 0.964844 0.148438C1.06055 0.09375 1.16536 0.0664062 1.2793 0.0664062C1.45703 0.0664062 1.60742 0.125651 1.73047 0.244141L7.14453 5.54883C7.20833 5.61263 7.25619 5.68327 7.28809 5.76074C7.32454 5.83366 7.34277 5.91341 7.34277 6Z"
-                        fill="black"
-                      />
-                    </svg>
-                  </button> */}
                 </div>
               </td>
             </tr>
