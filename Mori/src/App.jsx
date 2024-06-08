@@ -27,6 +27,7 @@ import StockBooking from "./components/XYZ/Laptop/StockBooking";
 import StockManagement from "./components/XYZ/Mobile/StockManagement";
 import StockDetail from "./components/XYZ/Mobile/StockDetails";
 import XYZHome from "./components/XYZ/Mobile/XYZHome";
+import XYZNotif from "./components/XYZ/XYZNotif";
 import XYZNavigation from "./components/XYZ/Mobile/XYZNavigation";
 import SchedulePickup from "./components/XYZ/Mobile/SchedulePickup";
 import AcceptedPackages from "./components/XYZ/Laptop/AcceptedPackages/AcceptedPackages";
@@ -68,6 +69,7 @@ function App() {
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
         <Route path="/XYZHome" element={<XYZHome />} />
+        <Route path="/XYZNotif" element={<XYZNotif />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
