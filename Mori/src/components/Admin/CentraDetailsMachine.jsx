@@ -1,23 +1,18 @@
 import React from 'react';
-import LeavesStatusDashboard from './LeavesStatusDashboard';
+import LeavesStatusDashboard from './LeavesStatusCard';
 import PersonInChargeBox from './PersonInChargeBox';
 import FlouringScheduleBox from './FlouringScheduleBox';
-import DryingMachineBoxDashboard from './DryingMachineBoxDashboard';
-import FlouringMachineBoxDashboard from './FlouringMachineBoxDashboard';
+import DryingMachineBoxDashboard from './DryingMachineBox';
+import FlouringMachineBoxDashboard from './FlouringMachineBox';
 import LeavesStatusCard from "./LeavesStatusCard";
-import PersonInChargeBox from "./PersonInChargeBox";
-import FlouringScheduleBox from "./FlouringScheduleBox";
 import DryingMachineBox from "./DryingMachineBox";
-import DryingMachineBoxDashboard from "./DryingMachineBox";
-import LeavesStatusDashboard from "./LeavesStatusCard";
-import FlouringMachineBoxDashboard from "./FlouringMachineBox";
 import FlouringMachineBox from "./FlouringMachineBox";
 
 const CentraDetailsMachine = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+        <h1 className="text-black text-[28px] font-bold font-['Be Vietnam Pro'] mb-4">
           Centra Semang, Kupang
         </h1>
       </div>
@@ -38,7 +33,7 @@ const CentraDetailsMachine = () => {
         </div>
       </div>
 
-      <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+      <div className="mt-4 text-black text-[28px] font-semibold font-['Be Vietnam Pro'] mb-4">
         Drying Machine
       </div>
 
@@ -46,7 +41,7 @@ const CentraDetailsMachine = () => {
         <DryingMachineBoxDashboard />
       </div>
 
-      <div className="mt-4 text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-4">
+      <div className="mt-4 text-black text-[28px] font-semibold font-['Be Vietnam Pro'] mb-4">
         Flouring Machine
       </div>
 
