@@ -116,7 +116,7 @@ export const TableComponent = ({ data }) => {
   
   
   return (
-    <div className="overflow-auto rounded-md border-2 border-solid max-h-96">
+    <div className="overflow-auto rounded-md border-2 border-solid max-h-80">
       <table className="w-full border-separate border-spacing-0">
         <thead className="sticky bg-white top-0 z-10">
           <tr>

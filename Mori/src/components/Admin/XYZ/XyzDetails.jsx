@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 
-const CentraDetails = () => {
+const XyzDetails = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
-  const [sortKey, setSortKey] = useState("location-a-z");
+  const [sortKey, setSortKey] = useState("warehouseName-a-z");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterLocation, setFilterLocation] = useState("");
 
   useEffect(() => {
-    fetch("/data_centra.json")
+    fetch("/data_xyz.json")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -17,7 +18,7 @@ const CentraDetails = () => {
       })
       .then((data) => {
         setData(data);
-        handleSearchAndSort(data, "location-a-z"); // Initial sort with fetched data
+        handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -26,7 +27,7 @@ const CentraDetails = () => {
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
-  }, [searchQuery]);
+  }, [searchQuery, filterLocation]);
 
   const handleSortChange = (e) => {
     const sortValue = e.target.value;
@@ -39,47 +40,68 @@ const CentraDetails = () => {
     handleSearchAndSort(data, sortKey);
   };
 
+  const handleFilterChange = (e) => {
+    setFilterLocation(e.target.value);
+    handleSearchAndSort(data, sortKey);
+  };
+
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.picName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.warehouseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.phone.toLowerCase().includes(searchQuery.toLowerCase())
+        row.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    if (sortValue === "location-a-z") {
-      filteredData.sort((a, b) => a.location.localeCompare(b.location));
-    } else if (sortValue === "location-z-a") {
-      filteredData.sort((a, b) => b.location.localeCompare(a.location));
-    } else if (sortValue === "picname-a-z") {
-      filteredData.sort((a, b) => a.picName.localeCompare(b.picName));
-    } else if (sortValue === "picname-z-a") {
-      filteredData.sort((a, b) => b.picName.localeCompare(a.picName));
+    if (filterLocation) {
+      filteredData = filteredData.filter((row) =>
+        row.location.toLowerCase().includes(filterLocation.toLowerCase())
+      );
+    }
+
+    if (sortValue === "warehouseName-a-z") {
+      filteredData.sort((a, b) =>
+        a.warehouseName.localeCompare(b.warehouseName)
+      );
+    } else if (sortValue === "warehouseName-z-a") {
+      filteredData.sort((a, b) =>
+        b.warehouseName.localeCompare(a.warehouseName)
+      );
+    } else if (sortValue === "createdDate-asc") {
+      filteredData.sort(
+        (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
+      );
+    } else if (sortValue === "createdDate-desc") {
+      filteredData.sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+      );
     }
 
     setSortedData(filteredData);
   };
 
+  const uniqueLocations = [...new Set(data.map((item) => item.location))];
+
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5">
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-          Centra Details
+          XYZ
         </div>
         <div className="flex flex-col p-4 rounded bg-[#CCE8EA] w-1/4 gap-1">
           <div className="text-[#828282] font-vietnam text-sm font-medium">
-            Total Centra
+            Total Warehouse
           </div>
           <div className="text-black font-vietnam text-3xl font-semibold">
-            {sortedData.length} Centra
+            {sortedData.length} Warehouse
           </div>
         </div>
-        <div className="flex flex-row w-full justify-between items-center">
+        <div className="flex flex-row w-full justify-between items-center gap-4">
           <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
             <input
               type="text"
-              className="grow border-none focus:border-none focus:ring-0 m-0 p-0 font-vietnam w-64"
+              className="grow border-none focus:border-none focus:ring-0 m-0 p-0 font-vietnam w-48"
               placeholder="Search"
               value={searchQuery}
               onChange={handleSearchChange}
@@ -97,20 +119,43 @@ const CentraDetails = () => {
               />
             </svg>
           </label>
-          <div className="flex flex-row gap-5 items-center">
-            <div className="font-vietnam font-semibold text-md items-center">
-              Sort By:
+          <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-2 items-center">
+              <div className="font-vietnam font-semibold text-md items-center">
+                Sort By:
+              </div>
+              <select
+                className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
+                value={sortKey}
+                onChange={handleSortChange}
+              >
+                <option value="warehouseName-a-z">
+                  Warehouse Name (A to Z)
+                </option>
+                <option value="warehouseName-z-a">
+                  Warehouse Name (Z to A)
+                </option>
+                <option value="createdDate-asc">Created Date (↑)</option>
+                <option value="createdDate-desc">Created Date (↓)</option>
+              </select>
             </div>
-            <select
-              className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
-              value={sortKey}
-              onChange={handleSortChange}
-            >
-              <option value="location-a-z">Location (A to Z)</option>
-              <option value="location-z-a">Location (Z to A)</option>
-              <option value="picname-a-z">PIC Name (A to Z)</option>
-              <option value="picname-z-a">PIC Name (Z to A)</option>
-            </select>
+            <div className="flex flex-row gap-2 items-center">
+              <div className="font-vietnam font-semibold text-md items-center">
+                Location:
+              </div>
+              <select
+                className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
+                value={filterLocation}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Locations</option>
+                {uniqueLocations.map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <button className="bg-[#CD4848] rounded py-2 px-6 flex gap-2 items-center justify-center hover:bg-[#CD4848]/80">
             <svg
@@ -139,4 +184,4 @@ const CentraDetails = () => {
   );
 };
 
-export default CentraDetails;
+export default XyzDetails;
