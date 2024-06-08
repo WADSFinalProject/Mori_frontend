@@ -64,7 +64,7 @@ export default function XYZHome() {
     return (
       <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`} style={{ width: 'auto', flexGrow: 1, minWidth: '300px', minHeight: '100px', maxWidth: 'none', position: 'relative' }}>
       {/* Machine Location Button */}
-      <div className="machine-location w-[170px] h-[26px] px-2.5 py-1 bg-black rounded justify-start items-center gap-2 inline-flex text-white text-sm font-medium font-['Be Vietnam Pro']" style={{ position: 'absolute', left: '15px', top: '9px' }}>
+      <div className="machine-location w-[170px] h-[26px] px-2.5 py-1 bg-black rounded justify-start items-center gap-2 inline-flex text-white text-sm font-medium font-['Be Vietnam Pro']" style={{ position: 'absolute', left: '15px', top: '9px'}}>
         <span className="text-sm">{region} </span><span className="font-bold text-sm">{location}</span>
         <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 5C6 5.13464 5.9724 5.26019 5.9172 5.37664C5.86569 5.48945 5.78289 5.60044 5.66881 5.70961L1.50138 9.74891C1.33211 9.9163 1.12603 10 0.883165 10C0.724931 10 0.577737 9.95997 0.441582 9.87991C0.305428 9.80349 0.196872 9.69978 0.115915 9.56878C0.0386385 9.43777 0 9.29221 0 9.1321C0 8.89192 0.0938362 8.67722 0.281509 8.48799L3.91904 4.99454L0.281509 1.50655C0.0938362 1.3246 0 1.11172 0 0.867904C0 0.707787 0.0386385 0.562227 0.115915 0.431223C0.196872 0.300218 0.305428 0.196507 0.441582 0.120087C0.577737 0.0400291 0.724931 0 0.883165 0C1.12603 0 1.33211 0.0818777 1.50138 0.245633L5.66881 4.28493C5.78289 4.3941 5.86569 4.50691 5.9172 4.62336C5.96872 4.73617 5.99632 4.86172 6 5Z" fill="white"/>
@@ -143,7 +143,7 @@ export default function XYZHome() {
             
             {/* View all locations */}
             <div className="mt-[-20px]">
-            <div className="mb-[10px] w-[342px] h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+            <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
                 <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">View All</div>
                 <img src={rightArrow} alt="right arrow" className="w-[6.69px] h-[11.87px] relative" />
             </div>
@@ -158,31 +158,36 @@ export default function XYZHome() {
             </div>
             <div className="flex">
 
-            {/* Stock */}
-            <Link to="/collector">
-            <div className="mt-3 mr-3 w-[166px] h-[74px] px-4 py-3 bg-stone-600 rounded-lg flex-col justify-start items-end inline-flex" style={{ position: 'relative', backgroundColor: '#5C612C' }}>
-                <img src={shipping} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
-                <div className="w-[18.65px] h-5 relative" />
-                <div className="self-stretch h-[50px] flex-col justify-start items-start gap-0.1 flex" >
-                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Stock Management</div>
-                <div className="self-stretch text-white text-[8px] font-normal font-['Be Vietnam Pro']">2 Warehouse almost FULL</div>
-                </div>
-            </div>
-            </Link>
-
-            {/* Shipping */}
-              <Link to="/shipping">
-              <div className="mt-3 mr-3 w-[166px] h-[74px] px-4 py-3 bg-stone-600 rounded-lg flex-col justify-start items-end inline-flex" style={{ position: 'relative', backgroundColor: '#00000099' }}>
-                <img src={truck} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
-                <div className="w-[18.65px] h-5 relative" />
-                <div className="self-stretch h-[50px] flex-col justify-start items-start gap-0.25 flex">
-                <div className="self-stretch text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Shipping Information</div>
-                <div className="self-stretch text-white text-[8px] font-normal font-['Be Vietnam Pro']">4 Shipment Arriving</div>
-                </div>
-            </div>
+            <div className="flex justify-center">
+              
+            <div className="flex justify-center">
+              
+              {/* Stock */}
+              <Link to="/collector" className="flex-grow">
+                  <div className="mt-3 mr-3 h-[74px] px-4 py-3 bg-stone-600 rounded-lg flex items-center" style={{ backgroundColor: '#5C612C' }}>
+                      <img src={shipping} alt="mori logo" className="w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
+                      <div className="w-[18.65px] h-5 relative" />
+                      <div className="flex flex-col justify-start items-start gap-0.1">
+                          <div className="text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Stock Management</div>
+                          <div className="text-white text-[8px] font-normal font-['Be Vietnam Pro']">2 Warehouse almost FULL</div>
+                      </div>
+                  </div>
               </Link>
-            </div>
 
+              {/* Shipping */}
+              <Link to="/shipping" className="flex-grow">
+                  <div className="mt-3 mr-3 h-[74px] px-4 py-3 bg-stone-600 rounded-lg flex items-center" style={{ backgroundColor: '#00000099' }}>
+                      <img src={truck} alt="mori logo" className="w-6" style={{ marginTop: '5px', marginRight: '5px' }} />
+                      <div className="w-[18.65px] h-5 relative" />
+                      <div className="flex flex-col justify-start items-start gap-0.25">
+                          <div className="text-white text-[15px] font-bold font-['Be Vietnam Pro']" style={{ marginTop: '-4px' }}>Shipping Information</div>
+                          <div className="text-white text-[8px] font-normal font-['Be Vietnam Pro']">4 Shipment Arriving</div>
+                      </div>
+                  </div>
+              </Link>
+          </div>
+          </div>
+          </div>
             {/* Recent Shipping Status */}
             <div className="pt-5">
             <div className="mt-[5px]">
@@ -206,7 +211,7 @@ export default function XYZHome() {
             {/* View all locations */}
             <div className="pt-5">
             <div className="mt-[-15px]">
-            <div className="mb-[10px] w-[342px] h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+            <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
                 <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">View All Locations</div>
                 <img src={rightArrow} alt="right arrow" className="w-[6.69px] h-[11.87px] relative" />
             </div>
