@@ -71,7 +71,6 @@ function App() {
         <Route path="/XYZHome" element={<XYZHome />} />
         <Route path="/XYZNotif" element={<XYZNotif />} />
         <Route path="/XYZNavigation" element={<XYZNavigation />} />
-
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
