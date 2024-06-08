@@ -80,11 +80,14 @@ export const TableComponent = ({ data }) => {
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <button className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-6 h-6">
+                <button
+                    className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
+                    onClick={null}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="27"
-                      height="27"
+                      width="20"
+                      height="20"
                       viewBox="0 0 27 27"
                       fill="none"
                     >
