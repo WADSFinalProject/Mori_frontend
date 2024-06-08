@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TableComponent = ({ data }) => {
+export const TableComponent = ({ data, onEditClick }) => {
   return (
     <div className="overflow-auto rounded-md border-2 border-solid max-h-80">
       <table className="w-full border-separate border-spacing-0">
@@ -26,7 +26,7 @@ export const TableComponent = ({ data }) => {
         <tbody>
           {data.map((row, index) => (
             <tr
-              key={row.id}
+              key={index}
               className={`${
                 index === data.length - 1 ? "border-b-0" : "border-b-2"
               }`}
@@ -67,7 +67,7 @@ export const TableComponent = ({ data }) => {
                 <div className="flex items-center justify-center gap-2">
                   <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={null}
+                    onClick={() => onEditClick(index)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
