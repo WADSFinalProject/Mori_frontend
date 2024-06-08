@@ -1,16 +1,33 @@
 import React from "react";
 
-export const TableComponent = ({ data, onEditClick }) => {
+export const TableComponent = ({ data }) => {
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
+  const getRoleStyles = (role) => {
+    switch (role) {
+      case "XYZ":
+        return "bg-[#A7AD6F] text-white";
+      case "Harbour Guard":
+        return "bg-[#9AD1B3] text-black";
+      case "Centra":
+        return "bg-[#5D9EA4] text-white";
+      case "Admin":
+        return "bg-[#CD4848] text-white";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="overflow-auto rounded-md border-2 border-solid max-h-80">
       <table className="w-full border-separate border-spacing-0">
         <thead className="sticky bg-white top-0">
           <tr>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Location
-            </th>
-            <th className="text-base font-medium text-center border-b-2 py-3">
-              PIC Name
+              Name
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
               Email
@@ -19,69 +36,72 @@ export const TableComponent = ({ data, onEditClick }) => {
               Phone
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Drying Machines
+              Role
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Flouring Machines
+              Location
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Actions
+              Created Date
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Action
             </th>
           </tr>
         </thead>
-        <tbody className="">
+        <tbody>
           {data.map((row, index) => (
             <tr
-              key={index}
-              className={` ${
+              key={row.id}
+              className={`${
                 index === data.length - 1 ? "border-b-0" : "border-b-2"
               }`}
             >
               <td
-                className={`font-semibold text-black text-base text-center ${
+                className={`font-bold text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
-                {row.location}
+                {row.name}
               </td>
               <td
-                className={`font-normal text-black text-base text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {row.picName}
-              </td>
-              <td
-                className={`font-normal text-base text-black text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
                 {row.email}
               </td>
               <td
-                className={`font-normal text-base text-black text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
                 {row.phone}
               </td>
               <td
-                className={`font-semibold text-black text-sm text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                className={`font-medium text-base text-center py-4 ${index === data.length - 1 ? "border-b-0" : "border-b-2"}`}
               >
-                <div className="bg-[#9AD1B3] py-2 rounded-md inline-block px-4">
-                  {row.dryingMachines} Machines
+                <div
+                  className={`${getRoleStyles(
+                    row.role
+                  )} py-1.5 rounded-md inline-block px-3.5`}
+                >
+                  {row.role}
                 </div>
               </td>
               <td
-                className={`font-semibold text-black text-sm text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
-                <div className="bg-[#E0EA74] py-2 rounded-md inline-block px-4">
-                  {row.flouringMachines} Machines
-                </div>
+                Kecamatan <b>{row.location}</b>
+              </td>
+              <td
+                className={`font-medium text-[#828282] text-sm text-center py-4 ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                }`}
+              >
+                {formatDate(row.createdDate)}
               </td>
               <td
                 className={`py-4 ${
@@ -91,7 +111,7 @@ export const TableComponent = ({ data, onEditClick }) => {
                 <div className="flex items-center justify-center gap-2">
                   <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => onEditClick(index)}
+                    onClick={null}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

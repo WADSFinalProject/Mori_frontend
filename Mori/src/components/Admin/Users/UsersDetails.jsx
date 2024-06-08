@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 
-const XyzDetails = () => {
+const UsersDetails = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
-  const [sortKey, setSortKey] = useState("warehouseName-a-z");
+  const [sortKey, setSortKey] = useState("name-a-z");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterLocation, setFilterLocation] = useState("");
+  const [filterRole, setFilterRole] = useState("");
 
   useEffect(() => {
-    fetch("/data_xyz.json")
+    fetch("/data_user.json")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -18,7 +18,7 @@ const XyzDetails = () => {
       })
       .then((data) => {
         setData(data);
-        handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
+        handleSearchAndSort(data, "name-a-z"); // Initial sort with fetched data
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -27,7 +27,7 @@ const XyzDetails = () => {
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
-  }, [searchQuery, filterLocation]);
+  }, [searchQuery, filterRole]);
 
   const handleSortChange = (e) => {
     const sortValue = e.target.value;
@@ -41,33 +41,29 @@ const XyzDetails = () => {
   };
 
   const handleFilterChange = (e) => {
-    setFilterLocation(e.target.value);
+    setFilterRole(e.target.value);
     handleSearchAndSort(data, sortKey);
   };
 
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.warehouseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    if (filterLocation) {
+    if (filterRole) {
       filteredData = filteredData.filter((row) =>
-        row.location.toLowerCase().includes(filterLocation.toLowerCase())
+        row.role.toLowerCase().includes(filterRole.toLowerCase())
       );
     }
 
-    if (sortValue === "warehouseName-a-z") {
-      filteredData.sort((a, b) =>
-        a.warehouseName.localeCompare(b.warehouseName)
-      );
-    } else if (sortValue === "warehouseName-z-a") {
-      filteredData.sort((a, b) =>
-        b.warehouseName.localeCompare(a.warehouseName)
-      );
+    if (sortValue === "name-a-z") {
+      filteredData.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortValue === "name-z-a") {
+      filteredData.sort((a, b) => b.name.localeCompare(a.name));
     } else if (sortValue === "createdDate-asc") {
       filteredData.sort(
         (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
@@ -81,22 +77,20 @@ const XyzDetails = () => {
     setSortedData(filteredData);
   };
 
-  const uniqueLocations = [...new Set(data.map((item) => item.location))];
+  const uniqueRoles = [...new Set(data.map((item) => item.role))];
 
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5">
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-          XYZ
+          Users
         </div>
-
         <div className="flex flex-col p-4 rounded-xl bg-[#CCE8EA] w-1/4 gap-1">
-        <div className="flex flex-col p-4 rounded bg-[#F2F9A9] w-1/4 gap-1">
           <div className="text-[#828282] font-vietnam text-sm font-medium">
-            Total Warehouse
+            Total User
           </div>
           <div className="text-black font-vietnam text-3xl font-semibold">
-            {sortedData.length} Warehouse
+            {sortedData.length} Users
           </div>
         </div>
         <div className="flex flex-row w-full justify-between items-center gap-4">
@@ -131,29 +125,25 @@ const XyzDetails = () => {
                 value={sortKey}
                 onChange={handleSortChange}
               >
-                <option value="warehouseName-a-z">
-                  Warehouse Name (A to Z)
-                </option>
-                <option value="warehouseName-z-a">
-                  Warehouse Name (Z to A)
-                </option>
+                <option value="name-a-z">Name (A to Z)</option>
+                <option value="name-z-a">Name (Z to A)</option>
                 <option value="createdDate-asc">Created Date (↑)</option>
                 <option value="createdDate-desc">Created Date (↓)</option>
               </select>
             </div>
             <div className="flex flex-row gap-2 items-center">
               <div className="font-vietnam font-semibold text-md items-center">
-                Location:
+                Role:
               </div>
               <select
                 className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
-                value={filterLocation}
+                value={filterRole}
                 onChange={handleFilterChange}
               >
-                <option value="">All Locations</option>
-                {uniqueLocations.map((location, index) => (
-                  <option key={index} value={location}>
-                    {location}
+                <option value="">All Roles</option>
+                {uniqueRoles.map((role, index) => (
+                  <option key={index} value={role}>
+                    {role}
                   </option>
                 ))}
               </select>
@@ -186,4 +176,4 @@ const XyzDetails = () => {
   );
 };
 
-export default XyzDetails;
+export default UsersDetails;

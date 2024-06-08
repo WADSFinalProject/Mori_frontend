@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 
 const HarbourDetails = () => {
+  
   const initialNewHarbourState = {
     harbourName: '',
     location: '',
@@ -9,7 +10,7 @@ const HarbourDetails = () => {
     openingHour: '00:00',
     closingHour: '00:00',
   };
-
+  
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState("harbourName-a-z");
@@ -166,6 +167,7 @@ const HarbourDetails = () => {
 
   return (
     <div className="bg-transparent">
+
       {!isAddNewVisible && !isEditVisible ? (
         <div className="flex flex-col w-full gap-5">
           <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
@@ -178,6 +180,13 @@ const HarbourDetails = () => {
             <div className="text-black font-vietnam text-3xl font-semibold">
               {sortedData.length} Harbour Guard
             </div>
+      <div className="flex flex-col w-full gap-5">
+        <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
+          Harbour Guard
+        </div>
+        <div className="flex flex-col p-4 rounded-xl bg-[#CCE8EA] w-1/3 gap-1">
+          <div className="text-[#828282] font-vietnam text-sm font-medium">
+            Total Harbour Guard
           </div>
           <div className="flex flex-row w-full justify-between items-center gap-4">
             <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
