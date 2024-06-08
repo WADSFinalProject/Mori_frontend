@@ -19,6 +19,7 @@ import XyzDetails from "./XYZ/XyzDetails";
 import HarbourDetails from "./HarbourGuard/HarbourDetails";
 import Invoice from "../XYZ/Laptop/Invoice";
 import DashboardContent from "./DashboardContent";
+import Users from "./Users";
 import UsersDetails from "./Users/UsersDetails";
 
 const MainXYZ = () => {
@@ -293,6 +294,7 @@ const MainXYZ = () => {
 
           {activePage === "Harbor Guard" && <HarbourDetails />}
           {activePage === "XYZ" && <XyzDetails />}
+          {activePage === "Users" && <Users />}
           {activePage === "Users" && <UsersDetails />}
           {activePage === "Settings" && <div>Settings Content</div>}
         </main>
