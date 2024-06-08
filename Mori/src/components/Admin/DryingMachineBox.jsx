@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 
-const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeight, totalWeight, lastUpdated, duration }) => {
+const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, totalWeight, lastUpdated, duration }) => {
   const totalTime = duration * 60; // duration in minutes, converted to seconds
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const fillPercentage = filledWeight / totalWeight;
@@ -20,8 +20,8 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
   const isProcessing = timeLeft > 0;
 
   const getColor = (percentage) => {
-    const startColor = [33, 112, 69]; // RGB for #217045
-    const endColor = [246, 246, 246]; // RGB for lighter shade
+    const startColor = [23, 110, 118];
+    const endColor = [246, 246, 246]; 
 
     const r = Math.floor(startColor[0] + (endColor[0] - startColor[0]) * (1 - percentage));
     const g = Math.floor(startColor[1] + (endColor[1] - startColor[1]) * (1 - percentage));
@@ -53,7 +53,7 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
   };
 
   return (
-    <div className="w-[490px] h-[280px] bg-white border border-black/opacity-20 rounded-lg p-4">
+    <div className="w-[490px] h-[280px]  bg-white border border-black/opacity-20  rounded-lg p-4">
       <div className="flex items-center">
         <div className="relative">
           <svg width="64" height="64" viewBox="0 0 36 36" className="circular-chart green">
@@ -70,16 +70,16 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
                  a 15.9155 15.9155 0 0 1 0 31.831
                  a 15.9155 15.9155 0 0 1 0 -31.831"
               fill="none"
-              stroke="#A7AD6F" // Duration circle color
+              stroke="#4D946D"
               strokeWidth="3.5" />
-            <text x="18" y="19" className="percentage" fontSize="8" fill="#A7AD6F" textAnchor="middle" dominantBaseline="middle">
+            <text x="18" y="19" className="percentage" fontSize="8" fill="#4D946D" textAnchor="middle" dominantBaseline="middle">
               {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
             </text>
           </svg>
         </div>
         <div className="ml-4 text-center">
           <h2 className="text-left text-black text-[22px] font-semibold font-['Be Vietnam Pro']">Machine {machineNumber}</h2>
-          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Floured <strong>{flouredDate}</strong></div>
+          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Dried <strong>{driedDate}</strong></div>
           <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Start <strong>{startTime}</strong></div>
         </div>
       </div>
@@ -99,38 +99,39 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
   );
 };
 
-// const FlouringMachineBoxDashboard = () => {
-//     return (
-//       <div className="flex flex-wrap gap-11">
-//         <FlouringMachineBox
-//           machineNumber="1"
-//           flouredDate="13 March 2024"
-//           startTime="02:45 PM"
-//           filledWeight={24.1}
-//           totalWeight={30}
-//           lastUpdated="1 Minute Ago"
-//           duration={0} 
-//         />
-//         <FlouringMachineBox
-//           machineNumber="3"
-//           flouredDate="13 March 2024"
-//           startTime="02:45 PM"
-//           filledWeight={17.2}
-//           totalWeight={30}
-//           lastUpdated="1 Minute Ago"
-//           duration={0} 
-//         />
-//         <FlouringMachineBox
-//           machineNumber="2"
-//           flouredDate="13 March 2024"
-//           startTime="02:45 PM"
-//           filledWeight={30}
-//           totalWeight={30}
-//           lastUpdated="1 Minute Ago"
-//           duration={25} 
-//         />
-//       </div>
-//     );
-// };
-
-export default FlouringMachineBox;
+const DryingMachineBoxDashboard = () => {
+    return (
+      <div className="flex flex-wrap gap-11">
+        <DryingMachineBox
+          machineNumber="1"
+          driedDate="13 March 2024"
+          startTime="02:45 PM"
+          filledWeight={24.1}
+          totalWeight={30}
+          lastUpdated="1 Minute Ago"
+          duration={0} // Duration in minutes
+        />
+        <DryingMachineBox
+          machineNumber="3"
+          driedDate="13 March 2024"
+          startTime="02:45 PM"
+          filledWeight={17.2}
+          totalWeight={30}
+          lastUpdated="1 Minute Ago"
+          duration={0} // Duration in minutes
+        />
+        <DryingMachineBox
+          machineNumber="2"
+          driedDate="13 March 2024"
+          startTime="02:45 PM"
+          filledWeight={30}
+          totalWeight={30}
+          lastUpdated="1 Minute Ago"
+          duration={20} // Duration in minutes
+        />
+      </div>
+    );
+  };
+  
+  export default DryingMachineBoxDashboard;
+  
