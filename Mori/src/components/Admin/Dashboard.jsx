@@ -15,6 +15,8 @@ import FlouringMachineBoxDashboard from "./FlouringMachineBox";
 import FlouringMachineBox from "./FlouringMachineBox";
 import AdminShipmentDetails from "./AdminShipmentDetails/AdminShipmentDetails";
 import CentraDetails from "./CentraDetails/CentraDetails";
+import Invoice from "../XYZ/Laptop/Invoice";
+import DashboardContent from "./DashboardContent";
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -236,7 +238,7 @@ const MainXYZ = () => {
           </div>
         </header>
         <main className="max-w-[4096px] mt-32 px-12">
-          {activePage === "Dashboard" && <div>Dashboard Content</div>}
+          {activePage === "Dashboard" && <DashboardContent/>}
 
           {/* Centra Details Page */}
           {activePage === "Centra Details" && <CentraDetails />}
