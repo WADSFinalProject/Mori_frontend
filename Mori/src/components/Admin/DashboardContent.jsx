@@ -15,7 +15,7 @@ const DashboardContent = () => {
         datasets: [
           {
             data: [47.1, 40],
-            backgroundColor: ['#3182CE', '#38A169'],
+            backgroundColor: ['#176E76', '#4D946D'],
             borderWidth: 0,
           },
         ],
@@ -34,13 +34,23 @@ const DashboardContent = () => {
 
   return (
       <div className=" bg-white p-3">
-        <div>
+        <div className='flex justify-between items-center'>
             <h1 className="text-3xl font-bold mb-6">Overview</h1>
+            <div className="inline-flex items-center border rounded-full px-4 py-2">
+              <svg className="w-4 h-4 text-black mr-2" width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.60938 8.85449C3.45443 8.85449 3.32454 8.80208 3.21973 8.69727C3.11491 8.59245 3.0625 8.46256 3.0625 8.30762C3.0625 8.15267 3.11491 8.02506 3.21973 7.9248C3.32454 7.81999 3.45443 7.76758 3.60938 7.76758H6.51465V3.83008C6.51465 3.67969 6.56706 3.55208 6.67188 3.44727C6.77669 3.34245 6.9043 3.29004 7.05469 3.29004C7.20964 3.29004 7.33952 3.34245 7.44434 3.44727C7.54915 3.55208 7.60156 3.67969 7.60156 3.83008V8.30762C7.60156 8.46256 7.54915 8.59245 7.44434 8.69727C7.33952 8.80208 7.20964 8.85449 7.05469 8.85449H3.60938ZM7.06152 15.0615C6.09538 15.0615 5.1862 14.877 4.33398 14.5078C3.48177 14.1432 2.72982 13.6351 2.07812 12.9834C1.43099 12.3317 0.922852 11.5798 0.553711 10.7275C0.18457 9.87533 0 8.96615 0 8C0 7.03385 0.18457 6.12467 0.553711 5.27246C0.922852 4.42025 1.43099 3.67057 2.07812 3.02344C2.72982 2.37174 3.47949 1.86133 4.32715 1.49219C5.17936 1.12305 6.08854 0.938477 7.05469 0.938477C8.02539 0.938477 8.93685 1.12305 9.78906 1.49219C10.6413 1.86133 11.3932 2.37174 12.0449 3.02344C12.6966 3.67057 13.207 4.42025 13.5762 5.27246C13.9453 6.12467 14.1299 7.03385 14.1299 8C14.1299 8.96615 13.9453 9.87533 13.5762 10.7275C13.207 11.5798 12.6966 12.3317 12.0449 12.9834C11.3932 13.6351 10.6413 14.1432 9.78906 14.5078C8.93685 14.877 8.02767 15.0615 7.06152 15.0615ZM7.06152 13.667C7.84994 13.667 8.58594 13.5212 9.26953 13.2295C9.95312 12.9378 10.5547 12.5322 11.0742 12.0127C11.5938 11.4932 11.9993 10.8916 12.291 10.208C12.5827 9.52441 12.7285 8.78841 12.7285 8C12.7285 7.21615 12.5827 6.48242 12.291 5.79883C11.9993 5.11068 11.5938 4.50684 11.0742 3.9873C10.5547 3.46777 9.95085 3.06217 9.2627 2.77051C8.5791 2.47884 7.8431 2.33301 7.05469 2.33301C6.27083 2.33301 5.53483 2.47884 4.84668 2.77051C4.16309 3.06217 3.5638 3.46777 3.04883 3.9873C2.53385 4.50684 2.13053 5.11068 1.83887 5.79883C1.5472 6.48242 1.40137 7.21615 1.40137 8C1.40137 8.78841 1.5472 9.52441 1.83887 10.208C2.13053 10.8916 2.53385 11.4932 3.04883 12.0127C3.56836 12.5322 4.16992 12.9378 4.85352 13.2295C5.54167 13.5212 6.27767 13.667 7.06152 13.667Z" fill="black"/>
+              </svg>
+              <span className="text-black font-semibold mr-2">30 Days</span>
+              <span className="text-gray-500">Oct 26/24 - Nov 26/24</span>
+              <svg className="w-4 h-4 text-black ml-2" width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.60938 8.85449C3.45443 8.85449 3.32454 8.80208 3.21973 8.69727C3.11491 8.59245 3.0625 8.46256 3.0625 8.30762C3.0625 8.15267 3.11491 8.02506 3.21973 7.9248C3.32454 7.81999 3.45443 7.76758 3.60938 7.76758H6.51465V3.83008C6.51465 3.67969 6.56706 3.55208 6.67188 3.44727C6.77669 3.34245 6.9043 3.29004 7.05469 3.29004C7.20964 3.29004 7.33952 3.34245 7.44434 3.44727C7.54915 3.55208 7.60156 3.67969 7.60156 3.83008V8.30762C7.60156 8.46256 7.54915 8.59245 7.44434 8.69727C7.33952 8.80208 7.20964 8.85449 7.05469 8.85449H3.60938ZM7.06152 15.0615C6.09538 15.0615 5.1862 14.877 4.33398 14.5078C3.48177 14.1432 2.72982 13.6351 2.07812 12.9834C1.43099 12.3317 0.922852 11.5798 0.553711 10.7275C0.18457 9.87533 0 8.96615 0 8C0 7.03385 0.18457 6.12467 0.553711 5.27246C0.922852 4.42025 1.43099 3.67057 2.07812 3.02344C2.72982 2.37174 3.47949 1.86133 4.32715 1.49219C5.17936 1.12305 6.08854 0.938477 7.05469 0.938477C8.02539 0.938477 8.93685 1.12305 9.78906 1.49219C10.6413 1.86133 11.3932 2.37174 12.0449 3.02344C12.6966 3.67057 13.207 4.42025 13.5762 5.27246C13.9453 6.12467 14.1299 7.03385 14.1299 8C14.1299 8.96615 13.9453 9.87533 13.5762 10.7275C13.207 11.5798 12.6966 12.3317 12.0449 12.9834C11.3932 13.6351 10.6413 14.1432 9.78906 14.5078C8.93685 14.877 8.02767 15.0615 7.06152 15.0615ZM7.06152 13.667C7.84994 13.667 8.58594 13.5212 9.26953 13.2295C9.95312 12.9378 10.5547 12.5322 11.0742 12.0127C11.5938 11.4932 11.9993 10.8916 12.291 10.208C12.5827 9.52441 12.7285 8.78841 12.7285 8C12.7285 7.21615 12.5827 6.48242 12.291 5.79883C11.9993 5.11068 11.5938 4.50684 11.0742 3.9873C10.5547 3.46777 9.95085 3.06217 9.2627 2.77051C8.5791 2.47884 7.8431 2.33301 7.05469 2.33301C6.27083 2.33301 5.53483 2.47884 4.84668 2.77051C4.16309 3.06217 3.5638 3.46777 3.04883 3.9873C2.53385 4.50684 2.13053 5.11068 1.83887 5.79883C1.5472 6.48242 1.40137 7.21615 1.40137 8C1.40137 8.78841 1.5472 9.52441 1.83887 10.208C2.13053 10.8916 2.53385 11.4932 3.04883 12.0127C3.56836 12.5322 4.16992 12.9378 4.85352 13.2295C5.54167 13.5212 6.27767 13.667 7.06152 13.667Z" fill="black"/>
+              </svg>
+            </div>
         </div>
         <div className='flex'>
-        <div className="w-full lg:w-1/3 mt-6 mr-10 ml-3">
+        <div className="w-full lg:w-2/3 mt-6 mr-10 ml-3">
                   <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-                    <h3 className="text-2xl font-bold mb-4 flex items-center">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center">
                       <svg
                         width="40"
                         height="40"
@@ -154,34 +164,33 @@ const DashboardContent = () => {
                   </div>
                 </div>
 
-                <div className="w-full lg:w-1/3 mt-6">
+                <div className="w-full lg:w-2/3 mt-6">
                     <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-                        <div className="bg-white p-4 rounded-lg shadow-sm">
                             <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
                             <div className="flex items-center justify-center h-full">
                             <div className="relative w-48 h-48">
                                 <Doughnut data={chartData} options={gaugeOptions} />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
                                 <span className="text-4xl font-bold">87.1%</span>
-                                <span className="text-green-500 text-lg">^12.1%</span>
+                                <span className="text-[#A7AD6F] text-lg">^12.1%</span>
                                 </div>
                             </div>
                             </div>
-                            <div className="flex justify-center mt-3">
-                            <div className="flex items-center mr-4">
-                                <span className="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                                <span className="text-gray-700">47.1% Wet to Dry Leaves</span>
+                            <div className="flex mt-3 flex-wrap">
+                                <div className="flex items-center mr-4">
+                                    <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+                                    <span className="text-gray-700">47.1% Wet to Dry Leaves</span>
+                                </div>
+                                <div className="flex items-center mr-4">
+                                    <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+                                    <span className="text-gray-700">40% Dry to Floured Leaves</span>
+                                </div>
                             </div>
-                            <div className="flex items-center">
-                                <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                                <span className="text-gray-700">40% Dry to Floured Leaves</span>
-                            </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
 
-            </div>
             </div>
   );
 };
