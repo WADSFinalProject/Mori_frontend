@@ -89,6 +89,8 @@ const XyzDetails = () => {
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
           XYZ
         </div>
+
+        <div className="flex flex-col p-4 rounded-xl bg-[#CCE8EA] w-1/4 gap-1">
         <div className="flex flex-col p-4 rounded bg-[#F2F9A9] w-1/4 gap-1">
           <div className="text-[#828282] font-vietnam text-sm font-medium">
             Total Warehouse
