@@ -1,16 +1,18 @@
 import React from "react";
 
 export const TableComponent = ({ data }) => {
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
   return (
     <div className="overflow-auto rounded-md border-2 border-solid max-h-80">
       <table className="w-full border-separate border-spacing-0">
         <thead className="sticky bg-white top-0">
           <tr>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Location
-            </th>
-            <th className="text-base font-medium text-center border-b-2 py-3">
-              PIC Name
+              Warehouse Name
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
               Email
@@ -19,69 +21,58 @@ export const TableComponent = ({ data }) => {
               Phone
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Drying Machines
+              Location
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Flouring Machines
+              Created Date
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Actions
+              Action
             </th>
           </tr>
         </thead>
-        <tbody className="">
+        <tbody>
           {data.map((row, index) => (
             <tr
               key={row.id}
-              className={` ${
+              className={`${
                 index === data.length - 1 ? "border-b-0" : "border-b-2"
               }`}
             >
               <td
-                className={`font-semibold text-black text-base text-center ${
+                className={`font-semibold text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
-                {row.location}
+                {row.warehouseName}
               </td>
               <td
-                className={`font-normal text-black text-base text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {row.picName}
-              </td>
-              <td
-                className={`font-normal text-base text-black text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
                 {row.email}
               </td>
               <td
-                className={`font-normal text-base text-black text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
                 {row.phone}
               </td>
               <td
-                className={`font-semibold text-black text-sm text-center ${
+                className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
-                <div className="bg-[#9AD1B3] py-2 rounded-md inline-block px-4">
-                  {row.dryingMachines} Machines
-                </div>
+                Kecamatan <b>{row.location}</b>
               </td>
               <td
-                className={`font-semibold text-black text-sm text-center ${
+                className={`font-medium text-[#828282] text-sm text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+                }`}
               >
-                <div className="bg-[#E0EA74] py-2 rounded-md inline-block px-4">
-                  {row.flouringMachines} Machines
-                </div>
+                {formatDate(row.createdDate)}
               </td>
               <td
                 className={`py-4 ${
@@ -89,7 +80,7 @@ export const TableComponent = ({ data }) => {
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <button
+                <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
                     onClick={null}
                   >
@@ -106,10 +97,7 @@ export const TableComponent = ({ data }) => {
                       />
                     </svg>
                   </button>
-                  <button
-                    className="pl-[0.075rem] flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={null}
-                  >
+                  {/* <button className="pl-[0.075rem] flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-6 h-6">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="8"
@@ -122,7 +110,7 @@ export const TableComponent = ({ data }) => {
                         fill="black"
                       />
                     </svg>
-                  </button>
+                  </button> */}
                 </div>
               </td>
             </tr>

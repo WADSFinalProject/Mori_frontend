@@ -5,7 +5,7 @@ const AdminShipmentDetails = () => {
   const data = [
     {
       id: 1,
-      batchId: ['#10202', '#10200'],
+      batchId: ["#10202", "#10200"],
       shipmentId: "100029837238",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
@@ -15,7 +15,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 2,
-      batchId: ['#10202', '#10200'],
+      batchId: ["#10202", "#10200"],
       shipmentId: "100029837239",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
@@ -25,7 +25,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 3,
-      batchId: ['#10202', '#10200'],
+      batchId: ["#10202", "#10200"],
       shipmentId: "100029837240",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
@@ -55,7 +55,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 6,
-      batchId: ['#10202', '#10200'],
+      batchId: ["#10202", "#10200"],
       shipmentId: "100029837243",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
@@ -75,7 +75,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 8,
-      batchId: ['#10202', '#10200', '#10203'],
+      batchId: ["#10202", "#10200", "#10203"],
       shipmentId: "100029837246",
       driedDate: ["11/11/24", "12/12/24", "10/10/24"],
       flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
@@ -95,7 +95,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 10,
-      batchId: ['#10202', '#10200', '#10203'],
+      batchId: ["#10202", "#10200", "#10203"],
       shipmentId: "100029837290",
       driedDate: ["11/11/24", "12/12/24", "10/10/24"],
       flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
@@ -105,7 +105,7 @@ const AdminShipmentDetails = () => {
     },
     {
       id: 11,
-      batchId: ['#10202', '#10200'],
+      batchId: ["#10202", "#10200"],
       shipmentId: "100029837249",
       driedDate: ["11/11/24", "12/12/24"],
       flouredDate: ["11/11/24", "12/12/24"],
@@ -122,7 +122,7 @@ const AdminShipmentDetails = () => {
 
   useEffect(() => {
     // Calculate total shipments count
-    const uniqueShipmentIds = new Set(data.map(item => item.shipmentId));
+    const uniqueShipmentIds = new Set(data.map((item) => item.shipmentId));
     setTotalShipments(uniqueShipmentIds.size);
 
     // Sort and filter data
@@ -141,9 +141,8 @@ const AdminShipmentDetails = () => {
   };
 
   const handleSearchAndSort = (searchValue, sortValue) => {
-    let filteredData = data.filter(
-      (row) =>
-        row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
+    let filteredData = data.filter((row) =>
+      row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
     if (sortValue === "new-old") {
@@ -163,24 +162,26 @@ const AdminShipmentDetails = () => {
   };
 
   return (
-    <div className="w-[1072px] bg-transparent">
-      <div className="flex flex-col w-full gap-5 mt-8 mx-12">
+    <div className="bg-transparent">
+      <div className="flex flex-col w-full gap-5 mt-8">
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
           Shipment Details
         </div>
 
-        <div className="w-[293px] h-[108px] p-6 bg-[#00000033] rounded border border-black/opacity-20 justify-start items-center gap-4 inline-flex">
-        <div className="flex-col justify-start items-start gap-1 inline-flex">
-          <div className="text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Total Shipments</div>
-          <div className="text-black text-3xl font-semibold font-['Be Vietnam Pro']">{totalShipments} Shipments</div>
+        <div className="flex flex-col p-4 rounded bg-[#CCE8EA] w-1/4 gap-1">
+          <div className="text-[#828282] font-vietnam text-sm font-medium">
+            Total Shipment
+          </div>
+          <div className="text-black font-vietnam text-3xl font-semibold">
+            {sortedData.length} Shipment
+          </div>
         </div>
-         </div>
 
         <div className="flex flex-row w-full justify-between items-center">
           <label className="input input-bordered flex items-center gap-2 rounded-md px-5 h-10">
             <input
               type="text"
-              className="grow border-none focus:border-none focus:ring-0 m-0 p-0 font-vietnam w-96"
+              className="grow border-none focus:border-none focus:ring-0 m-0 p-0 font-vietnam w-64"
               placeholder="Search"
               value={searchQuery}
               onChange={handleSearchChange}
