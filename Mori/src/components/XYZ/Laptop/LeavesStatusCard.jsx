@@ -131,7 +131,7 @@ const LeavesStatusDashboard = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-black text-[28px] font-extrabold font-['Be Vietnam Pro'] mb-[-5px]">Centra Semang, {selectedWarehouse}</h1>
+        <h1 className="text-black text-[28px] font-bold font-['Be Vietnam Pro'] mb-[-5px]">Centra Semang, {selectedWarehouse}</h1>
         <div className="relative">
           <button
             className="flex items-center text-[#A7AD6F] font-semibold"
@@ -193,7 +193,7 @@ const LeavesStatusDashboard = () => {
         />
       </div>
 
-      <div className="mt-4 mb-[-5px] text-black text-[28px] font-extrabold font-['Be Vietnam Pro']">
+      <div className="mt-4 mb-[-5px] text-black text-[28px] font-semibold font-['Be Vietnam Pro']">
         Drying Machine
       </div>
 
@@ -214,7 +214,7 @@ const LeavesStatusDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-4 mb-[-5px] text-black text-[28px] font-extrabold font-['Be Vietnam Pro']">
+      <div className="mt-4 mb-[-5px] text-black text-[28px] font-semibold font-['Be Vietnam Pro']">
         Flouring Machine
       </div>
 
