@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const HarbourDetails = () => {
   const initialNewHarbourState = {
@@ -19,7 +20,25 @@ const HarbourDetails = () => {
   const [isEditVisible, setEditVisible] = useState(false);
   const [editHarbourIndex, setEditHarbourIndex] = useState(null);
   const [newHarbour, setNewHarbour] = useState(initialNewHarbourState);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [harbourToDelete, setHarbourToDelete] = useState(null);
 
+
+  const handleDeleteClick = (index) => {
+    setHarbourToDelete(sortedData[index]);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    const updatedData = data.filter((_, index) => index !== editHarbourIndex);
+    setData(updatedData);
+    setEditVisible(false);
+    setNewHarbour(initialNewHarbourState);
+    setEditHarbourIndex(null);
+    handleSearchAndSort(updatedData, sortKey);
+    setDeleteModalOpen(false);
+  };
+  
   useEffect(() => {
     fetch("/data_harbour.json")
       .then((response) => {
@@ -256,7 +275,7 @@ const HarbourDetails = () => {
           </div>
 
           <div className="overflow-hidden">
-            <TableComponent data={sortedData} onEditClick={handleEditClick} />
+          <TableComponent data={sortedData} onEditClick={handleEditClick} />
           </div>
         </div>
       ) : (
@@ -265,114 +284,132 @@ const HarbourDetails = () => {
             <h2 className="text-4xl font-bold">{isAddNewVisible ? 'Add Harbour' : 'Edit Harbour'}</h2>
           </div>
           <form className="grid grid-cols-2 gap-4">
-            <input
-              name="harbourName"
-              value={newHarbour.harbourName}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Harbour Name"
-            />
-            <input
-              name="location"
-              value={newHarbour.location}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Location"
-            />
-            <input
-              name="phone"
-              value={newHarbour.phone}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Phone"
-            />
-            <div className="col-span-1">
-              <label className="block mb-1">Start time:</label>
-              <div className="relative max-w-sm flex items-center">
-                <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
-                  <select
-                    name="openingHour"
-                    className="bg-transparent text-xs appearance-none outline-none border-none text-center"
-                    value={newHarbour.openingHour?.split(':')[0] || ''}
-                    onChange={(e) => setNewHarbour(prevState => ({
-                      ...prevState,
-                      openingHour: `${e.target.value}:${prevState.openingHour?.split(':')[1] || '00'}`,
-                    }))}
-                  >
-                    {[...Array(24).keys()].map((hour) => (
-                      <option key={hour} value={String(hour).padStart(2, '0')}>{String(hour).padStart(2, '0')}</option>
-                    ))}
-                  </select>
-                  <span className="text-s mr-3">:</span>
-                  <select
-                    name="openingMinutes"
-                    className="bg-transparent text-xs appearance-none outline-none mr-4 border-none"
-                    value={newHarbour.openingHour?.split(':')[1] || ''}
-                    onChange={(e) => setNewHarbour(prevState => ({
-                      ...prevState,
-                      openingHour: `${prevState.openingHour?.split(':')[0] || '00'}:${e.target.value}`,
-                    }))}
-                  >
-                    {[...Array(60).keys()].map((minute) => (
-                      <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="col-span-1">
-              <label className="block mb-1">End time:</label>
-              <div className="relative max-w-sm flex items-center">
-                <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
-                  <select
-                    name="closingHour"
-                    className="bg-transparent text-xs appearance-none outline-none border-none text-center"
-                    value={newHarbour.closingHour?.split(':')[0] || ''}
-                    onChange={(e) => setNewHarbour(prevState => ({
-                      ...prevState,
-                      closingHour: `${e.target.value}:${prevState.closingHour?.split(':')[1] || '00'}`,
-                    }))}
-                  >
-                    {[...Array(24).keys()].map((hour) => (
-                      <option key={hour} value={String(hour).padStart(2, '0')}>{String(hour).padStart(2, '0')}</option>
-                    ))}
-                  </select>
-                  <span className="text-s mr-3">:</span>
-                  <select
-                    name="closingMinutes"
-                    className="bg-transparent text-xs appearance-none outline-none mr-4 border-none"
-                    value={newHarbour.closingHour?.split(':')[1] || ''}
-                    onChange={(e) => setNewHarbour(prevState => ({
-                      ...prevState,
-                      closingHour: `${prevState.closingHour?.split(':')[0] || '00'}:${e.target.value}`,
-                    }))}
-                  >
-                    {[...Array(60).keys()].map((minute) => (
-                      <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="col-span-2 flex justify-end">
-              <button
-                type="button"
-                className="px-4 py-2 text-white bg-gray-500 rounded-lg mr-2"
-                onClick={handleBackToList}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 text-white bg-[#CD4848] rounded-lg"
-                onClick={isAddNewVisible ? addHarbour : updateHarbour}
-              >
-                {isAddNewVisible ? 'Add Harbour' : 'Save Changes'}
-              </button>
-            </div>
+  <input
+    name="harbourName"
+    value={newHarbour.harbourName}
+    onChange={handleInputChange}
+    className="col-span-2 p-2 border rounded-lg"
+    placeholder="Harbour Name"
+  />
+  <input
+    name="location"
+    value={newHarbour.location}
+    onChange={handleInputChange}
+    className="col-span-2 p-2 border rounded-lg"
+    placeholder="Location"
+  />
+  <input
+    name="phone"
+    value={newHarbour.phone}
+    onChange={handleInputChange}
+    className="col-span-2 p-2 border rounded-lg"
+    placeholder="Phone"
+  />
+  <div className="col-span-1">
+    <label className="block mb-1">Start time:</label>
+    <div className="relative max-w-sm flex items-center">
+      <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
+        <select
+          name="openingHour"
+          className="bg-transparent text-xs appearance-none outline-none border-none text-center"
+          value={newHarbour.openingHour?.split(':')[0] || ''}
+          onChange={(e) => setNewHarbour(prevState => ({
+            ...prevState,
+            openingHour: `${e.target.value}:${prevState.openingHour?.split(':')[1] || '00'}`,
+          }))}
+        >
+          {[...Array(24).keys()].map((hour) => (
+            <option key={hour} value={String(hour).padStart(2, '0')}>{String(hour).padStart(2, '0')}</option>
+          ))}
+        </select>
+        <span className="text-s mr-3">:</span>
+        <select
+          name="openingMinutes"
+          className="bg-transparent text-xs appearance-none outline-none mr-4 border-none"
+          value={newHarbour.openingHour?.split(':')[1] || ''}
+          onChange={(e) => setNewHarbour(prevState => ({
+            ...prevState,
+            openingHour: `${prevState.openingHour?.split(':')[0] || '00'}:${e.target.value}`,
+          }))}
+        >
+          {[...Array(60).keys()].map((minute) => (
+            <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div className="col-span-1">
+    <label className="block mb-1">End time:</label>
+    <div className="relative max-w-sm flex items-center">
+      <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
+        <select
+          name="closingHour"
+          className="bg-transparent text-xs appearance-none outline-none border-none text-center"
+          value={newHarbour.closingHour?.split(':')[0] || ''}
+          onChange={(e) => setNewHarbour(prevState => ({
+            ...prevState,
+            closingHour: `${e.target.value}:${prevState.closingHour?.split(':')[1] || '00'}`,
+          }))}
+        >
+          {[...Array(24).keys()].map((hour) => (
+            <option key={hour} value={String(hour).padStart(2, '0')}>{String(hour).padStart(2, '0')}</option>
+          ))}
+        </select>
+        <span className="text-s mr-3">:</span>
+        <select
+          name="closingMinutes"
+          className="bg-transparent text-xs appearance-none outline-none mr-4 border-none"
+          value={newHarbour.closingHour?.split(':')[1] || ''}
+          onChange={(e) => setNewHarbour(prevState => ({
+            ...prevState,
+            closingHour: `${prevState.closingHour?.split(':')[0] || '00'}:${e.target.value}`,
+          }))}
+        >
+          {[...Array(60).keys()].map((minute) => (
+            <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div className="col-span-2 flex justify-between">
+  {isEditVisible && (
+    <button
+      type="button"
+      className="px-4 py-2 text-white bg-[#852222] rounded-lg"
+      onClick={() => setDeleteModalOpen(true)}
+    >
+      Delete Harbour
+    </button>
+  )}
+  <div>
+    <button
+      type="button"
+      className="px-4 py-2 text-white bg-gray-500 rounded-lg mr-2"
+      onClick={handleBackToList}
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      className="px-4 py-2 text-white bg-[#CD4848] rounded-lg"
+      onClick={isAddNewVisible ? addHarbour : updateHarbour}
+    >
+      {isAddNewVisible ? 'Add Harbour' : 'Save Changes'}
+    </button>
+  </div>
+</div>
+
           </form>
         </div>
       )}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        harbourName={harbourToDelete?.harbourName}
+      />
     </div>
   );
 };

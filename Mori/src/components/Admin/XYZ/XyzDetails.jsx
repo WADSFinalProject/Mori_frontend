@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
@@ -19,6 +20,23 @@ const XyzDetails = () => {
   const [isEditVisible, setEditVisible] = useState(false);
   const [editWarehouseIndex, setEditWarehouseIndex] = useState(null);
   const [newWarehouse, setNewWarehouse] = useState(initialNewWarehouseState);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [warehouseToDelete, setWarehouseToDelete] = useState(null);
+
+  const handleDeleteClick = (index) => {
+    setWarehouseToDelete(sortedData[index]);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    const updatedData = data.filter((_, index) => index !== editWarehouseIndex);
+    setData(updatedData);
+    setEditVisible(false);
+    setNewWarehouse(initialNewWarehouseState);
+    setEditWarehouseIndex(null);
+    handleSearchAndSort(updatedData, sortKey);
+    setDeleteModalOpen(false);
+  };
 
   useEffect(() => {
     fetch("/data_xyz.json")
@@ -272,7 +290,7 @@ const XyzDetails = () => {
           </div>
 
           <div className="overflow-hidden">
-            <TableComponent data={sortedData} onEditClick={handleEditClick} />
+            <TableComponent data={sortedData} onEditClick={handleEditClick} onDeleteClick={handleDeleteClick} />
           </div>
         </div>
       ) : (
@@ -309,27 +327,42 @@ const XyzDetails = () => {
               className="col-span-2 p-2 border rounded-lg"
               placeholder="Location"
             />
-            <div className="col-span-2">              
-            </div>
-            <div className="col-span-2 flex justify-end">
-              <button
-                type="button"
-                className="px-4 py-2 text-white bg-gray-500 rounded-lg mr-2"
-                onClick={handleBackToList}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 text-white bg-[#CD4848] rounded-lg"
-                onClick={isAddNewVisible ? addWarehouse : updateWarehouse}
-              >
-                {isAddNewVisible ? 'Add Warehouse' : 'Save Changes'}
-              </button>
+            <div className="col-span-2 flex justify-between">
+              {isEditVisible && (
+                <button
+                  type="button"
+                  className="px-4 py-2 text-white bg-[#852222] rounded-lg"
+                  onClick={() => setDeleteModalOpen(true)}
+                >
+                  Delete Warehouse
+                </button>
+              )}
+              <div>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-white bg-gray-500 rounded-lg mr-2"
+                  onClick={handleBackToList}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-white bg-[#CD4848] rounded-lg"
+                  onClick={isAddNewVisible ? addWarehouse : updateWarehouse}
+                >
+                  {isAddNewVisible ? 'Add Warehouse' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </form>
         </div>
       )}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        warehouseName={warehouseToDelete?.warehouseName}
+      />
     </div>
   );
 };
