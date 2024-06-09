@@ -158,13 +158,6 @@ const CentraDetails = () => {
         <div className="flex flex-col w-full gap-5">
           <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
             Centra Details
-      <div className="flex flex-col w-full gap-5">
-        <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-          Centra Details
-        </div>
-        <div className="flex flex-col p-4 rounded-xl bg-[#CCE8EA] w-1/4 gap-1">
-          <div className="text-[#828282] font-vietnam text-sm font-medium">
-            Total Centra
           </div>
           <div className="flex flex-col p-4 rounded bg-[#CCE8EA] w-1/4 gap-1">
             <div className="text-[#828282] font-vietnam text-sm font-medium">
