@@ -16,215 +16,224 @@ const Login = () => {
   ]);
   const { width } = useWindowSize(); // Get the window width
   const [isClicked, setIsClicked] = useState(false);
-    const [showVerificationForm, setShowVerificationForm] = useState(false);
-    const [showCodeEntry, setShowCodeEntry] = useState(false);
-    const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
-    const [timer, setTimer] = useState(59); // Start timer at 59 seconds
-    const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
-    const timerInterval = useRef(null);
-    const [success, setSuccess] = useState(false); 
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
-    const dummyAccount = { email: 'test@example.com', password: 'Test1234' }; // Dummy account details
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [showCodeEntry, setShowCodeEntry] = useState(false);
+  const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
+  const [timer, setTimer] = useState(59); // Start timer at 59 seconds
+  const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
+  const timerInterval = useRef(null);
+  const [success, setSuccess] = useState(false); 
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
+  const dummyAccount = { email: 'gde.agastya@binus.ac.id', password: '1234' }; // Dummy account details
+  const [showLoading, setShowLoading] = useState(false); // New state for loading screen
 
-
-    const togglePasswordVisibility = () => {
-      setShowPassword(!showPassword);
-    };
-    const toggleConfirmPasswordVisibility = () => {
-      setShowConfirmPassword(!showConfirmPassword); 
-    };
+  const LoadingScreen = () => (
+    <div className="text-center">
+      <div className="w-32 h-32 border-4 border-dashed rounded-full animate-spin border-[#4D946D] mx-auto"></div>
+      <h2 className="text-zinc-900 dark:text-white mt-4 font-bold text-xl">Loading...</h2>
+      <p className="text-zinc-600 dark:text-zinc-400 text-lg">Your OTP is being sent</p>
+    </div>
+  );
   
-    const passwordInputType = showPassword ? 'text' : 'password';
-    const confirmPasswordInputType = showConfirmPassword ? 'text' : 'password'; // Use this for the confirm password input
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword); 
+  };
 
+  const passwordInputType = showPassword ? 'text' : 'password';
+  const confirmPasswordInputType = showConfirmPassword ? 'text' : 'password'; // Use this for the confirm password input
 
-    const handlePasswordReset = (event) => {
-      event.preventDefault();
-      let valid = true;
-      let errorMsg = '';
-    
-      // Password validation rules
-      if (password.length < 8) {
-        valid = false;
-        errorMsg = 'Password must be at least 8 characters long.';
-      } else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
-        valid = false;
-        errorMsg = 'Password must contain letters and numbers.';
-      } else if (password !== confirmPassword) {
-        valid = false;
-        errorMsg = 'Passwords do not match.';
-      }
-    
-      if (!valid) {
-        setPasswordError(errorMsg);
-      } else {
-        // Reset all relevant states to return to the login view
-        setPasswordError('');
-        setPassword('');  // Reset the password
-        setConfirmPassword('');  // Reset the confirm password
-        setSuccess(false);  // Reset success to hide the reset password form
-        setShowVerificationForm(false);  // Ensure no forms are shown
-        setShowCodeEntry(false);  // Ensure the verification code entry is not shown
-        setIsClicked(false);  // Reset to initial state to show the login button again
-      }
-    };
-    
-    
+  const handlePasswordReset = (event) => {
+    event.preventDefault();
+    let valid = true;
+    let errorMsg = '';
   
-    useEffect(() => {
-      if (showCodeEntry && timer > 0) {
-        const interval = setInterval(() => {
-          setTimer(prevTime => prevTime - 1);
-        }, 1000);
-        return () => clearInterval(interval);
-      }
-    }, [showCodeEntry, timer]);
+    // Password validation rules
+    if (password.length < 8) {
+      valid = false;
+      errorMsg = 'Password must be at least 8 characters long.';
+    } else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+      valid = false;
+      errorMsg = 'Password must contain letters and numbers.';
+    } else if (password !== confirmPassword) {
+      valid = false;
+      errorMsg = 'Passwords do not match.';
+    }
   
-    const handleLoginClick = () => {
-      setIsClicked(true);
-    };
-    const handleLoginSubmit = (event) => {
-      event.preventDefault();
-      const enteredEmail = document.getElementById('login-email').value;
-      const enteredPassword = document.getElementById('login-password').value;
-    
-      if (enteredEmail === dummyAccount.email && enteredPassword === dummyAccount.password) {
+    if (!valid) {
+      setPasswordError(errorMsg);
+    } else {
+      // Reset all relevant states to return to the login view
+      setPasswordError('');
+      setPassword('');  // Reset the password
+      setConfirmPassword('');  // Reset the confirm password
+      setSuccess(false);  // Reset success to hide the reset password form
+      setShowVerificationForm(false);  // Ensure no forms are shown
+      setShowCodeEntry(false);  // Ensure the verification code entry is not shown
+      setIsClicked(false);  // Reset to initial state to show the login button again
+    }
+  };
+  
+  useEffect(() => {
+    if (showCodeEntry && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer(prevTime => prevTime - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [showCodeEntry, timer]);
+
+  const handleLoginClick = () => {
+    setIsClicked(true);
+    setInvalidCode(false); // Reset the invalid code state
+    setTimer(59); // Reset the timer
+  };
+  
+  
+  const handleLoginSubmit = (event) => {
+    event.preventDefault();
+    const enteredEmail = document.getElementById('login-email').value;
+    const enteredPassword = document.getElementById('login-password').value;
+  
+    if (enteredEmail === dummyAccount.email && enteredPassword === dummyAccount.password) {
+      setShowLoading(true); // Show loading screen
+      setInvalidCode(false); // Reset the invalid code state
+      setTimer(59); // Reset the timer
+      setTimeout(() => {
+        setShowLoading(false);
         setIsLoggedIn(true); // Set login status to true
         setShowCodeEntry(true); // Show the code entry form for login verification
-      } else {
-        alert('Invalid login credentials!');
-      }
-    };
-    const handleLoginVerificationSubmit = () => {
-      const dummyCode = "5678"; // Different dummy code for login verification
-    
-      if (verificationCode.join("") === dummyCode) {
-        console.log("Login Verification Code Submitted:", verificationCode.join(""));
-        alert('Login verified successfully!');
-        setShowCodeEntry(false);
-        setIsLoggedIn(false);
-      } else {
-        console.log("Incorrect Login Verification Code");
-        setInvalidCode(true); // Set invalid code message to be visible
-        for (let i = 0; i < verificationCode.length; i++) {
-          const inputBox = document.getElementById(`code-${i}`);
-          if (inputBox) {
-            inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';
-          }
+      }, 5000); // 5 seconds delay
+    } else {
+      alert('Invalid login credentials!');
+    }
+  };
+  
+  
+  
+  const handleLoginVerificationSubmit = () => {
+    const dummyCode = "5678"; // Different dummy code for login verification
+  
+    if (verificationCode.join("") === dummyCode) {
+      console.log("Login Verification Code Submitted:", verificationCode.join(""));
+      alert('Login verified successfully!');
+      setShowCodeEntry(false);
+      setIsLoggedIn(false);
+    } else {
+      console.log("Incorrect Login Verification Code");
+      setInvalidCode(true); // Set invalid code message to be visible
+      for (let i = 0; i < verificationCode.length; i++) {
+        const inputBox = document.getElementById(`code-${i}`);
+        if (inputBox) {
+          inputBox.style.borderColor = '#902E2E';
+          inputBox.style.color = '#902E2E';
         }
       }
-    };
-    
-    const handleForgotPassword = () => {
-      setShowVerificationForm(true);
-    };
+    }
+  };
   
-    const handleSendVerification = (event) => {
-      event.preventDefault();
+  const handleForgotPassword = () => {
+    setShowVerificationForm(true);
+    setInvalidCode(false); // Reset the invalid code state
+    setTimer(59); // Reset the timer
+  };
+  
+  
+
+  const handleSendVerification = (event) => {
+    event.preventDefault();
+    setShowLoading(true); // Show loading screen
+    setInvalidCode(false); // Reset the invalid code state
+    setTimer(59); // Reset the timer
+    setTimeout(() => {
+      setShowLoading(false);
       setShowVerificationForm(false);
       setShowCodeEntry(true);
-    };
+    }, 5000); // 5 seconds delay
+  };
   
-    const handleCodeInputChange = (index, event) => {
-      const newCode = [...verificationCode];
-      newCode[index] = event.target.value.toUpperCase();
-      setVerificationCode(newCode);
-      if (event.target.value && index < 3) {
-        document.getElementById(`code-${index + 1}`).focus();
-      }
-    };
+  
+  
+
+  const handleCodeInputChange = (index, event) => {
+    const newCode = [...verificationCode];
+    newCode[index] = event.target.value.toUpperCase();
+    setVerificationCode(newCode);
+    if (event.target.value && index < 3) {
+      document.getElementById(`code-${index + 1}`).focus();
+    }
+  };
   const handleResendCode = () => {
     console.log("Resending code...");
     setTimer(60); // Restart the timer without changing the form state
-};
-    const handleSubmit = () => {
-      const dummyCode = "1234";
-  
-      // Check if the entered code matches the dummy code
-      if (verificationCode.join("") === dummyCode) {
-        console.log("Verification Code Submitted:", verificationCode.join(""));
-        setSuccess(true); // Set success state to true
-        setShowCodeEntry(false);
-      } else {
-        console.log("Incorrect Verification Code");
-        setInvalidCode(true); // Set invalid code message to be visible
-        // Apply red border color to input boxes
-        for (let i = 0; i < verificationCode.length; i++) {
-          const inputBox = document.getElementById(`code-${i}`);
-          if (inputBox) {
-            inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';
-          }
+  };
+  const handleSubmit = () => {
+    const dummyCode = "1234";
+
+    // Check if the entered code matches the dummy code
+    if (verificationCode.join("") === dummyCode) {
+      console.log("Verification Code Submitted:", verificationCode.join(""));
+      setSuccess(true); // Set success state to true
+      setShowCodeEntry(false);
+    } else {
+      console.log("Incorrect Verification Code");
+      setInvalidCode(true); // Set invalid code message to be visible
+      // Apply red border color to input boxes
+      for (let i = 0; i < verificationCode.length; i++) {
+        const inputBox = document.getElementById(`code-${i}`);
+        if (inputBox) {
+          inputBox.style.borderColor = '#902E2E';
+          inputBox.style.color = '#902E2E';
         }
       }
-    };
+    }
+  };
+
+  const formatTime = () => {
+    const minutes = Math.floor(timer / 60);
+    const seconds = timer % 60;
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
+
+  const handleKeyDown = (e, index) => {
+    // Reset the border color when a key is pressed
+    const inputBox = document.getElementById(`code-${index}`);
+    if (inputBox) {
+      inputBox.style.borderColor = '';
+      inputBox.style.color = '';
+    }
   
-    const formatTime = () => {
-      const minutes = Math.floor(timer / 60);
-      const seconds = timer % 60;
-      return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    };
+    if (!/^[0-9]{1}$/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete" && e.key !== "Tab" && !e.metaKey) {
+      e.preventDefault();
+    }
   
-    const handleKeyDown = (e, index) => {
-      // Reset the border color when a key is pressed
-      const inputBox = document.getElementById(`code-${index}`);
-      if (inputBox) {
-        inputBox.style.borderColor = '';
-        inputBox.style.color = '';
-      }
-    
-      if (!/^[0-9]{1}$/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete" && e.key !== "Tab" && !e.metaKey) {
-        e.preventDefault();
-      }
-    
-      // Manage backspace or delete key operations
-      if (e.key === "Backspace") {
-        // Check if current box is empty or backspace was pressed
-        if (!verificationCode[index] || index > 0) {
-          e.preventDefault(); // Prevent default to avoid deleting twice
-          const newCode = [...verificationCode];
-          newCode[index] = ""; // Clear current box
-    
-          // Move focus to previous box and clear its content if current was already empty
-          if (index > 0 && !verificationCode[index]) {
-            newCode[index - 1] = "";
-            document.getElementById(`code-${index - 1}`).focus();
-          } else {
-            document.getElementById(`code-${index}`).focus();
-          }
-    
-          setVerificationCode(newCode);
+    // Manage backspace or delete key operations
+    if (e.key === "Backspace") {
+      // Check if current box is empty or backspace was pressed
+      if (!verificationCode[index] || index > 0) {
+        e.preventDefault(); // Prevent default to avoid deleting twice
+        const newCode = [...verificationCode];
+        newCode[index] = ""; // Clear current box
+  
+        // Move focus to previous box and clear its content if current was already empty
+        if (index > 0 && !verificationCode[index]) {
+          newCode[index - 1] = "";
+          document.getElementById(`code-${index - 1}`).focus();
+        } else {
+          document.getElementById(`code-${index}`).focus();
         }
+  
+        setVerificationCode(newCode);
       }
-    };
-    
-
-  // const handleKeyDown = (e, index) => {
-  //   if (
-  //     !/^[0-9]{1}$/.test(e.key) &&
-  //     e.key !== "Backspace" &&
-  //     e.key !== "Delete" &&
-  //     e.key !== "Tab" &&
-  //     !e.metaKey
-  //   ) {
-  //     e.preventDefault();
-  //   }
-    
-
-  //   if (e.key === "Delete" || e.key === "Backspace") {
-  //     const nextIndex = index > 0 ? index - 1 : 0;
-  //     const newInputs = [...inputs];
-  //     newInputs[nextIndex] = "";
-  //     setInputs(newInputs);
-  //     inputRefs.current[nextIndex].current.focus();
-  //   }
-  // };
+    }
+  };
 
   const handleInput = (e, index) => {
     const newInputs = [...inputs];
@@ -265,7 +274,7 @@ const Login = () => {
               <div className={`flex mb-2 transition-transform duration-500 ease-out ${isClicked ? 'transform -translate-y-[calc(28vh+2rem)]' : ''}`}>
                 <img src={mori} alt="morimori logo" className="mr-2 h-12" />
               </div>
-              {!showVerificationForm && !showCodeEntry && !success && !isLoggedIn && (
+              {!showVerificationForm && !showCodeEntry && !success && !isLoggedIn && !showLoading && (
                 <button onClick={handleLoginClick} className={`focus:outline-none ${isClicked ? 'hidden' : ''}`}>
                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mt-2">
                     <img src={ArrowRight} alt="arrow right" className="w-5 h-5" />
@@ -274,11 +283,13 @@ const Login = () => {
               )}
             </div>
           </div>
-  
+
           <div className={`absolute bottom-0 left-0 w-full bg-white rounded-t-3xl transform transition-transform duration-500 ease-in-out ${isClicked ? 'translate-y-0' : 'translate-y-full'}`} style={{ height: '70vh' }}>
-            <div className="flex  justify-center h-full pt-12">
+            <div className="flex justify-center h-full pt-12">
               <div className="w-full max-w-md p-4 mx-auto overflow-auto" style={{ maxHeight: '100%' }}>
-                {showVerificationForm ? (
+                {showLoading ? (
+                  <LoadingScreen />
+                ) : showVerificationForm ? (
                   <>
                     <h1 className="font-vietnam font-bold text-left text-3xl">Forgot Password</h1>
                     <form id="verification-form" className="space-y-4 mt-3" onSubmit={handleSendVerification}>
@@ -359,6 +370,7 @@ const Login = () => {
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                           />
                           <button
+                            type="button"
                             onClick={() => setShowPassword(!showPassword)} 
                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
                           >
@@ -385,6 +397,7 @@ const Login = () => {
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                           />
                           <button
+                            type="button"
                             onClick={toggleConfirmPasswordVisibility}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
                           >
@@ -432,6 +445,7 @@ const Login = () => {
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                           />
                           <button 
+                            type="button"
                             onClick={togglePasswordVisibility} 
                             className="absolute right-3 top-1/2 transform -translate-y-1/2"
                           >
@@ -475,7 +489,7 @@ const Login = () => {
                   <img src={mori} alt="morimori logo" className="mr-2" />
                 )}
               </div>
-              {!showVerificationForm && !showCodeEntry && !success && !isLoggedIn && (
+              {!showVerificationForm && !showCodeEntry && !success && !isLoggedIn && !showLoading && (
                 <button onClick={handleLoginClick} className={`focus:outline-none ${isClicked ? 'hidden' : ''}`}>
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center ">
                     <img src={ArrowRight} alt="arrow right" className="w-6 h-6" />
@@ -485,7 +499,13 @@ const Login = () => {
             </div>
           </div>
           
-          {showVerificationForm ? (
+          {showLoading ? (
+            <div className="absolute top-0 left-0 h-full w-1/2 bg-white transform translate-x-0 transition-transform duration-500 ease-in-out">
+              <div className="flex items-center justify-center h-full">
+                <LoadingScreen />
+              </div>
+            </div>
+          ) : showVerificationForm ? (
             <div className="absolute top-0 left-0 h-full w-1/2 bg-white transform translate-x-0 transition-transform duration-500 ease-in-out">
               <div className="flex items-center justify-center h-full">
                 <div className="w-full max-w-md p-8">
@@ -536,7 +556,7 @@ const Login = () => {
                       Verification code invalid!
                     </div>
                   )}
-      
+    
                   <div className="flex flex-col items-center mt-4">
                     {timer > 0 ? (
                       <div className="text-lg font-medium">{formatTime()}</div>
@@ -577,6 +597,7 @@ const Login = () => {
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                         />
                         <button
+                          type="button"
                           onClick={() => setShowPassword(!showPassword)} 
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
@@ -603,6 +624,7 @@ const Login = () => {
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                         />
                         <button
+                          type="button"
                           onClick={toggleConfirmPasswordVisibility} // Use the toggle function
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
@@ -654,6 +676,7 @@ const Login = () => {
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                         />
                         <button 
+                          type="button"
                           onClick={togglePasswordVisibility} 
                           className="absolute right-5 top-1/2 transform -translate-y-1/2"
                           style={{ width: '20px', height: '20px' }}
@@ -689,7 +712,6 @@ const Login = () => {
       )}
     </>
   );
-  
 }
 
 export default Login;
