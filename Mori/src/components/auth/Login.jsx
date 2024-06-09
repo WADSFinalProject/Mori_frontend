@@ -24,20 +24,21 @@ const Login = () => {
     const timerInterval = useRef(null);
     const [success, setSuccess] = useState(false); 
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [passwordError, setPasswordError] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+    
 
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
     };
-    const toggleConfirmPasswordVisibility = () => {
-      setShowConfirmPassword(!showConfirmPassword); 
-    };
   
+    const toggleConfirmPasswordVisibility = () => {
+      setShowConfirmPassword(!showConfirmPassword);
+    };
     const passwordInputType = showPassword ? 'text' : 'password';
-    const confirmPasswordInputType = showConfirmPassword ? 'text' : 'password'; // Use this for the confirm password input
+  const confirmPasswordInputType = showConfirmPassword ? 'text' : 'password';
 
 
     const handlePasswordReset = (event) => {
@@ -398,15 +399,17 @@ const Login = () => {
                       className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                     />
                     <button 
-                      onClick={togglePasswordVisibility} 
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                    >
-                      <img 
-                        src={showPassword ? hidepass : showpass} 
-                        alt={showPassword ? "Hide Password" : "Show Password"}
-                        className="w-5 h-5"
-                      />
-                    </button>
+  type="button"  // Change the button type to "button" to prevent form submission
+  onClick={togglePasswordVisibility} 
+  className="absolute right-5 top-1/2 transform -translate-y-1/2"
+  style={{ width: '20px', height: '20px' }}
+>
+  <img 
+    src={showPassword ? hidepass : showpass} 
+    alt={showPassword ? "Hide Password" : "Show Password"}
+  />
+</button>
+
                   </div>
                 </div>
                 <div className="flex flex-col items-center">
@@ -623,15 +626,17 @@ const Login = () => {
             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
           />
           <button 
-    onClick={togglePasswordVisibility} 
-    className="absolute right-5 top-1/2 transform -translate-y-1/2"  // Adjust 'right-10' as needed
-    style={{ width: '20px', height: '20px' }}
+  type="button"  // Change the button type to "button" to prevent form submission
+  onClick={togglePasswordVisibility} 
+  className="absolute right-5 top-1/2 transform -translate-y-1/2"
+  style={{ width: '20px', height: '20px' }}
 >
-    <img 
-        src={showPassword ? hidepass : showpass} 
-        alt={showPassword ? "Hide Password" : "Show Password"}
-    />
+  <img 
+    src={showPassword ? hidepass : showpass} 
+    alt={showPassword ? "Hide Password" : "Show Password"}
+  />
 </button>
+
 
         </div>
       </div>
