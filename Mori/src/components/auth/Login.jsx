@@ -5,6 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
+import axios from "axios"; 
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -16,18 +17,19 @@ const Login = () => {
   ]);
   const { width } = useWindowSize(); // Get the window width
   const [isClicked, setIsClicked] = useState(false);
-    const [showVerificationForm, setShowVerificationForm] = useState(false);
-    const [showCodeEntry, setShowCodeEntry] = useState(false);
-    const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
-    const [timer, setTimer] = useState(59); // Start timer at 59 seconds
-    const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
-    const timerInterval = useRef(null);
-    const [success, setSuccess] = useState(false); 
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [showCodeEntry, setShowCodeEntry] = useState(false);
+  const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
+  const [timer, setTimer] = useState(59); // Start timer at 59 seconds
+  const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
+  const timerInterval = useRef(null);
+  const [success, setSuccess] = useState(false); 
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [email, setEmail] = useState('');
 
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
@@ -82,10 +84,22 @@ const Login = () => {
       }
     }, [showCodeEntry, timer]);
   
-    const handleLoginClick = () => {
+
+    const handleLoginClick = async () => {
       setIsClicked(true);
+      try {
+        const response = await axios.post('http://localhost:5173/users/login', {
+          Email: email,
+          Password:password
+        });
+        setShowVerificationForm(true)
+        
+        console.log('Login success:', response.data);
+      } catch (error) {
+        // Handle login error here
+        console.error('Login error:', error);
+      }
     };
-  
     const handleForgotPassword = () => {
       setShowVerificationForm(true);
     };
@@ -383,6 +397,8 @@ const Login = () => {
                     id="login-email"
                     placeholder="Enter Email"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                   />
                 </div>
