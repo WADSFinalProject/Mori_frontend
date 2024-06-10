@@ -294,7 +294,6 @@ const MainXYZ = () => {
 
           {activePage === "Harbor Guard" && <HarbourDetails />}
           {activePage === "XYZ" && <XyzDetails />}
-          {activePage === "Users" && <Users />}
           {activePage === "Users" && <UsersDetails />}
           {activePage === "Settings" && <div>Settings Content</div>}
         </main>
