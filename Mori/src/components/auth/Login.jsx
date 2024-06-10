@@ -22,6 +22,7 @@ const Login = () => {
   const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
   const [timer, setTimer] = useState(59); // Start timer at 59 seconds
   const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
+  const [invalidCreds, setInvalidCreds] = useState(false); // State to control the visibility of invalid cred message    105,3
   const timerInterval = useRef(null);
   const [success, setSuccess] = useState(false); 
   const [password, setPassword] = useState('');
@@ -30,7 +31,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
-  const dummyAccount = { email: 'test@example.com', password: 'Test1234' }; // Dummy account details
+  const [enteredEmail, setEnteredEmail] = useState("")
+
 
 
     const togglePasswordVisibility = () => {
@@ -89,50 +91,61 @@ const Login = () => {
 
     const handleLoginClick = async () => {
       setIsClicked(true);
-      try {
-        const response = await axios.post('http://localhost:5173/users/login', {
-          Email: email,
-          Password:password
-        });
-        setShowVerificationForm(true)
-        
-        console.log('Login success:', response.data);
-      } catch (error) {
-        // Handle login error here
-        console.error('Login error:', error);
-      }
     };
-    const handleLoginSubmit = (event) => {
+    const handleLoginSubmit = async (event) => {
       event.preventDefault();
-      const enteredEmail = document.getElementById('login-email').value;
+      setEnteredEmail(document.getElementById('login-email').value)
       const enteredPassword = document.getElementById('login-password').value;
+      try {
+        await axios.post("http://localhost:8000/users/login", {
+          Email: enteredEmail,
+          Password: enteredPassword
+        }, {
+          withCredentials: true
+        }); 
     
-      if (enteredEmail === dummyAccount.email && enteredPassword === dummyAccount.password) {
         setIsLoggedIn(true); // Set login status to true
         setShowCodeEntry(true); // Show the code entry form for login verification
-      } else {
-        alert('Invalid login credentials!');
+        // setSubmitting(false);
+      } catch (error) {
+        console.error(error);
+        // setErrorMessage("An error occurred while logging in");
+        setInvalidCreds(true);
+        alert("Wrong email or password, please try again!")
+        
       }
     };
-    const handleLoginVerificationSubmit = () => {
-      const dummyCode = "5678"; // Different dummy code for login verification
     
-      if (verificationCode.join("") === dummyCode) {
+      
+    const handleLoginVerificationSubmit = async () => {
+      
+      console.log(enteredEmail)
+
+      const cookie = document.cookie;
+      console.log(cookie); 
+      try {
+        await axios.post("http://localhost:8000/users/verify", {
+          Email: enteredEmail,
+          Code:verificationCode.join("")
+        });
+        
         console.log("Login Verification Code Submitted:", verificationCode.join(""));
         alert('Login verified successfully!');
         setShowCodeEntry(false);
         setIsLoggedIn(false);
-      } else {
+        
+      } catch (error) {
+        console.error(error);
         console.log("Incorrect Login Verification Code");
         setInvalidCode(true); // Set invalid code message to be visible
         for (let i = 0; i < verificationCode.length; i++) {
           const inputBox = document.getElementById(`code-${i}`);
           if (inputBox) {
             inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';
-          }
-        }
-      }
+            inputBox.style.color = '#902E2E';}
+
+        
+      }}
     };
     
     const handleForgotPassword = () => {
@@ -458,12 +471,18 @@ const Login = () => {
                         </div>
                       </div>
                       <div className="flex flex-col items-center">
+                      
                         <button
                           type="submit"
                           className="w-full h-8 bg-black rounded-xl text-white font-vietnam text-xs font-medium justify-center items-center hover:bg-black/85"
                         >
                           LOGIN
                         </button>
+                        {invalidCreds && (
+                          <div classNam6e="text-xl font-vietnam font-medium mt-10 w-full text-center text-red-600">
+                            Wrong email or password, please try again!
+                            </div>
+                        )}
                         <a href="#" onClick={handleForgotPassword} className="text-ms font-medium text-center block mb-32 hover:underline hover:text-black mt-2">
                           Forgot Password?
                         </a>
