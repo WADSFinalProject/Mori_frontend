@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) => {
   const getStatusBackgroundColor = (status) => {
@@ -108,6 +109,7 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
             Preparing to ship
           </b>
         </div>
+        <Link to="/shipdetails">
         <svg
           width="11"
           height="17"
@@ -121,6 +123,7 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
             fillOpacity="0.25"
           />
         </svg>
+        </Link>
       </div>
     </div>
   );

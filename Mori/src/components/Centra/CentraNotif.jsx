@@ -3,47 +3,78 @@ import { useWindowSize } from 'react-use';
 import hamburgBlack from '../../assets/hamburgBlack.png'; 
 import settingsLogo from '../../assets/settingsLogo.png'; 
 import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 
 export default function CentraNotif() {
     const { width } = useWindowSize(); 
     const isMobile = width <= 640;
 
+    const navigate = useNavigate(); 
+
     return (
         <div>
             {isMobile ? (
                 // Header
-                <div className="bg-white">
-                    <div
-                        className="flex flex-col p-4 shadow-md bg-white" 
-                        >
-                        <div className="flex items-center justify-between mb-4"> {/* Added mb-4 for margin bottom */}
-                            <div className="flex items-center">
-                            <Link to="/navigation"> 
-                                <img src={hamburgBlack} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
-                            </Link>
-                            </div>
-                            <p className="text-2xl ml-2 mt-3 font-bold text-black">Notifications</p>
-                            <div className="flex">
-                            <img src={settingsLogo} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
-                            </div>
+                <div className="bg-white mt-5">
+                <header className="self-stretch flex flex-col items-start justify-start gap-[24px] max-w-full text-left text-base text-black font-vietnam">
+                <nav className="m-0 self-stretch flex flex-row items-start justify-start py-0 pr-6 pl-5 box-border max-w-full">
+                    <nav className="m-0 flex-1 flex flex-row items-start justify-between max-w-full gap-[20px] text-right text-xl text-[#828282] font-vietnam">
+                    <div className="flex flex-row items-start justify-start gap-[20px]">
+                        <div className="flex flex-row items-start justify-start">
+                        <h3 className="m-0 w-6 relative text-inherit tracking-[-0.02em] font-semibold font-inherit inline-block min-w-[24px]">
+                        <button onClick={() => navigate(-1)}>
+                            <svg
+                            className="w-[26px] h-[26px] text-gray-800"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="26"
+                            height="26"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            >
+                            <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2.5"
+                                d="M5 12h14M5 12l4-4m-4 4 4 4"
+                            />
+                            </svg>
+                            </button>
+                        </h3>
                         </div>
-                        {/* filter buttons - OPTIONAL */}
-                        <div className="flex">
-                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
-                                <button><p className="text-gray-300">All</p></button>
-                            </div>
-                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
-                                <button><p className="text-gray-300">Read</p></button>
-                            </div>
-                            <div className="flex items-center border rounded-lg border-gray-300 p-3 m-2 h-10">
-                                <button><p className="text-gray-300">Unread</p></button>
-                            </div>
-                        </div>
-
-
-
+                        <h3 className="m-0 relative text-inherit font-bold font-vietnam text-black text-left inline-block min-w-[89px]">
+                        Notifications
+                        </h3>
                     </div>
+                    <div className="flex flex-row items-start justify-start gap-[15px] text-left text-black">
+                        <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
+                        </div>
+                        <h3 className="m-0 relative text-[22px] tracking-[-0.02em] font-bold font-inherit inline-block min-w-[28px]">
+                        <Link to="/centranavigation">
+                        <svg
+                            className="w-[30px] h-[30px] text-gray-800"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeWidth="2.5"
+                            d="M5 7h14M5 12h14M5 17h14"
+                            />
+                        </svg>
+                        </Link>
+                        </h3>
+                    </div>
+                    </nav>
+                </nav>
+                </header>
 
                     {/* notif cards */}
                     <div>

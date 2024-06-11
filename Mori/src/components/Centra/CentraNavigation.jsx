@@ -8,12 +8,16 @@ import processorNav from '../../assets/processorNav.png';
 import shippingNav from '../../assets/shippingNav.png';
 import helpNav from '../../assets/helpNav.png';
 import logoutNav from '../../assets/logoutNav.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function CentraNavigation() {
     const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
     // Check if the window width is greater than a mobile device width (e.g., 640px)
     const isMobile = width <= 640;
+
+    const navigate = useNavigate(); 
+
 
     return (
         <div>
@@ -38,9 +42,9 @@ export default function CentraNavigation() {
                         <p className="text-xl ml-2 mt-4 font-semibold">Divisions</p>
                         </div>
                         <div className="flex">
-                            <Link to="/centrahome"> 
+                            <button onClick={() => navigate(-1)}> {/* Modify close button */}
                                 <img src={x} alt="back" className="text-6xl mt-4 mr-2 font-bold text-gray-700 w-5" />
-                            </Link>
+                            </button>
                         </div>
                     </div>
                     <hr className="w-full border-t-2 border-gray-300"/>

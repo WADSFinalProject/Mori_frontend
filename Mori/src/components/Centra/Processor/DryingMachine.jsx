@@ -188,7 +188,7 @@ export default function DryingMachine() {
     <div className="bg-000000" style={{ paddingBottom: '40px' }}>
       <div className="w-full">
         <div className="p-4 shadow-md flex justify-between items-center bg-white">
-          <Link to="/processor" className="flex items-center">
+          <Link to="/centraprocessor" className="flex items-center">
             <img src={back} alt="back" className="w-5 mr-2" />
           </Link>
           <span className="font-bold text-2xl lg:text-3xl xl:text-4xl mr-18 font-vietnam">

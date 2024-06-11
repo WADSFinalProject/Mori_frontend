@@ -39,8 +39,8 @@ export default function ShipDetails() {
         <div className={isMobile ? "mb-16" : "" } style={{ paddingBottom: '40px' }}>
             {isMobile ? (
                 <>
-                    <div className="p-2 shadow-md flex items-center justify-between bg-white">
-                        <Link to="/" className="flex items-center">
+                    <div className="mt-3 p-5 shadow-md flex items-center justify-between bg-white">
+                        <Link to="/centrashipping" className="flex items-center">
                             <img src={back} alt="back" className="w-4 h-4" />
                         </Link>
                         <div className="flex items-center flex-grow justify-center">
@@ -219,10 +219,10 @@ export default function ShipDetails() {
 
                     {/* Buttons placed at the bottom */}
                     <div className="flex left-0 right-0 p-3 bg-white flex justify-between">
-                        <button className="flex-1 mr-2 border-2 border-red-500 shadow-lg text-red-500 hover:bg-red-500 hover:text-white duration-300 cursor-pointer active:scale-[0.98] py-2 px-4 rounded font-vietnam">
+                        <button className="flex-1 mr-2 border-3 bg-[#CD484866] text-[#852222] hover:bg-red-500 hover:text-white duration-300 cursor-pointer active:scale-[0.98] py-2 px-4 rounded font-vietnam">
                             Report Missing
                         </button>
-                        <button className="flex-1 ml-2 border-2 border-blue-700 shadow-lg text-blue-700 hover:bg-blue-700 hover:text-white duration-300 cursor-pointer active:scale-[0.98] py-2 px-4 rounded font-vietnam">
+                        <button className="flex-1 ml-2 border-3 bg-[#4D946D] text-[#FFFFFF] hover:bg-green-700 hover:text-white duration-300 cursor-pointer active:scale-[0.98] py-2 px-4 rounded font-vietnam">
                             Confirm Shipment
                         </button>
                     </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ShippingBox = ({ batchId, weight, date, checked, onChange }) => {
   const mainBgColor = checked ? "#eef1ff" : "whitesmoke";
