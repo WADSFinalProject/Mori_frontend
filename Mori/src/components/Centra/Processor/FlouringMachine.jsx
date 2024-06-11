@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useWindowSize } from 'react-use';
 import bell from '../../../assets/bell.png';
 import hamburg from '../../../assets/hamburg.png';
 import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
+import { Link, useNavigate } from "react-router-dom";
 
 const gaugeOptions = {
   responsive: true,
@@ -165,6 +166,8 @@ export default function FlouringMachine() {
     setEditMode(false);
   };
 
+  const navigate = useNavigate(); // useNavigate hook
+
   const { currentLoad, capacity } = machineData || {}; 
 
   let chartColor = '#99D0D580'; 
@@ -180,9 +183,16 @@ export default function FlouringMachine() {
     <div className="bg-000000" style={{ paddingBottom: '40px' }}>
       <div className="w-full">
         <div className="p-4 shadow-md flex justify-between items-center bg-white">
-          <Link to="/processor" className="flex items-center">
-            <img src={back} alt="back" className="w-5 mr-2" />
-          </Link>
+        <Link
+          to={{
+            pathname: "/centraprocessor",
+            state: { activeTab: "flouring" } // Set the active tab to "flouring"
+          }}
+          className="flex items-center"
+        >
+          <img src={back} alt="back" className="w-5 mr-2" />
+        </Link>
+
           <span className="font-bold text-2xl lg:text-3xl xl:text-4xl mr-18 font-vietnam">
             Flouring Machine {machineNumber}
           </span>

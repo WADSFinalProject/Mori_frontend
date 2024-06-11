@@ -90,7 +90,9 @@ export default function CentraHome() {
               </div>
               <img src={moriLogo} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20" />
               <div className="flex">
+              <Link to="/centranotif">
                 <img src={bell} alt="notifications" className="text-6xl mr-2 font-bold text-gray-700 w-5" />
+                </Link>
               </div>
             </div>
             <div className="flex flex-row gap-5 p-3">
@@ -103,10 +105,13 @@ export default function CentraHome() {
           </header>
 
           <div className="p-5">
-            <div className="mt-">
+            <div className="mb-[-120px]">
               <h2 className="text-gray-600 font-bold">Quick Access</h2>
             </div>
-            <div className="flex">
+          </div>
+
+          <div className="p-5">
+          <div className="flex justify-between">
               <Link to="/collectormain">
                 <div className="mt-3 mr-3 rounded-lg flex justify-center items-center relative" style={{ width: "110px", height: "100px", backgroundColor: "#5D9EA4"}}>
                   <img src={collector} alt="mori logo" className="absolute top-3 right-2 w-6" style={{ marginTop: "5px", marginRight: "5px" }} />
@@ -126,7 +131,7 @@ export default function CentraHome() {
                 </div> 
               </Link>
             </div>
-          </div>
+            </div>
 
             {/* Machine Stock Status */}
           <div className="p-5">

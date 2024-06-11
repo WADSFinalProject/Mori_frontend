@@ -3,6 +3,7 @@ import { useWindowSize } from "react-use";
 import ShippingBox from "./ShippingBox";
 import StatusComponent from "./StatusComponent";
 import "./Shipping.css";
+import { Link } from "react-router-dom";
 
 const Shipping = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
@@ -137,6 +138,7 @@ const Shipping = () => {
               <div className="flex flex-row items-start justify-start gap-[20px]">
                 <div className="flex flex-row items-start justify-start">
                   <h3 className="m-0 w-6 relative text-inherit tracking-[-0.02em] font-semibold font-inherit inline-block min-w-[24px]">
+                  <Link to="/centrahome">
                     <svg
                       className="w-[26px] h-[26px] text-gray-800"
                       aria-hidden="true"
@@ -154,6 +156,7 @@ const Shipping = () => {
                         d="M5 12h14M5 12l4-4m-4 4 4 4"
                       />
                     </svg>
+                    </Link>
                   </h3>
                 </div>
                 <h3 className="m-0 relative text-inherit font-bold font-vietnam text-black text-left inline-block min-w-[89px]">
@@ -163,6 +166,7 @@ const Shipping = () => {
               <div className="flex flex-row items-start justify-start gap-[15px] text-left text-black">
                 <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
                   <h3 className="m-0 relative text-inherit tracking-[-0.02em] font-bold font-inherit inline-block min-w-[24px]">
+                  <Link to="/centranotif">
                     <svg
                       className="w-[26px] h-[26px] text-gray-800"
                       aria-hidden="true"
@@ -174,9 +178,11 @@ const Shipping = () => {
                     >
                       <path d="M17.133 12.632v-1.8a5.406 5.406 0 0 0-4.154-5.262.955.955 0 0 0 .021-.106V3.1a1 1 0 0 0-2 0v2.364a.955.955 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C6.867 15.018 5 15.614 5 16.807 5 17.4 5 18 5.538 18h12.924C19 18 19 17.4 19 16.807c0-1.193-1.867-1.789-1.867-4.175ZM8.823 19a3.453 3.453 0 0 0 6.354 0H8.823Z" />
                     </svg>
+                    </Link>
                   </h3>
                 </div>
                 <h3 className="m-0 relative text-[22px] tracking-[-0.02em] font-bold font-inherit inline-block min-w-[28px]">
+                <Link to="/centranavigation">
                   <svg
                     className="w-[30px] h-[30px] text-gray-800"
                     aria-hidden="true"
@@ -193,6 +199,7 @@ const Shipping = () => {
                       d="M5 7h14M5 12h14M5 17h14"
                     />
                   </svg>
+                  </Link>
                 </h3>
               </div>
             </nav>

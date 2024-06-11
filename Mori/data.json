@@ -5,7 +5,7 @@
       "status": "Fresh",
       "date": "13 March 2024",
       "time": "02:45PM",
-      "duration": "00:00:00"
+      "duration": "08:30:00"
     },
     {
       "batchId": "2",
@@ -21,7 +21,7 @@
       "status": "Exceeded",
       "date": "15 March 2024",
       "time": "02:45PM",
-      "duration": "00:00:00"
+      "duration": "00:05:43"
     },
     {
       "batchId": "4",

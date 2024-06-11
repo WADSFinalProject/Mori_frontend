@@ -51,22 +51,23 @@ export default function EditBatch({ onClose, batchData }) {
                 // Find the batch data matching the batchId
                 const batch = data.find(item => item.batchId === batchData.batchId);
                 if (batch) {
-                    const dateFromJSON = data.date;
-                    const parsedDate = new Date(dateFromJSON);
-                    setValue(parsedDate);
-                    // Update state with fetched data
-                    setValue({ startDate: new Date(batch.date), endDate: null });
+                    setValue({
+                        startDate: new Date(batch.date),
+                        endDate: null
+                    });
                     setWeight(batch.weight);
                     // Set time in desired format
                     const timeParts = batch.time.split(':');
                     const hours = parseInt(timeParts[0]);
                     const minutes = parseInt(timeParts[1]);
-                    const ampm = timeParts[1].includes('AM') ? 'AM' : 'PM';
+                    const ampm = timeParts.length > 2 && timeParts[2].includes('AM') ? 'AM' : 'PM';
                     setTime(`${hours}:${minutes} ${ampm}`);
+
                 }
             })
             .catch(error => console.error('Error fetching data:', error));
     }, []);
+    
 
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center items-end md:items-center md:py-4 md:px-6 md:pt-0 md:bg-black md:bg-opacity-25">
@@ -111,7 +112,7 @@ export default function EditBatch({ onClose, batchData }) {
                     onChange={handleValueChange}
                     inputClassName="w-full h-10 rounded-md focus:ring-0 bg-[#EFEFEF] dark:bg-gray-900 dark:placeholder:text-gray-100 border-gray-300 text-sm text-gray-500"
                     placeholderText="Select date"
-                    dateFormat="MM/dd/yyyy"
+                    dateFormat="YYYY-MM-DD"
                 />
                 <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                     <svg className="w-4 h-4 text-[#6C7CD1] dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">

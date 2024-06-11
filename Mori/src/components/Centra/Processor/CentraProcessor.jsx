@@ -67,7 +67,9 @@ const ChartWithBox = ({ data, label, labelStyle }) => (
 export default function Processor() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
-  const [activeTab, setActiveTab] = useState('drying');
+  const initialActiveTab = location.state?.activeTab || "drying"; // Default to drying tab if state not available
+  const [activeTab, setActiveTab] = useState(initialActiveTab);
+
   const [dryingMachines, setDryingMachines] = useState([
     { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '1 hour ago' },
     { number: 2, status: 'FULL', currentLoad: 30, capacity: 30, lastUpdated: '2 hours ago' },
