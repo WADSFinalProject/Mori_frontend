@@ -237,7 +237,7 @@ export default function Processor() {
       {isMobile ? (
         <div>
           <div className="p-4 shadow-md flex justify-between items-center bg-white ml-4">
-            <Link to="/" className="flex items-center">
+            <Link to="/centrahome" className="flex items-center">
               <img src={back} alt="back" className="w-5 mr-2" />
             </Link>
             <span className="font-bold text-2xl lg:text-3xl xl:text-4xl mr-20 font-vietnam">Processor</span>

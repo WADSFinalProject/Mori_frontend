@@ -46,28 +46,28 @@ export default function CentraNavigation() {
                     <hr className="w-full border-t-2 border-gray-300"/>
                     <div>
                         <div className="flex flex-col ml-8 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/centrahome" className="flex items-center">
                                 <img src={homeNav} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Main Page</p>
                             </Link>
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/collectormain" className="flex items-center">
                                 <img src={collectorNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Collector</p>
                             </Link>
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/processor" className="flex items-center">
+                            <Link to="/centraprocessor" className="flex items-center">
                                 <img src={processorNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Processor</p>
                             </Link>
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/shipping" className="flex items-center">
+                            <Link to="/centrashipping" className="flex items-center">
                                 <img src={shippingNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />   
                                 <p className="text-l ml-4 mt-3">Shipping</p>
                             </Link>
