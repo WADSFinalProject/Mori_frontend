@@ -19,9 +19,25 @@ export default function HarborNotif() {
                         >
                         <div className="flex items-center justify-between mb-4"> {/* Added mb-4 for margin bottom */}
                             <div className="flex items-center">
-                            <Link to="/navigation"> 
-                                <img src={hamburgBlack} alt="divisions" className="text-6xl font-bold text-gray-700 w-5" />
-                            </Link>
+                            <Link to="/harborhome">
+                                <svg
+                                className="w-[26px] h-[26px] text-gray-800"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="26"
+                                height="26"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2.5"
+                                    d="M5 12h14M5 12l4-4m-4 4 4 4"
+                                />
+                                </svg>
+                                </Link>
                             </div>
                             <p className="text-2xl ml-2 mt-3 font-bold text-black">Notifications</p>
                             <div className="flex">

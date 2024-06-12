@@ -120,7 +120,7 @@ export default function HarborHome() {
             <div className="flex items-center justify-between mb-4">
               {/* Added mb-4 for margin bottom */}
               <div className="flex items-center">
-                <Link to="/navigation">
+                <Link to="/harbornavigation">
                   <img
                     src={hamburg}
                     alt="divisions"
@@ -128,17 +128,21 @@ export default function HarborHome() {
                   />
                 </Link>
               </div>
+              
               <img
                 src={moriLogo}
                 alt="mori logo"
                 className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20"
               />
               <div className="flex">
+              <Link to="/harbornotif">
                 <img
                   src={bell}
                   alt="notifications"
                   className="text-6xl mr-2 font-bold text-gray-700 w-5"
                 />
+                </Link>
+
               </div>
             </div>
             <div className="flex flex-row gap-5 p-3">

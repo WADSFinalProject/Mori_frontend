@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import StatusComponent from "./StatusComponent";
+import back from '../../../assets/back.png'; 
+import { useNavigate } from "react-router-dom";
 
 const ShippingInformation = () => {
+
+  const navigate = useNavigate();
   const shipmentData = [
     {
       id: "98478",
@@ -101,20 +105,9 @@ const ShippingInformation = () => {
             style={{ height: `${headerHeight}px` }}
           >
             <div className="flex flex-row justify-between mx-6 items-center">
-              <svg
-                className="hover:cursor-pointer"
-                onClick={null}
-                width="22"
-                height="23"
-                viewBox="0 0 22 23"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1.18511 6.78605C0.525572 6.78605 0 6.06383 0 5.24969C0 4.42242 0.525572 3.7002 1.18511 3.7002H20.4149C21.0744 3.7002 21.6 4.39615 21.6 5.24969C21.6 6.07696 21.0744 6.78605 20.4149 6.78605H1.18511ZM1.18511 13.0366C0.525572 13.0366 0 12.3143 0 11.5002C0 10.6598 0.525572 9.9507 1.18511 9.9507H20.4149C21.0744 9.9507 21.6 10.6467 21.6 11.5002C21.6 12.3275 21.0744 13.0366 20.4149 13.0366H1.18511ZM1.18511 19.3002C0.525572 19.3002 0 18.5648 0 17.7507C0 16.9234 0.525572 16.2143 1.18511 16.2143H20.4149C21.0744 16.2143 21.6 16.8972 21.6 17.7507C21.6 18.578 21.0744 19.3002 20.4149 19.3002H1.18511Z"
-                  fill="black"
-                />
-              </svg>
+            <button onClick={() => navigate(-1)}> 
+              <img src={back} alt="back" className="w-5 mr-2" /> 
+            </button>
               <div className="font-vietnam text-xl font-bold select-none">
                 Shipping Information
               </div>

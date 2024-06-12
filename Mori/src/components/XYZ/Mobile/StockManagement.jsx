@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from 'react-use';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import bell from '../../../assets/bell.png'; 
 import hamburg from '../../../assets/hamburg.png'; 
 import back from '../../../assets/back.png'; 
@@ -142,9 +142,9 @@ const StockManagement = () => {
       {isMobile ? (
         <div>
           <div className="p-4 shadow-md flex justify-between items-center bg-white fixed top-0 left-0 right-0 z-50">
-            <Link to="/" className="flex items-center">
+            <button onClick={() => navigate(-1)}> 
               <img src={back} alt="back" className="w-5 mr-2" /> 
-            </Link>
+            </button>
             <span className="font-bold text-xl font-vietnam flex-1 text-center">Stock Management</span>
             <div className="flex space-x-2">
               <img src={bell} alt="notifications" className="w-5" />

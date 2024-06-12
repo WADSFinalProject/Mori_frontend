@@ -5,12 +5,15 @@ import { Link } from "react-router-dom";
 import homeNav from '../../assets/homeNav.png';
 import helpNav from '../../assets/helpNav.png';
 import logoutNav from '../../assets/logoutNav.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function HarborNavigation() {
     const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
 
     // Check if the window width is greater than a mobile device width (e.g., 640px)
     const isMobile = width <= 640;
+
+    const navigate = useNavigate(); 
 
     return (
         <div>
@@ -35,15 +38,15 @@ export default function HarborNavigation() {
                         <p className="text-xl ml-2 mt-4 font-semibold">Divisions</p>
                         </div>
                         <div className="flex">
-                            <Link to="/centrahome"> 
+                            <button onClick={() => navigate(-1)}>
                                 <img src={x} alt="back" className="text-6xl mt-4 mr-2 font-bold text-gray-700 w-5" />
-                            </Link>
+                            </button>
                         </div>
                     </div>
                     <hr className="w-full border-t-2 border-gray-300"/>
                     <div>
                         <div className="flex flex-col ml-8 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/harborhome" className="flex items-center">
                                 <img src={homeNav} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Main Page</p>
                             </Link>
@@ -63,7 +66,7 @@ export default function HarborNavigation() {
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/" className="flex items-center">
                                 <img src={logoutNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Log Out</p>
                             </Link>

@@ -45,21 +45,21 @@ export default function XYZNavigation() {
                     <hr className="w-full border-t-2 border-gray-300"/>
                     <div>
                         <div className="flex flex-col ml-8 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/XYZHome" className="flex items-center">
                                 <img src={homeNav} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Main Page</p>
                             </Link>
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/xyz-stockmanagement" className="flex items-center">
                                 <img src={stockManagement} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Stock Management</p>
                             </Link>
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/processor" className="flex items-center">
+                            <Link to="/shippinginformation" className="flex items-center">
                                 <img src={shippingTruck} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Shipping Information</p>
                             </Link>
