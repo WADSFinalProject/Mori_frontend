@@ -37,6 +37,8 @@ import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
 
+// import PrivateRoute from './utils/PrivateRoute';
+
 function App() {
   return (
     <Router>

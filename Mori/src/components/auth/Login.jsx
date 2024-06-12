@@ -5,7 +5,8 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import axios from "axios"; 
+import  { setAccessToken, axios} from "../utils/tokenUtils";
+
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -22,17 +23,16 @@ const Login = () => {
   const [verificationCode, setVerificationCode] = useState(Array(4).fill("")); // Array to hold each digit of the code
   const [timer, setTimer] = useState(59); // Start timer at 59 seconds
   const [invalidCode, setInvalidCode] = useState(false); // State to control the visibility of invalid code message
-  const [invalidCreds, setInvalidCreds] = useState(false); // State to control the visibility of invalid cred message    105,3
+  const [invalidCreds, setInvalidCreds] = useState(false); // State to control the visibility of invalid cred message
   const timerInterval = useRef(null);
-  const [success, setSuccess] = useState(false); 
+  const [success, setSuccess] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
-  const [enteredEmail, setEnteredEmail] = useState("")
-
+  const [enteredEmail, setEnteredEmail] = useState("");
   const dummyAccount = { email: 'gde.agastya@binus.ac.id', password: '1234' }; // Dummy account details
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
 
@@ -43,12 +43,12 @@ const Login = () => {
       <p className="text-zinc-600 dark:text-zinc-400 text-lg">Your OTP is being sent</p>
     </div>
   );
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword); 
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const passwordInputType = showPassword ? 'text' : 'password';
@@ -58,7 +58,7 @@ const Login = () => {
     event.preventDefault();
     let valid = true;
     let errorMsg = '';
-  
+
     // Password validation rules
     if (password.length < 8) {
       valid = false;
@@ -70,58 +70,7 @@ const Login = () => {
       valid = false;
       errorMsg = 'Passwords do not match.';
     }
-  
 
-    // const handleLoginSubmit = async (event) => {
-     
-    
-    //     setIsLoggedIn(true); // Set login status to true
-    //     setShowCodeEntry(true); // Show the code entry form for login verification
-    //     // setSubmitting(false);
-    //   } catch (error) {
-    //     console.error(error);
-    //     // setErrorMessage("An error occurred while logging in");
-    //     setInvalidCreds(true);
-    //     alert("Wrong email or password, please try again!")
-        
-    //   }
-    // };
-    
-      
-    const handleLoginVerificationSubmit = async () => {
-      
-      console.log(enteredEmail)
-
-      const cookie = document.cookie;
-      console.log(cookie); 
-      try {
-        await axios.post("http://localhost:8000/users/verify", {
-          Email: enteredEmail,
-          Code:verificationCode.join("")
-        });
-        
-        console.log("Login Verification Code Submitted:", verificationCode.join(""));
-        alert('Login verified successfully!');
-        setShowCodeEntry(false);
-        setIsLoggedIn(false);
-        
-      } catch (error) {
-        console.error(error);
-        console.log("Incorrect Login Verification Code");
-        setInvalidCode(true); // Set invalid code message to be visible
-        for (let i = 0; i < verificationCode.length; i++) {
-          const inputBox = document.getElementById(`code-${i}`);
-          if (inputBox) {
-            inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';}
-
-        
-      }}
-    };
-    
-    const handleForgotPassword = () => {
-      setShowVerificationForm(true);
-    };
     if (!valid) {
       setPasswordError(errorMsg);
     } else {
@@ -135,7 +84,7 @@ const Login = () => {
       setIsClicked(false);  // Reset to initial state to show the login button again
     }
   };
-  
+
   useEffect(() => {
     if (showCodeEntry && timer > 0) {
       const interval = setInterval(() => {
@@ -150,42 +99,51 @@ const Login = () => {
     setInvalidCode(false); // Reset the invalid code state
     setTimer(59); // Reset the timer
   };
-  
-  
+
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    setEnteredEmail(document.getElementById('login-email').value)
+
+    const theEmail = document.getElementById('login-email').value;
     const enteredPassword = document.getElementById('login-password').value;
+    await new Promise(resolve => setTimeout(resolve, 0)); // Wait for the state update to complete
+
     try {
-      await axios.post("http://localhost:8000/users/login", {
-        Email: enteredEmail,
-        Password: enteredPassword
-      });  
       setShowLoading(true); // Show loading screen
       setInvalidCode(false); // Reset the invalid code state
-      setTimer(59); // Reset the timer
-      setTimeout(() => {
-        setShowLoading(false);
-        setIsLoggedIn(true); // Set login status to true
-        setShowCodeEntry(true); // Show the code entry form for login verification
-      }, 5000); // 5 seconds delay
-    } catch (error){
+      await axios.post("/users/login", {
+        Email: theEmail,
+        Password: enteredPassword
+      });
+
+      setShowLoading(false);
+      setIsLoggedIn(true);
+
+      setEnteredEmail(theEmail);
+      setShowCodeEntry(true); // Show the code entry form for login verification
+
+    } catch (error) {
+      setShowLoading(false);
       console.error(error);
       alert('Invalid login credentials!');
     }
   };
-  
-  
-  
-  const handleLoginVerificationSubmit = () => {
-    const dummyCode = "5678"; // Different dummy code for login verification
-  
-    if (verificationCode.join("") === dummyCode) {
+
+  const handleLoginVerificationSubmit = async () => {
+    try {
+      const response = await axios.post("/users/verify", {
+        Email: enteredEmail,
+        Code: verificationCode.join("")
+      }, { withCredentials: true });
+      setAccessToken(response.data.access_token); // Store access token in memory
+
+      setIsLoggedIn(false);
+
       console.log("Login Verification Code Submitted:", verificationCode.join(""));
       alert('Login verified successfully!');
       setShowCodeEntry(false);
-      setIsLoggedIn(false);
-    } else {
+
+    } catch (error) {
+      console.error(error);
       console.log("Incorrect Login Verification Code");
       setInvalidCode(true); // Set invalid code message to be visible
       for (let i = 0; i < verificationCode.length; i++) {
@@ -197,14 +155,12 @@ const Login = () => {
       }
     }
   };
-  
+
   const handleForgotPassword = () => {
     setShowVerificationForm(true);
     setInvalidCode(false); // Reset the invalid code state
     setTimer(59); // Reset the timer
   };
-  
-  
 
   const handleSendVerification = (event) => {
     event.preventDefault();
@@ -217,9 +173,6 @@ const Login = () => {
       setShowCodeEntry(true);
     }, 5000); // 5 seconds delay
   };
-  
-  
-  
 
   const handleCodeInputChange = (index, event) => {
     const newCode = [...verificationCode];
@@ -229,10 +182,27 @@ const Login = () => {
       document.getElementById(`code-${index + 1}`).focus();
     }
   };
-  const handleResendCode = () => {
-    console.log("Resending code...");
+  const handleResendCode = async () => {
     setTimer(60); // Restart the timer without changing the form state
+    try {
+      setShowLoading(true); // Show loading screen
+      setInvalidCode(false); // Reset the invalid code state
+      console.log(enteredEmail);
+      await axios.post("/users/resend_code", {
+        theEmail: enteredEmail
+      });
+
+      setShowLoading(false);
+      setIsLoggedIn(true); // Set login status to true
+      setEnteredEmail(theEmail);
+      setShowCodeEntry(true); // Show the code entry form for login verification
+
+    } catch (error) {
+      setShowLoading(false);
+      console.error(error);
+    }
   };
+
   const handleSubmit = () => {
     const dummyCode = "1234";
 
@@ -268,11 +238,11 @@ const Login = () => {
       inputBox.style.borderColor = '';
       inputBox.style.color = '';
     }
-  
+
     if (!/^[0-9]{1}$/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete" && e.key !== "Tab" && !e.metaKey) {
       e.preventDefault();
     }
-  
+
     // Manage backspace or delete key operations
     if (e.key === "Backspace") {
       // Check if current box is empty or backspace was pressed
@@ -280,7 +250,7 @@ const Login = () => {
         e.preventDefault(); // Prevent default to avoid deleting twice
         const newCode = [...verificationCode];
         newCode[index] = ""; // Clear current box
-  
+
         // Move focus to previous box and clear its content if current was already empty
         if (index > 0 && !verificationCode[index]) {
           newCode[index - 1] = "";
@@ -288,7 +258,7 @@ const Login = () => {
         } else {
           document.getElementById(`code-${index}`).focus();
         }
-  
+
         setVerificationCode(newCode);
       }
     }
@@ -430,10 +400,10 @@ const Login = () => {
                           />
                           <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)} 
+                            onClick={() => setShowPassword(!showPassword)}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
                           >
-                            <img 
+                            <img
                               src={showPassword ? hidepass : showpass}
                               alt={showPassword ? "Hide Password" : "Show Password"}
                               className="w-5 h-5"
@@ -460,7 +430,7 @@ const Login = () => {
                             onClick={toggleConfirmPasswordVisibility}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
                           >
-                            <img 
+                            <img
                               src={showConfirmPassword ? hidepass : showpass}
                               alt={showConfirmPassword ? "Hide Password" : "Show Password"}
                               className="w-5 h-5"
@@ -503,13 +473,13 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                           />
-                          <button 
+                          <button
                             type="button"
-                            onClick={togglePasswordVisibility} 
+                            onClick={togglePasswordVisibility}
                             className="absolute right-3 top-1/2 transform -translate-y-1/2"
                           >
-                            <img 
-                              src={showPassword ? hidepass : showpass} 
+                            <img
+                              src={showPassword ? hidepass : showpass}
                               alt={showPassword ? "Hide Password" : "Show Password"}
                               className="w-5 h-5"
                             />
@@ -517,7 +487,6 @@ const Login = () => {
                         </div>
                       </div>
                       <div className="flex flex-col items-center">
-                      
                         <button
                           type="submit"
                           className="w-full h-8 bg-black rounded-xl text-white font-vietnam text-xs font-medium justify-center items-center hover:bg-black/85"
@@ -525,9 +494,9 @@ const Login = () => {
                           LOGIN
                         </button>
                         {invalidCreds && (
-                          <div classNam6e="text-xl font-vietnam font-medium mt-10 w-full text-center text-red-600">
+                          <div className="text-xl font-vietnam font-medium mt-10 w-full text-center text-red-600">
                             Wrong email or password, please try again!
-                            </div>
+                          </div>
                         )}
                         <a href="#" onClick={handleForgotPassword} className="text-ms font-medium text-center block mb-32 hover:underline hover:text-black mt-2">
                           Forgot Password?
@@ -563,7 +532,7 @@ const Login = () => {
               )}
             </div>
           </div>
-          
+
           {showLoading ? (
             <div className="absolute top-0 left-0 h-full w-1/2 bg-white transform translate-x-0 transition-transform duration-500 ease-in-out">
               <div className="flex items-center justify-center h-full">
@@ -621,7 +590,7 @@ const Login = () => {
                       Verification code invalid!
                     </div>
                   )}
-    
+
                   <div className="flex flex-col items-center mt-4">
                     {timer > 0 ? (
                       <div className="text-lg font-medium">{formatTime()}</div>
@@ -663,10 +632,10 @@ const Login = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPassword(!showPassword)} 
+                          onClick={() => setShowPassword(!showPassword)}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
-                          <img 
+                          <img
                             src={showPassword ? hidepass : showpass}
                             alt={showPassword ? "Hide Password" : "Show Password"}
                             style={{ width: '20px', height: '20px' }}
@@ -693,7 +662,7 @@ const Login = () => {
                           onClick={toggleConfirmPasswordVisibility} // Use the toggle function
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
-                          <img 
+                          <img
                             src={showConfirmPassword ? hidepass : showpass}
                             alt={showConfirmPassword ? "Hide Password" : "Show Password"}
                             style={{ width: '20px', height: '20px' }}
@@ -740,14 +709,14 @@ const Login = () => {
                           onChange={(e) => setPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
                         />
-                        <button 
+                        <button
                           type="button"
-                          onClick={togglePasswordVisibility} 
+                          onClick={togglePasswordVisibility}
                           className="absolute right-5 top-1/2 transform -translate-y-1/2"
                           style={{ width: '20px', height: '20px' }}
                         >
-                          <img 
-                            src={showPassword ? hidepass : showpass} 
+                          <img
+                            src={showPassword ? hidepass : showpass}
                             alt={showPassword ? "Hide Password" : "Show Password"}
                           />
                         </button>
@@ -769,7 +738,7 @@ const Login = () => {
               </div>
             </div>
           )}
-  
+
           <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 transition-transform duration-500 ease-out ${isClicked ? 'translate-x-[calc(26vw-4rem)]' : ''} text-white text-xs`}>
             © 2001-2024, XYZ | Help
           </div>
