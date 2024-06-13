@@ -10,8 +10,8 @@ import GreenTruck from '../../../assets/GreenTruck.png';
 import darkgreenpoint from '../../../assets/DarkGreenPoint.png';
 import RedTruck from '../../../assets/RedTruck.png';
 import RedPoint from '../../../assets/RedPointer.png';
-import neoTruck from '../../../assets/neotruck.png';  // Add your neotruck.png here
-import neoPoint from '../../../assets/neopoint.png';  // Add your neopoint.png here
+import neoTruck from '../../../assets/neotruck.png';
+import neoPoint from '../../../assets/neopoint.png';
 
 export default function ShipDetails() {
     const { width } = useWindowSize();
@@ -21,7 +21,7 @@ export default function ShipDetails() {
     const delivStatus = "JNE Standard - JNE102392130";
     const delivType = "Regular";
     const preparingTime = "18-03-2024 08:40 PM"; 
-    const [shipmentState, setShipmentState] = useState('Shipped'); // Default state is 'Missing'
+    const [shipmentState, setShipmentState] = useState('Shipped');
 
     const batches = [
         { id: 10201, weight: '23 kg', driedDate: '11/11/25', flouredDate: '11/11/25' },
@@ -188,7 +188,7 @@ export default function ShipDetails() {
                             </div>
                         </>
                     )}
-                    <div className="batch-info-container p-3 shadow-md bg-white" style={{ paddingBottom: '30px' }}> 
+                    <div className="batch-info-container p-3 shadow-md bg-white" style={{ paddingBottom: '30px', paddingLeft: '45px', paddingRight: '45px' }}> 
                         <div>
                             <h2 className="font-bold text-md lg:text-lg font-vietnam">Batch Information</h2>
                             <hr className="mt-1" style={{ borderColor: '#E5E7EB', borderWidth: '1px', height: 0 }} />
@@ -202,7 +202,7 @@ export default function ShipDetails() {
                                         <p className="text-xs lg:text-sm font-vietnam" style={{ color: '#828282'}}>Floured Date</p>
                                     </div>
                                     <div className="text-right">
-                                        <span className="font-bold text-md lg:text-lg font-vietnam" style={{ color: '#5D9EA4' }}>{batch.weight}</span>
+                                        <span className="font-bold text-sm lg:text-md font-vietnam" style={{ color: '#5D9EA4' }}>{batch.weight}</span>
                                         <p className="text-xs lg:text-sm font-vietnam" style={{ color: '#828282'}}> {batch.driedDate}</p>
                                         <p className="text-xs lg:text-sm font-vietnam" style={{ color: '#828282'}}> {batch.flouredDate}</p>
                                     </div>
@@ -217,7 +217,6 @@ export default function ShipDetails() {
                         </div>
                     </div>
 
-                    {/* Buttons placed at the bottom */}
                     <div className="flex left-0 right-0 p-3 bg-white flex justify-between">
                         <button className="flex-1 mr-2 border-3 bg-[#CD484866] text-[#852222] hover:bg-red-500 hover:text-white duration-300 cursor-pointer active:scale-[0.98] py-2 px-4 rounded font-vietnam">
                             Report Missing
