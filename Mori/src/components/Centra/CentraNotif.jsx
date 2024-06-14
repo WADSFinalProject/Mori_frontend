@@ -51,7 +51,7 @@ export default function CentraNotif() {
                         <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
                         </div>
                         <h3 className="m-0 relative text-[22px] tracking-[-0.02em] font-bold font-inherit inline-block min-w-[28px]">
-                        <Link to="/centranavigation">
+                        <Link to="/centra/navigation">
                         <svg
                             className="w-[30px] h-[30px] text-gray-800"
                             aria-hidden="true"

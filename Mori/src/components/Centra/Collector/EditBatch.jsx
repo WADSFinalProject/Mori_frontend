@@ -74,7 +74,7 @@ export default function EditBatch({ onClose, batchData }) {
             <div className="bg-white rounded-t-lg md:rounded-lg overflow-hidden shadow-md w-full max-w-screen-lg md:rounded-none md:w-96">
                 <div className="px-4 py-3 border-b border-gray-200">
                     <nav className="flex justify-between items-center">
-                    <Link to="/CollectorMain">
+                    <Link to="/centra/collector">
                         <button className="text-zinc-500 text-sm font-semibold hover:text-[#6C7CD1]" onClick={onClose}>Cancel</button>
                     </Link>
 

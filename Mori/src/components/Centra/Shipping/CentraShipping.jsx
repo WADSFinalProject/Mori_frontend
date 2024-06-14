@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import ShippingBox from "./ShippingBox";
 import StatusComponent from "./StatusComponent";
-import "./Shipping.css";
+import "./CentraShipping.css";
 import { Link } from "react-router-dom";
 
-const Shipping = () => {
+const CentraShipping = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
   const { height } = useWindowSize(); // Get the window height using the useWindowSize hook
   // Check if the window width is greater than a mobile device width (e.g., 640px)
@@ -138,7 +138,7 @@ const Shipping = () => {
               <div className="flex flex-row items-start justify-start gap-[20px]">
                 <div className="flex flex-row items-start justify-start">
                   <h3 className="m-0 w-6 relative text-inherit tracking-[-0.02em] font-semibold font-inherit inline-block min-w-[24px]">
-                    <Link to="/centra/home">
+                    <Link to="/centrahome">
                       <svg
                         className="w-[26px] h-[26px] text-gray-800"
                         aria-hidden="true"
@@ -166,7 +166,7 @@ const Shipping = () => {
               <div className="flex flex-row items-start justify-start gap-[15px] text-left text-black">
                 <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
                   <h3 className="m-0 relative text-inherit tracking-[-0.02em] font-bold font-inherit inline-block min-w-[24px]">
-                    <Link to="/centra/notification">
+                    <Link to="/centranotif">
                       <svg
                         className="w-[26px] h-[26px] text-gray-800"
                         aria-hidden="true"
@@ -182,7 +182,7 @@ const Shipping = () => {
                   </h3>
                 </div>
                 <h3 className="m-0 relative text-[22px] tracking-[-0.02em] font-bold font-inherit inline-block min-w-[28px]">
-                  <Link to="/centra/navigation">
+                  <Link to="/centranavigation">
                     <svg
                       className="w-[30px] h-[30px] text-gray-800"
                       aria-hidden="true"
@@ -239,13 +239,12 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center">
               {checkedCount} {batchText}
             </p>
-            <Link
-              to="/centra/arrangeshipment"
+            <button
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </Link>
+            </button>
           </div>
         )}
 
@@ -276,7 +275,7 @@ const Shipping = () => {
 
       {/* Main content for TO SHIP tab */}
       {activeTab === "toShip" && (
-        <main className="self-stretch flex flex-row items-start justify-start mt-5 px-6 mb-12 box-border max-w-full text-left text-lg text-black font-vietnam overflow-y-auto">
+        <main className="self-stretch flex flex-row items-start justify-start my-5 px-6 box-border max-w-full text-left text-lg text-black font-vietnam overflow-y-auto">
           <div className="flex-1 flex flex-col items-start justify-start gap-[8px] max-w-full">
             {batchToShip.map((batch, index) => (
               <ShippingBox
@@ -334,7 +333,7 @@ const Shipping = () => {
 
           {/* Batches (Only show based on the filters) */}
           <div
-            className="mb-[40px] overflow-y-auto"
+            className="overflow-y-auto"
             style={{ maxHeight: `${maxScrollHeight}px` }}
           >
             {sortedData.map((shipment) => (
@@ -353,12 +352,16 @@ const Shipping = () => {
       )}
 
       {/* Footer */}
-      <footer className="font-vietnam bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
-        <p className="font-bold">@2024 MORI</p>
-        <p className="font-semibold">CENTRA</p>
+
+      <footer className="bg-[#f0f0f0] flex justify-between items-center sticky bottom-0 border-black border-t w-screen px-5 py-2">
+        <b className="justify-center items-center">
+          <span className="font-vietnam">©</span>
+          <span className="text-xs font-vietnam"> 2024 MORI</span>
+        </b>
+        <span className="text-xs font-vietnam">CENTRA</span>
       </footer>
     </div>
   );
 };
 
-export default Shipping;
+export default CentraShipping;
