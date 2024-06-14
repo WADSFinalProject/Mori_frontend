@@ -10,7 +10,7 @@ function FilterDropdown() {
 
   useEffect(() => {
     // Fetch data from data.json
-    fetch('data.json')
+    fetch('/data.json')
       .then(response => response.json())
       .then(data => {
         // Set the fetched data
