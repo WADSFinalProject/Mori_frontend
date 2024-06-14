@@ -15,7 +15,7 @@ const ConfirmShipment = () => {
     } else {
       setIsButtonDisabled(true); // Disable button if not
     }
-  }, [weightReceived, airwayBill]); // This effect depends on changes to shippingMethod and airwayBill
+  }, [weightReceived, airwayBill]); 
 
   return (
     <>
@@ -124,7 +124,6 @@ const ConfirmShipment = () => {
           </main>
         </div>
       ) : (
-        // Display "Not available for this device" text for larger devices
         <div className="flex justify-center items-center h-screen mt-4 text-gray-600">
           Not available for this device.
         </div>
