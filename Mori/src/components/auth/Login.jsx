@@ -5,7 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { loginUser, resetPasswordOTP, verifyUser } from '../../service/auth';
+import { loginUser, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -16,6 +16,7 @@ const Login = () => {
     React.createRef(),
   ]);
   const [loginCredentials, setLoginCredentials] = useState({email: '', password: ''});
+  const [emailPassReset, setEmailPassReset] = useState("");
   const { width } = useWindowSize(); // Get the window width
   const [isClicked, setIsClicked] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
@@ -153,8 +154,11 @@ const Login = () => {
     
     const enteredEmail = event.target.elements[0].value;
 
+    setEmailPassReset(enteredEmail)
+
     setShowLoading(true); // Show loading screen
     setInvalidCode(false); // Reset the invalid code state
+    
     resetPasswordOTP(enteredEmail).then(res => {
       setShowVerificationForm(false);
       setShowCodeEntry(true);
@@ -180,25 +184,27 @@ const Login = () => {
   };
 
   const handleSubmit = () => {
-    const dummyCode = "1234";
-
-    // Check if the entered code matches the dummy code
-    if (verificationCode.join("") === dummyCode) {
-      console.log("Verification Code Submitted:", verificationCode.join(""));
-      setSuccess(true); // Set success state to true
-      setShowCodeEntry(false);
-    } else {
-      console.log("Incorrect Verification Code");
-      setInvalidCode(true); // Set invalid code message to be visible
-      // Apply red border color to input boxes
-      for (let i = 0; i < verificationCode.length; i++) {
-        const inputBox = document.getElementById(`code-${i}`);
-        if (inputBox) {
-          inputBox.style.borderColor = '#902E2E';
-          inputBox.style.color = '#902E2E';
+    resetPasswordVerification(emailPassReset, verificationCode.join(""))
+      .then(res => {
+        // alert("Success : ", res)
+        setSuccess(true); // Set success state to true
+        setShowCodeEntry(false);
+      }).catch(err => {
+        alert("Error : ", err)
+        console.log("Incorrect Verification Code");
+        setInvalidCode(true); // Set invalid code message to be visible
+        
+        // Apply red border color to input boxes
+        for (let i = 0; i < verificationCode.length; i++) {
+          const inputBox = document.getElementById(`code-${i}`);
+          if (inputBox) {
+            inputBox.style.borderColor = '#902E2E';
+            inputBox.style.color = '#902E2E';
+          }
         }
-      }
-    }
+      }).finally(() => {
+
+      });
   };
 
   const formatTime = () => {

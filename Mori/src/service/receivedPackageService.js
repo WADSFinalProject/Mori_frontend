@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -12,7 +13,7 @@ export const createReceivedPackage = async (expeditionID, userID, packageType, r
             WarehouseDestination: warehouseDestination
         };
 
-        return await axios.post("http://localhost:8000/secured/received_packages", packageDetails, {
+        return await axios.post(host + "/secured/received_packages", packageDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -30,7 +31,7 @@ export const readReceivedPackages = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get("http://localhost:8000/secured/received_packages", {
+        return await axios.get(host + "/secured/received_packages", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -44,7 +45,7 @@ export const readReceivedPackages = async (skip = 0, limit = 100) => {
 
 export const getReceivedPackageDetails = async (package_id) => {
     try {
-        return await axios.get(`http://localhost:8000/secured/received_packages/${package_id}`, {
+        return await axios.get(host + `/secured/received_packages/${package_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -65,7 +66,7 @@ export const updateReceivedPackage = async (package_id, expeditionID, userID, pa
             WarehouseDestination: warehouseDestination
         };
 
-        return await axios.put(`http://localhost:8000/secured/received_packages/${package_id}`, packageDetails, {
+        return await axios.put(host + `/secured/received_packages/${package_id}`, packageDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -78,7 +79,7 @@ export const updateReceivedPackage = async (package_id, expeditionID, userID, pa
 
 export const deleteReceivedPackage = async (package_id) => {
     try {
-        return await axios.delete(`http://localhost:8000/secured/received_packages/${package_id}`, {
+        return await axios.delete(host + `/secured/received_packages/${package_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

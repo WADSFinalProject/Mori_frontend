@@ -1,10 +1,11 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
 export const getDriedDate = async (dryingId) => {
     try {
-        return axios.get(`http://localhost:8000/secured/drying-activities/${dryingId}/date`, {
+        return axios.get(host + `/secured/drying-activities/${dryingId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -17,7 +18,7 @@ export const getDriedDate = async (dryingId) => {
 
 export const getFlouredDate = async (flouringId) => {
     try {
-        return axios.get(`http://localhost:8000/secured/flouring-activities/${flouringId}/date`, {
+        return axios.get(host + `/secured/flouring-activities/${flouringId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },
