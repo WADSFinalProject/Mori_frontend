@@ -192,7 +192,7 @@ export default function XYZHome() {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <Link to="/XYZNavigation">
+                <Link to="/xyz/m/navigation">
                   <img
                     src={hamburg}
                     alt="divisions"
@@ -206,7 +206,7 @@ export default function XYZHome() {
                 className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20"
               />
               <div className="flex">
-                <Link to="/XYZNotif">
+                <Link to="/xyz/m/notification">
                   <img
                     src={bell}
                     alt="notifications"
@@ -274,7 +274,10 @@ export default function XYZHome() {
               </h2>
             </div>
             <div className="flex flex-row text-white justify-between w-full gap-3">
-              <Link to="/xyz-stock-management" className="py-3 px-4 flex flex-row bg-[#5C612C] rounded-lg items-center w-1/2 justify-between">
+              <Link
+                to="/xyz/m/stockmanagement"
+                className="py-3 px-4 flex flex-row bg-[#5C612C] rounded-lg items-center w-1/2 justify-between"
+              >
                 <div className="flex flex-col gap-1.5">
                   <div className="font-vietnam font-bold text-base">
                     Stock
@@ -301,7 +304,10 @@ export default function XYZHome() {
                 </div>
               </Link>
 
-              <Link to="/shippinginformation" className="py-3 px-4 flex flex-row bg-black/60 rounded-lg items-center w-1/2 justify-between">
+              <Link
+                to="/xyz/m/shippinginformation"
+                className="py-3 px-4 flex flex-row bg-black/60 rounded-lg items-center w-1/2 justify-between"
+              >
                 <div className="flex flex-col gap-1.5">
                   <div className="font-vietnam font-bold text-base">
                     Shipping

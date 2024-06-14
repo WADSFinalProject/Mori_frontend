@@ -207,18 +207,30 @@ const StockManagement = () => {
     <div className="bg-000000">
       {isMobile ? (
         <div>
-          <div className="p-4 shadow-md flex justify-between items-center bg-white fixed top-0 left-0 right-0 z-50">
-            <button onClick={() => navigate(-1)}>
-              <img src={back} alt="back" className="w-5 mr-2" />
-            </button>
-            <span className="font-bold text-xl font-vietnam flex-1 text-center">
-              Stock Management
-            </span>
-            <div className="flex space-x-2">
-              <img src={bell} alt="notifications" className="w-5" />
-              <img src={hamburg} alt="menu" className="w-5" />
+          <header className="w-full pt-4 h-16 fixed top-0 left-0 z-50 bg-white">
+            <div className="flex flex-row justify-between mx-6 items-center">
+              <button onClick={() => navigate(-1)}>
+                <img src={back} alt="back" className="w-5 mr-2" />
+              </button>
+              <div className="font-vietnam text-xl font-bold select-none">
+                Shipping Information
+              </div>
+              <svg
+                className="hover:cursor-pointer"
+                onClick={null}
+                width="18"
+                height="21"
+                viewBox="0 0 18 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.71171 16.6067C0.666667 16.6067 0 15.9634 0 15.0218C0 13.9496 0.792793 13.0919 1.64865 12.3273C2.34234 11.7027 2.46847 10.3508 2.65766 8.87776C2.9009 5.69855 3.95496 3.35843 6.18919 2.52866C6.6036 1.27935 7.66667 0.375 9 0.375C10.3333 0.375 11.3874 1.27935 11.8108 2.52866C14.045 3.35843 15.0991 5.69855 15.3423 8.87776C15.5225 10.3508 15.6577 11.7027 16.3514 12.3273C17.1982 13.0919 18 13.9496 18 15.0218C18 15.9634 17.3333 16.6067 16.2883 16.6067H1.71171ZM9 20.625C7.2973 20.625 6.05405 19.4037 5.94595 17.9586H12.0541C11.9459 19.4037 10.7027 20.625 9 20.625Z"
+                  fill="black"
+                />
+              </svg>
             </div>
-          </div>
+          </header>
 
           <div className="flex justify-between bg-white py-2 px-3 space-x-2 top-14 left-0 right-0 z-40 fixed">
             <div className="relative w-1/2">

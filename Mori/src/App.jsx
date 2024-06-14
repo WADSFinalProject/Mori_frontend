@@ -69,19 +69,23 @@ function App() {
         <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
-        <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
-        <Route path="/xyz-stockmanagement" element={<StockManagement />} />
-        <Route path="/stockdetail/:location" element={<StockDetail />} />
-        <Route path="/XYZHome" element={<XYZHome />} />
-        <Route path="/XYZNotif" element={<XYZNotif />} />
-        <Route path="/XYZNavigation" element={<XYZNavigation />} />
+
+        {/* XYZ MOBILE */}
+        <Route path="/xyz/m/stockmanagement" element={<StockManagement />} />
+        <Route path="/xyz/m/home" element={<XYZHome />} />
+        <Route path="/xyz/m/notification" element={<XYZNotif />} />
+        <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
+        <Route path="xyz/m/shippinginformation" element={<ShippingInformation />} />
+        
+
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
         <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+        <Route path="/stockdetail/:location" element={<StockDetail />} />
 
       </Routes>
     </Router>
