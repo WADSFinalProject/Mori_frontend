@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
-export const TableComponent = ({ data }) => {
+export const TableComponent = ({ data, onDelete}) => {
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState(null);
+  const [editShipmentIndex, setShipmentIndex] = useState(null);
+  const handleDeleteClick = (index) => {
+    setUserToDelete(sortedData[index]);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    const updatedData = data.filter((_, index) => index !== editShipmentIndex);
+    setData(updatedData);
+    setEditVisible(false);
+    setNewUser(initialNewUserState);
+    setShipmentIndex(null);
+    handleSearchAndSort(updatedData, sortKey);
+    setDeleteModalOpen(false);
+  };
+
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "To Deliver":
@@ -151,11 +170,11 @@ export const TableComponent = ({ data }) => {
       />
     </svg>
   );
-
+  
   const getStatusRow = (checkpoint) => {
     if (!checkpoint) return null; // Add a null check
-
-    const [status, dateTime] = checkpoint.split(" | ");
+  
+    const [status, dateTime] = checkpoint.split(' | ');
     return (
       <div
         style={{
@@ -168,9 +187,7 @@ export const TableComponent = ({ data }) => {
         }}
       >
         {getStatusIcon()}
-        <div style={{ marginLeft: "10px", textAlign: "left" }}>
-          {" "}
-          {/* Remove flex to prevent stretching */}
+        <div style={{ marginLeft: "10px", textAlign: "left" }}> {/* Remove flex to prevent stretching */}
           <div
             style={{
               color: "#CD4848",
@@ -193,12 +210,18 @@ export const TableComponent = ({ data }) => {
     );
   };
 
+  // const handleDelete = (shipmentId) => {
+  //   const updatedData = data.filter(item => item.shipmentId !== shipmentId);
+  //   setData(updatedData);
+  // };
+
+  
   return (
-    <div className="overflow-auto rounded-md border-2 border-solid max-h-96">
+    <div className="overflow-auto rounded-md border-2 border-solid max-h-80">
       <table className="w-full border-separate border-spacing-0">
         <thead className="sticky bg-white top-0 z-10">
           <tr>
-            <th className="text-base font-medium text-left border-b-2 py-3">
+          <th className="text-base font-medium text-left border-b-2 py-3">
               <div className="flex flex-row items-center justify-center gap-1.5">
                 <svg
                   className="pt-0.5"
@@ -290,37 +313,22 @@ export const TableComponent = ({ data }) => {
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">
               <div className="flex flex-row items-center justify-center gap-1.5">
-                <svg
-                  width="15"
-                  height="16"
-                  viewBox="0 0 15 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7.62353 15.0615C3.74899 15.0615 0.558594 11.8727 0.558594 8C0.558594 4.1341 3.74899 0.938477 7.61676 0.938477C11.4913 0.938477 14.6885 4.1341 14.6885 8C14.6885 11.8727 11.4981 15.0615 7.62353 15.0615ZM7.62353 13.5111C10.6785 13.5111 13.1373 11.0534 13.1373 8C13.1373 4.94655 10.6785 2.4889 7.61676 2.4889C4.56183 2.4889 2.11654 4.94655 2.11654 8C2.11654 11.0534 4.56861 13.5111 7.62353 13.5111ZM7.61676 9.05618C7.21034 9.05618 6.97326 8.83276 6.95972 8.41976L6.85811 5.33246C6.84456 4.90593 7.15615 4.60803 7.60999 4.60803C8.06382 4.60803 8.38896 4.9127 8.36864 5.33923L8.26703 8.41299C8.24671 8.83953 8.01641 9.05618 7.61676 9.05618ZM7.61676 11.331C7.15615 11.331 6.77683 11.0128 6.77683 10.5592C6.77683 10.1124 7.14938 9.78738 7.61676 9.78738C8.09092 9.78738 8.4567 10.1124 8.4567 10.5592C8.4567 11.0196 8.08414 11.331 7.61676 11.331Z"
-                    fill="black"
-                  />
-                </svg>
+              <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.62353 15.0615C3.74899 15.0615 0.558594 11.8727 0.558594 8C0.558594 4.1341 3.74899 0.938477 7.61676 0.938477C11.4913 0.938477 14.6885 4.1341 14.6885 8C14.6885 11.8727 11.4981 15.0615 7.62353 15.0615ZM7.62353 13.5111C10.6785 13.5111 13.1373 11.0534 13.1373 8C13.1373 4.94655 10.6785 2.4889 7.61676 2.4889C4.56183 2.4889 2.11654 4.94655 2.11654 8C2.11654 11.0534 4.56861 13.5111 7.62353 13.5111ZM7.61676 9.05618C7.21034 9.05618 6.97326 8.83276 6.95972 8.41976L6.85811 5.33246C6.84456 4.90593 7.15615 4.60803 7.60999 4.60803C8.06382 4.60803 8.38896 4.9127 8.36864 5.33923L8.26703 8.41299C8.24671 8.83953 8.01641 9.05618 7.61676 9.05618ZM7.61676 11.331C7.15615 11.331 6.77683 11.0128 6.77683 10.5592C6.77683 10.1124 7.14938 9.78738 7.61676 9.78738C8.09092 9.78738 8.4567 10.1124 8.4567 10.5592C8.4567 11.0196 8.08414 11.331 7.61676 11.331Z" fill="black"/>
+              </svg>
                 Status
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">
               <div className="flex flex-row items-center justify-center gap-1.5">
-                <svg
-                  width="15"
-                  height="16"
-                  viewBox="0 0 15 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8.37293 14.9385C8.33166 14.9385 8.27725 14.888 8.2097 14.7871C8.14216 14.6901 8.07462 14.5601 8.00708 14.3971C7.93954 14.238 7.88325 14.0595 7.83822 13.8616C7.79319 13.6636 7.77068 13.4696 7.77068 13.2794V9.95552H8.96955V13.2794C8.96955 13.4696 8.94704 13.6636 8.90201 13.8616C8.85698 14.0595 8.8007 14.238 8.73316 14.3971C8.66561 14.5601 8.59807 14.6901 8.53053 14.7871C8.46674 14.888 8.41421 14.9385 8.37293 14.9385ZM4.78757 10.5085C4.50989 10.5085 4.28663 10.4251 4.11777 10.2582C3.95267 10.0875 3.87012 9.86433 3.87012 9.58879C3.87012 9.1425 3.98456 8.70785 4.21346 8.28484C4.44235 7.86183 4.75942 7.48345 5.16468 7.1497C5.57368 6.81595 6.05023 6.55206 6.59432 6.35802C7.14216 6.1601 7.73503 6.06114 8.37293 6.06114C9.01083 6.06114 9.60182 6.1601 10.1459 6.35802C10.69 6.55206 11.1666 6.81595 11.5756 7.1497C11.9846 7.48345 12.3016 7.86183 12.5268 8.28484C12.7557 8.70785 12.8701 9.1425 12.8701 9.58879C12.8701 9.86433 12.7876 10.0875 12.6225 10.2582C12.4574 10.4251 12.236 10.5085 11.9583 10.5085H4.78757ZM5.06899 9.44326H11.6712C11.7763 9.44326 11.8195 9.38117 11.8007 9.25698C11.7669 9.00085 11.66 8.74471 11.4799 8.48858C11.2998 8.23245 11.0596 7.9996 10.7594 7.79004C10.4592 7.58047 10.1065 7.41166 9.70126 7.28359C9.29976 7.15552 8.85698 7.09149 8.37293 7.09149C7.88888 7.09149 7.44423 7.15552 7.03897 7.28359C6.63747 7.41166 6.28663 7.58047 5.98644 7.79004C5.68625 7.9996 5.4461 8.23245 5.26599 8.48858C5.08588 8.74471 4.97706 9.00085 4.93954 9.25698C4.92077 9.38117 4.96393 9.44326 5.06899 9.44326ZM4.58494 1.64284C4.58494 1.44104 4.65248 1.27417 4.78757 1.14222C4.9264 1.00639 5.10651 0.938477 5.3279 0.938477H11.418C11.6393 0.938477 11.8176 1.00639 11.9527 1.14222C12.0915 1.27417 12.1609 1.44104 12.1609 1.64284C12.1609 1.85241 12.0821 2.06003 11.9245 2.26571C11.8307 2.39378 11.6975 2.53737 11.5249 2.69648C11.356 2.85171 11.1609 3.01471 10.9395 3.18546C10.7181 3.35622 10.4874 3.52697 10.2472 3.69773L10.4555 6.92268H9.37481L9.16655 3.20293C9.15905 3.10202 9.19094 3.03411 9.26224 2.99918C9.43485 2.90216 9.59807 2.80514 9.75192 2.70812C9.90952 2.6111 10.0484 2.5199 10.1684 2.43453C10.2885 2.34915 10.3879 2.27347 10.4667 2.2075C10.5455 2.13764 10.5999 2.08719 10.63 2.05615C10.6562 2.0251 10.6619 1.99794 10.6469 1.97465C10.6356 1.95137 10.615 1.93972 10.5849 1.93972H6.1553C6.12903 1.93972 6.10839 1.95137 6.09338 1.97465C6.08212 1.99794 6.08775 2.0251 6.11027 2.05615C6.14029 2.08719 6.1947 2.13764 6.27349 2.2075C6.35605 2.27347 6.45736 2.34915 6.57743 2.43453C6.70126 2.5199 6.83822 2.6111 6.98832 2.70812C7.14216 2.80514 7.30727 2.90216 7.48363 2.99918C7.55492 3.03411 7.58869 3.10202 7.58494 3.20293L7.37106 6.92268H6.28475L6.49864 3.69773C6.25473 3.52697 6.02209 3.35622 5.8007 3.18546C5.58306 3.01471 5.38794 2.85171 5.21533 2.69648C5.04648 2.53737 4.91515 2.39378 4.82134 2.26571C4.66374 2.06003 4.58494 1.85241 4.58494 1.64284Z"
-                    fill="black"
-                  />
-                </svg>
+              <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8.37293 14.9385C8.33166 14.9385 8.27725 14.888 8.2097 14.7871C8.14216 14.6901 8.07462 14.5601 8.00708 14.3971C7.93954 14.238 7.88325 14.0595 7.83822 13.8616C7.79319 13.6636 7.77068 13.4696 7.77068 13.2794V9.95552H8.96955V13.2794C8.96955 13.4696 8.94704 13.6636 8.90201 13.8616C8.85698 14.0595 8.8007 14.238 8.73316 14.3971C8.66561 14.5601 8.59807 14.6901 8.53053 14.7871C8.46674 14.888 8.41421 14.9385 8.37293 14.9385ZM4.78757 10.5085C4.50989 10.5085 4.28663 10.4251 4.11777 10.2582C3.95267 10.0875 3.87012 9.86433 3.87012 9.58879C3.87012 9.1425 3.98456 8.70785 4.21346 8.28484C4.44235 7.86183 4.75942 7.48345 5.16468 7.1497C5.57368 6.81595 6.05023 6.55206 6.59432 6.35802C7.14216 6.1601 7.73503 6.06114 8.37293 6.06114C9.01083 6.06114 9.60182 6.1601 10.1459 6.35802C10.69 6.55206 11.1666 6.81595 11.5756 7.1497C11.9846 7.48345 12.3016 7.86183 12.5268 8.28484C12.7557 8.70785 12.8701 9.1425 12.8701 9.58879C12.8701 9.86433 12.7876 10.0875 12.6225 10.2582C12.4574 10.4251 12.236 10.5085 11.9583 10.5085H4.78757ZM5.06899 9.44326H11.6712C11.7763 9.44326 11.8195 9.38117 11.8007 9.25698C11.7669 9.00085 11.66 8.74471 11.4799 8.48858C11.2998 8.23245 11.0596 7.9996 10.7594 7.79004C10.4592 7.58047 10.1065 7.41166 9.70126 7.28359C9.29976 7.15552 8.85698 7.09149 8.37293 7.09149C7.88888 7.09149 7.44423 7.15552 7.03897 7.28359C6.63747 7.41166 6.28663 7.58047 5.98644 7.79004C5.68625 7.9996 5.4461 8.23245 5.26599 8.48858C5.08588 8.74471 4.97706 9.00085 4.93954 9.25698C4.92077 9.38117 4.96393 9.44326 5.06899 9.44326ZM4.58494 1.64284C4.58494 1.44104 4.65248 1.27417 4.78757 1.14222C4.9264 1.00639 5.10651 0.938477 5.3279 0.938477H11.418C11.6393 0.938477 11.8176 1.00639 11.9527 1.14222C12.0915 1.27417 12.1609 1.44104 12.1609 1.64284C12.1609 1.85241 12.0821 2.06003 11.9245 2.26571C11.8307 2.39378 11.6975 2.53737 11.5249 2.69648C11.356 2.85171 11.1609 3.01471 10.9395 3.18546C10.7181 3.35622 10.4874 3.52697 10.2472 3.69773L10.4555 6.92268H9.37481L9.16655 3.20293C9.15905 3.10202 9.19094 3.03411 9.26224 2.99918C9.43485 2.90216 9.59807 2.80514 9.75192 2.70812C9.90952 2.6111 10.0484 2.5199 10.1684 2.43453C10.2885 2.34915 10.3879 2.27347 10.4667 2.2075C10.5455 2.13764 10.5999 2.08719 10.63 2.05615C10.6562 2.0251 10.6619 1.99794 10.6469 1.97465C10.6356 1.95137 10.615 1.93972 10.5849 1.93972H6.1553C6.12903 1.93972 6.10839 1.95137 6.09338 1.97465C6.08212 1.99794 6.08775 2.0251 6.11027 2.05615C6.14029 2.08719 6.1947 2.13764 6.27349 2.2075C6.35605 2.27347 6.45736 2.34915 6.57743 2.43453C6.70126 2.5199 6.83822 2.6111 6.98832 2.70812C7.14216 2.80514 7.30727 2.90216 7.48363 2.99918C7.55492 3.03411 7.58869 3.10202 7.58494 3.20293L7.37106 6.92268H6.28475L6.49864 3.69773C6.25473 3.52697 6.02209 3.35622 5.8007 3.18546C5.58306 3.01471 5.38794 2.85171 5.21533 2.69648C5.04648 2.53737 4.91515 2.39378 4.82134 2.26571C4.66374 2.06003 4.58494 1.85241 4.58494 1.64284Z" fill="black"/>
+              </svg>
                 Checkpoint
               </div>
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Action
             </th>
           </tr>
         </thead>
@@ -340,112 +348,138 @@ export const TableComponent = ({ data }) => {
                 {row.shipmentId}
               </td>
 
-              <td
-                className={`font-semibold text-[#a7ad6f] text-base text-center ${
+              <td className={`font-semibold text-[#a7ad6f] text-base text-center ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
                 } py-4`}
-              >
-                {Array.isArray(row.batchId) ? (
-                  <ul>
-                    {row.batchId.map((id, index) => (
-                      <li key={index}>{id}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  row.batchId
-                )}
-              </td>
+                >
+              {Array.isArray(row.batchId) ? (
+                <ul>
+                  {row.batchId.map((id, index) => (
+                    <li key={index}>{id}</li>
+                  ))}
+                </ul>
+              ) : (
+                row.batchId
+              )}
+            </td>
+              
+            <td className={`font-medium text-sm text-[#828282] text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+                >
+              {Array.isArray(row.driedDate) ? (
+                <ul>
+                  {row.driedDate.map((id, index) => (
+                    <li key={index}>{id}</li>
+                  ))}
+                </ul>
+              ) : (
+                row.driedDate
+              )}
+            </td>
+          
+            <td className={`font-medium text-sm text-[#828282] text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+                >
+              {Array.isArray(row.flouredDate) ? (
+                <ul>
+                  {row.flouredDate.map((id, index) => (
+                    <li key={index}>{id}</li>
+                  ))}
+                </ul>
+              ) : (
+                row.flouredDate
+              )}
+            </td>
+
+            <td className={`font-medium text-sm text-[#828282] text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+                >
+              {Array.isArray(row.weight) ? (
+                <ul>
+                  {row.weight.map((id, index) => (
+                    <li key={index}>{id}</li>
+                  ))}
+                </ul>
+              ) : (
+                row.weight
+              )}
+            </td>
 
               <td
-                className={`font-medium text-sm text-[#828282] text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {Array.isArray(row.driedDate) ? (
-                  <ul>
-                    {row.driedDate.map((id, index) => (
-                      <li key={index}>{id}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  row.driedDate
-                )}
-              </td>
-
-              <td
-                className={`font-medium text-sm text-[#828282] text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {Array.isArray(row.flouredDate) ? (
-                  <ul>
-                    {row.flouredDate.map((id, index) => (
-                      <li key={index}>{id}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  row.flouredDate
-                )}
-              </td>
-
-              <td
-                className={`font-medium text-sm text-[#828282] text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {Array.isArray(row.weight) ? (
-                  <ul>
-                    {row.weight.map((id, index) => (
-                      <li key={index}>{id}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  row.weight
-                )}
-              </td>
-
-              <td
-                className={`font-semibold text-black text-base text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
+              className={`font-semibold text-black text-base text-center ${
+                index === data.length - 1 ? "border-b-0" : "border-b-2"
+              } py-4`}
+              style={{
+                padding: "0.1rem", // Reduced padding from 0.5rem to 0.25rem
+                textAlign: "center",
+                fontWeight: "bold",
+                height: "30px",
+                width: "130px",
+              }}
+            >
+              <div
                 style={{
-                  padding: "0.1rem", // Reduced padding from 0.5rem to 0.25rem
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  height: "30px",
+                  backgroundColor: getStatusBackgroundColor(row.status),
+                  color: getStatusTextColor(row.status),
+                  borderRadius: "0.3rem",
+                  height: "40px", 
                   width: "130px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <div
-                  style={{
-                    backgroundColor: getStatusBackgroundColor(row.status),
-                    color: getStatusTextColor(row.status),
-                    borderRadius: "0.3rem",
-                    height: "40px",
-                    width: "130px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div style={{ marginRight: "0.5rem" }}>
-                    {getStatusLogo(row.status)}
-                  </div>
-                  {row.status}
+            <div style={{ marginRight: "0.5rem" }}>
+                {getStatusLogo(row.status)}
+              </div>
+              {row.status}
+            </div>
+            </td>
+
+            <td
+              className={`font-semibold text-black text-base text-center ${
+                index === data.length - 1 ? "border-b-0" : "border-b-2"
+              } py-4`}
+            >
+              {getStatusRow(row.checkpoint)}
+            </td>
+
+            <td
+                className={`py-4 ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
+                    onClick={() => setDeleteModalOpen(true)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <path d="M4 7l16 0" />
+                      <path d="M10 11l0 6" />
+                      <path d="M14 11l0 6" />
+                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                  </button>
                 </div>
               </td>
+            
 
-              <td
-                className={`font-semibold text-black text-base text-center ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                } py-4`}
-              >
-                {getStatusRow(row.checkpoint)}
-              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        shipmentId={shipmentToDelete?.shipmentId}
+      />
     </div>
   );
 };
