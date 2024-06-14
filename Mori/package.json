@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fontsource/be-vietnam-pro": "^5.0.19",
+    "axios": "^1.7.2",
     "chart.js": "^4.4.2",
     "firebase": "^10.11.1",
     "flowbite": "^2.3.0",

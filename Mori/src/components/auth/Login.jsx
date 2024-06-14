@@ -5,6 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
+import { loginUser, verifyUser } from '../../service/service';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -14,6 +15,7 @@ const Login = () => {
     React.createRef(),
     React.createRef(),
   ]);
+  const [loginCredentials, setLoginCredentials] = useState({email: '', password: ''});
   const { width } = useWindowSize(); // Get the window width
   const [isClicked, setIsClicked] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
@@ -29,7 +31,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
-  const dummyAccount = { email: 'gde.agastya@binus.ac.id', password: '1234' }; // Dummy account details
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
 
   const LoadingScreen = () => (
@@ -97,46 +98,48 @@ const Login = () => {
   };
   
   
-  const handleLoginSubmit = (event) => {
+  const handleLoginSubmit = async (event) => {
     event.preventDefault();
+
     const enteredEmail = document.getElementById('login-email').value;
     const enteredPassword = document.getElementById('login-password').value;
-  
-    if (enteredEmail === dummyAccount.email && enteredPassword === dummyAccount.password) {
-      setShowLoading(true); // Show loading screen
-      setInvalidCode(false); // Reset the invalid code state
-      setTimer(59); // Reset the timer
-      setTimeout(() => {
-        setShowLoading(false);
+
+    setLoginCredentials({
+      email: enteredEmail, 
+      password: enteredPassword
+    })
+
+    setShowLoading(true); // Show loading screen
+    setInvalidCode(false); // Reset the invalid code state
+    loginUser(enteredEmail, enteredPassword)
+      .then(res => {
         setIsLoggedIn(true); // Set login status to true
         setShowCodeEntry(true); // Show the code entry form for login verification
-      }, 5000); // 5 seconds delay
-    } else {
-      alert('Invalid login credentials!');
-    }
+      }).catch(err => {
+        alert('Login error : ' + err)
+      }).finally(() => {
+        setShowLoading(false);
+      })
   };
   
-  
-  
   const handleLoginVerificationSubmit = () => {
-    const dummyCode = "5678"; // Different dummy code for login verification
-  
-    if (verificationCode.join("") === dummyCode) {
-      console.log("Login Verification Code Submitted:", verificationCode.join(""));
-      alert('Login verified successfully!');
-      setShowCodeEntry(false);
-      setIsLoggedIn(false);
-    } else {
-      console.log("Incorrect Login Verification Code");
-      setInvalidCode(true); // Set invalid code message to be visible
-      for (let i = 0; i < verificationCode.length; i++) {
-        const inputBox = document.getElementById(`code-${i}`);
-        if (inputBox) {
-          inputBox.style.borderColor = '#902E2E';
-          inputBox.style.color = '#902E2E';
+    verifyUser(loginCredentials.email, verificationCode.join(''))
+      .then(res => {
+        console.log("Login Verification Code Submitted:", verificationCode.join(""));
+        alert('Login verified successfully!');
+        setShowCodeEntry(false);
+        setIsLoggedIn(false);
+      }).catch(err => {
+        console.log("Incorrect Login Verification Code");
+        setInvalidCode(true); // Set invalid code message to be visible
+        for (let i = 0; i < verificationCode.length; i++) {
+          const inputBox = document.getElementById(`code-${i}`);
+          if (inputBox) {
+            inputBox.style.borderColor = '#902E2E';
+            inputBox.style.color = '#902E2E';
+          }
         }
-      }
-    }
+      })
   };
   
   const handleForgotPassword = () => {
@@ -144,8 +147,6 @@ const Login = () => {
     setInvalidCode(false); // Reset the invalid code state
     setTimer(59); // Reset the timer
   };
-  
-  
 
   const handleSendVerification = (event) => {
     event.preventDefault();
@@ -158,9 +159,6 @@ const Login = () => {
       setShowCodeEntry(true);
     }, 5000); // 5 seconds delay
   };
-  
-  
-  
 
   const handleCodeInputChange = (index, event) => {
     const newCode = [...verificationCode];
@@ -170,10 +168,12 @@ const Login = () => {
       document.getElementById(`code-${index + 1}`).focus();
     }
   };
+
   const handleResendCode = () => {
     console.log("Resending code...");
     setTimer(60); // Restart the timer without changing the form state
   };
+
   const handleSubmit = () => {
     const dummyCode = "1234";
 
