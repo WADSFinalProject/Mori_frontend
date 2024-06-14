@@ -218,12 +218,13 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center text-base">
               {checkedCount} {batchText}
             </p>
-            <button
+            <Link
+              to="/centra/arrangeshipment"
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </button>
+            </Link>
           </div>
         )}
         {allChecked && (
