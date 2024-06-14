@@ -1,5 +1,5 @@
 import React from 'react';
-import calendar from '../../assets/XYZ/calendarIcon.png';
+import calendar from '../../../assets/XYZ/calendarIcon.png';
 
 const FlouringScheduleBox = ({ every, nearest }) => {
     const nearestSchedule = nearest ? `${nearest}` : '...';

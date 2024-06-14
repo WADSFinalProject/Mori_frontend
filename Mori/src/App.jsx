@@ -35,7 +35,7 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
-import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
+import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
 
 function App() {
   return (

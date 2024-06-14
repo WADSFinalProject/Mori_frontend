@@ -5,14 +5,14 @@ import semicircle from "../../assets/XYZ/semicircle.png";
 import ArrowDown from "../../assets/XYZ/arrowdown.png";
 import notifIcon from "../../assets/XYZ/notif.png";
 import nonotifIcon from "../../assets/XYZ/nonotif.png";
-import LeavesStatusCard from "./LeavesStatusCard";
-import PersonInChargeBox from "./PersonInChargeBox";
-import FlouringScheduleBox from "./FlouringScheduleBox";
-import DryingMachineBox from "./DryingMachineBox";
-import DryingMachineBoxDashboard from "./DryingMachineBox";
-import LeavesStatusDashboard from "./LeavesStatusCard";
-import FlouringMachineBoxDashboard from "./FlouringMachineBox";
-import FlouringMachineBox from "./FlouringMachineBox";
+import LeavesStatusCard from "./CentraDetailsMachine/LeavesStatusCard";
+import PersonInChargeBox from "./CentraDetailsMachine/PersonInChargeBox";
+import FlouringScheduleBox from "./CentraDetailsMachine/FlouringScheduleBox";
+import DryingMachineBox from "./CentraDetailsMachine/DryingMachineBox";
+import DryingMachineBoxDashboard from "./CentraDetailsMachine/DryingMachineBox";
+import LeavesStatusDashboard from "./CentraDetailsMachine/LeavesStatusCard";
+import FlouringMachineBoxDashboard from "./CentraDetailsMachine/FlouringMachineBox";
+import FlouringMachineBox from "./CentraDetailsMachine/FlouringMachineBox";
 import AdminShipmentDetails from "./AdminShipmentDetails/AdminShipmentDetails";
 import CentraDetails from "./CentraDetails/CentraDetails";
 import XyzDetails from "./XYZ/XyzDetails";
@@ -58,7 +58,7 @@ const MainXYZ = () => {
 
   return (
     <div className="flex">
-      <div className="fixed flex flex-col w-64 h-screen bg-white border-r-2">
+      <div className="ml-5 fixed flex flex-col w-64 h-screen bg-white border-r-2">
         <div className="flex items-center justify-center mt-10 mr-24">
           <img src={moriLogo} alt="Mori Logo" className="h-10" />
         </div>
@@ -136,7 +136,7 @@ const MainXYZ = () => {
               </li>
             ))}
           </ul>
-          <div className="px-6 mt-10 mb-1">
+          {/* <div className="px-6 mt-10 mb-1">
             <h2 className="text-sm font-semibold text-gray-700 ml-[-0.1rem]">
               SUPPORT
             </h2>
@@ -188,7 +188,7 @@ const MainXYZ = () => {
                 </div>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </nav>
       </div>
       <div className="flex-1 ml-64">
