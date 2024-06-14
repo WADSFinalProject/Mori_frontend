@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useWindowSize } from "react-use"; // Import useWindowSize hook from react-use library
+import { useWindowSize } from "react-use";
 import moriLogo from "../../../assets/moriWhite.png";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
@@ -50,24 +50,8 @@ const shipmentData = [
   },
 ];
 
-const gaugeOptions = {
-  cutout: "80%",
-  circumference: 180,
-  rotation: -90,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
-  },
-};
-
 export default function HarborHome() {
-  const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
-
-  // Check if the window width is greater than a mobile device width (e.g., 640px)
+  const { width } = useWindowSize();
   const isMobile = width <= 1024;
 
   const [sortOption, setSortOption] = useState("new-old");
@@ -107,20 +91,18 @@ export default function HarborHome() {
   return (
     <div>
       {isMobile ? (
-        // Header
         <div className="bg-[#F0F0F0]">
           <header
-            className="flex flex-col p-4 shadow-md" // Changed to flex-col to stack the sections vertically
+            className="flex flex-col p-4 shadow-md"
             style={{
-              backgroundImage: `url(${bg})`, // Set the background image
-              backgroundSize: "cover", // Cover the entire background
-              backgroundRepeat: "no-repeat", // Don't repeat the background image
+              backgroundImage: `url(${bg})`,
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              {/* Added mb-4 for margin bottom */}
               <div className="flex items-center">
-                <Link to="/harbornavigation">
+                <Link to="/harbor/navigation">
                   <img
                     src={hamburg}
                     alt="divisions"
@@ -128,28 +110,26 @@ export default function HarborHome() {
                   />
                 </Link>
               </div>
-              
               <img
                 src={moriLogo}
                 alt="mori logo"
                 className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-20"
               />
               <div className="flex">
-              <Link to="/harbornotif">
-                <img
-                  src={bell}
-                  alt="notifications"
-                  className="text-6xl mr-2 font-bold text-gray-700 w-5"
-                />
+                <Link to="/harbor/notification">
+                  <img
+                    src={bell}
+                    alt="notifications"
+                    className="text-6xl mr-2 font-bold text-gray-700 w-5"
+                  />
                 </Link>
-
               </div>
             </div>
             <div className="flex flex-row gap-5 p-3">
               <div className="w-16 h-16 bg-black rounded-full">
                 {/* to put an icon or image inside the circle */}
               </div>
-              <div className="">
+              <div>
                 <p className="text-lg text-white font-semibold">
                   Selamat pagi,
                 </p>
@@ -158,13 +138,13 @@ export default function HarborHome() {
             </div>
           </header>
 
-          <main className="">
+          <main>
             {/* FILTERS */}
             <div className="grid grid-cols-2 gap-3 mt-7">
-              <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+              <div className="font-vietnam items-center justify-center font-bold text-md text-center">
                 Sort By
               </div>
-              <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
+              <div className="font-vietnam items-center justify-center font-bold text-md text-center">
                 Channel Filter
               </div>
 
@@ -209,14 +189,12 @@ export default function HarborHome() {
             </div>
           </main>
 
-          {/* Footer */}
-          <footer className="sticky w-full bg-gray-200 text-black flex justify-between items-center h-10 px-3 bottom-0">
-            <p className="font-semibold">@2024 AMIN</p>
-            <p className="font-semibold">HARBOUR</p>
+          <footer className="font-vietnam bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
+            <p className="font-bold">@2024 MORI</p>
+            <p className="font-semibold">HARBOR GUARD</p>
           </footer>
         </div>
       ) : (
-        // Display "Not available for this device" text for larger devices
         <div className="flex justify-center items-center h-screen mt-4 text-gray-600">
           Not available for this device.
         </div>
