@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import StatusComponent from "./StatusComponent";
-import back from '../../../assets/back.png'; 
+import back from "../../../assets/back.png";
 import { useNavigate } from "react-router-dom";
 
 const ShippingInformation = () => {
-
   const navigate = useNavigate();
   const shipmentData = [
     {
@@ -105,9 +104,9 @@ const ShippingInformation = () => {
             style={{ height: `${headerHeight}px` }}
           >
             <div className="flex flex-row justify-between mx-6 items-center">
-            <button onClick={() => navigate(-1)}> 
-              <img src={back} alt="back" className="w-5 mr-2" /> 
-            </button>
+              <button onClick={() => navigate(-1)}>
+                <img src={back} alt="back" className="w-5 mr-2" />
+              </button>
               <div className="font-vietnam text-xl font-bold select-none">
                 Shipping Information
               </div>
@@ -184,11 +183,8 @@ const ShippingInformation = () => {
           </main>
 
           {/* Footer */}
-          <footer
-            className="absolute w-full bg-gray-200 text-black flex justify-between items-center px-3 bottom-0 select-none py-3"
-            style={{ height: `${footerHeight}px` }}
-          >
-            <p className="font-semibold">@2024 AMIN</p>
+          <footer className="font-vietnam bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
+            <p className="font-bold">@2024 MORI</p>
             <p className="font-semibold">XYZ</p>
           </footer>
         </div>
