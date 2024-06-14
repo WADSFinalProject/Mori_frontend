@@ -5,7 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { loginUser, verifyUser } from '../../service/service';
+import { loginUser, verifyUser } from '../../service/auth';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
