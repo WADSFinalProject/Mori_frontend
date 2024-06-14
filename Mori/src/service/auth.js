@@ -59,6 +59,23 @@ export const setPassword = async (token, newPassword) => {
     }
 };
 
+export const resetPasswordOTP = async (email) => {
+    try {
+        const payload = {
+            email: email
+        }
+
+        return axios.post("http://localhost:8000/users/resetpassword-OTP?email=" + email, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error validating email for OTP : ", error)
+        throw new Error(error)
+    }
+}
+
 export const loginUser = async (email, password) => {
     try {
         const loginDetails = {
