@@ -45,16 +45,21 @@ function App() {
         <Route path="/setpassword" element={<SetPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/resetverification" element={<ResetVerification />} />
-        <Route path="/centrahome" element={<CentraHome />} />
-        <Route path="/centrashipping" element={<Shipping />} />
-        <Route path="/centranavigation" element={<CentraNavigation />} />
+
+        {/* CENTRA */}
+        <Route path="/centra/home" element={<CentraHome />} />
+        <Route path="/centra/shipping" element={<Shipping />} />
+        <Route path="/centra/navigation" element={<CentraNavigation />} />
         <Route path="/editbatch" element={<EditBatch />} />
-        <Route path="/collectormain" element={<CollectorMain />} />
-        <Route path="/centraprocessor" element={<CentraProcessor />} />
+        <Route path="/centra/collector" element={<CollectorMain />} />
+        <Route path="/centra/processor" element={<CentraProcessor />} />
+        <Route path="/centra/notification" element={<CentraNotif />} />
+        <Route path="/centra/arrangeshipment" element={<ArrangeShipment />} />
+        {/* ini harus ngikutin shipment idnya */}
         <Route path="/shipdetails" element={<ShipDetails />} />
-        <Route path="/registeraccount" element={<RegisterAccount />} />
+        
+
         <Route path="/harborhome" element={<HarborHome />} />
-        <Route path="/centranotif" element={<CentraNotif />} />
         <Route path="/confirmshipment" element={<ConfirmShipment />} />
         <Route path="/arrangeshipment" element={<ArrangeShipment />} />
         <Route path="/harbornavigation" element={<HarborNavigation />} />

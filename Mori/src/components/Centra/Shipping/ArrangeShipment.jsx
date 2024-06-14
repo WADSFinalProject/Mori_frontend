@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
+import { Link } from "react-router-dom";
 
 const ArrangeShipment = () => {
   const { width } = useWindowSize();
@@ -34,7 +35,7 @@ const ArrangeShipment = () => {
         <div className="max-w-[640px] relative bg-slate-50 h-screen overflow-hidden text-left text-base text-zinc-500 font-vietnam ml-auto mr-auto">
           <header className="absolute mt-6 w-full flex flex-col items-center justify-between text-right text-xl">
             <div className="flex flex-row w-full">
-              <button className="hover:cursor-pointer" onClick={null}>
+              <Link to="/centra/shipping" className="hover:cursor-pointer">
                 <svg
                   className="ml-5"
                   width="24"
@@ -48,7 +49,7 @@ const ArrangeShipment = () => {
                     fill="#828282"
                   />
                 </svg>
-              </button>
+              </Link>
               <div className="flex-1 flex flex-row items-center justify-center gap-[8px] text-base">
                 <svg
                   width="25"

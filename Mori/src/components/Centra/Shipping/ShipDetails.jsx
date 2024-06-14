@@ -40,7 +40,7 @@ export default function ShipDetails() {
             {isMobile ? (
                 <>
                     <div className="mt-3 p-5 shadow-md flex items-center justify-between bg-white">
-                        <Link to="/centrashipping" className="flex items-center">
+                        <Link to="/centra/shipping" className="flex items-center">
                             <img src={back} alt="back" className="w-4 h-4" />
                         </Link>
                         <div className="flex items-center flex-grow justify-center">
