@@ -70,8 +70,8 @@ export default function EditBatch({ onClose, batchData }) {
     
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center items-end md:items-center md:py-4 md:px-6 md:pt-0 md:bg-black md:bg-opacity-25">
-            <div className="bg-white rounded-t-lg md:rounded-lg overflow-hidden shadow-md w-full max-w-screen-lg md:rounded-none md:w-96">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center items-end md:items-center md:py-4 md:px-6 md:pt-0 md:bg-black md:bg-opacity-25 h-full">
+            <div className="bg-white rounded-t-lg md:rounded-lg overflow-hidden shadow-md w-full max-w-screen-lg md:rounded-none md:w-96 flex flex-col h-full">
                 <div className="px-4 py-3 border-b border-gray-200">
                     <nav className="flex justify-between items-center">
                     <Link to="/centra/collector">
