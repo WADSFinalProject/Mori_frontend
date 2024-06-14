@@ -18,8 +18,6 @@ export const registerUser = async (userDetails) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error registering the user: ", error);
     });
   } catch (error) {
     console.log("Error registering user: ", error);
@@ -36,8 +34,6 @@ export const validateToken = async (token) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error validating the token: ", error);
     });
   } catch (error) {
     console.log("Error validating token: ", error);
@@ -56,8 +52,6 @@ export const setPassword = async (token, newPassword) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error setting the password: ", error);
     });
   } catch (error) {
     console.log("Error setting password: ", error);
@@ -94,8 +88,6 @@ export const verifyUser = async (email, code) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error verifying the user: ", error);
     });
   } catch (error) {
     console.log("Error verifying user: ", error);
@@ -110,8 +102,6 @@ export const refreshToken = async (refreshToken) => {
         "Content-Type": "application/json",
       },
       withCredentials: true,
-    }).catch((error) => {
-      console.error("There was an error refreshing the token: ", error);
     });
   } catch (error) {
     console.log("Error refreshing token: ", error);
@@ -125,8 +115,6 @@ export const resendCode = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error resending the code: ", error);
     });
   } catch (error) {
     console.log("Error resending code: ", error);
@@ -140,8 +128,6 @@ export const logoutUser = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error logging out: ", error);
     });
   } catch (error) {
     console.log("Error logging out: ", error);
@@ -155,8 +141,6 @@ export const accessProtectedRoute = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error accessing the protected route: ", error);
     });
   } catch (error) {
     console.log("Error accessing protected route: ", error);
@@ -178,8 +162,6 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error creating the batch: ", error);
     });
   } catch (error) {
     console.log("Error creating batch: ", error);
@@ -197,8 +179,6 @@ export const readBatches = async (skip = 0, limit = 100) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading batches: ", error);
     });
   } catch (error) {
     console.log("Error reading batches: ", error);
@@ -212,8 +192,6 @@ export const readBatch = async (batchId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading the batch: ", error);
     });
   } catch (error) {
     console.log("Error reading batch: ", error);
@@ -233,8 +211,6 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error updating the batch: ", error);
     });
   } catch (error) {
     console.log("Error updating batch: ", error);
@@ -248,8 +224,6 @@ export const deleteBatch = async (batchId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error deleting the batch: ", error);
     });
   } catch (error) {
     console.log("Error deleting batch: ", error);
@@ -263,8 +237,6 @@ export const getDriedDate = async (dryingId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error getting the dried date: ", error);
     });
   } catch (error) {
     console.log("Error getting dried date: ", error);
@@ -278,8 +250,6 @@ export const getFlouredDate = async (flouringId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error getting the floured date: ", error);
     });
   } catch (error) {
     console.log("Error getting floured date: ", error);
@@ -293,8 +263,6 @@ export const startMachine = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error starting the machine: ", error);
     });
   } catch (error) {
     console.log("Error starting machine: ", error);
@@ -308,8 +276,6 @@ export const stopMachine = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error stopping the machine: ", error);
     });
   } catch (error) {
     console.log("Error stopping machine: ", error);
@@ -323,8 +289,6 @@ export const readMachineStatus = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading the machine status: ", error);
     });
   } catch (error) {
     console.log("Error reading machine status: ", error);
@@ -338,8 +302,6 @@ export const readFlouringMachineStatus = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading the flouring machine status: ", error);
     });
   } catch (error) {
     console.log("Error reading flouring machine status: ", error);
@@ -353,8 +315,6 @@ export const startFlouringMachine = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error starting the flouring machine: ", error);
     });
   } catch (error) {
     console.log("Error starting flouring machine: ", error);
@@ -368,8 +328,6 @@ export const stopFlouringMachine = async (machineId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error stopping the flouring machine: ", error);
     });
   } catch (error) {
     console.log("Error stopping flouring machine: ", error);
@@ -391,8 +349,6 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error creating the wet leaves collection: ", error);
     });
   } catch (error) {
     console.log("Error creating wet leaves collection: ", error);
@@ -410,8 +366,6 @@ export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading the wet leaves collections: ", error);
     });
   } catch (error) {
     console.log("Error reading wet leaves collections: ", error);
@@ -425,8 +379,6 @@ export const readWetLeavesCollection = async (wetLeavesBatchId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error reading the wet leaves collection: ", error);
     });
   } catch (error) {
     console.log("Error reading wet leaves collection: ", error);
@@ -447,8 +399,6 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, 
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error updating the wet leaves collection: ", error);
     });
   } catch (error) {
     console.log("Error updating wet leaves collection: ", error);
@@ -462,8 +412,6 @@ export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((error) => {
-      console.error("There was an error deleting the wet leaves collection: ", error);
     });
   } catch (error) {
     console.log("Error deleting wet leaves collection: ", error);
