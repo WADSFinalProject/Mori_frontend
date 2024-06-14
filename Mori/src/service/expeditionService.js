@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -13,7 +14,7 @@ export const createExpedition = async (estimatedArrival, totalPackages, expediti
             CentralID: centralID
         };
 
-        return await axios.post("https://mori-backend.vercel.app/secured/expeditions", expeditionDetails, {
+        return await axios.post(host + "/secured/expeditions", expeditionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -31,7 +32,7 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get("https://mori-backend.vercel.app/secured/expeditions", {
+        return await axios.get(host + "/secured/expeditions", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -45,7 +46,7 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
 
 export const getExpeditionDetails = async (expedition_id) => {
     try {
-        return await axios.get(`https://mori-backend.vercel.app/secured/expeditions/${expedition_id}`, {
+        return await axios.get(host + `/secured/expeditions/${expedition_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -67,7 +68,7 @@ export const updateExpedition = async (expedition_id, estimatedArrival, totalPac
             CentralID: centralID
         };
 
-        return await axios.put(`https://mori-backend.vercel.app/secured/expeditions/${expedition_id}`, expeditionDetails, {
+        return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -80,7 +81,7 @@ export const updateExpedition = async (expedition_id, estimatedArrival, totalPac
 
 export const deleteExpedition = async (expedition_id) => {
     try {
-        return await axios.delete(`https://mori-backend.vercel.app/secured/expeditions/${expedition_id}`, {
+        return await axios.delete(host + `/secured/expeditions/${expedition_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

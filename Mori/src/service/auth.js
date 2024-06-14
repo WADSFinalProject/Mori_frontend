@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -14,7 +15,7 @@ export const registerUser = async (userDetails) => {
             Phone,
         };
 
-        return axios.post("https://mori-backend.vercel.app/users/register", newUser, {
+        return axios.post(host + "/users/register", newUser, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -27,7 +28,7 @@ export const registerUser = async (userDetails) => {
 
 export const validateToken = async (token) => {
     try {
-        return axios.get(`https://mori-backend.vercel.app/users/validate-link`, {
+        return axios.get(host + `/users/validate-link`, {
             params: {
                 token: token
             },
@@ -48,7 +49,7 @@ export const setPassword = async (token, newPassword) => {
             new_password: newPassword,
         };
 
-        return axios.post("https://mori-backend.vercel.app/users/setpassword", passwordDetails, {
+        return axios.post(host + "/users/setpassword", passwordDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -65,7 +66,7 @@ export const resetPasswordOTP = async (email) => {
             email: email
         }
 
-        return axios.post("https://mori-backend.vercel.app/users/resetpassword-OTP?email=" + email, {
+        return axios.post(host + "/users/resetpassword-OTP?email=" + email, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -83,7 +84,7 @@ export const resetPasswordVerification = (email, code) => {
             Code: code
         }
 
-        return axios.post("https://mori-backend.vercel.app/users/verify-reset", payload, {
+        return axios.post(host + "/users/verify-reset", payload, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -101,7 +102,7 @@ export const loginUser = async (email, password) => {
             Password: password,
         };
 
-        return axios.post("https://mori-backend.vercel.app/users/login", loginDetails, {
+        return axios.post(host + "/users/login", loginDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -119,7 +120,7 @@ export const verifyUser = async (email, code) => {
             Code: code,
         };
 
-        return axios.post("https://mori-backend.vercel.app/users/verify", verificationDetails, {
+        return axios.post(host + "/users/verify", verificationDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -132,7 +133,7 @@ export const verifyUser = async (email, code) => {
 
 export const refreshToken = async (refreshToken) => {
     try {
-        return axios.post("https://mori-backend.vercel.app/token/refresh", {}, {
+        return axios.post(host + "/token/refresh", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -146,7 +147,7 @@ export const refreshToken = async (refreshToken) => {
 
 export const resendCode = async () => {
     try {
-        return axios.post("https://mori-backend.vercel.app/users/resend_code", {}, {
+        return axios.post(host + "/users/resend_code", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -159,7 +160,7 @@ export const resendCode = async () => {
 
 export const logoutUser = async () => {
     try {
-        return axios.post("https://mori-backend.vercel.app/users/logout", {}, {
+        return axios.post(host + "/users/logout", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -172,7 +173,7 @@ export const logoutUser = async () => {
 
 export const accessProtectedRoute = async () => {
     try {
-        return axios.get("https://mori-backend.vercel.app/secured/protected-route", {
+        return axios.get(host + "/secured/protected-route", {
             headers: {
                 "Content-Type": "application/json",
             },

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -12,7 +13,7 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
             FlouredDate: flouredDate,
         };
 
-        return axios.post("https://mori-backend.vercel.app/secured/batches", batchDetails, {
+        return axios.post(host + "/secured/batches", batchDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +26,7 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
 
 export const readBatches = async (skip = 0, limit = 100) => {
     try {
-        return axios.get("https://mori-backend.vercel.app/secured/batches", {
+        return axios.get(host + "/secured/batches", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -42,7 +43,7 @@ export const readBatches = async (skip = 0, limit = 100) => {
 
 export const readBatch = async (batchId) => {
     try {
-        return axios.get(`https://mori-backend.vercel.app/secured/batches/${batchId}`, {
+        return axios.get(host + `/secured/batches/${batchId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -61,7 +62,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
             DryingID: dryingID,
         };
 
-        return axios.put(`https://mori-backend.vercel.app/secured/batches/${batchId}`, batchDetails, {
+        return axios.put(host + `/secured/batches/${batchId}`, batchDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -74,7 +75,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
 
 export const deleteBatch = async (batchId) => {
     try {
-        return axios.delete(`https://mori-backend.vercel.app/secured/batches/${batchId}`, {
+        return axios.delete(host + `/secured/batches/${batchId}`, {
             headers: {
                 "Content-Type": "application/json",
             },

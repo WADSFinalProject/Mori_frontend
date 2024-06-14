@@ -1,10 +1,11 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
 export const startMachine = async (machineId) => {
     try {
-        return axios.post(`https://mori-backend.vercel.app/secured/drying_machines/${machineId}/start`, {}, {
+        return axios.post(host + `/secured/drying_machines/${machineId}/start`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -17,7 +18,7 @@ export const startMachine = async (machineId) => {
 
 export const stopMachine = async (machineId) => {
     try {
-        return axios.post(`https://mori-backend.vercel.app/secured/drying_machines/${machineId}/stop`, {}, {
+        return axios.post(host + `/secured/drying_machines/${machineId}/stop`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -30,7 +31,7 @@ export const stopMachine = async (machineId) => {
 
 export const readMachineStatus = async (machineId) => {
     try {
-        return axios.get(`https://mori-backend.vercel.app/secured/drying_machines/${machineId}/status`, {
+        return axios.get(host + `/secured/drying_machines/${machineId}/status`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -43,7 +44,7 @@ export const readMachineStatus = async (machineId) => {
 
 export const readFlouringMachineStatus = async (machineId) => {
     try {
-        return axios.get(`https://mori-backend.vercel.app/secured/flouring_machines/${machineId}/status`, {
+        return axios.get(host + `/secured/flouring_machines/${machineId}/status`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -56,7 +57,7 @@ export const readFlouringMachineStatus = async (machineId) => {
 
 export const startFlouringMachine = async (machineId) => {
     try {
-        return axios.post(`https://mori-backend.vercel.app/secured/flouring_machines/${machineId}/start`, {}, {
+        return axios.post(host + `/secured/flouring_machines/${machineId}/start`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -69,7 +70,7 @@ export const startFlouringMachine = async (machineId) => {
 
 export const stopFlouringMachine = async (machineId) => {
     try {
-        return axios.post(`https://mori-backend.vercel.app/secured/flouring_machines/${machineId}/stop`, {}, {
+        return axios.post(host + `/secured/flouring_machines/${machineId}/stop`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
