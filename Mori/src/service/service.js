@@ -244,3 +244,232 @@ export const registerUser = async (userDetails) => {
     }
   };
 
+  export const deleteBatch = async (batchId) => {
+    try {
+      return axios.delete(`http://localhost:8000/secured/batches/${batchId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error deleting the batch: ", error);
+      });
+    } catch (error) {
+      console.log("Error deleting batch: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const getDriedDate = async (dryingId) => {
+    try {
+      return axios.get(`http://localhost:8000/secured/drying-activities/${dryingId}/date`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error getting the dried date: ", error);
+      });
+    } catch (error) {
+      console.log("Error getting dried date: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const getFlouredDate = async (flouringId) => {
+    try {
+      return axios.get(`http://localhost:8000/secured/flouring-activities/${flouringId}/date`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error getting the floured date: ", error);
+      });
+    } catch (error) {
+      console.log("Error getting floured date: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const startMachine = async (machineId) => {
+    try {
+      return axios.post(`http://localhost:8000/secured/drying_machines/${machineId}/start`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error starting the machine: ", error);
+      });
+    } catch (error) {
+      console.log("Error starting machine: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const stopMachine = async (machineId) => {
+    try {
+      return axios.post(`http://localhost:8000/secured/drying_machines/${machineId}/stop`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error stopping the machine: ", error);
+      });
+    } catch (error) {
+      console.log("Error stopping machine: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const readMachineStatus = async (machineId) => {
+    try {
+      return axios.get(`http://localhost:8000/secured/drying_machines/${machineId}/status`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error reading the machine status: ", error);
+      });
+    } catch (error) {
+      console.log("Error reading machine status: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const readFlouringMachineStatus = async (machineId) => {
+    try {
+      return axios.get(`http://localhost:8000/secured/flouring_machines/${machineId}/status`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error reading the flouring machine status: ", error);
+      });
+    } catch (error) {
+      console.log("Error reading flouring machine status: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const startFlouringMachine = async (machineId) => {
+    try {
+      return axios.post(`http://localhost:8000/secured/flouring_machines/${machineId}/start`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error starting the flouring machine: ", error);
+      });
+    } catch (error) {
+      console.log("Error starting flouring machine: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const stopFlouringMachine = async (machineId) => {
+    try {
+      return axios.post(`http://localhost:8000/secured/flouring_machines/${machineId}/stop`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error stopping the flouring machine: ", error);
+      });
+    } catch (error) {
+      console.log("Error stopping flouring machine: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const createWetLeavesCollection = async (centralId, date, weight, expired, expirationTime) => {
+    try {
+      const collectionDetails = {
+        CentralID: centralId,
+        Date: date,
+        Weight: weight,
+        Expired: expired,
+        ExpirationTime: expirationTime,
+      };
+  
+      return axios.post("http://localhost:8000/secured/wet-leaves-collections", collectionDetails, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error creating the wet leaves collection: ", error);
+      });
+    } catch (error) {
+      console.log("Error creating wet leaves collection: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
+    try {
+      return axios.get("http://localhost:8000/secured/wet-leaves-collections", {
+        params: {
+          skip: skip,
+          limit: limit,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error reading the wet leaves collections: ", error);
+      });
+    } catch (error) {
+      console.log("Error reading wet leaves collections: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const readWetLeavesCollection = async (wetLeavesBatchId) => {
+    try {
+      return axios.get(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error reading the wet leaves collection: ", error);
+      });
+    } catch (error) {
+      console.log("Error reading wet leaves collection: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, expired, expirationTime) => {
+    try {
+      const collectionDetails = {
+        Date: date,
+        Weight: weight,
+        Expired: expired,
+        ExpirationTime: expirationTime,
+      };
+  
+      return axios.put(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error updating the wet leaves collection: ", error);
+      });
+    } catch (error) {
+      console.log("Error updating wet leaves collection: ", error);
+      throw new Error(error);
+    }
+  };
+
+  export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
+    try {
+      return axios.delete(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch((error) => {
+        console.error("There was an error deleting the wet leaves collection: ", error);
+      });
+    } catch (error) {
+      console.log("Error deleting wet leaves collection: ", error);
+      throw new Error(error);
+    }
+  };
+
