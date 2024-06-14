@@ -115,8 +115,8 @@ const AdminShipmentDetails = () => {
     },
   ];
 
-  const [sortedData, setSortedData] = useState([]);
-  const [sortKey, setSortKey] = useState("new-old");
+  const [sortedData, setSortedData] = useState(data);
+  const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
 
@@ -124,40 +124,30 @@ const AdminShipmentDetails = () => {
     // Calculate total shipments count
     const uniqueShipmentIds = new Set(data.map((item) => item.shipmentId));
     setTotalShipments(uniqueShipmentIds.size);
+  }, [data]);
 
-    // Sort and filter data
-    handleSortChange(sortKey);
-  }, [data, sortKey]);
+  useEffect(() => {
+    handleSearchAndFilter(searchQuery, filterKey);
+  }, [filterKey, searchQuery]);
 
-  const handleSortChange = (sortValue) => {
-    setSortKey(sortValue);
-    handleSearchAndSort(searchQuery, sortValue);
+  const handleFilterChange = (filterValue) => {
+    setFilterKey(filterValue);
   };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    handleSearchAndSort(value, sortKey);
   };
 
-  const handleSearchAndSort = (searchValue, sortValue) => {
+  const handleSearchAndFilter = (searchValue, filterValue) => {
     let filteredData = data.filter((row) =>
       row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
-    if (sortValue === "new-old") {
-      filteredData.sort(
-        (a, b) => new Date(b.driedDate) - new Date(a.driedDate)
-      );
-    } else if (sortValue === "old-new") {
-      filteredData.sort(
-        (a, b) => new Date(a.driedDate) - new Date(b.driedDate)
-      );
-    } else if (sortValue === "heavy-light") {
-      filteredData.sort((a, b) => parseInt(b.weight) - parseInt(a.weight));
-    } else if (sortValue === "light-heavy") {
-      filteredData.sort((a, b) => parseInt(a.weight) - parseInt(b.weight));
+    if (filterValue !== "all") {
+      filteredData = filteredData.filter((row) => row.status === filterValue);
     }
+
     setSortedData(filteredData);
   };
 
@@ -201,18 +191,19 @@ const AdminShipmentDetails = () => {
           </label>
           <div className="flex flex-row gap-5 items-center">
             <div className="font-vietnam font-semibold text-md items-center">
-              Sort By:
+              Filter By:
             </div>
-            {/* Sort */}
+            {/* Filter */}
             <select
               className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
-              value={sortKey}
-              onChange={handleSortChange}
+              value={filterKey}
+              onChange={(e) => handleFilterChange(e.target.value)}
             >
-              <option value="new-old">Newest to Oldest</option>
-              <option value="old-new">Oldest to Newest</option>
-              <option value="heavy-light">Heaviest to Lightest</option>
-              <option value="light-heavy">Lightest to Heaviest</option>
+              <option value="all">All</option>
+              <option value="To Deliver">To Deliver</option>
+              <option value="Completed">Completed</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Missing">Missing</option>
             </select>
           </div>
         </div>
