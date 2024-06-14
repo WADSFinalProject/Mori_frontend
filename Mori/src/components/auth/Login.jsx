@@ -5,7 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { loginUser, verifyUser } from '../../service/auth';
+import { loginUser, resetPasswordOTP, verifyUser } from '../../service/auth';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -150,14 +150,19 @@ const Login = () => {
 
   const handleSendVerification = (event) => {
     event.preventDefault();
+    
+    const enteredEmail = event.target.elements[0].value;
+
     setShowLoading(true); // Show loading screen
     setInvalidCode(false); // Reset the invalid code state
-    setTimer(59); // Reset the timer
-    setTimeout(() => {
-      setShowLoading(false);
+    resetPasswordOTP(enteredEmail).then(res => {
       setShowVerificationForm(false);
       setShowCodeEntry(true);
-    }, 5000); // 5 seconds delay
+    }).catch(err => {
+      alert('Error : ' + err)
+    }).finally(() => {
+      setShowLoading(false);
+    });
   };
 
   const handleCodeInputChange = (index, event) => {
