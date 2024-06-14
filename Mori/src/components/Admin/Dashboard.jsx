@@ -136,7 +136,7 @@ const MainXYZ = () => {
               </li>
             ))}
           </ul>
-          <div className="px-6 mt-10 mb-1">
+          {/* <div className="px-6 mt-10 mb-1">
             <h2 className="text-sm font-semibold text-gray-700 ml-[-0.1rem]">
               SUPPORT
             </h2>
@@ -188,7 +188,7 @@ const MainXYZ = () => {
                 </div>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </nav>
       </div>
       <div className="flex-1 ml-64">

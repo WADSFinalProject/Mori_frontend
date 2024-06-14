@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const AdminShipmentDetails = () => {
+
   const data = [
     {
       id: 1,
