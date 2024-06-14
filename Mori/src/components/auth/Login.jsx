@@ -5,6 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
+import { loginUser } from '../../service/service';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -97,23 +98,22 @@ const Login = () => {
   };
   
   
-  const handleLoginSubmit = (event) => {
+  const handleLoginSubmit = async (event) => {
     event.preventDefault();
     const enteredEmail = document.getElementById('login-email').value;
     const enteredPassword = document.getElementById('login-password').value;
-  
-    if (enteredEmail === dummyAccount.email && enteredPassword === dummyAccount.password) {
-      setShowLoading(true); // Show loading screen
-      setInvalidCode(false); // Reset the invalid code state
-      setTimer(59); // Reset the timer
-      setTimeout(() => {
-        setShowLoading(false);
+
+    setShowLoading(true); // Show loading screen
+    setInvalidCode(false); // Reset the invalid code state
+    loginUser(enteredEmail, enteredPassword)
+      .then(res => {
         setIsLoggedIn(true); // Set login status to true
         setShowCodeEntry(true); // Show the code entry form for login verification
-      }, 5000); // 5 seconds delay
-    } else {
-      alert('Invalid login credentials!');
-    }
+      }).catch(err => {
+        alert('Login error : ' + err)
+      }).finally(() => {
+        setShowLoading(false);
+      })
   };
   
   
