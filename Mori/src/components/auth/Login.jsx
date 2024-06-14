@@ -5,7 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { loginUser, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
+import { ResetPassword, loginUser, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -72,14 +72,22 @@ const Login = () => {
     if (!valid) {
       setPasswordError(errorMsg);
     } else {
-      // Reset all relevant states to return to the login view
-      setPasswordError('');
-      setPassword('');  // Reset the password
-      setConfirmPassword('');  // Reset the confirm password
-      setSuccess(false);  // Reset success to hide the reset password form
-      setShowVerificationForm(false);  // Ensure no forms are shown
-      setShowCodeEntry(false);  // Ensure the verification code entry is not shown
-      setIsClicked(false);  // Reset to initial state to show the login button again
+      ResetPassword(emailPassReset, password)
+        .then(res => {
+          // alert("Success")
+          // Reset all relevant states to return to the login view
+          setPasswordError('');
+          setPassword('');  // Reset the password
+          setConfirmPassword('');  // Reset the confirm password
+          setSuccess(false);  // Reset success to hide the reset password form
+          setShowVerificationForm(false);  // Ensure no forms are shown
+          setShowCodeEntry(false);  // Ensure the verification code entry is not shown
+          setIsClicked(false);  // Reset to initial state to show the login button again
+        })
+        .catch(err => {
+          alert(err)
+        })
+        .finally(() => {});
     }
   };
   

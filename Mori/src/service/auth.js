@@ -95,6 +95,24 @@ export const resetPasswordVerification = (email, code) => {
     }
 }
 
+export const ResetPassword = (email, new_password) => {
+    try {
+        const payload = {
+            Email: email,
+            new_password: new_password
+        };
+
+        return axios.put(host + "/users/resetpassword", payload, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Reset-password Error : ", error)
+        throw new Error(error)
+    }
+}
+
 export const loginUser = async (email, password) => {
     try {
         const loginDetails = {
