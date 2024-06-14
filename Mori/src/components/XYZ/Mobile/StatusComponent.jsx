@@ -1,6 +1,13 @@
 import React from "react";
 
-const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) => {
+const StatusComponent = ({
+  id,
+  status,
+  batches,
+  totalWeight,
+  collected,
+  time,
+}) => {
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "To Deliver":
