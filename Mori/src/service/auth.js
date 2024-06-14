@@ -14,7 +14,7 @@ export const registerUser = async (userDetails) => {
             Phone,
         };
 
-        return axios.post("http://localhost:8000/users/register", newUser, {
+        return axios.post("https://mori-backend.vercel.app/users/register", newUser, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -27,7 +27,7 @@ export const registerUser = async (userDetails) => {
 
 export const validateToken = async (token) => {
     try {
-        return axios.get(`http://localhost:8000/users/validate-link`, {
+        return axios.get(`https://mori-backend.vercel.app/users/validate-link`, {
             params: {
                 token: token
             },
@@ -48,7 +48,7 @@ export const setPassword = async (token, newPassword) => {
             new_password: newPassword,
         };
 
-        return axios.post("http://localhost:8000/users/setpassword", passwordDetails, {
+        return axios.post("https://mori-backend.vercel.app/users/setpassword", passwordDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -65,13 +65,31 @@ export const resetPasswordOTP = async (email) => {
             email: email
         }
 
-        return axios.post("http://localhost:8000/users/resetpassword-OTP?email=" + email, {
+        return axios.post("https://mori-backend.vercel.app/users/resetpassword-OTP?email=" + email, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
     } catch (error) {
         console.log("Error validating email for OTP : ", error)
+        throw new Error(error)
+    }
+}
+
+export const resetPasswordVerification = (email, code) => {
+    try {
+        const payload = {
+            Email: email,
+            Code: code
+        }
+
+        return axios.post("https://mori-backend.vercel.app/users/verify-reset", payload, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Reset Verification Error : ", error)
         throw new Error(error)
     }
 }
@@ -83,7 +101,7 @@ export const loginUser = async (email, password) => {
             Password: password,
         };
 
-        return axios.post("http://localhost:8000/users/login", loginDetails, {
+        return axios.post("https://mori-backend.vercel.app/users/login", loginDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -101,7 +119,7 @@ export const verifyUser = async (email, code) => {
             Code: code,
         };
 
-        return axios.post("http://localhost:8000/users/verify", verificationDetails, {
+        return axios.post("https://mori-backend.vercel.app/users/verify", verificationDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -114,7 +132,7 @@ export const verifyUser = async (email, code) => {
 
 export const refreshToken = async (refreshToken) => {
     try {
-        return axios.post("http://localhost:8000/token/refresh", {}, {
+        return axios.post("https://mori-backend.vercel.app/token/refresh", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -128,7 +146,7 @@ export const refreshToken = async (refreshToken) => {
 
 export const resendCode = async () => {
     try {
-        return axios.post("http://localhost:8000/users/resend_code", {}, {
+        return axios.post("https://mori-backend.vercel.app/users/resend_code", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -141,7 +159,7 @@ export const resendCode = async () => {
 
 export const logoutUser = async () => {
     try {
-        return axios.post("http://localhost:8000/users/logout", {}, {
+        return axios.post("https://mori-backend.vercel.app/users/logout", {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -154,7 +172,7 @@ export const logoutUser = async () => {
 
 export const accessProtectedRoute = async () => {
     try {
-        return axios.get("http://localhost:8000/secured/protected-route", {
+        return axios.get("https://mori-backend.vercel.app/secured/protected-route", {
             headers: {
                 "Content-Type": "application/json",
             },

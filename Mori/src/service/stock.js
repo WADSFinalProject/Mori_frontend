@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 export const getAllStockDetails = async () => {
     try {
-        return axios.get("http://localhost:8000/secured/stocks", {
+        return axios.get("https://mori-backend.vercel.app/secured/stocks", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -17,7 +17,7 @@ export const getAllStockDetails = async () => {
 
 export const getStockDetail = async (location_id) => {
     try {
-        return axios.get(`http://localhost:8000/secured/stocks/${location_id}`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/stocks/${location_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

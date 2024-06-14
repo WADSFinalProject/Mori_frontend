@@ -12,7 +12,7 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
             ExpirationTime: expirationTime,
         };
 
-        return axios.post("http://localhost:8000/secured/wet-leaves-collections", collectionDetails, {
+        return axios.post("https://mori-backend.vercel.app/secured/wet-leaves-collections", collectionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +25,7 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
 
 export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
     try {
-        return axios.get("http://localhost:8000/secured/wet-leaves-collections", {
+        return axios.get("https://mori-backend.vercel.app/secured/wet-leaves-collections", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -42,7 +42,7 @@ export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
 
 export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.get(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -62,7 +62,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, 
             ExpirationTime: expirationTime,
         };
 
-        return axios.put(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
+        return axios.put(`https://mori-backend.vercel.app/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -75,7 +75,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, 
 
 export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.delete(`http://localhost:8000/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
+        return axios.delete(`https://mori-backend.vercel.app/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
             headers: {
                 "Content-Type": "application/json",
             },

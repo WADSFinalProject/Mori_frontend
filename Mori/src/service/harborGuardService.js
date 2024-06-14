@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 export const getAllHarborGuards = async () => {
     try {
-        return await axios.get("http://localhost:8000/secured/harborguards", {
+        return await axios.get("https://mori-backend.vercel.app/secured/harborguards", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -23,7 +23,7 @@ export const addHarborGuard = async (PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.post("http://localhost:8000/secured/harborguards", guardDetails, {
+        return await axios.post("https://mori-backend.vercel.app/secured/harborguards", guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -36,7 +36,7 @@ export const addHarborGuard = async (PIC_name, email, phone) => {
 
 export const showHarborGuard = async (guard_id) => {
     try {
-        return await axios.get(`http://localhost:8000/secured/harborguards/${guard_id}`, {
+        return await axios.get(`https://mori-backend.vercel.app/secured/harborguards/${guard_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -55,7 +55,7 @@ export const modifyHarborGuard = async (guard_id, PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.put(`http://localhost:8000/secured/harborguards/${guard_id}`, guardDetails, {
+        return await axios.put(`https://mori-backend.vercel.app/secured/harborguards/${guard_id}`, guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -68,7 +68,7 @@ export const modifyHarborGuard = async (guard_id, PIC_name, email, phone) => {
 
 export const removeHarborGuard = async (guard_id) => {
     try {
-        return await axios.delete(`http://localhost:8000/secured/harborguards/${guard_id}`, {
+        return await axios.delete(`https://mori-backend.vercel.app/secured/harborguards/${guard_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

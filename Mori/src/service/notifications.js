@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 export const getNotifications = async () => {
     try {
-        return axios.get("http://localhost:8000/secured/notifications", {
+        return axios.get("https://mori-backend.vercel.app/secured/notifications", {
             headers: {
                 "Content-Type": "application/json",
             },

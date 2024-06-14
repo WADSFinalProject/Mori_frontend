@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 export const getDriedDate = async (dryingId) => {
     try {
-        return axios.get(`http://localhost:8000/secured/drying-activities/${dryingId}/date`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/drying-activities/${dryingId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -17,7 +17,7 @@ export const getDriedDate = async (dryingId) => {
 
 export const getFlouredDate = async (flouringId) => {
     try {
-        return axios.get(`http://localhost:8000/secured/flouring-activities/${flouringId}/date`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/flouring-activities/${flouringId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },

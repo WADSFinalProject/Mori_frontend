@@ -13,7 +13,7 @@ export const createPackageReceipt = async (userID, packageID, totalWeight, timeA
             Date: date
         };
 
-        return await axios.post("http://localhost:8000/secured/package_receipts", receiptDetails, {
+        return await axios.post("https://mori-backend.vercel.app/secured/package_receipts", receiptDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -31,7 +31,7 @@ export const readPackageReceipts = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get("http://localhost:8000/secured/package_receipts", {
+        return await axios.get("https://mori-backend.vercel.app/secured/package_receipts", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -45,7 +45,7 @@ export const readPackageReceipts = async (skip = 0, limit = 100) => {
 
 export const getPackageReceiptDetails = async (receipt_id) => {
     try {
-        return await axios.get(`http://localhost:8000/secured/package_receipts/${receipt_id}`, {
+        return await axios.get(`https://mori-backend.vercel.app/secured/package_receipts/${receipt_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -67,7 +67,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
             Date: date
         };
 
-        return await axios.put(`http://localhost:8000/secured/package_receipts/${receipt_id}`, receiptDetails, {
+        return await axios.put(`https://mori-backend.vercel.app/secured/package_receipts/${receipt_id}`, receiptDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -80,7 +80,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
 
 export const deletePackageReceipt = async (receipt_id) => {
     try {
-        return await axios.delete(`http://localhost:8000/secured/package_receipts/${receipt_id}`, {
+        return await axios.delete(`https://mori-backend.vercel.app/secured/package_receipts/${receipt_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 export const getLocationDetails = async (location_id) => {
     try {
-        return axios.get(`http://localhost:8000/secured/location/${location_id}`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/location/${location_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -17,7 +17,7 @@ export const getLocationDetails = async (location_id) => {
 
 export const getShipmentHistory = async (location_id) => {
     try {
-        return axios.get(`http://localhost:8000/secured/shipments/${location_id}/history`, {
+        return axios.get(`https://mori-backend.vercel.app/secured/shipments/${location_id}/history`, {
             headers: {
                 "Content-Type": "application/json",
             },
