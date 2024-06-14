@@ -161,8 +161,8 @@ const XYZShippingInformation = () => {
   };
 
   return (
-    <div className="w-[1072px] bg-transparent">
-      <div className="flex flex-col w-full gap-5 mt-8 mx-12">
+    <div className="bg-transparent">
+      <div className="flex flex-col w-full gap-5">
         <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
           Shipping Information
         </div>
