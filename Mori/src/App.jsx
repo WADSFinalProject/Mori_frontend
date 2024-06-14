@@ -58,19 +58,19 @@ function App() {
         {/* ini harus ngikutin shipment idnya */}
         <Route path="/shipdetails" element={<ShipDetails />} />
         
+        {/* HARBOUR GUARD */}
+        <Route path="/harbor/home" element={<HarborHome />} />
+        <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
+        <Route path="/harbor/navigation" element={<HarborNavigation />} />
+        <Route path="/harbor/notification" element={<HarborNotif />} />
 
-        <Route path="/harborhome" element={<HarborHome />} />
-        <Route path="/confirmshipment" element={<ConfirmShipment />} />
-        <Route path="/arrangeshipment" element={<ArrangeShipment />} />
-        <Route path="/harbornavigation" element={<HarborNavigation />} />
+        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
         <Route path="/schedulepickup" element={<SchedulePickup />} />
         <Route path="/stockbooking" element={<StockBooking />} />
-        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
         <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/shippinginformation" element={<ShippingInformation />} />
-        <Route path="/harbornotif" element={<HarborNotif />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
         <Route path="/xyz-stockmanagement" element={<StockManagement />} />
