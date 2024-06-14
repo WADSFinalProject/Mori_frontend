@@ -1,4 +1,7 @@
 {
+  "devDependencies": {
+    "vite": "^2.7.1"
+  },
   "dependencies": {
     "chart.js": "^4.4.3",
     "firebase": "^10.11.1",
