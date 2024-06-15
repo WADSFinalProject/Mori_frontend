@@ -23,7 +23,7 @@ import FlouringMachine from "./components/Centra/Processor/FlouringMachine";
 import HarborNotif from "./components/HarborGuard/HarborNotif";
 import XYZShippingInformationMobile from "./components/XYZ/Mobile/XYZShippingInformationMobile";
 import Dashboard from "./components/XYZ/Laptop/Dashboard";
-import StockBooking from "./components/XYZ/Laptop/StockBooking";
+import StockBooking from "./components/XYZ/Laptop/StockBooking/StockBooking";
 import StockManagement from "./components/XYZ/Mobile/StockManagement";
 import StockDetail from "./components/XYZ/Mobile/StockDetails";
 import XYZHome from "./components/XYZ/Mobile/XYZHome";
@@ -35,8 +35,10 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
+
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
 import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
+
 
 function App() {
   return (
@@ -90,8 +92,10 @@ function App() {
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
         <Route
-          path="xyz/m/shippinginformation"
-          element={<XYZShippingInformationMobile />}
+
+          path="/xyz/m/shippinginformation"
+          element={<ShippingInformation />}
+
         />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -102,7 +106,10 @@ function App() {
           element={<CentraDetailsMachine />}
         />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
+
         <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+
+
       </Routes>
     </Router>
   );

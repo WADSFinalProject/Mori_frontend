@@ -6,7 +6,7 @@ const FlouringScheduleBox = ({ every, nearest }) => {
     const everySchedule = every ? ` ${every}` : '...';
   
     return (
-      <div className="w-full max-w-screen-md p-6 rounded-xl border border-black/opacity-20 flex justify-start items-center gap-4">
+      <div className="w-full max-w-screen-md h-[113px] p-6 rounded-xl border border-black/opacity-20 flex justify-start items-center gap-4">
         <div className="text-right text-black text-base font-sf-pro">
           <img src={calendar} alt="Calendar Icon" style={{ width: '17px', height: '15px' }} />
         </div>
