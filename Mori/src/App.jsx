@@ -36,7 +36,7 @@ import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformati
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
 
-import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
+import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
 import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
 
 
