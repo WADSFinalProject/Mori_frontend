@@ -20,7 +20,7 @@ import AcceptedPackages from '././AcceptedPackages/AcceptedPackages';
 import StockBooking from './StockBooking';
 
 const MainXYZ = () => {
-  const [activePage, setActivePage] = useState('Dashboard');
+  const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState('Kupang');
   const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
@@ -134,6 +134,11 @@ const MainXYZ = () => {
     setTempUserState(userState);
   };
 
+  const handlePageChange = (page) => {
+    setActivePage(page);
+    localStorage.setItem('activePage', page);
+  };
+  
   return (
     <div className="flex">
       <div className="fixed flex flex-col w-64 h-screen bg-white shadow-lg">
@@ -156,8 +161,8 @@ const MainXYZ = () => {
               <li key={item.name} className="relative flex items-center rounded-md hover:bg-gray-200 p-2">
                 <div
                   className={`flex items-center cursor-pointer ${activePage === item.name ? 'bg-white-100 font-bold' : 'hover:bg-gray-200'}`}
-                  onClick={() => setActivePage(item.name)}
-                >
+                  onClick={() => handlePageChange(item.name)}  // Use handlePageChange here
+                  >
                   {activePage === item.name && (
                     <img src={semicircle} alt="Semicircle" className="mr-2 h-5" />
                   )}
@@ -188,8 +193,8 @@ const MainXYZ = () => {
               <li key={item.name} className="relative flex items-center rounded-md hover:bg-gray-200 p-2">
                 <div
                   className={`flex items-center cursor-pointer ${activePage === item.name ? 'bg-white-100 font-bold' : 'hover:bg-gray-200'}`}
-                  onClick={() => setActivePage(item.name)}
-                >
+                  onClick={() => handlePageChange(item.name)}  // Use handlePageChange here
+                  >
                   {activePage === item.name && (
                     <img src={semicircle} alt="Semicircle" className="mr-2 h-5" />
                   )}
