@@ -1,54 +1,51 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
+const API_URL = 'http://localhost:8000';
 const AuthContext = createContext();
-
-// export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState(null);
     const [userRole, setUserRole] = useState(null);
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const saveAccessToken = (token) => {
         setAccessToken(token);
-        setUserRole(jwtDecode(token).role)
+        const decoded = jwtDecode(token);
+        setUserRole(decoded.role); // Ensure your token actually includes a 'role' claim
     };
-    
 
-    const refreshAccessToken = async (retryCount = 0) => {
+    const refreshAccessToken = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/token/refresh', {}, {
+            const response = await axios.post("http://localhost:8000/token/refresh", {}, {
                 withCredentials: true,
             });
-            setAccessToken(response.data.access_token);
+            const newAccessToken = response.data.access_token;
+            saveAccessToken(newAccessToken);
+            return newAccessToken; // Return new token for interceptor to use
         } catch (error) {
             console.log("Error refreshing token: ", error);
-            if (retryCount < 3) {
-                toast.info("Attempting to reconnect...",{position: "top-center"});
-                setTimeout(() => refreshAccessToken(retryCount + 1), 2000 * (2 ** retryCount));
-            } else {
-                toast.error("Unable to refresh your session. Taking you back to login page...", {position: "top-center"});
-                navigate('/');}
+            toast.error("Session expired. Please log in again.", { position: "top-center" });
+            navigate('/');
+            throw error; // Rethrow to handle by interceptor
         }
     };
 
     useEffect(() => {
-        refreshAccessToken(); //refresh on initial load to handle page reloads
-        const interval = setInterval(refreshAccessToken, 5 * 60 * 1000); // Refresh token every 5 minutes
-        return () => clearInterval(interval); //Cleanup interval 
-    }, []);
-
+        // Call setupInterceptors from here once we define it in api.js
+        import('./api').then(apiModule => {
+            apiModule.setupInterceptors(accessToken, saveAccessToken, refreshAccessToken);
+        });
+    }, [accessToken]);
 
     return (
-        <AuthContext.Provider value={{ accessToken, saveAccessToken, refreshAccessToken, userRole }}>
+        <AuthContext.Provider value={{ accessToken, userRole, saveAccessToken, refreshAccessToken }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => {
-    return useContext(AuthContext);
-  };
+export const useAuth = () => useContext(AuthContext);

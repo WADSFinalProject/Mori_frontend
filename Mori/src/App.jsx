@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Login from "./components/auth/Login";
@@ -73,10 +73,9 @@ function App() {
   };
 
   return (
-    <AuthProvider>
+    <Routes>
+    
        {/* AUTH */}
-      <Router>
-        <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/setpassword" element={<SetPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
@@ -198,10 +197,7 @@ function App() {
 
 
           
-        </Routes>
-      </Router>
-
-    </AuthProvider>
+    </Routes>
     
 
     

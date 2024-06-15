@@ -6,7 +6,8 @@ import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; 
+
 import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -166,6 +167,7 @@ const Login = () => {
 
         saveAccessToken(res.data.access_token);
         const role = jwtDecode(response.data.accessToken).role;
+        console.log(role)
 
         if(role == "Centra"){
           navigate("/centra/home")
@@ -181,6 +183,9 @@ const Login = () => {
 
         }else if (role == "Admin"){
           navigate("/admin-dashboard")
+        } else{
+          navigate("/xyz-dashboard")
+
         }
 
         setShowCodeEntry(false);

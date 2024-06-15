@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { refreshToken } from "./authContext";
-
 
 const API_URL = 'http://localhost:8000';
 
@@ -9,34 +7,32 @@ const api = axios.create({
     withCredentials: true,
 });
 
-const setupInterceptors = (accessToken, saveAccessToken) => {
+const setupInterceptors = (accessToken, saveAccessToken, refreshAccessToken) => {
     api.interceptors.request.use(
-        async (config) => {
+        config => {
             if (accessToken) {
                 config.headers['Authorization'] = `Bearer ${accessToken}`;
             }
             return config;
         },
-        (error) => Promise.reject(error)
+        error => Promise.reject(error)
     );
 
     api.interceptors.response.use(
-        (response) => response,
-        async (error) => {
+        response => response,
+        async error => {
             const originalRequest = error.config;
-
             if (error.response.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
                 try {
-                    const { data } = await refreshToken();
-                    saveAccessToken(data.access_token);
-                    originalRequest.headers['Authorization'] = `Bearer ${data.access_token}`;
+                    const newAccessToken = await refreshAccessToken();
+                    saveAccessToken(newAccessToken);
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                     return api(originalRequest);
                 } catch (err) {
                     return Promise.reject(err);
                 }
             }
-
             return Promise.reject(error);
         }
     );
