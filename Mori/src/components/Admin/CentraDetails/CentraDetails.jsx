@@ -290,27 +290,6 @@ const CentraDetails = () => {
               placeholder="Location"
             />
             <input
-              name="picName"
-              value={newLocation.picName}
-              onChange={handleInputChange}
-              className="col-span-1 p-2 border rounded-lg"
-              placeholder="PIC Name"
-            />
-            <input
-              name="email"
-              value={newLocation.email}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Email"
-            />
-            <input
-              name="phone"
-              value={newLocation.phone}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Phone Number"
-            />
-            <input
               type="number"
               name="dryingMachines"
               value={newLocation.dryingMachines}
@@ -359,7 +338,7 @@ const CentraDetails = () => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete(locationToDelete?.id)}
+        onConfirm={() => handleConfirmDelete(locationToDelete?.id)}
         locationName={locationToDelete?.location}
       />
     </div>

@@ -514,7 +514,7 @@ export const TableComponent = ({ data, onDelete }) => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete(shipmentToDelete?.shipmentId)}
+        onConfirm={() => handleConfirmDelete(shipmentToDelete?.shipmentId)}
       />
     </div>
   );
