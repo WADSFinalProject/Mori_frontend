@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useWindowSize } from 'react-use';
 import { Link } from "react-router-dom";
 import DatePicker from "react-tailwindcss-datepicker";
+import CollectorMain from "./CollectorMain";
 
 export default function EditBatch({ onClose, batchData }) {
     const { width } = useWindowSize();
     const isMobile = width <= 640;
 
-    const [value, setValue] = useState({ startDate: null, endDate: null });
     const { batchId, status, duration: batchDuration } = batchData; // Renaming duration to batchDuration
+    const [editDate, setEditDate] = useState("");
 
     const [weight, setWeight] = useState("");
-    const [time, setTime] = useState(""); // Renaming duration to batchDuration
-
+    
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
     const [hours, setHours] = useState(1);
@@ -31,10 +31,14 @@ export default function EditBatch({ onClose, batchData }) {
         setAmPm(event.target.value);
     };
 
-    const handleValueChange = (newValue) => {
-        setValue(newValue);
+    // Function to handle change in DatePicker or direct input
+    const handleDateChange = (value) => {
+        if (value && value.format) {
+            setEditDate(value.format('YYYY-MM-DD'));
+        } else {
+            setEditDate(value);
+        }
     };
-
     const handleConfirmExpiry = () => {
         setShowConfirmationModal(true);
     };
@@ -43,30 +47,89 @@ export default function EditBatch({ onClose, batchData }) {
         setShowConfirmationModal(false);
     };
 
+
+const handleSave = () => {
+    // Prepare updated data object
+    const updatedData = {
+        batchId: batchData.batchId,
+        date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+        weight: parseFloat(weight), // Convert weight to a number if needed
+        time: `${hours}:${minutes}${ampm}`,
+        // Add other fields as needed
+    };
+
+    fetch('/data.json', {
+        method: 'PUT', // Assuming your backend supports PUT for updates
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Data updated successfully.');
+            // Optionally, you can show a success message or perform other actions upon successful save
+        } else {
+            console.error('Failed to update data.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating data:', error);
+    });
+
+    onClose(); // Close the modal or perform any necessary cleanup
+};
+
     useEffect(() => {
         // Fetch data from data.json
-        fetch('data.json')
+        fetch('/data.json')
             .then(response => response.json())
             .then(data => {
+                console.log('Fetched data:', data); // Log fetched data for debugging
+    
                 // Find the batch data matching the batchId
                 const batch = data.find(item => item.batchId === batchData.batchId);
                 if (batch) {
-                    setValue({
-                        startDate: new Date(batch.date),
-                        endDate: null
-                    });
+                    console.log('Batch found:', batch); // Log batch data for debugging
+    
+                    const dateParts = batch.date.split(' '); // Split by space to separate day and month
+                    const day = parseInt(dateParts[0]);
+                    const month = dateParts[1]; // Month name like "March"
+                    const year = parseInt(dateParts[2]);
+    
+                    // Map month name to month number (assuming full month names)
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    const monthNumber = monthNames.findIndex(m => m === month) + 1; // Months are 1-indexed in JavaScript Date object
+    
+                    // Create startDate as a Date object
+                    const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                    // Create startDate as a Date object
+                    const startDateObj = new Date(`${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+
+                    // Set startDate in state
+                    setEditDate(startDate);
+
+                    console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
+                    console.log('startDate:', startDate);
+
                     setWeight(batch.weight);
-                    // Set time in desired format
+    
+                    // Parse time into hours, minutes, and ampm
                     const timeParts = batch.time.split(':');
                     const hours = parseInt(timeParts[0]);
-                    const minutes = parseInt(timeParts[1]);
-                    const ampm = timeParts.length > 2 && timeParts[2].includes('AM') ? 'AM' : 'PM';
-                    setTime(`${hours}:${minutes} ${ampm}`);
-
+                    const minutes = parseInt(timeParts[1].substring(0, 2)); // Extract minutes
+                    const ampm = timeParts[1].slice(-2); // Extract AM/PM part
+    
+                    // Update state variables accordingly
+                    setHours(hours);
+                    setMinutes(minutes);
+                    setAmPm(ampm);
+                } else {
+                    console.log('Batch not found for batchId:', batchData.batchId); // Log if batch not found for debugging
                 }
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []);
+    }, [batchData]); // Depend on batchData to rerun effect when it changes
     
 
     return (
@@ -84,12 +147,12 @@ export default function EditBatch({ onClose, batchData }) {
                             </svg>
                             <h1 className="text-zinc-500 text-base font-semibold ml-2">Edit Batch #{batchId}</h1>
                         </div>
-                        <button className="text-zinc-500 text-sm font-semibold hover:text-[#6C7CD1]">Save</button>
+                        <button className="text-zinc-500 text-sm font-semibold hover:text-[#6C7CD1]"  onClick={handleSave}>Save</button>
                     </nav>
                 </div>
 
                 {/* Expiration Warning */}
-                <div className="flex bg-[#F2BBBB] p-4 mb-4 text-sm text-black" role="alert">
+                {/* <div className="flex bg-[#F2BBBB] p-4 mb-4 text-sm text-black" role="alert">
                     <svg width="60" height="50" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '1rem' }}>
                         <path d="M12.6797 25.2617C5.97656 25.2617 0.457031 19.7422 0.457031 13.0391C0.457031 6.34766 5.96484 0.816406 12.668 0.816406C18.8789 0.816406 24.082 5.57422 24.8086 11.5977C23.9531 11.375 22.8984 11.3398 22.0664 11.4922C21.3398 6.95703 17.4141 3.5 12.668 3.5C7.38281 3.5 3.15234 7.75391 3.15234 13.0391C3.15234 18.3242 7.39453 22.5781 12.6797 22.5781C13.793 22.5781 14.8711 22.3789 15.8555 22.0156C16.1719 22.8828 16.6523 23.6797 17.2734 24.3477C15.8438 24.9453 14.2852 25.2617 12.6797 25.2617ZM6.90234 14.6445C6.32812 14.6445 5.89453 14.1875 5.89453 13.625C5.89453 13.0508 6.32812 12.6055 6.90234 12.6055H11.6484V6.11328C11.6484 5.53906 12.1055 5.09375 12.668 5.09375C13.2422 5.09375 13.6875 5.53906 13.6875 6.11328V13.625C13.6875 14.1875 13.2422 14.6445 12.668 14.6445H6.90234ZM23.0508 25.2734C19.7227 25.2734 16.9688 22.5195 16.9688 19.168C16.9688 15.8398 19.7227 13.0859 23.0508 13.0859C26.3906 13.0859 29.1445 15.8398 29.1445 19.168C29.1445 22.4961 26.3672 25.2734 23.0508 25.2734ZM23.0508 20.1992C23.5547 20.1992 23.918 19.8477 23.9414 19.3672L24.0469 16.0859C24.0586 15.5117 23.6484 15.1133 23.0508 15.1133C22.4648 15.1133 22.0547 15.5117 22.0781 16.0859L22.1719 19.3672C22.1953 19.8477 22.5586 20.1992 23.0508 20.1992ZM23.0508 23.1992C23.707 23.1992 24.1992 22.7188 24.2109 22.0859C24.2109 21.4648 23.707 20.9727 23.0508 20.9727C22.4062 20.9727 21.9023 21.4531 21.9023 22.0859C21.9023 22.7188 22.4062 23.1992 23.0508 23.1992Z" fill="#A84E4E"/>
                     </svg>
@@ -97,7 +160,7 @@ export default function EditBatch({ onClose, batchData }) {
                         <span className="font-medium font-extrabold">Batch #{batchId}</span> has exceeded the expiration date. Confirm Expiry to change the batch status.
                         <span className="text-sm font-bold text-[#A74D4D] mt-4 font-vietnam cursor-pointer" onClick={handleConfirmExpiry}> Confirm Expiry Now.</span> 
                     </div>
-                </div>
+                </div> */}
 
                 <div className="px-4 py-4">
                     <h1 className="text-black text-base font-bold">Collection Details</h1>
@@ -108,10 +171,13 @@ export default function EditBatch({ onClose, batchData }) {
                 <DatePicker
                     useRange={false}
                     asSingle={true}
-                    value={value}
-                    onChange={handleValueChange}
+                    value={{startDate: editDate, endDate: editDate}} // Set value prop of DatePicker to startDate
+                    onChange={(date) => {
+                        if (date) {
+                          setEditDate(date.startDate);
+                        }
+                      }}
                     inputClassName="w-full h-10 rounded-md focus:ring-0 bg-[#EFEFEF] dark:bg-gray-900 dark:placeholder:text-gray-100 border-gray-300 text-sm text-gray-500"
-                    placeholderText="Select date"
                     dateFormat="YYYY-MM-DD"
                 />
                 <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
