@@ -5,11 +5,7 @@ axios.defaults.withCredentials = true
 
 export const getAllUsers = async () => {
     try {
-        return axios.get(host + "/secured/users", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.get(host + "/secured/users");
     } catch (error) {
         console.log("Error getting centras: ", error);
         throw new Error(error);

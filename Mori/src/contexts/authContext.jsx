@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -7,11 +8,15 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState(null);
+    const [userRole, setUserRole] = useState(null);
+
     const navigate = useNavigate()
 
     const saveAccessToken = (token) => {
         setAccessToken(token);
+        setUserRole(jwtDecode(token).role)
     };
+    
 
     const refreshAccessToken = async (retryCount = 0) => {
         try {
@@ -38,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ accessToken, saveAccessToken, refreshAccessToken }}>
+        <AuthContext.Provider value={{ accessToken, saveAccessToken, refreshAccessToken, userRole }}>
             {children}
         </AuthContext.Provider>
     );

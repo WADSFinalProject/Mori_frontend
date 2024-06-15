@@ -14,11 +14,7 @@ export const createExpedition = async (estimatedArrival, totalPackages, expediti
             CentralID: centralID
         };
 
-        return await axios.post(host + "/secured/expeditions", expeditionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await axios.post(host + "/secured/expeditions", expeditionDetails, );
     } catch (error) {
         console.error("Error creating expedition: ", error);
         throw new Error(error);
@@ -46,11 +42,7 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
 
 export const getExpeditionDetails = async (expedition_id) => {
     try {
-        return await axios.get(host + `/secured/expeditions/${expedition_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await axios.get(host + `/secured/expeditions/${expedition_id}`, );
     } catch (error) {
         console.error(`Error getting details of expedition ${expedition_id}: `, error);
         throw new Error(error);
@@ -68,11 +60,7 @@ export const updateExpedition = async (expedition_id, estimatedArrival, totalPac
             CentralID: centralID
         };
 
-        return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, );
     } catch (error) {
         console.error(`Error updating expedition ${expedition_id}: `, error);
         throw new Error(error);
@@ -81,11 +69,7 @@ export const updateExpedition = async (expedition_id, estimatedArrival, totalPac
 
 export const deleteExpedition = async (expedition_id) => {
     try {
-        return await axios.delete(host + `/secured/expeditions/${expedition_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await axios.delete(host + `/secured/expeditions/${expedition_id}`, );
     } catch (error) {
         console.error(`Error deleting expedition ${expedition_id}: `, error);
         throw new Error(error);

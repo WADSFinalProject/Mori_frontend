@@ -13,11 +13,7 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
             FlouredDate: flouredDate,
         };
 
-        return axios.post(host + "/secured/batches", batchDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + "/secured/batches", batchDetails, );
     } catch (error) {
         console.log("Error creating batch: ", error);
         throw new Error(error);
@@ -43,11 +39,7 @@ export const readBatches = async (skip = 0, limit = 100) => {
 
 export const readBatch = async (batchId) => {
     try {
-        return axios.get(host + `/secured/batches/${batchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.get(host + `/secured/batches/${batchId}`, );
     } catch (error) {
         console.log("Error reading batch: ", error);
         throw new Error(error);
@@ -62,11 +54,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
             DryingID: dryingID,
         };
 
-        return axios.put(host + `/secured/batches/${batchId}`, batchDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.put(host + `/secured/batches/${batchId}`, batchDetails, );
     } catch (error) {
         console.log("Error updating batch: ", error);
         throw new Error(error);
@@ -75,11 +63,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
 
 export const deleteBatch = async (batchId) => {
     try {
-        return axios.delete(host + `/secured/batches/${batchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.delete(host + `/secured/batches/${batchId}`, );
     } catch (error) {
         console.log("Error deleting batch: ", error);
         throw new Error(error);

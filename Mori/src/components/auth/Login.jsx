@@ -6,8 +6,8 @@ import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
-
-import { useAuth } from '../AuthContext';
+import jwtDecode from 'jwt-decode';
+import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -37,9 +37,30 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
   
-  const { saveAccessToken } = useAuth();
+  const {  accessToken, saveAccessToken } = useAuth();
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (accessToken) {
+      const role = jwtDecode(response.data.accessToken).role;
+
+      if(role == "Centra"){
+        navigate("/centra/home")
+
+      } else if (role == "Guard"){
+        navigate("/harbor/home")
+
+      } else if (role == "xyzMobile"){
+        navigate("/xyz/m/home")
+
+      } else if (role == "xyzDesktop"){
+        navigate("/xyz/d/xyz-dashboard")
+
+      }else if (role == "Admin"){
+        navigate("/admin/admin-dashboard")
+      }
+    }
+    }, [accessToken, navigate]);
 
   const LoadingScreen = () => (
     <div className="text-center">
@@ -147,16 +168,19 @@ const Login = () => {
         const role = jwtDecode(response.data.accessToken).role;
 
         if(role == "Centra"){
-          navigate("/centrahome")
+          navigate("/centra/home")
 
         } else if (role == "Guard"){
-          navigate("harborhome")
+          navigate("/harbor/home")
 
         } else if (role == "xyzMobile"){
-          navigate("/XYZHome")
+          navigate("/xyz/m/home")
 
         } else if (role == "xyzDesktop"){
-          navigate("")
+          navigate("/xyz-dashboard")
+
+        }else if (role == "Admin"){
+          navigate("/admin-dashboard")
         }
 
         setShowCodeEntry(false);

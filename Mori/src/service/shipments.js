@@ -13,11 +13,7 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
             issue_description: issue_description,
         };
 
-        return axios.post(host + "/secured/shipments", shipmentDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + "/secured/shipments", shipmentDetails);
     } catch (error) {
         console.log("Error adding shipment: ", error);
         throw new Error(error);
@@ -30,11 +26,7 @@ export const readShipments = async (skip = 0, limit = 100) => {
             params: {
                 skip: skip,
                 limit: limit,
-            },
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+            }})
     } catch (error) {
         console.log("Error reading shipments: ", error);
         throw new Error(error);
@@ -52,11 +44,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
             issue_description: issue_description,
         };
 
-        return axios.put(host + `/secured/shipments/${shipment_id}`, shipmentDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.put(host + `/secured/shipments/${shipment_id}`, shipmentDetails);
     } catch (error) {
         console.log("Error updating shipment: ", error);
         throw new Error(error);
@@ -65,11 +53,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
 
 export const getShipmentDetails = async (shipment_id) => {
     try {
-        return axios.get(host + `/secured/shipments/${shipment_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.get(host + `/secured/shipments/${shipment_id}`);
     } catch (error) {
         console.log("Error getting shipment details: ", error);
         throw new Error(error);
@@ -78,11 +62,7 @@ export const getShipmentDetails = async (shipment_id) => {
 
 export const deleteShipment = async (shipment_id) => {
     try {
-        return axios.delete(host + `/secured/shipments/${shipment_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.delete(host + `/secured/shipments/${shipment_id}`);
     } catch (error) {
         console.log("Error deleting shipment: ", error);
         throw new Error(error);
@@ -95,11 +75,7 @@ export const confirmShipmentArrival = async (shipment_id, weight) => {
             weight: weight,
         };
 
-        return axios.post(host + `/secured/shipments/${shipment_id}/confirm`, shipmentDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + `/secured/shipments/${shipment_id}/confirm`, shipmentDetails);
     } catch (error) {
         console.log("Error confirming shipment arrival: ", error);
         throw new Error(error);
@@ -112,11 +88,7 @@ export const reportShipmentIssue = async (shipment_id, description) => {
             description: description,
         };
 
-        return axios.post(host + `/secured/shipments/${shipment_id}/report`, issueDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + `/secured/shipments/${shipment_id}/report`, issueDetails);
     } catch (error) {
         console.log("Error reporting shipment issue: ", error);
         throw new Error(error);
@@ -129,11 +101,7 @@ export const rescaleShipment = async (shipment_id, new_weight) => {
             new_weight: new_weight,
         };
 
-        return axios.put(host + `/secured/shipments/${shipment_id}/rescale`, weightDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.put(host + `/secured/shipments/${shipment_id}/rescale`, weightDetails);
     } catch (error) {
         console.log("Error rescaling shipment: ", error);
         throw new Error(error);
@@ -147,11 +115,7 @@ export const schedulePickup = async (pickup_time, location) => {
             location: location,
         };
 
-        return axios.post(host + "/secured/shipments/schedule-pickup", pickupDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + "/secured/shipments/schedule-pickup", pickupDetails);
     } catch (error) {
         console.log("Error scheduling pickup: ", error);
         throw new Error(error);

@@ -13,11 +13,7 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
             ExpirationTime: expirationTime,
         };
 
-        return axios.post(host + "/secured/wet-leaves-collections", collectionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.post(host + "/secured/wet-leaves-collections", collectionDetails, );
     } catch (error) {
         console.log("Error creating wet leaves collection: ", error);
         throw new Error(error);
@@ -43,11 +39,7 @@ export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
 
 export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.get(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.get(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, );
     } catch (error) {
         console.log("Error reading wet leaves collection: ", error);
         throw new Error(error);
@@ -63,11 +55,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, 
             ExpirationTime: expirationTime,
         };
 
-        return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, );
     } catch (error) {
         console.log("Error updating wet leaves collection: ", error);
         throw new Error(error);
@@ -76,11 +64,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, 
 
 export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.delete(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.delete(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`);
     } catch (error) {
         console.log("Error deleting wet leaves collection: ", error);
         throw new Error(error);

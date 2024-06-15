@@ -5,11 +5,7 @@ axios.defaults.withCredentials = true
 
 export const getNotifications = async () => {
     try {
-        return axios.get(host + "/secured/notifications", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return axios.get(host + "/secured/notifications", );
     } catch (error) {
         console.log("Error getting notifications: ", error);
         throw new Error(error);
