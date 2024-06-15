@@ -5,7 +5,8 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { ResetPassword, loginUser, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
+import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
+import Cookies from 'universal-cookie';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -33,6 +34,8 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
+
+  const cookies = new Cookies();
 
   const LoadingScreen = () => (
     <div className="text-center">
@@ -136,6 +139,9 @@ const Login = () => {
       .then(res => {
         console.log("Login Verification Code Submitted:", verificationCode.join(""));
         alert('Login verified successfully!');
+
+        cookies.set('access_token', res.data.access_token, { path: '/' })
+
         setShowCodeEntry(false);
         setIsLoggedIn(false);
       }).catch(err => {
@@ -189,6 +195,12 @@ const Login = () => {
   const handleResendCode = () => {
     console.log("Resending code...");
     setTimer(60); // Restart the timer without changing the form state
+    
+    resendCode().then(res => {
+      console.log('Success : ', res);
+    }).catch(err => {
+      alert("Error resend code : ", err)
+    });
   };
 
   const handleSubmit = () => {
