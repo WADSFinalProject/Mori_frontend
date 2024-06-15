@@ -163,19 +163,17 @@ export const verifyUser = async (email, code) => {
 //     }
 // };
 
-export const refreshAccessToken = async () => {
+// export const refreshAccessToken = async () => {
 
-    try{
-        const response = await axios.post(host + `/token/refresh`, {}, { withCredentials: true });
-        accessToken = response.data.access_token;
-        return accessToken;
-    } catch(error){
-              console.log("Error refreshing token: ", error);
-        throw new Error(error);
-    }
-
-    
-};
+//     try{
+//         const response = await axios.post(host + `/token/refresh`, {}, { withCredentials: true });
+//         accessToken = response.data.access_token;
+//         return accessToken;
+//     } catch(error){
+//               console.log("Error refreshing token: ", error);
+//         throw new Error(error);
+//     }
+// };
 
 export const logout = async () => {
     await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
