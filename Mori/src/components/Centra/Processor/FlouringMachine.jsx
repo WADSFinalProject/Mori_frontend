@@ -185,7 +185,7 @@ export default function FlouringMachine() {
         <div className="p-4 shadow-md flex justify-between items-center bg-white">
         <Link
           to={{
-            pathname: "/centraprocessor",
+            pathname: "/centra/processor",
             state: { activeTab: "flouring" } // Set the active tab to "flouring"
           }}
           className="flex items-center"

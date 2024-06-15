@@ -9,7 +9,7 @@ export default function EditBatch({ onClose, batchData }) {
     const isMobile = width <= 640;
 
     const { batchId, status, duration: batchDuration } = batchData; // Renaming duration to batchDuration
-    const [startDate, setStartDate] = useState(null); // Initialize startDate state
+    const [editDate, setEditDate] = useState("");
 
     const [weight, setWeight] = useState("");
     
@@ -31,11 +31,14 @@ export default function EditBatch({ onClose, batchData }) {
         setAmPm(event.target.value);
     };
 
-    // Handle change function for DatePicker
-    const handleValueChange = (date) => {
-        setStartDate(date); // Update startDate state when DatePicker value changes
+    // Function to handle change in DatePicker or direct input
+    const handleDateChange = (value) => {
+        if (value && value.format) {
+            setEditDate(value.format('YYYY-MM-DD'));
+        } else {
+            setEditDate(value);
+        }
     };
-
     const handleConfirmExpiry = () => {
         setShowConfirmationModal(true);
     };
@@ -45,37 +48,37 @@ export default function EditBatch({ onClose, batchData }) {
     };
 
 
-    const handleSave = () => {
-        // Prepare updated data object
-        const updatedData = {
-            batchId: batchData.batchId,
-            // date: startDate.toISOString().split('T')[0], // Format startDate as YYYY-MM-DD
-            weight: weight,
-            time: `${hours}:${minutes}${ampm}`,
-            // Add other fields as needed
-        };
-
-        fetch('/data.json', {
-            method: 'PUT', // or 'POST' depending on your backend setup
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedData),
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Data updated successfully.');
-                // Optionally, you can show a success message or perform other actions upon successful save
-            } else {
-                console.error('Failed to update data.');
-            }
-        })
-        .catch(error => {
-            console.error('Error updating data:', error);
-        });
-
-        onClose();
+const handleSave = () => {
+    // Prepare updated data object
+    const updatedData = {
+        batchId: batchData.batchId,
+        date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+        weight: parseFloat(weight), // Convert weight to a number if needed
+        time: `${hours}:${minutes}${ampm}`,
+        // Add other fields as needed
     };
+
+    fetch('/data.json', {
+        method: 'PUT', // Assuming your backend supports PUT for updates
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Data updated successfully.');
+            // Optionally, you can show a success message or perform other actions upon successful save
+        } else {
+            console.error('Failed to update data.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating data:', error);
+    });
+
+    onClose(); // Close the modal or perform any necessary cleanup
+};
 
     useEffect(() => {
         // Fetch data from data.json
@@ -100,12 +103,15 @@ export default function EditBatch({ onClose, batchData }) {
     
                     // Create startDate as a Date object
                     const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-    
-                    console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
-    
+                    // Create startDate as a Date object
+                    const startDateObj = new Date(`${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+
                     // Set startDate in state
-                    setStartDate(startDate);
-    
+                    setEditDate(startDate);
+
+                    console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
+                    console.log('startDate:', startDate);
+
                     setWeight(batch.weight);
     
                     // Parse time into hours, minutes, and ampm
@@ -124,7 +130,6 @@ export default function EditBatch({ onClose, batchData }) {
             })
             .catch(error => console.error('Error fetching data:', error));
     }, [batchData]); // Depend on batchData to rerun effect when it changes
-    
     
 
     return (
@@ -166,10 +171,13 @@ export default function EditBatch({ onClose, batchData }) {
                 <DatePicker
                     useRange={false}
                     asSingle={true}
-                    value={startDate} // Set value prop of DatePicker to startDate
-                    onChange={handleValueChange}
+                    value={{startDate: editDate, endDate: editDate}} // Set value prop of DatePicker to startDate
+                    onChange={(date) => {
+                        if (date) {
+                          setEditDate(date.startDate);
+                        }
+                      }}
                     inputClassName="w-full h-10 rounded-md focus:ring-0 bg-[#EFEFEF] dark:bg-gray-900 dark:placeholder:text-gray-100 border-gray-300 text-sm text-gray-500"
-                    placeholderText="Select date"
                     dateFormat="YYYY-MM-DD"
                 />
                 <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
