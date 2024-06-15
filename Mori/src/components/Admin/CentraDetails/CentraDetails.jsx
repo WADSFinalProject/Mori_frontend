@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import {
+  deleteCentra,
+  getAllCentras,
+  updateCentraDetails,
+} from "../../../service/centras";
 
 const CentraDetails = () => {
   const initialNewLocationState = {
-    location: '',
-    picName: '',
-    email: '',
-    phone: '',
-    dryingMachines: '',
-    flouringMachines: '',
+    location: "",
+    picName: "",
+    email: "",
+    phone: "",
+    dryingMachines: "",
+    flouringMachines: "",
   };
 
   const [data, setData] = useState([]);
@@ -22,36 +27,49 @@ const CentraDetails = () => {
   const [newLocation, setNewLocation] = useState(initialNewLocationState);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [locationToDelete, setLocationToDelete] = useState(null);
+  const [centraToEdit, setCentraToEdit] = useState(null);
 
   const handleDeleteClick = (index) => {
     setLocationToDelete(sortedData[index]);
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editLocationIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewLocation(initialNewLocationState);
-    setEditLocationIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
-    setDeleteModalOpen(false);
+  const handleConfirmDelete = (centraId) => {
+    // const updatedData = data.filter((_, index) => index !== editLocationIndex);
+    deleteCentra(centraId)
+      .then((res) => {
+        console.log("Success : ", res);
+        setData(updatedData);
+        setEditVisible(false);
+        setNewLocation(initialNewLocationState);
+        setEditLocationIndex(null);
+        handleSearchAndSort(updatedData, sortKey);
+        setDeleteModalOpen(false);
+      })
+      .catch((err) => {
+        alert("Error : ", err);
+      });
   };
 
   useEffect(() => {
-    fetch("/data_centra.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
+    getAllCentras()
+      .then((res) => {
+        console.log("Success : ", res);
+        resArr = [];
+        res.data.forEach((dt) => {
+          resArr.push({
+            id: dt.CentralID,
+            location: dt.Address,
+            picName: "Nama orang",
+            email: "Nama@gmail.com",
+            phone: "081816032859",
+            dryingMachines: 3,
+            flouringMachines: 1,
+          });
+        });
       })
-      .then((data) => {
-        setData(data);
-        handleSearchAndSort(data, "location-a-z"); // Initial sort with fetched data
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      .catch((err) => {
+        alert("Error : ", err);
       });
   }, []);
 
@@ -100,8 +118,9 @@ const CentraDetails = () => {
 
   const handleEditClick = (index) => {
     const locationToEdit = sortedData[index];
+    setCentraToEdit(locationToEdit);
     const originalIndex = data.findIndex(
-      item =>
+      (item) =>
         item.location === locationToEdit.location &&
         item.picName === locationToEdit.picName &&
         item.email === locationToEdit.email &&
@@ -151,22 +170,30 @@ const CentraDetails = () => {
       setNewLocation(initialNewLocationState);
       handleSearchAndSort([...data, newLocationEntry], sortKey);
     } else {
-      alert('Please fill in all fields');
+      alert("Please fill in all fields");
     }
   };
 
   const updateLocation = () => {
-    const updatedData = data.map((location, index) =>
-      index === editLocationIndex
-        ? { ...newLocation }
-        : location
-    );
-
-    setData(updatedData);
-    setEditVisible(false);
-    setNewLocation(initialNewLocationState);
-    setEditLocationIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+    if (
+      newLocation.location &&
+      newLocation.picName &&
+      newLocation.email &&
+      newLocation.phone &&
+      newLocation.dryingMachines &&
+      newLocation.flouringMachines
+    ) {
+      // call update api
+      updateCentraDetails(centraToEdit.id).then((res) => {
+        console.log("Success : ", res);
+        setEditVisible(false);
+        setNewLocation(initialNewLocationState);
+        setEditLocationIndex(null);
+        handleSearchAndSort(updatedData, sortKey);
+      });
+    } else {
+      alert("Please fill in all fields");
+    }
   };
 
   return (
@@ -250,7 +277,9 @@ const CentraDetails = () => {
       ) : (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-4xl font-bold">{isAddNewVisible ? 'Add Location' : 'Edit Location'}</h2>
+            <h2 className="text-4xl font-bold">
+              {isAddNewVisible ? "Add Location" : "Edit Location"}
+            </h2>
           </div>
           <form className="grid grid-cols-2 gap-4">
             <input
@@ -320,7 +349,7 @@ const CentraDetails = () => {
                   className="px-4 py-2 text-white bg-[#CD4848] rounded-lg"
                   onClick={isAddNewVisible ? addLocation : updateLocation}
                 >
-                  {isAddNewVisible ? 'Add Location' : 'Save Changes'}
+                  {isAddNewVisible ? "Add Location" : "Save Changes"}
                 </button>
               </div>
             </div>
@@ -330,7 +359,7 @@ const CentraDetails = () => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
+        onConfirm={handleConfirmDelete(locationToDelete?.id)}
         locationName={locationToDelete?.location}
       />
     </div>
