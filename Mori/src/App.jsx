@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes,  Navigate  } from "react-router-dom";
+
 
 import Login from "./components/auth/Login";
 import SetPassword from "./components/auth/SetPassword";
@@ -51,6 +52,7 @@ import { setupInterceptors } from './contexts/api';
 
 function App() {
   const { accessToken, saveAccessToken } = useAuth();
+
 
     useEffect(() => {
         setupInterceptors(accessToken, saveAccessToken);
