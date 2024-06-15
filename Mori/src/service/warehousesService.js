@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -9,7 +10,7 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get("http://localhost:8000/secured/warehouses", {
+        return await axios.get(host + "/secured/warehouses", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -29,7 +30,7 @@ export const createWarehouse = async (PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.post("http://localhost:8000/secured/warehouses", warehouseDetails, {
+        return await axios.post(host + "/secured/warehouses", warehouseDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -42,7 +43,7 @@ export const createWarehouse = async (PIC_name, email, phone) => {
 
 export const getWarehouseDetails = async (warehouse_id) => {
     try {
-        return await axios.get(`http://localhost:8000/secured/warehouses/${warehouse_id}`, {
+        return await axios.get(host + `/secured/warehouses/${warehouse_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -61,7 +62,7 @@ export const updateWarehouse = async (warehouse_id, PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.put(`http://localhost:8000/secured/warehouses/${warehouse_id}`, warehouseDetails, {
+        return await axios.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -74,7 +75,7 @@ export const updateWarehouse = async (warehouse_id, PIC_name, email, phone) => {
 
 export const deleteWarehouse = async (warehouse_id) => {
     try {
-        return await axios.delete(`http://localhost:8000/secured/warehouses/${warehouse_id}`, {
+        return await axios.delete(host + `/secured/warehouses/${warehouse_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

@@ -1,10 +1,11 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
 export const getNotifications = async () => {
     try {
-        return axios.get("http://localhost:8000/secured/notifications", {
+        return axios.get(host + "/secured/notifications", {
             headers: {
                 "Content-Type": "application/json",
             },

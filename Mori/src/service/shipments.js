@@ -1,4 +1,5 @@
 import axios from "axios";
+import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
@@ -12,7 +13,7 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
             issue_description: issue_description,
         };
 
-        return axios.post("http://localhost:8000/secured/shipments", shipmentDetails, {
+        return axios.post(host + "/secured/shipments", shipmentDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +26,7 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
 
 export const readShipments = async (skip = 0, limit = 100) => {
     try {
-        return axios.get("http://localhost:8000/secured/shipments", {
+        return axios.get(host + "/secured/shipments", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -51,7 +52,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
             issue_description: issue_description,
         };
 
-        return axios.put(`http://localhost:8000/secured/shipments/${shipment_id}`, shipmentDetails, {
+        return axios.put(host + `/secured/shipments/${shipment_id}`, shipmentDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -64,7 +65,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
 
 export const getShipmentDetails = async (shipment_id) => {
     try {
-        return axios.get(`http://localhost:8000/secured/shipments/${shipment_id}`, {
+        return axios.get(host + `/secured/shipments/${shipment_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -77,7 +78,7 @@ export const getShipmentDetails = async (shipment_id) => {
 
 export const deleteShipment = async (shipment_id) => {
     try {
-        return axios.delete(`http://localhost:8000/secured/shipments/${shipment_id}`, {
+        return axios.delete(host + `/secured/shipments/${shipment_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -94,7 +95,7 @@ export const confirmShipmentArrival = async (shipment_id, weight) => {
             weight: weight,
         };
 
-        return axios.post(`http://localhost:8000/secured/shipments/${shipment_id}/confirm`, shipmentDetails, {
+        return axios.post(host + `/secured/shipments/${shipment_id}/confirm`, shipmentDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -111,7 +112,7 @@ export const reportShipmentIssue = async (shipment_id, description) => {
             description: description,
         };
 
-        return axios.post(`http://localhost:8000/secured/shipments/${shipment_id}/report`, issueDetails, {
+        return axios.post(host + `/secured/shipments/${shipment_id}/report`, issueDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -128,7 +129,7 @@ export const rescaleShipment = async (shipment_id, new_weight) => {
             new_weight: new_weight,
         };
 
-        return axios.put(`http://localhost:8000/secured/shipments/${shipment_id}/rescale`, weightDetails, {
+        return axios.put(host + `/secured/shipments/${shipment_id}/rescale`, weightDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -146,7 +147,7 @@ export const schedulePickup = async (pickup_time, location) => {
             location: location,
         };
 
-        return axios.post("http://localhost:8000/secured/shipments/schedule-pickup", pickupDetails, {
+        return axios.post(host + "/secured/shipments/schedule-pickup", pickupDetails, {
             headers: {
                 "Content-Type": "application/json",
             },

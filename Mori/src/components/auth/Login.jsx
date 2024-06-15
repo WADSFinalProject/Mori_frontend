@@ -5,7 +5,7 @@ import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { loginUser, resetPasswordOTP, verifyUser } from '../../service/auth';
+import { ResetPassword, loginUser, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -16,6 +16,7 @@ const Login = () => {
     React.createRef(),
   ]);
   const [loginCredentials, setLoginCredentials] = useState({email: '', password: ''});
+  const [emailPassReset, setEmailPassReset] = useState("");
   const { width } = useWindowSize(); // Get the window width
   const [isClicked, setIsClicked] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
@@ -71,14 +72,22 @@ const Login = () => {
     if (!valid) {
       setPasswordError(errorMsg);
     } else {
-      // Reset all relevant states to return to the login view
-      setPasswordError('');
-      setPassword('');  // Reset the password
-      setConfirmPassword('');  // Reset the confirm password
-      setSuccess(false);  // Reset success to hide the reset password form
-      setShowVerificationForm(false);  // Ensure no forms are shown
-      setShowCodeEntry(false);  // Ensure the verification code entry is not shown
-      setIsClicked(false);  // Reset to initial state to show the login button again
+      ResetPassword(emailPassReset, password)
+        .then(res => {
+          // alert("Success")
+          // Reset all relevant states to return to the login view
+          setPasswordError('');
+          setPassword('');  // Reset the password
+          setConfirmPassword('');  // Reset the confirm password
+          setSuccess(false);  // Reset success to hide the reset password form
+          setShowVerificationForm(false);  // Ensure no forms are shown
+          setShowCodeEntry(false);  // Ensure the verification code entry is not shown
+          setIsClicked(false);  // Reset to initial state to show the login button again
+        })
+        .catch(err => {
+          alert(err)
+        })
+        .finally(() => {});
     }
   };
   
@@ -153,8 +162,11 @@ const Login = () => {
     
     const enteredEmail = event.target.elements[0].value;
 
+    setEmailPassReset(enteredEmail)
+
     setShowLoading(true); // Show loading screen
     setInvalidCode(false); // Reset the invalid code state
+    
     resetPasswordOTP(enteredEmail).then(res => {
       setShowVerificationForm(false);
       setShowCodeEntry(true);
@@ -180,25 +192,27 @@ const Login = () => {
   };
 
   const handleSubmit = () => {
-    const dummyCode = "1234";
-
-    // Check if the entered code matches the dummy code
-    if (verificationCode.join("") === dummyCode) {
-      console.log("Verification Code Submitted:", verificationCode.join(""));
-      setSuccess(true); // Set success state to true
-      setShowCodeEntry(false);
-    } else {
-      console.log("Incorrect Verification Code");
-      setInvalidCode(true); // Set invalid code message to be visible
-      // Apply red border color to input boxes
-      for (let i = 0; i < verificationCode.length; i++) {
-        const inputBox = document.getElementById(`code-${i}`);
-        if (inputBox) {
-          inputBox.style.borderColor = '#902E2E';
-          inputBox.style.color = '#902E2E';
+    resetPasswordVerification(emailPassReset, verificationCode.join(""))
+      .then(res => {
+        // alert("Success : ", res)
+        setSuccess(true); // Set success state to true
+        setShowCodeEntry(false);
+      }).catch(err => {
+        alert("Error : ", err)
+        console.log("Incorrect Verification Code");
+        setInvalidCode(true); // Set invalid code message to be visible
+        
+        // Apply red border color to input boxes
+        for (let i = 0; i < verificationCode.length; i++) {
+          const inputBox = document.getElementById(`code-${i}`);
+          if (inputBox) {
+            inputBox.style.borderColor = '#902E2E';
+            inputBox.style.color = '#902E2E';
+          }
         }
-      }
-    }
+      }).finally(() => {
+
+      });
   };
 
   const formatTime = () => {
