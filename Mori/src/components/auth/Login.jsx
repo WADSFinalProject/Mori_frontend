@@ -8,6 +8,7 @@ import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
 
 import { useAuth } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -37,6 +38,7 @@ const Login = () => {
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
   
   const { saveAccessToken } = useAuth();
+  const navigate = useNavigate()
 
 
   const LoadingScreen = () => (
@@ -144,6 +146,19 @@ const Login = () => {
 
         saveAccessToken(res.data.access_token);
         const role = jwtDecode(response.data.accessToken).role;
+
+        if(role == "Centra"){
+          navigate("/centrahome")
+
+        } else if (role == "Guard"){
+          navigate("harborhome")
+
+        } else if (role == "xyzMobile"){
+          navigate("/XYZHome")
+
+        } else if (role == "xyzDesktop"){
+          navigate("")
+        }
 
         setShowCodeEntry(false);
         setIsLoggedIn(false);

@@ -31,8 +31,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        refreshAccessToken(); //refresh on initial load to handle page reloads
         const interval = setInterval(refreshAccessToken, 5 * 60 * 1000); // Refresh token every 5 minutes
-        return () => clearInterval(interval);
+        return () => clearInterval(interval); //Cleanup interval 
     }, []);
 
 
