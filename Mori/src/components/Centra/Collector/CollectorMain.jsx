@@ -158,7 +158,7 @@ const CollectorMain = () => {
           </main>
 
           {/* Footer */}
-          <footer className="bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
+          <footer className="font-vietnam bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
             <p className="font-bold">@2024 MORI</p>
             <p className="font-semibold">CENTRA</p>
           </footer>

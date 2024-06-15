@@ -21,9 +21,9 @@ import HarborNavigation from "./components/HarborGuard/HarborNavigation";
 import DryingMachine from "./components/Centra/Processor/DryingMachine";
 import FlouringMachine from "./components/Centra/Processor/FlouringMachine";
 import HarborNotif from "./components/HarborGuard/HarborNotif";
-import ShippingInformation from "./components/XYZ/Mobile/ShippingInformation";
+import XYZShippingInformationMobile from "./components/XYZ/Mobile/XYZShippingInformationMobile";
 import Dashboard from "./components/XYZ/Laptop/Dashboard";
-import StockBooking from "./components/XYZ/Laptop/StockBooking";
+import StockBooking from "./components/XYZ/Laptop/StockBooking/StockBooking";
 import StockManagement from "./components/XYZ/Mobile/StockManagement";
 import StockDetail from "./components/XYZ/Mobile/StockDetails";
 import XYZHome from "./components/XYZ/Mobile/XYZHome";
@@ -35,7 +35,10 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
+
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
+import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
+
 
 function App() {
   return (
@@ -57,7 +60,7 @@ function App() {
         <Route path="/centra/arrangeshipment" element={<ArrangeShipment />} />
         {/* ini harus ngikutin shipment idnya */}
         <Route path="/shipdetails" element={<ShipDetails />} />
-        
+
         {/* HARBOUR GUARD */}
         <Route path="/harbor/home" element={<HarborHome />} />
         <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
@@ -67,11 +70,19 @@ function App() {
         <Route path="/acceptedpackages" element={<AcceptedPackages />} />
         <Route path="/schedulepickup" element={<SchedulePickup />} />
         <Route path="/stockbooking" element={<StockBooking />} />
-        <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
-        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
-        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
+        <Route
+          path="/XYZShippingInformation"
+          element={<XYZShippingInformation />}
+        />
+        <Route
+          path="/dryingmachine/:machineNumber"
+          element={<DryingMachine />}
+        />
+        <Route
+          path="/flouringmachine/:machineNumber"
+          element={<FlouringMachine />}
+        />
         <Route path="/harbornotif" element={<HarborNotif />} />
-        <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
 
@@ -80,14 +91,24 @@ function App() {
         <Route path="/xyz/m/home" element={<XYZHome />} />
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
-        <Route path="xyz/m/shippinginformation" element={<ShippingInformation />} />
-        
+        <Route
+
+          path="/xyz/m/shippinginformation"
+          element={<ShippingInformation />}
+
+        />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
-        <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+        <Route
+          path="/centradetailsmachine"
+          element={<CentraDetailsMachine />}
+        />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
+
+        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+
 
       </Routes>
     </Router>

@@ -60,30 +60,6 @@ const StockBooking = () => {
       flouredDate: "11/17/24",
       weight: "29kg",
     },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,8 +122,8 @@ const StockBooking = () => {
   };
 
   return (
-    <div className="w-[1072px] bg-transparent">
-      <div className="flex flex-col w-full gap-5 mt-8 mx-12">
+    <div className="bg-transparent">
+      <div className="flex flex-col w-full gap-5">
         <div className="flex flex-row justify-between">
           <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
             Stock Booking
@@ -205,7 +181,7 @@ const StockBooking = () => {
 
         <hr className="w-full bg-[#bfbfbf] h-[2px] border-0 mt-5" />
 
-        <div className="flex justify-end mt-2 mb-7">
+        <div className="flex justify-end mt-2">
           <button
             className="bg-[#5c612c] rounded-md border-0 py-3 px-7 hover:bg-[#5c612c]/85 hover:transition-colors disabled:bg-black/20"
             onClick={() => handleBookButtonClick(selectedBatches)}
