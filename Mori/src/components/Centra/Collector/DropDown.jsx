@@ -10,58 +10,65 @@ function FilterDropdown() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [batchData, setBatchData] = useState([]);
 
-  // useEffect(() => {
-  //   // Fetch data from data.json
-  //   fetch('/data.json')
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       // Set the fetched data
-  //       setBatchData(data);
-  //     })
-  //     .catch(error => console.error('Error fetching data:', error));
-  // }, []);
-
   useEffect(() => {
-    // Fetch data from backend using readBatches
-    const fetchBatches = async () => {
-      try {
-        const response = await readBatches();
-        setBatchData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchBatches();
+    // Fetch data from data.json
+    fetch('/data.json')
+      .then(response => response.json())
+      .then(data => {
+        // Set the fetched data
+        setBatchData(data);
+      })
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
-  
-  // Render BatchBox components using fetched data
-  const renderBatchBoxes = () => {
-    // Filter BatchBox data based on the selected date
-    const filteredBatchData = selectedDate
-      ? batchData.filter(batch => {
-          const batchDate = new Date(batch.date.replace(/,/g, ""));
-          return batchDate.toDateString() === selectedDate.toDateString();
-        })
-      : batchData;
 
-    return (
-      <div style={{ padding: '0px', marginTop: '10px' }}>
-        {filteredBatchData.map(batch => (
-          <div key={batch.batchId} style={{ marginBottom: '10px' }}>
-            <BatchBox
-              batchId={batch.batchId}
-              weight={batch.weight}
-              status={batch.status}
-              date={batch.date}
-              time={batch.time}
-              duration={batch.duration}
-            />
-          </div>
-        ))}
-      </div>
-    );
-  };
+  // useEffect(() => {
+  //   // Fetch data from backend using readBatches
+  //   const fetchBatches = async () => {
+  //     try {
+  //       const response = await readBatches();
+  //       setBatchData(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  //   fetchBatches();
+  // }, []);
+  
+// Render BatchBox components using fetched data
+const renderBatchBoxes = () => {
+  // Filter BatchBox data based on the selected date
+  const filteredBatchData = selectedDate
+    ? batchData.filter(batch => {
+        const batchDate = new Date(batch.date.replace(/,/g, ""));
+        return batchDate.toDateString() === selectedDate.toDateString();
+      })
+    : batchData;
+
+  // Sort filteredBatchData by date, newest to oldest
+  filteredBatchData.sort((a, b) => {
+    const dateA = new Date(a.date.replace(/,/g, ""));
+    const dateB = new Date(b.date.replace(/,/g, ""));
+    return dateA - dateB; // Sort descending (newest to oldest)
+  });
+
+  return (
+    <div style={{ padding: '0px', marginTop: '10px' }}>
+      {filteredBatchData.map(batch => (
+        <div key={batch.batchId} style={{ marginBottom: '10px' }}>
+          <BatchBox
+            batchId={batch.batchId}
+            weight={batch.weight}
+            status={batch.status}
+            date={batch.date}
+            time={batch.time}
+            duration={batch.duration}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
   return (
     <div className="relative inline-block text-left w-full">

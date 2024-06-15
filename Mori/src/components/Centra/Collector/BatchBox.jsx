@@ -11,6 +11,8 @@ function getStatusStyles(status) {
       return { backgroundColor: '#CD4848', color: '#FFFFFF' };
     case 'Expired':
       return { backgroundColor: '#818181', color: '#FFFFFF' };
+    case 'Processed':
+      return { backgroundColor: '#9AD1B380', color: '#000000' };
     default:
       return { backgroundColor: '', color: '' };
   }

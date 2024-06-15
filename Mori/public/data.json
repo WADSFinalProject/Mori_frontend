@@ -30,6 +30,14 @@
       "date": "16 March 2024",
       "time": "02:45PM",
       "duration": "00:00:00"
+    },
+    {
+      "batchId": "5",
+      "weight": "12.4 kg",
+      "status": "Processed",
+      "date": "10 March 2024",
+      "time": "02:45PM",
+      "duration": "00:00:00"
     }
   ]
   
