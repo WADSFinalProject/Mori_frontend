@@ -141,7 +141,7 @@ const AdminShipmentDetails = () => {
         });
       })
       .catch((err) => {
-        alert("Error : ", err);
+        console.log("Error : ", err);
       });
   }, []);
 

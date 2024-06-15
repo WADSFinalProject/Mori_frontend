@@ -61,7 +61,7 @@ const HarbourDetails = () => {
         handleSearchAndSort(data, "harbourName-a-z"); // Initial sort with fetched data
       })
       .catch((err) => {
-        alert("Error : ", err);
+        console.log("Error : ", err);
       });
   }, []);
 
