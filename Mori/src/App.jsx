@@ -21,7 +21,7 @@ import HarborNavigation from "./components/HarborGuard/HarborNavigation";
 import DryingMachine from "./components/Centra/Processor/DryingMachine";
 import FlouringMachine from "./components/Centra/Processor/FlouringMachine";
 import HarborNotif from "./components/HarborGuard/HarborNotif";
-import ShippingInformation from "./components/XYZ/Mobile/ShippingInformation";
+import XYZShippingInformationMobile from "./components/XYZ/Mobile/XYZShippingInformationMobile";
 import Dashboard from "./components/XYZ/Laptop/Dashboard";
 import StockBooking from "./components/XYZ/Laptop/StockBooking/StockBooking";
 import StockManagement from "./components/XYZ/Mobile/StockManagement";
@@ -35,7 +35,10 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
+
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
+import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
+
 
 function App() {
   return (
@@ -80,7 +83,6 @@ function App() {
           element={<FlouringMachine />}
         />
         <Route path="/harbornotif" element={<HarborNotif />} />
-        <Route path="/shippinginformation" element={<ShippingInformation />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
 
@@ -90,8 +92,10 @@ function App() {
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
         <Route
+
           path="/xyz/m/shippinginformation"
           element={<ShippingInformation />}
+
         />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -102,6 +106,10 @@ function App() {
           element={<CentraDetailsMachine />}
         />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
+
+        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+
+
       </Routes>
     </Router>
   );

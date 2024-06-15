@@ -2,17 +2,18 @@ import React, { useState, useEffect, useMemo } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import DatePicker from "react-tailwindcss-datepicker";
+import { getAllUsers } from "../../../service/users";
 
 const UsersDetails = () => {
   const initialNewUserState = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    role: '',
-    location: '',
-    birthdate: '',
-    address: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    role: "",
+    location: "",
+    birthdate: "",
+    address: "",
   };
 
   const [data, setData] = useState([]);
@@ -29,13 +30,26 @@ const UsersDetails = () => {
   const [editDate, setEditDate] = useState(null);
 
   useEffect(() => {
-    fetch("/data_user.json")
-      .then(response => response.json())
-      .then(data => {
-        setData(data);
+    getAllUsers()
+      .then((resData) => {
+        userList = [];
+        resData.forEach(user => {
+          // IDORole: 0, Email: "user@example.com", FullName: "string", Role: "string", Phone: "string", UserID: 1
+          userList.push({
+            id: user.UserID,
+            name: user.FullName,
+            email: user.Email,
+            phone: user.Phone,
+            role: user.Role,
+            location: "",
+            createdDate: ""
+          })
+        })
+        console.log('user List : ', userList)
+        setData(userList);
         handleSearchAndSort(data, "name-a-z");
       })
-      .catch(error => console.error("Error fetching data:", error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
@@ -94,7 +108,6 @@ const UsersDetails = () => {
     const roles = data.map((user) => user.role);
     return [...new Set(roles)];
   }, [data]);
-  
 
   const handleAddNewClick = () => {
     setAddNewVisible(true);
@@ -105,7 +118,9 @@ const UsersDetails = () => {
 
   const handleEditClick = (index) => {
     const userToEdit = sortedData[index];
-    const originalIndex = data.findIndex(item => item.email === userToEdit.email);
+    const originalIndex = data.findIndex(
+      (item) => item.email === userToEdit.email
+    );
     setEditUserIndex(originalIndex);
     setEditVisible(true);
     setAddNewVisible(false);
@@ -152,7 +167,7 @@ const UsersDetails = () => {
   };
 
   const addUser = () => {
-    if (Object.values(newUser).some(field => field === '')) {
+    if (Object.values(newUser).some((field) => field === "")) {
       alert("Please fill in all fields");
       return;
     }
@@ -298,7 +313,10 @@ const UsersDetails = () => {
               {isAddNewVisible ? "Add User" : "Edit User"}
             </h2>
           </div>
-          <form className="grid grid-cols-2 gap-4" onSubmit={(e) => e.preventDefault()}>
+          <form
+            className="grid grid-cols-2 gap-4"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <input
               name="firstName"
               value={newUser.firstName}

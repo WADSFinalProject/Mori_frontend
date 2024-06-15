@@ -4,7 +4,7 @@ import StatusComponent from "./StatusComponent";
 import back from "../../../assets/back.png";
 import { useNavigate } from "react-router-dom";
 
-const ShippingInformation = () => {
+const XYZShippingInformationMobile = () => {
   const navigate = useNavigate();
   const shipmentData = [
     {
@@ -198,4 +198,4 @@ const ShippingInformation = () => {
   );
 };
 
-export default ShippingInformation;
+export default XYZShippingInformationMobile;
