@@ -1,9 +1,10 @@
 import React from "react";
+import "./ShippingInformationStyle.css";
 
 const ShippingInformationGlobal = () => {
   return (
-    <div className="max-w-[640px] mx-auto h-screen flex flex-col items-start justify-start">
-      <header className="w-full flex flex-row items-center justify-center gap-12 h-full self-start">
+    <div className="max-w-[425px] mx-auto h-screen flex flex-col gap-4 items-start justify-start bg-[#F0F0F0]">
+      <header className="w-full flex flex-row items-center justify-between gap-12 h-16 px-6 bg-white">
         <svg
           width="20"
           height="17"
@@ -36,12 +37,133 @@ const ShippingInformationGlobal = () => {
           </div>
         </div>
 
-        <div className="w-7 h-7 text-transparent select-none">t</div>
+        <div className="w-2 h-7 text-transparent select-none">t</div>
       </header>
 
-      <main className="flex flex-col gap-3">
-        <div className="p-5 w-full h-full "></div>
-        <div className="p-5 w-full h-full "></div>
+      <main className="flex flex-col gap-3 justify-center items-center px-8 w-full">
+        <div className="p-5 w-full h-full bg-white rounded-lg flex flex-col">
+          <div className="font-vietnam font-normal text-base tracking-tight">
+            Estimated Arrival{" "}
+            <b>Monday, 18 March 2024{/* tanggal estimated arrival disini */}</b>
+          </div>
+          <div className="font-vietnam text-xs font-medium tracking-tight text-[#828282]">
+            Shipped with JNE Standard{/* nama kurir */}
+          </div>
+        </div>
+        <div className="p-5 w-full h-full bg-white rounded-lg flex flex-col gap-1">
+          <div className="font-vietnam text-sm font-bold tracking-tight">
+            Shipping Information
+          </div>
+          <div className="flex flex-row w-full justify-between">
+            <div className="font-vietnam text-xs font-medium text-[#828282] tracking-tight">
+              Airway Bill
+            </div>
+            <div className="flex flex-row gap-1">
+              <div className="font-vietnam text-xs font-medium tracking-tight">
+                SPXID046105037563{/* Nomor Resi */}
+              </div>
+              <div className="text-[#A7AD6F] font-vietnam text-xs font-medium cursor-pointer">
+                COPY
+              </div>
+            </div>
+          </div>
+          <hr className="bg-[#f0f0f0] w-full h-[1px] my-3" />
+
+          <div className="flex">
+            <ul className="timeline timeline-vertical font-vietnam self-start">
+              <li>
+                <hr />
+                <div className="timeline-start text-[#00000066] text-center text-xs font-medium tracking-tight">
+                  19 Mar
+                  <br />
+                  16:35
+                </div>
+                <div className="timeline-middle p-2 bg-[#F0F0F0] border border-[#00000066] rounded-full mx-3">
+                  <svg
+                    width="16px"
+                    height="16px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 12.6111L8.92308 17.5L20 6.5"
+                      stroke="#00000066"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></path>
+                  </svg>
+                </div>
+                <div className="timeline-end text-[#00000066] text-xs tracking-tight">
+                  <b>Airway Bill Created</b> <br />
+                  Batch #ID has been set for shipping by Nama Orang
+                </div>
+              </li>
+
+              <li>
+                <hr />
+                <div className="timeline-start text-[#00000066] text-center text-xs font-medium tracking-tight">
+                  19 Mar
+                  <br />
+                  20:39
+                </div>
+                <div className="timeline-middle p-2 bg-[#F0F0F0] border border-[#00000066] rounded-full mx-3">
+                  <svg
+                    width="16px"
+                    height="16px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 12.6111L8.92308 17.5L20 6.5"
+                      stroke="#00000066"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></path>
+                  </svg>
+                </div>
+                <div className="timeline-end text-[#00000066] text-xs tracking-tight">
+                  <b>Picked up</b> <br />
+                  Batch #ID is picked up by Franz Sinatra
+                </div>
+                <hr />
+              </li>
+              <li>
+                <div className="timeline-start text-[#A7AD6F] text-center text-xs font-medium tracking-tight">
+                  Today
+                  <br />
+                  20:39
+                </div>
+                <div className="timeline-middle p-2 bg-[#A7AD6F] border border-[#A7AD6F] rounded-full mx-3">
+                  <svg
+                    width="16px"
+                    height="16px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke="#ffffff"
+                  >
+                    <path
+                      d="M4 12.6111L8.92308 17.5L20 6.5"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></path>{" "}
+                  </svg>
+                </div>
+                <div className="timeline-end text-[#A7AD6F] text-xs tracking-tight">
+                  <b>Preparing to Ship</b> <br />
+                  Batch is being processed by shipping service
+                </div>
+                <hr />
+              </li>
+            </ul>
+          </div>
+        </div>
       </main>
     </div>
   );
