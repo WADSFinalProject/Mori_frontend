@@ -49,16 +49,14 @@ const HarbourDetails = () => {
         resArr = [];
         res.data.forEach((dt) => {
           resArr.push({
-            id: dt.HarborID,
-            harbourName: "Crystal Cove",
-            location: "Kelapa Lima",
+            id: dt.HarbourID,
+            harbourName: dt.harbourName,
+            location: dt.location,
             phone: dt.phone,
-            openingHour: "07:00",
-            closingHour: "17:00",
+            openingHour: dt.openingHour,
+            closingHour: dt.closingHour,
           });
         });
-        setData(resArr)
-        handleSearchAndSort(data, "harbourName-a-z"); // Initial sort with fetched data
       })
       .catch((err) => {
         console.log("Error : ", err);
@@ -161,6 +159,7 @@ const HarbourDetails = () => {
     ) {
       const newHarbourEntry = { ...newHarbour };
 
+      // setData((prevState) => [...prevState, newHarbourEntry]);
       addHarborGuard()
         .then((res) => {
           console.log("Success : ", res);

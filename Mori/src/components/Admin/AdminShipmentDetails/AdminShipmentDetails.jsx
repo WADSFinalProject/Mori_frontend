@@ -129,14 +129,14 @@ const AdminShipmentDetails = () => {
         resArr = [];
         res.data.forEach((dt) => {
           resArr.push({
-            id: dt.shipmentId,
+            id: dt.ID,
             batchId: dt.batch_id,
             shipmentId: dt.shipment_id,
-            driedDate: ["11/11/24", "12/12/24", "10/10/24"],
-            flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
+            driedDate: dt.driedDate,
+            flouredDate: dt.flouredDate,
             weight: dt.weight,
             status: dt.status,
-            checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
+            checkpoint: dt.checkpoint,
           });
         });
       })
