@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditBatch from './EditBatch';
 
 function getStatusStyles(status) {
@@ -23,6 +23,8 @@ function getDurationColor(duration) {
 const BatchBox = ({ batchId, status, date, time, weight, duration, selectedDate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editBatchData, setEditBatchData] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(duration);
+
   const { backgroundColor, color } = getStatusStyles(status);
 
   if (selectedDate && selectedDate.toDateString() !== new Date(date).toDateString()) {
@@ -33,6 +35,27 @@ const BatchBox = ({ batchId, status, date, time, weight, duration, selectedDate 
     setEditBatchData({ batchId, status, date, time, weight, duration });
     setIsEditing(true);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        const [hours, minutes, seconds] = prevTime.split(':').map(Number);
+        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        if (totalSeconds > 0) {
+          totalSeconds -= 1;
+        }
+
+        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const s = String(totalSeconds % 60).padStart(2, '0');
+
+        return `${h}:${m}:${s}`;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="self-stretch rounded-2xl overflow-hidden flex flex-col items-start justify-start p-4 pb-0.5 gap-[1px]" style={{ backgroundColor: 'white' }}>
@@ -96,7 +119,7 @@ const BatchBox = ({ batchId, status, date, time, weight, duration, selectedDate 
             />
             </svg> 
 
-          <div className="text-xs font-small font-['Be Vietnam Pro'] ml-4">{duration}</div>
+          <div className="text-xs font-small font-['Be Vietnam Pro'] ml-4">{timeLeft}</div>
         </div>
 
         <button

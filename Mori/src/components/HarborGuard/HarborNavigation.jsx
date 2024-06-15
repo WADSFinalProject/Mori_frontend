@@ -46,7 +46,7 @@ export default function HarborNavigation() {
                     <hr className="w-full border-t-2 border-gray-300"/>
                     <div>
                         <div className="flex flex-col ml-8 mt-8">
-                            <Link to="/harborhome" className="flex items-center">
+                            <Link to="/harbor/home" className="flex items-center">
                                 <img src={homeNav} alt="mori logo" className="text-6xl ml-2 mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Main Page</p>
                             </Link>
