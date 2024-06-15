@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useWindowSize } from 'react-use';
 import { Link } from "react-router-dom";
 import DatePicker from "react-tailwindcss-datepicker";
+import CollectorMain from "./CollectorMain";
 
 export default function EditBatch({ onClose, batchData }) {
     const { width } = useWindowSize();
     const isMobile = width <= 640;
 
-    const [value, setValue] = useState({ startDate: null, endDate: null });
     const { batchId, status, duration: batchDuration } = batchData; // Renaming duration to batchDuration
+    const [editDate, setEditDate] = useState("");
 
     const [weight, setWeight] = useState("");
-    const [time, setTime] = useState(""); // Renaming duration to batchDuration
-
+    
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
     const [hours, setHours] = useState(1);
@@ -31,8 +31,9 @@ export default function EditBatch({ onClose, batchData }) {
         setAmPm(event.target.value);
     };
 
-    const handleValueChange = (newValue) => {
-        setValue(newValue);
+    // Handle change function for DatePicker
+    const handleStartDateChange = (date) => {
+        setEditDate(date); // Update startDate state when DatePicker value changes
     };
 
     const handleConfirmExpiry = () => {
@@ -43,30 +44,89 @@ export default function EditBatch({ onClose, batchData }) {
         setShowConfirmationModal(false);
     };
 
+
+const handleSave = () => {
+    // Prepare updated data object
+    const updatedData = {
+        batchId: batchData.batchId,
+        date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+        weight: parseFloat(weight), // Convert weight to a number if needed
+        time: `${hours}:${minutes}${ampm}`,
+        // Add other fields as needed
+    };
+
+    fetch('/data.json', {
+        method: 'PUT', // Assuming your backend supports PUT for updates
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Data updated successfully.');
+            // Optionally, you can show a success message or perform other actions upon successful save
+        } else {
+            console.error('Failed to update data.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating data:', error);
+    });
+
+    onClose(); // Close the modal or perform any necessary cleanup
+};
+
     useEffect(() => {
         // Fetch data from data.json
-        fetch('data.json')
+        fetch('/data.json')
             .then(response => response.json())
             .then(data => {
+                console.log('Fetched data:', data); // Log fetched data for debugging
+    
                 // Find the batch data matching the batchId
                 const batch = data.find(item => item.batchId === batchData.batchId);
                 if (batch) {
-                    setValue({
-                        startDate: new Date(batch.date),
-                        endDate: null
-                    });
+                    console.log('Batch found:', batch); // Log batch data for debugging
+    
+                    const dateParts = batch.date.split(' '); // Split by space to separate day and month
+                    const day = parseInt(dateParts[0]);
+                    const month = dateParts[1]; // Month name like "March"
+                    const year = parseInt(dateParts[2]);
+    
+                    // Map month name to month number (assuming full month names)
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    const monthNumber = monthNames.findIndex(m => m === month) + 1; // Months are 1-indexed in JavaScript Date object
+    
+                    // Create startDate as a Date object
+                    const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                    // Create startDate as a Date object
+                    const startDateObj = new Date(`${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+
+                    // Set startDate in state
+                    setEditDate(startDate);
+
+                    console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
+                    console.log('startDate:', startDate);
+
                     setWeight(batch.weight);
-                    // Set time in desired format
+    
+                    // Parse time into hours, minutes, and ampm
                     const timeParts = batch.time.split(':');
                     const hours = parseInt(timeParts[0]);
-                    const minutes = parseInt(timeParts[1]);
-                    const ampm = timeParts.length > 2 && timeParts[2].includes('AM') ? 'AM' : 'PM';
-                    setTime(`${hours}:${minutes} ${ampm}`);
-
+                    const minutes = parseInt(timeParts[1].substring(0, 2)); // Extract minutes
+                    const ampm = timeParts[1].slice(-2); // Extract AM/PM part
+    
+                    // Update state variables accordingly
+                    setHours(hours);
+                    setMinutes(minutes);
+                    setAmPm(ampm);
+                } else {
+                    console.log('Batch not found for batchId:', batchData.batchId); // Log if batch not found for debugging
                 }
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []);
+    }, [batchData]); // Depend on batchData to rerun effect when it changes
     
 
     return (
@@ -84,7 +144,7 @@ export default function EditBatch({ onClose, batchData }) {
                             </svg>
                             <h1 className="text-zinc-500 text-base font-semibold ml-2">Edit Batch #{batchId}</h1>
                         </div>
-                        <button className="text-zinc-500 text-sm font-semibold hover:text-[#6C7CD1]">Save</button>
+                        <button className="text-zinc-500 text-sm font-semibold hover:text-[#6C7CD1]"  onClick={handleSave}>Save</button>
                     </nav>
                 </div>
 
@@ -108,10 +168,9 @@ export default function EditBatch({ onClose, batchData }) {
                 <DatePicker
                     useRange={false}
                     asSingle={true}
-                    value={value}
-                    onChange={handleValueChange}
+                    value={{startDate: editDate, endDate: editDate}} // Set value prop of DatePicker to startDate
+                    onChange={setEditDate}
                     inputClassName="w-full h-10 rounded-md focus:ring-0 bg-[#EFEFEF] dark:bg-gray-900 dark:placeholder:text-gray-100 border-gray-300 text-sm text-gray-500"
-                    placeholderText="Select date"
                     dateFormat="YYYY-MM-DD"
                 />
                 <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
