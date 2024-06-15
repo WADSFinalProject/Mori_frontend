@@ -21,9 +21,9 @@ import HarborNavigation from "./components/HarborGuard/HarborNavigation";
 import DryingMachine from "./components/Centra/Processor/DryingMachine";
 import FlouringMachine from "./components/Centra/Processor/FlouringMachine";
 import HarborNotif from "./components/HarborGuard/HarborNotif";
-import ShippingInformation from "./components/XYZ/Mobile/ShippingInformation";
+import XYZShippingInformationMobile from "./components/XYZ/Mobile/XYZShippingInformationMobile";
 import Dashboard from "./components/XYZ/Laptop/Dashboard";
-import StockBooking from "./components/XYZ/Laptop/StockBooking";
+import StockBooking from "./components/XYZ/Laptop/StockBooking/StockBooking";
 import StockManagement from "./components/XYZ/Mobile/StockManagement";
 import StockDetail from "./components/XYZ/Mobile/StockDetails";
 import XYZHome from "./components/XYZ/Mobile/XYZHome";
@@ -35,7 +35,11 @@ import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
 import AdminDashboard from "./components/Admin/Dashboard";
 import DashboardContent from "./components/Admin/DashboardContent";
-import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine";
+
+import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
+import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
+
+
 
 import { AuthProvider, useAuth } from './contexts/authContext';
 import { setupInterceptors } from './api';
@@ -51,55 +55,75 @@ function App() {
 
   return (
     <AuthProvider>
-       {/* HARBOUR GUARD */}
+       {/* AUTH */}
       <Router>
         <Routes>
-          <Route path="/harbor/home" element={<HarborHome />} />
-          <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
-          <Route path="/harbor/navigation" element={<HarborNavigation />} />
-          <Route path="/harbor/notification" element={<HarborNotif />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/setpassword" element={<SetPassword />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/resetverification" element={<ResetVerification />} />
 
-          <Route path="/acceptedpackages" element={<AcceptedPackages />} />
-          <Route path="/schedulepickup" element={<SchedulePickup />} />
-          <Route path="/stockbooking" element={<StockBooking />} />
-          <Route
-            path="/XYZShippingInformation"
-            element={<XYZShippingInformation />}
-          />
-          <Route
-            path="/dryingmachine/:machineNumber"
-            element={<DryingMachine />}
-          />
-          <Route
-            path="/flouringmachine/:machineNumber"
-            element={<FlouringMachine />}
-          />
-          <Route path="/harbornotif" element={<HarborNotif />} />
-          <Route path="/xyz-dashboard" element={<Dashboard />} />
-          <Route path="/xyz-stock-booking" element={<StockBooking />} />
+        {/* CENTRA */}
+        <Route path="/centra/home" element={<CentraHome />} />
+        <Route path="/centra/shipping" element={<Shipping />} />
+        <Route path="/centra/navigation" element={<CentraNavigation />} />
+        <Route path="/editbatch" element={<EditBatch />} />
+        <Route path="/centra/collector" element={<CollectorMain />} />
+        <Route path="/centra/processor" element={<CentraProcessor />} />
+        <Route path="/centra/notification" element={<CentraNotif />} />
+        <Route path="/centra/arrangeshipment" element={<ArrangeShipment />} />
+        {/* ini harus ngikutin shipment idnya */}
+        <Route path="/shipdetails" element={<ShipDetails />} />
 
-          {/* XYZ MOBILE */}
-          <Route path="/xyz/m/stockmanagement" element={<StockManagement />} />
-          <Route path="/xyz/m/home" element={<XYZHome />} />
-          <Route path="/xyz/m/notification" element={<XYZNotif />} />
-          <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
-          <Route
+        {/* HARBOUR GUARD */}
+        <Route path="/harbor/home" element={<HarborHome />} />
+        <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
+        <Route path="/harbor/navigation" element={<HarborNavigation />} />
+        <Route path="/harbor/notification" element={<HarborNotif />} />
 
-            path="/xyz/m/shippinginformation"
-            element={<XYZShippingInformation />}
+        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
+        <Route path="/schedulepickup" element={<SchedulePickup />} />
+        <Route path="/stockbooking" element={<StockBooking />} />
+        <Route
+          path="/XYZShippingInformation"
+          element={<XYZShippingInformation />}
+        />
+        <Route
+          path="/dryingmachine/:machineNumber"
+          element={<DryingMachine />}
+        />
+        <Route
+          path="/flouringmachine/:machineNumber"
+          element={<FlouringMachine />}
+        />
+        <Route path="/harbornotif" element={<HarborNotif />} />
+        <Route path="/xyz-dashboard" element={<Dashboard />} />
+        <Route path="/xyz-stock-booking" element={<StockBooking />} />
 
-          />
+        {/* XYZ MOBILE */}
+        <Route path="/xyz/m/stockmanagement" element={<StockManagement />} />
+        <Route path="/xyz/m/home" element={<XYZHome />} />
+        <Route path="/xyz/m/notification" element={<XYZNotif />} />
+        <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
+        <Route
 
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/invoice" element={<Invoice />} />
-          <Route path="/dashboardContent" element={<DashboardContent />} />
-          <Route
-            path="/centradetailsmachine"
-            element={<CentraDetailsMachine />}
-          />
-          <Route path="/stockdetail/:location" element={<StockDetail />} />
+          path="/xyz/m/shippinginformation"
+          element={<XYZShippingInformation />}
 
-          <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+        />
+
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/invoice" element={<Invoice />} />
+        <Route path="/dashboardContent" element={<DashboardContent />} />
+        <Route
+          path="/centradetailsmachine"
+          element={<CentraDetailsMachine />}
+        />
+        <Route path="/stockdetail/:location" element={<StockDetail />} />
+
+        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+
+
           
         </Routes>
       </Router>
