@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { readShipments } from "../../../service/shipments";
 
 const AdminShipmentDetails = () => {
-
   const data = [
     {
       id: 1,
@@ -121,6 +121,29 @@ const AdminShipmentDetails = () => {
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
+
+  useEffect(() => {
+    readShipments()
+      .then((res) => {
+        console.log("Success : ", res);
+        resArr = [];
+        res.data.forEach((dt) => {
+          resArr.push({
+            id: dt.shipmentId,
+            batchId: dt.batch_id,
+            shipmentId: dt.shipment_id,
+            driedDate: ["11/11/24", "12/12/24", "10/10/24"],
+            flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
+            weight: dt.weight,
+            status: dt.status,
+            checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
+          });
+        });
+      })
+      .catch((err) => {
+        alert("Error : ", err);
+      });
+  }, []);
 
   useEffect(() => {
     // Calculate total shipments count
