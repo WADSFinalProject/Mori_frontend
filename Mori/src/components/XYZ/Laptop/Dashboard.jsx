@@ -6,7 +6,7 @@ import ArrowDown from "../../../assets/XYZ/arrowdown.png";
 import notifIcon from "../../../assets/XYZ/notif.png";
 import nonotifIcon from "../../../assets/XYZ/nonotif.png";
 import DashboardMachineCard from "./DashboardMachineCard";
-import LeavesStatusDashboard from "./LeavesStatusCard";
+import LeavesStatusDashboard from "./MonitoringCentra/LeavesStatusCard";
 import XYZShippingInformation from "././XYZShippingInformation/XYZShippingInformation";
 import AcceptedPackages from "././AcceptedPackages/AcceptedPackages";
 import StockBooking from "./StockBooking/StockBooking";
