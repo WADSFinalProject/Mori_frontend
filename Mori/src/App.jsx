@@ -94,7 +94,7 @@ function App() {
         <Route
 
           path="/xyz/m/shippinginformation"
-          element={<ShippingInformation />}
+          element={<XYZShippingInformationMobile />}
 
         />
 

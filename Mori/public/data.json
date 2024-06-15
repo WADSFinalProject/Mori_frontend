@@ -1,7 +1,7 @@
 [
     {
       "batchId": "1",
-      "weight": "12.9kg",
+      "weight": "12.9 kg",
       "status": "Fresh",
       "date": "13 March 2024",
       "time": "02:40AM",
@@ -9,7 +9,7 @@
     },
     {
       "batchId": "2",
-      "weight": "12.4kg",
+      "weight": "12.4 kg",
       "status": "Near Expiry",
       "date": "14 March 2024",
       "time": "02:45PM",
@@ -17,7 +17,7 @@
     },
     {
       "batchId": "3",
-      "weight": "12.5kg",
+      "weight": "12.5 kg",
       "status": "Exceeded",
       "date": "15 March 2024",
       "time": "02:45PM",
@@ -25,7 +25,7 @@
     },
     {
       "batchId": "4",
-      "weight": "12.4kg",
+      "weight": "12.4 kg",
       "status": "Expired",
       "date": "16 March 2024",
       "time": "02:45PM",

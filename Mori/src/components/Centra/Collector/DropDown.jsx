@@ -2,23 +2,39 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import BatchBox from './BatchBox'; 
+import { readBatches } from '../../../service/batches';
+import axios from 'axios';
 
 function FilterDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [batchData, setBatchData] = useState([]);
 
-  useEffect(() => {
-    // Fetch data from data.json
-    fetch('/data.json')
-      .then(response => response.json())
-      .then(data => {
-        // Set the fetched data
-        setBatchData(data);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+  // useEffect(() => {
+  //   // Fetch data from data.json
+  //   fetch('/data.json')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // Set the fetched data
+  //       setBatchData(data);
+  //     })
+  //     .catch(error => console.error('Error fetching data:', error));
+  // }, []);
 
+  useEffect(() => {
+    // Fetch data from backend using readBatches
+    const fetchBatches = async () => {
+      try {
+        const response = await readBatches();
+        setBatchData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchBatches();
+  }, []);
+  
   // Render BatchBox components using fetched data
   const renderBatchBoxes = () => {
     // Filter BatchBox data based on the selected date
@@ -40,7 +56,6 @@ function FilterDropdown() {
               date={batch.date}
               time={batch.time}
               duration={batch.duration}
-              selectedDate={selectedDate}
             />
           </div>
         ))}

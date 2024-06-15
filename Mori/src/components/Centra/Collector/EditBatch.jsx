@@ -103,8 +103,6 @@ const handleSave = () => {
     
                     // Create startDate as a Date object
                     const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                    // Create startDate as a Date object
-                    const startDateObj = new Date(`${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
 
                     // Set startDate in state
                     setEditDate(startDate);
@@ -112,8 +110,13 @@ const handleSave = () => {
                     console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
                     console.log('startDate:', startDate);
 
-                    setWeight(batch.weight);
-    
+                    // Extract numeric part of weight
+                    const weightString = batch.weight; // Assuming batch.weight is "12.9 kg"
+                    const numericWeight = parseFloat(weightString); // Extracts 12.9 as a float
+
+                    // Set weight in state
+                    setWeight(numericWeight);
+
                     // Parse time into hours, minutes, and ampm
                     const timeParts = batch.time.split(':');
                     const hours = parseInt(timeParts[0]);
@@ -215,26 +218,31 @@ const handleSave = () => {
             </div>
 
 
-                        {/* Weight */}
-                        <h2 className="text-black text-sm font-medium font-['Be Vietnam Pro'] pt-3">Weight</h2>
-                        <div className="relative max-w-full w-full flex items-center pt-3">
-                            <input 
-                                id="weight" 
-                                value={weight} 
-                                onChange={(e) => setWeight(e.target.value)} 
-                                className="h-10 bg-[#EFEFEF] border border-gray-300 leading-none text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500" 
-                                placeholder="0.0 kg" 
-                                min="0" 
-                                step="0.01" 
-                                required 
-                            />
-                            <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                <svg className="w-4 h-4 text-[#6C7CD1] dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fillRule="evenodd" d="M8.34232922,9 L15.6576708,9 C17.0342737,9 18.234223,9.93689212 18.5680983,11.2723931 L21,21 L3,21 L5.43190172,11.2723931 C5.76577697,9.93689212 6.96572629,9 8.34232922,9 Z M11.264,18 L12.608,18 L12.608,12.336 L11.376,12.336 L9.512,13.704 L10.208,14.656 L11.264,13.84 L11.264,18 Z" clipRule="evenodd"/>
-                                    <circle fill="#6C7CD1" opacity="1" cx="12" cy="5.5" r="2.5"/>
-                                </svg>
-                            </div>
+                    {/* Weight */}
+                    <h2 className="text-black text-sm font-medium font-['Be Vietnam Pro'] pt-3">Weight</h2>
+                    <div className="relative max-w-full w-full flex items-center pt-3">
+                        <input 
+                            id="weight" 
+                            value={weight} 
+                            onChange={(e) => setWeight(e.target.value)} 
+                            className="h-10 bg-[#EFEFEF] border border-gray-300 leading-none text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500" 
+                            placeholder="0.0 kg" 
+                            min="0" 
+                            step="0.01" 
+                            required 
+                        />
+                        
+                        <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                        <span className="font-vietnam font" style={{ color: '#808080', fontSize: '15px', lineHeight: '1.2', marginLeft: '-1px' }}>
+                        {} kg
+                        </span>
+
+                            <svg className="ml-3 w-4 h-4 text-[#6C7CD1] dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <path fillRule="evenodd" d="M8.34232922,9 L15.6576708,9 C17.0342737,9 18.234223,9.93689212 18.5680983,11.2723931 L21,21 L3,21 L5.43190172,11.2723931 C5.76577697,9.93689212 6.96572629,9 8.34232922,9 Z M11.264,18 L12.608,18 L12.608,12.336 L11.376,12.336 L9.512,13.704 L10.208,14.656 L11.264,13.84 L11.264,18 Z" clipRule="evenodd"/>
+                                <circle fill="#6C7CD1" opacity="1" cx="12" cy="5.5" r="2.5"/>
+                            </svg>
                         </div>
+                    </div>
 
                     {/* Empty space */}
                     <div style={{ height: "340px" }}></div>

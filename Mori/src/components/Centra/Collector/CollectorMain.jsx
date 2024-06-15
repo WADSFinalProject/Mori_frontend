@@ -4,6 +4,7 @@ import DropDown from "./DropDown";
 import EditBatch from "./EditBatch"; // Import the EditBatch component
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { readBatches } from '../../../service/batches';
 
 const CollectorMain = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
@@ -12,22 +13,42 @@ const CollectorMain = () => {
   const footerHeight = 40;
 
   const [batchData, setBatchData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [totalWeight, setTotalWeight] = useState(0);
+
+  // useEffect(() => {
+  //   fetch("/data.json")
+  //     .then((response) => response.json())
+  //     .then((data) => setBatchData(data))
+  //     .catch((error) => console.error("Error fetching data:", error));
+  // }, []);
+
+  // // Calculate the total weight
+  // const totalWeight = batchData.reduce(
+  //   (total, batch) => total + (parseFloat(batch.weight) || 0),
+  //   0
+  // );
 
   useEffect(() => {
-    fetch("/data.json")
-      .then((response) => response.json())
-      .then((data) => setBatchData(data))
-      .catch((error) => console.error("Error fetching data:", error));
+    // Fetch data from backend using readBatches
+    const fetchBatches = async () => {
+      try {
+        const response = await readBatches();
+        const data = response.data;
+        setBatchData(data);
+
+        // Calculate the total weight
+        const weight = data.reduce(
+          (total, batch) => total + (parseFloat(batch.weight) || 0),
+          0
+        );
+        setTotalWeight(weight);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchBatches();
   }, []);
-
-  // Calculate the total weight
-  const totalWeight = batchData.reduce(
-    (total, batch) => total + (parseFloat(batch.weight) || 0),
-    0
-  );
-
-  const handleClose = () => {};
 
   return (
     <div>
