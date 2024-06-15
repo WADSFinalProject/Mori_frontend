@@ -81,7 +81,6 @@ const Login = () => {
     } else {
       ResetPassword(emailPassReset, password)
         .then(res => {
-          // alert("Success")
           // Reset all relevant states to return to the login view
           setPasswordError('');
           setPassword('');  // Reset the password
@@ -224,7 +223,6 @@ const Login = () => {
   const handleSubmit = () => {
     resetPasswordVerification(emailPassReset, verificationCode.join(""))
       .then(res => {
-        // alert("Success : ", res)
         setSuccess(true); // Set success state to true
         setShowCodeEntry(false);
       }).catch(err => {

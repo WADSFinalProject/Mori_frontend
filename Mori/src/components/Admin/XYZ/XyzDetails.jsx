@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { createWarehouse, getAllWarehouses } from "../../../service/warehousesService";
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
@@ -22,6 +23,7 @@ const XyzDetails = () => {
   const [newWarehouse, setNewWarehouse] = useState(initialNewWarehouseState);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [warehouseToDelete, setWarehouseToDelete] = useState(null);
+  const [warehouseEdit, setWarehouseEdit] = useState(null);
 
   const handleDeleteClick = (index) => {
     setWarehouseToDelete(sortedData[index]);
@@ -39,20 +41,24 @@ const XyzDetails = () => {
   };
 
   useEffect(() => {
-    fetch("/data_xyz.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
+    getAllWarehouses().then(res => {
+      warehouses = [];
+      res.data.forEach(wh => {
+        warehouses.push({
+          id: wh.id,
+          warehouseName: "Warehouse 1",
+          email: wh.email,
+          phone: wh.phone,
+          location: "Maulafa",
+          createdDate: "2024-01-01T12:34:56Z"
+        })
       })
-      .then((data) => {
-        setData(data);
-        handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+
+      setData(data);
+      handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
+    }).catch(err => {
+      console.log(err)
+    })
   }, []);
 
   useEffect(() => {
@@ -119,6 +125,7 @@ const XyzDetails = () => {
 
   const handleEditClick = (index) => {
     const warehouseToEdit = sortedData[index];
+    setWarehouseEdit(warehouseToEdit)
     const originalIndex = data.findIndex(
       item =>
         item.warehouseName === warehouseToEdit.warehouseName &&
@@ -162,29 +169,44 @@ const XyzDetails = () => {
       newWarehouse.location &&
       newWarehouse.createdDate
     ) {
-      const newWarehouseEntry = { ...newWarehouse };
+      // const newWarehouseEntry = { ...newWarehouse };
 
-      setData((prevState) => [...prevState, newWarehouseEntry]);
-      setAddNewVisible(false);
-      setNewWarehouse(initialNewWarehouseState);
-      handleSearchAndSort([...data, newWarehouseEntry], sortKey);
+      // setData((prevState) => [...prevState, newWarehouseEntry]);
+      createWarehouse("dummy_name", newWarehouse.email, newWarehouse.phone)
+        .then(res => {
+          console.log('Success add new warehouse')
+          setAddNewVisible(false);
+          setNewWarehouse(initialNewWarehouseState);
+          handleSearchAndSort([...data, newWarehouseEntry], sortKey);
+        })
+        .catch(err => {
+          console.log(err)
+        });
     } else {
       alert('Please fill in all fields');
     }
   };
 
   const updateWarehouse = () => {
-    const updatedData = data.map((warehouse, index) =>
-      index === editWarehouseIndex
-        ? { ...newWarehouse }
-        : warehouse
-    );
-
-    setData(updatedData);
-    setEditVisible(false);
-    setNewWarehouse(initialNewWarehouseState);
-    setEditWarehouseIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+    if (
+      newWarehouse.warehouseName &&
+      newWarehouse.email &&
+      newWarehouse.phone &&
+      newWarehouse.location &&
+      newWarehouse.createdDate
+    ) {
+      updateWarehouse(warehouseEdit.id, "dummy_name_edit", warehouseEdit.email, warehouseEdit.phone)
+        .then(res => {
+          console.log(res)
+          setEditVisible(false);
+          setNewWarehouse(initialNewWarehouseState);
+          setEditWarehouseIndex(null);
+          handleSearchAndSort(updatedData, sortKey);
+        })
+        .catch(err => console.log(err))
+    } else {
+      alert('Please fill in all fields');
+    }
   };
 
   const uniqueLocations = [...new Set(data.map((item) => item.location))];

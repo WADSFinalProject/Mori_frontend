@@ -51,50 +51,62 @@ function App() {
 
   return (
     <AuthProvider>
+       {/* HARBOUR GUARD */}
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/setpassword" element={<SetPassword />} />
-          <Route path="/resetpassword" element={<ResetPassword />} />
-          <Route path="/resetverification" element={<ResetVerification />} />
-          <Route path="/centrahome" element={<CentraHome />} />
-          <Route path="/centrashipping" element={<Shipping />} />
-          <Route path="/centranavigation" element={<CentraNavigation />} />
-          <Route path="/editbatch" element={<EditBatch />} />
-          <Route path="/collectormain" element={<CollectorMain />} />
-          <Route path="/centraprocessor" element={<CentraProcessor />} />
-          <Route path="/shipdetails" element={<ShipDetails />} />
-          <Route path="/registeraccount" element={<RegisterAccount />} />
-          <Route path="/harborhome" element={<HarborHome />} />
-          <Route path="/centranotif" element={<CentraNotif />} />
-          <Route path="/confirmshipment" element={<ConfirmShipment />} />
-          <Route path="/arrangeshipment" element={<ArrangeShipment />} />
-          <Route path="/harbornavigation" element={<HarborNavigation />} />
+          <Route path="/harbor/home" element={<HarborHome />} />
+          <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
+          <Route path="/harbor/navigation" element={<HarborNavigation />} />
+          <Route path="/harbor/notification" element={<HarborNotif />} />
+
+          <Route path="/acceptedpackages" element={<AcceptedPackages />} />
           <Route path="/schedulepickup" element={<SchedulePickup />} />
           <Route path="/stockbooking" element={<StockBooking />} />
-          <Route path="/acceptedpackages" element={<AcceptedPackages />} />
-          <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
-          <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
-          <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
-          <Route path="/shippinginformation" element={<ShippingInformation />} />
+          <Route
+            path="/XYZShippingInformation"
+            element={<XYZShippingInformation />}
+          />
+          <Route
+            path="/dryingmachine/:machineNumber"
+            element={<DryingMachine />}
+          />
+          <Route
+            path="/flouringmachine/:machineNumber"
+            element={<FlouringMachine />}
+          />
           <Route path="/harbornotif" element={<HarborNotif />} />
           <Route path="/xyz-dashboard" element={<Dashboard />} />
           <Route path="/xyz-stock-booking" element={<StockBooking />} />
-          <Route path="/xyz-stockmanagement" element={<StockManagement />} />
-          <Route path="/stockdetail/:location" element={<StockDetail />} />
-          <Route path="/XYZHome" element={<XYZHome />} />
-          <Route path="/XYZNotif" element={<XYZNotif />} />
-          <Route path="/XYZNavigation" element={<XYZNavigation />} />
+
+          {/* XYZ MOBILE */}
+          <Route path="/xyz/m/stockmanagement" element={<StockManagement />} />
+          <Route path="/xyz/m/home" element={<XYZHome />} />
+          <Route path="/xyz/m/notification" element={<XYZNotif />} />
+          <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
+          <Route
+
+            path="/xyz/m/shippinginformation"
+            element={<XYZShippingInformation />}
+
+          />
+
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/dashboardContent" element={<DashboardContent />} />
-          <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+          <Route
+            path="/centradetailsmachine"
+            element={<CentraDetailsMachine />}
+          />
+          <Route path="/stockdetail/:location" element={<StockDetail />} />
 
+          <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+          
         </Routes>
       </Router>
 
     </AuthProvider>
     
+       
   );
 }
 
