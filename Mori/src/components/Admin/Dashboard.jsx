@@ -23,9 +23,12 @@ import Users from "./Users";
 import UsersDetails from "./Users/UsersDetails";
 
 const MainXYZ = () => {
-  const [activePage, setActivePage] = useState("Dashboard");
+  const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-
+  const handlePageChange = (page) => {
+    setActivePage(page);
+    localStorage.setItem('activePage', page);
+  };
   // Editable user state
   const initialUserState = {
     name: "John Doe",
@@ -105,8 +108,8 @@ const MainXYZ = () => {
                       ? "bg-white-100 font-bold"
                       : "hover:bg-gray-200"
                   }`}
-                  onClick={() => setActivePage(item.name)}
-                >
+                  onClick={() => handlePageChange(item.name)}
+                  >
                   {activePage === item.name && (
                     <img
                       src={semicircle}
