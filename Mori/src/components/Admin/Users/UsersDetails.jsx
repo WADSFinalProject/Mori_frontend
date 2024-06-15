@@ -31,9 +31,22 @@ const UsersDetails = () => {
 
   useEffect(() => {
     getAllUsers()
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data);
+      .then((resData) => {
+        userList = [];
+        resData.forEach(user => {
+          // IDORole: 0, Email: "user@example.com", FullName: "string", Role: "string", Phone: "string", UserID: 1
+          userList.push({
+            id: user.UserID,
+            name: user.FullName,
+            email: user.Email,
+            phone: user.Phone,
+            role: user.Role,
+            location: "",
+            createdDate: ""
+          })
+        })
+        console.log('user List : ', userList)
+        setData(userList);
         handleSearchAndSort(data, "name-a-z");
       })
       .catch((error) => console.error("Error fetching data:", error));
