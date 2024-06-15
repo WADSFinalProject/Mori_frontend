@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import ArrowDown from '../../../assets/XYZ/arrowdown.png';
+import ArrowDown from '../../../../assets/XYZ/arrowdown.png';
 import PersonInChargeBox from './PersonInChargeBox'; 
 import FlouringScheduleBox from './FlouringScheduleBox'; 
 import DryingMachineBox from './DryingMachineBox'; // Import the DryingMachineBoxDashboard component
