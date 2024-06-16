@@ -2,10 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import DatePicker from "react-tailwindcss-datepicker";
-import { addNewUser, getAllUsers } from "../../../service/users";
+import { addNewUser, getAllUsers, updateExistingUser } from "../../../service/users";
+import { getAllCentras } from "../../../service/centras";
+import { addUserCentra, getUserCentraByUser, updateUserCentra } from "../../../service/userCentra";
 
 const UsersDetails = () => {
   const initialNewUserState = {
+    id: 0,
     firstName: "",
     lastName: "",
     email: "",
@@ -15,6 +18,13 @@ const UsersDetails = () => {
     birthdate: "",
     address: "",
   };
+
+  const defaultUserCentra = {
+    id: 0,
+    centraId: 0,
+    userId: 0,
+    active: false
+  }
 
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
@@ -28,22 +38,20 @@ const UsersDetails = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [editUserIndex, setEditUserIndex] = useState(null);
   const [editDate, setEditDate] = useState(null);
+  const [centras, setCentras] = useState([]);
+  const [selectedCentra, setSelectedCentra] = useState(defaultUserCentra);
 
   useEffect(() => {
     fetchData();
-  }, []);
+    fetchCentraData();
+  }, [sortKey, filterRole]);
 
   const fetchData = () => {
-    let $sortBy = "Name";
-    if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
-      $sortBy="Name"
-    } else {
-      $sortBy = "CreatedDate"
-    }
-      
+    let $sortBy = sortKey.split('-')[0] === "name" ? "Name" : "CreatedDate";
+    
     getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole)
       .then(res => {
-        if(res.data.length > 0){
+        if (res.data.length > 0) {
           const userList = res.data.map(user => ({
             id: user.UserID,
             name: `${user.FirstName} ${user.LastName}`,
@@ -58,12 +66,26 @@ const UsersDetails = () => {
           setData(userList);
           handleSearchAndSort(userList, sortKey);
         } else {
-          console.error("No Data")
+          console.error("No Data");
         }
       })
       .catch(err => {
         console.error("Error fetching data:", err);
       });
+  }
+
+  const fetchCentraData = () => {
+    getAllCentras().then(res => {
+      if (res.data.length > 0) {
+        let centraList = res.data.map(centra => ({
+          label: centra.Address,
+          value: centra.CentralID
+        }));
+        setCentras(centraList);
+      }
+    }).catch(err => {
+      console.log('Error getting centras : ', err);
+    });
   }
 
   useEffect(() => {
@@ -138,18 +160,38 @@ const UsersDetails = () => {
     setEditUserIndex(originalIndex);
     setEditVisible(true);
     setAddNewVisible(false);
+
+    let centraId = null;
+    getUserCentraByUser(userToEdit.id).then(res => {
+      centraId = res.data.CentraID;
+      setSelectedCentra({
+        id: res.data.id,
+        centraId: res.data.CentraID,
+        userId: res.data.userID,
+        active: res.data.Active
+      });
+    }).catch(err => {
+      console.log('User Centra Mapping not found');
+    });
+
     setNewUser({
+      id: userToEdit.id,
       firstName: userToEdit.name.split(" ")[0],
       lastName: userToEdit.name.split(" ")[1],
       email: userToEdit.email,
       phone: userToEdit.phone,
       role: userToEdit.role,
-      location: userToEdit.location,
+      location: "",
       birthdate: userToEdit.birthdate,
       address: userToEdit.address,
     });
     setEditDate(userToEdit.birthdate);
   };
+
+  useEffect(() => {
+    let user = { ...newUser, location: selectedCentra.centraId };
+    setNewUser(user);
+  }, [selectedCentra]);
 
   const handleDeleteClick = (index) => {
     setUserToDelete(sortedData[index]);
@@ -189,6 +231,12 @@ const UsersDetails = () => {
     addNewUser(newUser)
         .then((res) => {
           console.log("Success : ", res);
+
+          addUserCentra(newUser.location, res.data.UserID, true).then(res => {
+            console.log('Success in adding userCentra');
+          }).catch(err => {
+            console.log('Adding userCentra Error : ', err);
+          });
           
           setAddNewVisible(false);
           setNewUser(initialNewUserState);
@@ -198,25 +246,39 @@ const UsersDetails = () => {
         .catch((err) => {
           alert("Error : ", err);
         });
-  }
+  };
 
   const updateUser = () => {
-    const updatedData = data.map((user, index) =>
-      index === editUserIndex
-        ? {
-            ...user,
-            ...newUser,
-            name: `${newUser.firstName} ${newUser.lastName}`,
-            birthdate: editDate,
-          }
-        : user
-    );
+    updateExistingUser(newUser)
+    .then((res) => {
+      console.log("Success update user: ", res);
 
-    setData(updatedData);
+      if (selectedCentra.id === 0) {
+        addUserCentra(newUser.location, newUser.id, true).then(res => {
+          console.log('Success in adding userCentra');
+        }).catch(err => {
+          console.log('Adding userCentra Error : ', err);
+        });
+      } else {
+        updateUserCentra(selectedCentra.id, newUser.location, newUser.id, true).then(res => {
+          console.log('Success in updating userCentra');
+        }).catch(err => {
+          console.log('Updating userCentra Error : ', err);
+        });
+      }
+      
+      setAddNewVisible(false);
+      setNewUser(initialNewUserState);
+      setEditDate(null);
+      fetchData();
+    })
+    .catch((err) => {
+      alert("Error : ", err);
+    });
+
     setEditVisible(false);
     setNewUser(initialNewUserState);
     setEditUserIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
   };
 
   return (
@@ -366,7 +428,7 @@ const UsersDetails = () => {
               className="col-span-1 p-2 border rounded-lg"
             >
               <option value="">Choose Role</option>
-              <option value="Centra">Centra </option>
+              <option value="Centra">Centra</option>
               <option value="Admin">Admin</option>
               <option value="Harbour Guard">Harbour Guard</option>
               <option value="XYZ">XYZ</option>
@@ -379,11 +441,12 @@ const UsersDetails = () => {
               className="col-span-1 p-2 border rounded-lg"
               placeholder="Location"
             >
-              <option value="">Choose Location</option>
-              <option value="1">1 </option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
+              <option value="">Choose Centra Location</option>
+              {centras.map((cent) => (
+                <option key={cent.value} value={cent.value}>
+                  {cent.label}
+                </option>
+              ))}
             </select>
 
             <div className="col-span-1">
