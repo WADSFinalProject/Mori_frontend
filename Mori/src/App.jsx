@@ -116,19 +116,21 @@ function App() {
         }/>
 
         {/* XYZ MOBILE */}
-        <Route path="/xyz/m/*"  element= {
-          <RoleBasedRoute allowedRoles={['xyzMobile']}>
+        <Route path="/xyz/*"  element= {
+          <RoleBasedRoute allowedRoles={['xyz']}>
             <Routes>
-              <Route path="stockmanagement" element={<StockManagement />} />
-              <Route path="home" element={<XYZHome />} />
-              <Route path="notification" element={<XYZNotif />} />
-              <Route path="navigation" element={<XYZNavigation />} />
+              <Route path="/m/stockmanagement" element={<StockManagement />} />
+              <Route path="/m/home" element={<XYZHome />} />
+              <Route path="/m/notification" element={<XYZNotif />} />
+              <Route path="/m/navigation" element={<XYZNavigation />} />
               <Route
 
-                path="shippinginformation"
+                path="/m/shippinginformation"
                 element={<XYZShippingInformation />}
               />
-              <Route path="/schedulepickup" element={<SchedulePickup />} />
+              <Route path="/m/schedulepickup" element={<SchedulePickup />} />
+              <Route path="/m/acceptedpackages" element={<AcceptedPackages />} />
+              <Route path="/d/xyz-dashboard" element={<Dashboard />} /> 
 
             </Routes>
             
@@ -136,19 +138,7 @@ function App() {
        
         }/>
 
-        {/* XYZ DESKTOP */}
 
-        <Route path="/xyz/d/*"  element= {
-          <RoleBasedRoute allowedRoles={['xyzDesktop']}>
-            <Routes>
-              <Route path="/xyz-dashboard" element={<Dashboard />} /> 
-              <Route path="/acceptedpackages" element={<AcceptedPackages />} />
-
-            </Routes>
-            
-         </RoleBasedRoute>
-       
-        }/>
 
         {/* ADMIN */}
 

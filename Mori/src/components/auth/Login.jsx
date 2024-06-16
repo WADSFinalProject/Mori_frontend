@@ -6,10 +6,13 @@ import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
+
 import {jwtDecode} from 'jwt-decode'; 
 
 import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
+
+import { useCheckMobileScreen } from '../../contexts/utils';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -37,31 +40,10 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
-  
-  const {  accessToken, saveAccessToken } = useAuth();
+
+
+  const { accessToken, saveAccessToken } = useAuth();
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (accessToken) {
-      const role = jwtDecode(response.data.accessToken).role;
-
-      if(role == "Centra"){
-        navigate("/centra/home")
-
-      } else if (role == "Guard"){
-        navigate("/harbor/home")
-
-      } else if (role == "xyzMobile"){
-        navigate("/xyz/m/home")
-
-      } else if (role == "xyzDesktop"){
-        navigate("/xyz/d/xyz-dashboard")
-
-      }else if (role == "Admin"){
-        navigate("/admin/admin-dashboard")
-      }
-    }
-    }, [accessToken, navigate]);
 
   const LoadingScreen = () => (
     <div className="text-center">
@@ -158,51 +140,48 @@ const Login = () => {
         setShowLoading(false);
       })
   };
-  
-  const handleLoginVerificationSubmit = () => {
+
+const isMobile = useCheckMobileScreen()
+const handleLoginVerificationSubmit = () => {
     verifyUser(loginCredentials.email, verificationCode.join(''))
-      .then(res => {
-        console.log("Login Verification Code Submitted:", verificationCode.join(""));
-        alert('Login verified successfully!');
+        .then(res => {
+            console.log("Login Verification Code Submitted:", verificationCode.join(""));
+            alert('Login verified successfully!');
+            
+            const accessToken = res.data.access_token; // Ensure you're correctly accessing the token
+            saveAccessToken(accessToken); // Save the token using the context function
+            const role = jwtDecode(accessToken).role; // Decode the token to get the role
+            console.log(role);
 
-        saveAccessToken(res.data.access_token);
-        const role = jwtDecode(response.data.accessToken).role;
-        console.log(role)
+            // Role-based redirection logic
+            if (role === "Centra") {
+                navigate("/centra/home");
+            } else if (role === "Guard") {
+                navigate("/harbor/home");
+            } else if (role === "xyz" && isMobile) {
+                navigate("/xyz/m/home");
+            } else if (role === "xyz" && !isMobile) {
+                navigate("/xyz/d/xyz-dashboard");
+            } else if (role === "Admin") {
+                navigate("/admin-dashboard");
+            }
 
-        if(role == "Centra"){
-          navigate("/centra/home")
+            setShowCodeEntry(false);
+            setIsLoggedIn(false);
+        })
+        .catch(err => {
+            console.log("Incorrect Login Verification Code");
+            setInvalidCode(true); // Set invalid code message to be visible
+            verificationCode.forEach((_, index) => {
+                const inputBox = document.getElementById(`code-${index}`);
+                if (inputBox) {
+                    inputBox.style.borderColor = '#902E2E';
+                    inputBox.style.color = '#902E2E';
+                }
+            });
+        });
+};
 
-        } else if (role == "Guard"){
-          navigate("/harbor/home")
-
-        } else if (role == "xyzMobile"){
-          navigate("/xyz/m/home")
-
-        } else if (role == "xyzDesktop"){
-          navigate("/xyz-dashboard")
-
-        }else if (role == "Admin"){
-          navigate("/admin-dashboard")
-        } else{
-          navigate("/xyz-dashboard")
-
-        }
-
-        setShowCodeEntry(false);
-        setIsLoggedIn(false);
-      }).catch(err => {
-        console.log("Incorrect Login Verification Code");
-        setInvalidCode(true); // Set invalid code message to be visible
-        for (let i = 0; i < verificationCode.length; i++) {
-          const inputBox = document.getElementById(`code-${i}`);
-          if (inputBox) {
-            inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';
-          }
-        }
-      })
-  };
-  
   const handleForgotPassword = () => {
     setShowVerificationForm(true);
     setInvalidCode(false); // Reset the invalid code state
