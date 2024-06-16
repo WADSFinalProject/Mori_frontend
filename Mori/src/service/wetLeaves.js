@@ -3,7 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, duration) => {
+export const createWetLeavesCollection = async (centralId, date, time, weight, status) => {
     try {
         const collectionDetails = {
             CentralID: centralId,
@@ -56,7 +56,7 @@ export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     }
 };
 
-export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status, expired) => {
+export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status) => {
     try {
         const collectionDetails = {
             Date: date,

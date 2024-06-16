@@ -48,9 +48,7 @@ export default function EditBatch({ onClose, batchData }) {
     const handleCloseModal = () => {
         setShowConfirmationModal(false);
     };
-
-
-
+    
     const handleSave = () => {
         // Format time
         let formattedHours = hours;
@@ -81,23 +79,34 @@ export default function EditBatch({ onClose, batchData }) {
     };
 
     const handleExpired = () => {
-        // Directly set status to "Expired" and save
+        // Format time
+        let formattedHours = hours;
+        if (ampm === "PM" && hours !== 12) {
+            formattedHours += 12;
+        } else if (ampm === "AM" && hours === 12) {
+            formattedHours = 0;
+        }
+        const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00.000000`;
+    
+        // Prepare updated data object
         const updatedData = {
             batchId: batchData.batchId,
-            status: "Expired"
+            date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+            weight: parseFloat(weight), // Convert weight to a number if needed
+            time: formattedTime,
+            status: "Expired", // Always set status to "Expired" in this context
         };
     
-        updateWetLeavesCollection(batchData.batchId, updatedData.status)
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status)
             .then(response => {
-                console.log('Batch status updated to Expired successfully.');
-                onClose(); // Close the modal upon successful update
-                window.location.reload(); // Reload the page if needed
+                console.log('Data updated successfully.');
+                onClose(); // Close the modal 
+                window.location.reload();
             })
             .catch(error => {
-                console.error('Failed to update batch status:', error);
+                console.error('Failed to update data:', error);
             });
     };
-    
     
     
 useEffect(() => {
