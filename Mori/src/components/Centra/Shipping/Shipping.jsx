@@ -4,6 +4,7 @@ import ShippingBox from "./ShippingBox";
 import StatusComponent from "./StatusComponent";
 import "./Shipping.css";
 import { Link } from "react-router-dom";
+import { readBatches } from "../../../service/batches";
 
 const Shipping = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
@@ -15,28 +16,35 @@ const Shipping = () => {
 
   const [maxScrollHeight, setMaxScrollHeight] = useState(0);
   const [activeTab, setActiveTab] = useState("toShip");
-
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("new-old");
+  const [batchToShip, setBatchToShip] = useState([]);
+  const [checkedState, setCheckedState] = useState([]);
 
   useEffect(() => {
     const availableHeight = height - (headerHeight + footerHeight);
     setMaxScrollHeight(availableHeight);
   }, [height, headerHeight, footerHeight]);
 
-  // Dummy data for To Ship tab
-  const batchToShip = [
-    { id: "1", weight: "10kg", date: "11/11/25" },
-    { id: "2", weight: "29kg", date: "11/11/25" },
-    { id: "3", weight: "30kg", date: "11/11/25" },
-    { id: "4", weight: "30kg", date: "11/11/25" },
-    { id: "5", weight: "30kg", date: "11/11/25" },
-  ];
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await readBatches();
+        const batches = response.data.map((batch) => ({
+          id: batch.ProductID,
+          weight: batch.Weight + "kg",
+          driedDate: batch.DriedDate,
+          flouredDate: batch.FlouredDate,
+        }));
+        setBatchToShip(batches);
+        setCheckedState(new Array(batches.length).fill(false));
+      } catch (error) {
+        console.error("Error fetching batches: ", error);
+      }
+    };
 
-  // State to track checked boxes
-  const [checkedState, setCheckedState] = useState(
-    new Array(batchToShip.length).fill(false)
-  );
+    fetchBatches();
+  }, []);
 
   const handleCheckboxChange = (index) => {
     const updatedCheckedState = checkedState.map((item, position) =>
@@ -284,7 +292,8 @@ const Shipping = () => {
                 key={batch.id}
                 batchId={batch.id}
                 weight={batch.weight}
-                date={batch.date}
+                driedDate={batch.driedDate}
+                flouredDate={batch.flouredDate}
                 checked={checkedState[index]}
                 onChange={() => handleCheckboxChange(index)}
               />

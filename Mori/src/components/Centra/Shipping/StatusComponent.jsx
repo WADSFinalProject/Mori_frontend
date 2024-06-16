@@ -1,7 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) => {
+const StatusComponent = ({
+  id,
+  status,
+  batches,
+  totalWeight,
+  collected,
+  time,
+}) => {
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "To Deliver":
@@ -36,10 +43,10 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
   const statusFilter = getStatusFilter(status);
 
   return (
-    <div
+    <Link
+      to="/shipdetails"
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
       // onclick go to shipment details page
-      onClick={null}
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
         <div>
@@ -109,7 +116,6 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
             Preparing to ship
           </b>
         </div>
-        <Link to="/shipdetails">
         <svg
           width="11"
           height="17"
@@ -123,9 +129,8 @@ const StatusComponent = ({ id, status, batches, totalWeight, collected, time }) 
             fillOpacity="0.25"
           />
         </svg>
-        </Link>
       </div>
-    </div>
+    </Link>
   );
 };
 
