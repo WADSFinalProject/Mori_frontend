@@ -95,9 +95,10 @@ export default function EditBatch({ onClose, batchData }) {
             weight: parseFloat(weight), // Convert weight to a number if needed
             time: formattedTime,
             status: "Expired", // Always set status to "Expired" in this context
+            expired: expired,
         };
     
-        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status)
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, true)
             .then(response => {
                 console.log('Data updated successfully.');
                 onClose(); // Close the modal 
