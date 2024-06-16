@@ -145,6 +145,11 @@ export default function Processor() {
   useEffect(() => {
     const fetchWetLeavesData = async () => {
       try {
+        // Log the parameters being sent
+        const params = { skip: 0, limit: 100 };
+        console.log("Fetching wet leaves data with params:", params);
+
+
         const response = await readWetLeavesCollections();
         const collections = response.data; // Assuming response.data contains the collections
 
@@ -190,6 +195,10 @@ export default function Processor() {
   useEffect(() => {
     const fetchDriedLeavesData = async () => {
         try {
+            // Log the parameters being sent
+            const params = { skip: 0, limit: 100 };
+            console.log("Fetching dried leaves data with params:", params);
+
             const response = await readDriedLeaves();
             const collections = response.data; // Assuming response.data contains the collections
 
