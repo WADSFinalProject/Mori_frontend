@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import { Link } from "react-router-dom";
 import bell from "../../../assets/bell.png";
@@ -6,6 +6,12 @@ import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
 import { Pie, Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
+import axios from "axios";
+import { readWetLeavesCollections } from "../../../service/wetLeaves.js";
+import { readDriedLeaves } from "../../../service/driedLeaves.js";
+import { readBatches } from "../../../service/batches.js";
+import { readDryingMachines } from "../../../service/dryingMachine.js";
+import { readFlouringMachines } from "../../../service/flouringMachine";
 
 const gaugeOptions = {
   responsive: true,
@@ -69,64 +75,48 @@ const ChartWithBox = ({ data, label, labelStyle }) => (
 export default function Processor() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
+  // const location = useLocation();
   const initialActiveTab = location.state?.activeTab || "drying"; // Default to drying tab if state not available
   const [activeTab, setActiveTab] = useState(initialActiveTab);
 
-  const [dryingMachines, setDryingMachines] = useState([
-    {
-      number: 1,
-      status: "FULL",
-      currentLoad: 24,
-      capacity: 30,
-      lastUpdated: "1 hour ago",
-    },
-    {
-      number: 2,
-      status: "FULL",
-      currentLoad: 30,
-      capacity: 30,
-      lastUpdated: "2 hours ago",
-    },
-    {
-      number: 3,
-      status: "EMPTY",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "30 minutes ago",
-    },
-  ]);
+  const [dryingMachines, setDryingMachines] = useState([]);
+  const [flouringMachines, setFlouringMachines] = useState([]);
 
-  const [flouringMachines, setFlouringMachines] = useState([
-    {
-      number: 1,
-      status: "FULL",
-      currentLoad: 24,
-      capacity: 30,
-      lastUpdated: "45 minutes ago",
-    },
-    {
-      number: 2,
-      status: "FULL",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "3 hours ago",
-    },
-    {
-      number: 3,
-      status: "EMPTY",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "1 hour ago",
-    },
-  ]);
+  useEffect(() => {
+  const fetchDryingMachines = async () => {
+    try {
+      const response = await readDryingMachines();
+      console.log("Drying Machines:", response.data); // Log drying machines data
+      setDryingMachines(response.data);
+    } catch (error) {
+      console.log("Error fetching drying machines: ", error);
+    }
+  };
+
+  fetchDryingMachines();
+  }, []);
+
+useEffect(() => {
+  const fetchFlouringMachines = async () => {
+    try {
+      const response = await readFlouringMachines();
+      console.log("Flouring Machines:", response.data); // Log flouring machines data
+      setFlouringMachines(response.data);
+    } catch (error) {
+      console.log("Error fetching flouring machines: ", error);
+    }
+  };
+
+  fetchFlouringMachines();
+  }, []);
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
-  const wetLeavesData = {
+  const [wetLeavesData, setWetLeavesData] = useState({
     labels: ["Unprocessed Wet Leaves", "Empty"],
     datasets: [
       {
-        data: [10, 90],
+        data: [0, 100],
         backgroundColor: ["#538455", "#86B788"],
         borderColor: ["#538455", "#86B788"],
         borderWidth: 1,
@@ -135,13 +125,13 @@ export default function Processor() {
         cutout: "75%",
       },
     ],
-  };
+  });
 
-  const driedLeavesData = {
-    labels: ["Dried Leaves", "Empty"],
+  const [driedLeavesData, setDriedLeavesData] = useState({
+    labels: ["Processed Dried Leaves", "Empty"],
     datasets: [
       {
-        data: [20, 90],
+        data: [0, 100],
         backgroundColor: ["#838453", "#B2B472"],
         borderColor: ["#838453", "#B2B472"],
         borderWidth: 1,
@@ -150,28 +140,13 @@ export default function Processor() {
         cutout: "75%",
       },
     ],
-  };
+  });
 
-  const Unfloureddriedleaves = {
-    labels: ["Unfloured dried Leaves", "Empty"],
+  const [flouredLeavesData, setFlouredLeavesData] = useState({
+    labels: ["Floured Leaves", "Empty"],
     datasets: [
       {
-        data: [10, 90],
-        backgroundColor: ["#838453", "#B2B472"],
-        borderColor: ["#838453", "#B2B472"],
-        borderWidth: 1,
-        circumference: 360,
-        rotation: 0,
-        cutout: "75%",
-      },
-    ],
-  };
-
-  const flouredleaves = {
-    labels: ["floured Leaves", "Empty"],
-    datasets: [
-      {
-        data: [30, 90],
+        data: [0, 100],
         backgroundColor: ["#704B40", "#B78F82"],
         borderColor: ["#704B40", "#B78F82"],
         borderWidth: 1,
@@ -180,22 +155,115 @@ export default function Processor() {
         cutout: "75%",
       },
     ],
-  };
+  });
+
+  useEffect(() => {
+    const fetchWetLeavesData = async () => {
+      try {
+        const response = await readWetLeavesCollections();
+        const collections = response.data;
+
+        let totalWetLeaves = 0;
+        collections.forEach((collection) => {
+          totalWetLeaves += collection.Weight;
+        });
+
+        setWetLeavesData({
+          ...wetLeavesData,
+          datasets: [
+            {
+              ...wetLeavesData.datasets[0],
+              data: [totalWetLeaves, 100 - totalWetLeaves],
+            },
+          ],
+        });
+      } catch (error) {
+        console.log("Error fetching wet leaves data: ", error);
+      }
+    };
+
+    fetchWetLeavesData();
+  }, []);
+
+  useEffect(() => {
+    const fetchDriedLeavesData = async () => {
+        try {
+            const response = await readDriedLeaves();
+            const collections = response.data;
+
+            if (Array.isArray(collections)) {
+                let totalDriedLeaves = 0;
+                collections.forEach((collection) => {
+                    totalDriedLeaves += collection.Weight;
+                });
+
+                setDriedLeavesData({
+                    ...driedLeavesData,
+                    datasets: [
+                        {
+                            ...driedLeavesData.datasets[0],
+                            data: [totalDriedLeaves, 100 - totalDriedLeaves],
+                        },
+                    ],
+                });
+            } else {
+                console.log("Expected an array of dried leaves data, but received:", collections);
+            }
+        } catch (error) {
+            console.log("Error fetching dried leaves data: ", error);
+        }
+    };
+
+    fetchDriedLeavesData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFlouredLeavesData = async () => {
+      try {
+        const response = await readBatches();
+        const batches = response.data;
+
+        let totalFlouredLeaves = 0;
+        batches.forEach((batch) => {
+          if (batch.FlouredDate) {
+            totalFlouredLeaves += batch.Weight;
+          }
+        });
+
+        setFlouredLeavesData({
+          ...flouredLeavesData,
+          datasets: [
+            {
+              ...flouredLeavesData.datasets[0],
+              data: [totalFlouredLeaves, 100 - totalFlouredLeaves],
+            },
+          ],
+        });
+      } catch (error) {
+        console.log("Error fetching floured leaves data: ", error);
+      }
+    };
+
+    fetchFlouredLeavesData();
+  }, []);
 
   const renderMachines = () => {
     const machines = activeTab === "drying" ? dryingMachines : flouringMachines;
+    // console.log("Rendering Machines:", machines); // Log machines to be rendered
     return machines.map((machine, index) => {
+      const key = machine.id ? machine.id : index; // Ensure machine.id is unique and defined
       const isLastCard = index === machines.length - 1;
       const machineCardMarginClass = isLastCard ? "mb-10" : "mb-4";
       return (
         <MachineCard
-          key={machine.number}
+          key={key}
           machine={machine}
           extraMarginClass={machineCardMarginClass}
         />
       );
     });
   };
+  
 
   const MachineCard = ({ machine, extraMarginClass }) => {
     let chartColor = "#99D0D580"; // Default color when less than half
@@ -204,15 +272,19 @@ export default function Processor() {
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4"; // Color when more than half
     }
-
+  
     const linkTo =
       activeTab === "drying"
         ? `/dryingmachine/${machine.number}`
         : `/flouringmachine/${machine.number}`;
-
+  
+    const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
+  
+    const machineStatusClass = (machine.status || "").toLowerCase();
+  
     return (
       <div
-        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`}
+        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
         style={{
           width: "auto",
           flexGrow: 1,
@@ -273,7 +345,9 @@ export default function Processor() {
           </div>
         </div>
         <button
-          className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`start-btn text-white py-1 px-6 ${
+            machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           style={{
             backgroundColor: "#000000",
             width: "100%",
@@ -300,11 +374,12 @@ export default function Processor() {
           }}
         >
           <div>Last updated:</div>
-          <div style={{ fontWeight: "bold" }}>{machine.lastUpdated}</div>
+          <div style={{ fontWeight: "bold" }}>{lastUpdatedTime}</div>
         </div>
       </div>
     );
   };
+
 
   return (
     <div className="bg-000000">
@@ -357,13 +432,13 @@ export default function Processor() {
             ) : (
               <div className="flex justify-center gap-4">
                 <ChartWithBox
-                  data={Unfloureddriedleaves}
+                  data={driedLeavesData}
                   label="Unfloured Dried Leaves"
                   backgroundColor="#828282"
                   labelStyle={{ color: "black", top: "20px" }}
                 />
                 <ChartWithBox
-                  data={flouredleaves}
+                  data={flouredLeavesData}
                   label="Floured Leaves"
                   backgroundColor="#d9d9d9"
                   labelStyle={{ top: "20px" }}
