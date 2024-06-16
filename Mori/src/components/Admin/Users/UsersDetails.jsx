@@ -44,19 +44,14 @@ const UsersDetails = () => {
   useEffect(() => {
     fetchData();
     fetchCentraData();
-  }, []);
+  }, [sortKey, filterRole]);
 
   const fetchData = () => {
-    let $sortBy = "Name";
-    if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
-      $sortBy="Name"
-    } else {
-      $sortBy = "CreatedDate"
-    }
-      
+    let $sortBy = sortKey.split('-')[0] === "name" ? "Name" : "CreatedDate";
+    
     getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole)
       .then(res => {
-        if(res.data.length > 0){
+        if (res.data.length > 0) {
           const userList = res.data.map(user => ({
             id: user.UserID,
             name: `${user.FirstName} ${user.LastName}`,
@@ -71,7 +66,7 @@ const UsersDetails = () => {
           setData(userList);
           handleSearchAndSort(userList, sortKey);
         } else {
-          console.error("No Data")
+          console.error("No Data");
         }
       })
       .catch(err => {
@@ -81,19 +76,16 @@ const UsersDetails = () => {
 
   const fetchCentraData = () => {
     getAllCentras().then(res => {
-      if(res.data.length > 0){
-        let centraList = []
-        res.data.map(centra => {
-          centraList.push({
-            label: centra.Address,
-            value: centra.CentralID
-          })
-        })
+      if (res.data.length > 0) {
+        let centraList = res.data.map(centra => ({
+          label: centra.Address,
+          value: centra.CentralID
+        }));
         setCentras(centraList);
       }
     }).catch(err => {
-      console.log('Error getting centras : ', err)
-    })
+      console.log('Error getting centras : ', err);
+    });
   }
 
   useEffect(() => {
@@ -169,19 +161,18 @@ const UsersDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
 
-    // getExistingUserCentra
     let centraId = null;
     getUserCentraByUser(userToEdit.id).then(res => {
-      centraId = res.data.CentraID
+      centraId = res.data.CentraID;
       setSelectedCentra({
         id: res.data.id,
         centraId: res.data.CentraID,
         userId: res.data.userID,
         active: res.data.Active
-      })
+      });
     }).catch(err => {
-      console.log('User Centra Mapping not found')
-    })
+      console.log('User Centra Mapping not found');
+    });
 
     setNewUser({
       id: userToEdit.id,
@@ -198,10 +189,9 @@ const UsersDetails = () => {
   };
 
   useEffect(() => {
-    let user = newUser;
-    user.location = selectedCentra.centraId
-    setNewUser(user)
-  }, [selectedCentra])
+    let user = { ...newUser, location: selectedCentra.centraId };
+    setNewUser(user);
+  }, [selectedCentra]);
 
   const handleDeleteClick = (index) => {
     setUserToDelete(sortedData[index]);
@@ -242,12 +232,11 @@ const UsersDetails = () => {
         .then((res) => {
           console.log("Success : ", res);
 
-          // add usercentra
           addUserCentra(newUser.location, res.data.UserID, true).then(res => {
             console.log('Success in adding userCentra');
           }).catch(err => {
-            console.log('Adding userCentra Error : ', err)
-          })
+            console.log('Adding userCentra Error : ', err);
+          });
           
           setAddNewVisible(false);
           setNewUser(initialNewUserState);
@@ -257,30 +246,25 @@ const UsersDetails = () => {
         .catch((err) => {
           alert("Error : ", err);
         });
-  }
+  };
 
   const updateUser = () => {
-    
     updateExistingUser(newUser)
     .then((res) => {
       console.log("Success update user: ", res);
 
-      if(centraId == null){
-        console.log('no centra assigned')
-        // add usercentra
-        addUserCentra(newUser.location, res.data.UserID, true).then(res => {
+      if (selectedCentra.id === 0) {
+        addUserCentra(newUser.location, newUser.id, true).then(res => {
           console.log('Success in adding userCentra');
         }).catch(err => {
-          console.log('Adding userCentra Error : ', err)
-        })
+          console.log('Adding userCentra Error : ', err);
+        });
       } else {
-        console.log('about to update centra assigned')
-        // update existing usercentra
-        updateUserCentra(selectedCentra.id, newUser.location, res.data.UserID, true).then(res => {
+        updateUserCentra(selectedCentra.id, newUser.location, newUser.id, true).then(res => {
           console.log('Success in updating userCentra');
         }).catch(err => {
-          console.log('Adding userCentra Error : ', err);
-        })
+          console.log('Updating userCentra Error : ', err);
+        });
       }
       
       setAddNewVisible(false);
@@ -444,7 +428,7 @@ const UsersDetails = () => {
               className="col-span-1 p-2 border rounded-lg"
             >
               <option value="">Choose Role</option>
-              <option value="Centra">Centra </option>
+              <option value="Centra">Centra</option>
               <option value="Admin">Admin</option>
               <option value="Harbour Guard">Harbour Guard</option>
               <option value="XYZ">XYZ</option>
@@ -459,7 +443,7 @@ const UsersDetails = () => {
             >
               <option value="">Choose Centra Location</option>
               {centras.map((cent) => (
-                <option key={cent.value} value={cent.value} {...newUser.location == cent.value ? 'selected' : ''}>
+                <option key={cent.value} value={cent.value}>
                   {cent.label}
                 </option>
               ))}
