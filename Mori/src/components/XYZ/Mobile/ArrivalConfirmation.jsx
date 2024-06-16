@@ -1,28 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
+import scale from '../../../assets/scale.png';
 
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 1024;
-  const [airwayBill, setAirwayBill] = useState("");
-  const [weightReceived, setWeightReceived] = useState("");
+
+  const [batches, setBatches] = useState([
+    { id: "Batch #1", weight: "" },
+    { id: "Batch #2", weight: "" },
+    { id: "Batch #3", weight: "" }
+  ]);
+
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  const getTotalWeight = () => {
+    return batches.reduce((total, batch) => {
+      return total + (parseFloat(batch.weight) || 0);
+    }, 0).toFixed(1);
+  };
+
   useEffect(() => {
-    // Check if both the shipping method and airway bill are provided
-    if (weightReceived !== "" && airwayBill.trim() !== "") {
-      setIsButtonDisabled(false); // Enable button if both conditions are met
-    } else {
-      setIsButtonDisabled(true); // Disable button if not
-    }
-  }, [weightReceived, airwayBill]);
+    const anyWeightEntered = batches.some(batch => batch.weight !== "");
+    setIsButtonDisabled(!anyWeightEntered);
+  }, [batches]);
+
+  const handleWeightChange = (index, newWeight) => {
+    const updatedBatches = batches.map((batch, i) =>
+      i === index ? { ...batch, weight: newWeight } : batch
+    );
+    setBatches(updatedBatches);
+  };
 
   return (
     <>
       {isMobile ? (
-        <div className="max-w-[640px] relative bg-slate-50 h-screen overflow-hidden text-left text-base text-zinc-500 font-vietnam ml-auto mr-auto">
-          <header className="absolute mt-6 w-full flex flex-col items-center justify-between text-right text-xl">
-            <div className="flex flex-row w-full">
+        <div className="max-w-[640px] relative bg-slate-50 h-screen overflow-hidden text-left text-base text-zinc-500 font-vietnam ml-auto mr-auto flex flex-col">
+          <header className="w-full mt-6 flex flex-col items-center justify-between text-right text-xl flex-grow-0">
+            <div className="w-full flex flex-row">
               <button className="hover:cursor-pointer" onClick={null}>
                 <svg
                   className="ml-5"
@@ -40,7 +55,7 @@ const ArrivalConfirmation = () => {
               </button>
               <div className="flex-1 flex flex-row items-center justify-center gap-[8px] text-base">
                 <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.95312 16.5078C4.48438 16.5078 0.804688 12.8281 0.804688 8.35938C0.804688 3.89844 4.48438 0.210938 8.94531 0.210938C13.4141 0.210938 17.1016 3.89844 17.1016 8.35938C17.1016 12.8281 13.4219 16.5078 8.95312 16.5078ZM8.08594 12.2422C8.39844 12.2422 8.67188 12.0859 8.85938 11.8047L12.5078 6.17188C12.625 5.99219 12.7188 5.78125 12.7188 5.59375C12.7188 5.15625 12.3281 4.85156 11.9062 4.85156C11.6328 4.85156 11.3984 5.00781 11.2109 5.29688L8.0625 10.3281L6.61719 8.51562C6.41406 8.26562 6.21094 8.16406 5.95312 8.16406C5.51562 8.16406 5.17188 8.51562 5.17188 8.95312C5.17188 9.16406 5.24219 9.35156 5.39844 9.54688L7.28125 11.8125C7.51562 12.1016 7.76562 12.2422 8.08594 12.2422Z" fill="#828282"/>
+                  <path d="M8.95312 16.5078C4.48438 16.5078 0.804688 12.8281 0.804688 8.35938C0.804688 3.89844 4.48438 0.210938 8.94531 0.210938C13.4141 0.210938 17.1016 3.89844 17.1016 8.35938C17.1016 12.8281 13.4219 16.5078 8.95312 16.5078ZM8.08594 12.2422C8.39844 12.2422 8.67188 12.0859 8.85938 11.8047L12.5078 6.17188C12.625 5.99219 12.7188 5.78125 12.7188 5.59375C12.7188 5.15625 12.3281 4.85156 11.9062 4.85156C11.6328 4.85156 11.3984 5.00781 11.2109 5.29688L8.0625 10.3281L6.61719 8.51562C6.41406 8.26562 6.21094 8.16406 5.95312 8.16406C5.51562 8.16406 5.17188 8.51562 5.17188 8.95312C5.17188 9.16406 5.24219 9.35156 5.39844 9.54688L7.28125 11.8125C7.51562 12.1016 7.76562 12.2422 8.08594 12.2422Z" fill="#828282"/>
                 </svg>
 
                 <div className="relative font-semibold text-lg font-vietnam text-center select-none">
@@ -54,64 +69,59 @@ const ArrivalConfirmation = () => {
             <hr className="relative w-full h-0 border-2 border-[#d9d9d9] mt-5" />
           </header>
 
-          <main className="absolute mt-24 w-full flex flex-col items-start justify-start px-5">
-            <form id="shipment-form">
-              {/* Shipping ID */}
-              <div className="w-full justify-start items-start flex flex-col gap-2.5">
-                <div className="text-black text-base font-semibold font-vietnam select-none">
-                  Batch Information
-                </div>
+          <main className="w-full mt-5 flex flex-col items-start justify-start px-5 flex-grow overflow-y-auto">
+            <form id="shipment-form" className="w-full">
+              <div className="w-full h-[27px] text-black text-lg font-semibold font-['Be Vietnam Pro']">Batch Information</div>
+              <hr className="w-full border-gray-300 mt-2" />
 
-                <input
-                  placeholder="Type..."
-                  className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none"
-                  value={airwayBill}
-                  onChange={(e) => setAirwayBill(e.target.value)}
-                />
-
-                <div className="w-full mt-2"></div>
-
-                {/* Weight Received */}
-                <div className="text-black text-base font-semibold font-vietnam mt-4 select-none">
-                  Weight Received
-                </div>
-
-                <div className="w-full">
-                    {/* Input field */}
-                    <input
-                        placeholder="Scale..."
-                        className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none pr-16"
-                        value={weightReceived}
-                        onChange={(e) => setWeightReceived(e.target.value)}
-                    />
-                    <div className="relative">
-                        {/* SVG icon */}
-                        <svg
-                            className="absolute top-[-24px] right-2 transform -translate-y-1/2 w-4 h-4 text-black pointer-events-none"
-                            viewBox="0 0 15 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path d="M0.98368 12.7794L2.52045 6.96979C2.65611 6.45685 2.91575 6.06129 3.29936 5.78309C3.68297 5.50054 4.16014 5.35926 4.73087 5.35926H11.1376C11.7083 5.35926 12.1855 5.50054 12.5691 5.78309C12.9527 6.06129 13.2123 6.45685 13.348 6.96979L14.8918 12.7794C15.0836 13.501 15.0204 14.0617 14.7023 14.4617C14.3889 14.8616 13.8579 15.0615 13.1094 15.0615H2.76605C2.01287 15.0615 1.47722 14.8616 1.15911 14.4617C0.845675 14.0617 0.787198 13.501 0.98368 12.7794ZM2.32397 12.8642C2.23508 13.1641 2.24912 13.3923 2.36607 13.5488C2.4877 13.7053 2.68652 13.7835 2.96253 13.7835H12.8989C13.1843 13.7835 13.3831 13.7053 13.4954 13.5488C13.6123 13.3923 13.6287 13.1641 13.5445 12.8642L12.0498 7.37405C11.9141 6.88285 11.5914 6.63725 11.0814 6.63725H4.78701C4.27709 6.63725 3.95664 6.88285 3.82565 7.37405L2.32397 12.8642ZM7.24303 6.31775V4.23125H8.62542V6.31775H7.24303ZM7.93773 4.86372C7.54945 4.86372 7.19391 4.77678 6.87112 4.60291C6.553 4.42468 6.29804 4.18778 6.10624 3.89219C5.91444 3.5966 5.81853 3.26841 5.81853 2.90762C5.81853 2.55117 5.91444 2.22298 6.10624 1.92305C6.29804 1.62311 6.553 1.38403 6.87112 1.20581C7.19391 1.02759 7.54945 0.938477 7.93773 0.938477C8.31666 0.938477 8.66518 1.02759 8.98329 1.20581C9.30609 1.38403 9.56572 1.62311 9.7622 1.92305C9.95869 2.22298 10.0569 2.55117 10.0569 2.90762C10.0569 3.26841 9.95869 3.5966 9.7622 3.89219C9.5704 4.18778 9.3131 4.42468 8.99031 4.60291C8.6722 4.77678 8.32134 4.86372 7.93773 4.86372ZM7.93773 3.79438C8.19971 3.79438 8.42426 3.70745 8.61138 3.53357C8.79851 3.35535 8.89207 3.1467 8.89207 2.90762C8.89207 2.66854 8.79617 2.45989 8.60437 2.28167C8.41724 2.10344 8.19503 2.01433 7.93773 2.01433C7.67575 2.01433 7.44887 2.10344 7.25706 2.28167C7.06994 2.45989 6.97637 2.66854 6.97637 2.90762C6.97637 3.1467 7.06994 3.35535 7.25706 3.53357C7.44887 3.70745 7.67575 3.79438 7.93773 3.79438Z" fill="black"/>
-                        </svg>
-
+              <div className="w-full flex flex-col gap-2.5 mt-2">
+                {batches.map((batch, index) => (
+                  <div key={batch.id} className="w-full flex flex-col">
+                    <div className="text-black text-sm font-bold font-['Be Vietnam Pro']">
+                      {batch.id}
                     </div>
-                </div>
-
-
-                <button
-                  className="w-full mt-3 py-2 bg-[#217045] text-white rounded-md select-none hover:bg-[#9AD1B380]/90 disabled:cursor-not-allowed disabled:bg-[#176e76]/50"
-                  type="submit"
-                  disabled={isButtonDisabled}
-                >
-                  Confirm Shipment
-                </button>
+                    <div className="w-full relative flex">
+                      <input
+                        placeholder="0.0 kg"
+                        className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none pr-16"
+                        value={batch.weight}
+                        onChange={(e) => handleWeightChange(index, e.target.value)}
+                      />
+                      <img
+                        className="absolute top-[50%] right-2 transform -translate-y-1/2 w-4 h-4 pointer-events-none"
+                        src={scale}
+                        alt="icon"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
+
+              <hr className="w-full border-gray-300 mt-5" />
+
+              <div className="w-full flex justify-between items-center mt-2">
+                <div className="text-black text-sm font-bold font-['Be Vietnam Pro']">
+                  Total Weight
+                </div>
+                <div className="text-stone-400 text-sm font-bold font-['Be Vietnam Pro']">
+                  {getTotalWeight()} kg
+                </div>
+              </div>
+
+              <button
+                className={`w-full mt-3 py-2 ${
+                  isButtonDisabled ? "bg-[#CD484866]/50" : "bg-[#CD4848] hover:bg-[#CD4848]/90"
+                } ${!isButtonDisabled && "text-white"} text-black rounded-md select-none disabled:cursor-not-allowed`}
+                type="submit"
+                disabled={isButtonDisabled}
+              >
+                {isButtonDisabled ? "No Rescaling Needed & Confirm" : "Rescale & Confirm"}
+              </button>
             </form>
           </main>
         </div>
       ) : (
-        <div className="flex justify-center items-center h-screen mt-4 text-gray-600">
+        <div className="w-full flex justify-center items-center h-screen mt-4 text-gray-600">
           Not available for this device.
         </div>
       )}
