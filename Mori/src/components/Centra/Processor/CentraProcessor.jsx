@@ -226,6 +226,20 @@ export default function Processor() {
     fetchDriedLeavesData();
   }, []);
 
+  // const [driedLeavesData, setDriedLeavesData] = useState({
+  //   labels: ["Dried Leaves", "Empty"],
+  //   datasets: [
+  //       {
+  //           data: [0, 100], // Initial data, will be updated
+  //           backgroundColor: ["#838453", "#B2B472"],
+  //           borderColor: ["#838453", "#B2B472"],
+  //           borderWidth: 1,
+  //           circumference: 360,
+  //           rotation: 0,
+  //           cutout: "75%",
+  //       },
+  //   ],
+  // });
   
 
   const Unfloureddriedleaves = {

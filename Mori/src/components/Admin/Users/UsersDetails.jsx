@@ -371,13 +371,21 @@ const UsersDetails = () => {
               <option value="Harbour Guard">Harbour Guard</option>
               <option value="XYZ">XYZ</option>
             </select>
-            <input
+            
+            <select
               name="location"
               value={newUser.location}
               onChange={handleInputChange}
               className="col-span-1 p-2 border rounded-lg"
               placeholder="Location"
-            />
+            >
+              <option value="">Choose Location</option>
+              <option value="1">1 </option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+
             <div className="col-span-1">
               <DatePicker
                 useRange={false}
