@@ -30,26 +30,34 @@ const UsersDetails = () => {
   const [editDate, setEditDate] = useState(null);
 
   useEffect(() => {
-    getAllUsers()
-      .then((resData) => {
-        userList = [];
-        resData.forEach(user => {
-          // IDORole: 0, Email: "user@example.com", FullName: "string", Role: "string", Phone: "string", UserID: 1
-          userList.push({
+    let $sortBy = "Name";
+    if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
+      $sortBy="Name"
+    } else {
+      $sortBy = "CreatedDate"
+    }
+      
+    getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole)
+      .then(res => {
+        if(res.data.length > 0){
+          const userList = res.data.map(user => ({
             id: user.UserID,
-            name: user.FullName,
+            name: `${user.FirstName} ${user.LastName}`,
             email: user.Email,
             phone: user.Phone,
             role: user.Role,
             location: "",
-            createdDate: ""
-          })
-        })
-        console.log('user List : ', userList)
-        setData(userList);
-        handleSearchAndSort(data, "name-a-z");
+            createdDate: "" // Assuming created date is available
+          }));
+          setData(userList);
+          handleSearchAndSort(userList, sortKey);
+        } else {
+          console.error("No Data")
+        }
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch(err => {
+        console.error("Error fetching data:", err);
+      });
   }, []);
 
   useEffect(() => {
@@ -178,13 +186,20 @@ const UsersDetails = () => {
       createdDate: new Date().toISOString(),
     };
 
-    const updatedData = [...data, newUserEntry];
-    setData(updatedData);
-    setAddNewVisible(false);
-    setNewUser(initialNewUserState);
-    setEditDate(null);
-    handleSearchAndSort(updatedData, sortKey);
-  };
+    // const updatedData = [...data, newUserEntry];
+    addUser(newUser)
+        .then((res) => {
+          console.log("Success : ", res);
+          setData(updatedData);
+          setAddNewVisible(false);
+          setNewUser(initialNewUserState);
+          setEditDate(null);
+          handleSearchAndSort(updatedData, sortKey);
+        })
+        .catch((err) => {
+          alert("Error : ", err);
+        });
+  }
 
   const updateUser = () => {
     const updatedData = data.map((user, index) =>
