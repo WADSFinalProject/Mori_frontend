@@ -68,3 +68,16 @@ export const updateExistingUser = async (user) => {
         throw new Error(error)
     }
 }
+
+export const deleteUser = async (userId) => {
+    try {
+        return axios.delete(`${host}/secured/users/${userId}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    } catch (error) {
+        console.error(error)
+        throw new Error(error)
+    }
+}
