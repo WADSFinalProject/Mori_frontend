@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import DatePicker from "react-tailwindcss-datepicker";
 import CollectorMain from "./CollectorMain";
 import { readWetLeavesCollections } from '../../../service/wetLeaves';
+import { updateWetLeavesCollection } from '../../../service/wetLeaves'; 
 
 export default function EditBatch({ onClose, batchData }) {
     const { width } = useWindowSize();
@@ -49,36 +50,25 @@ export default function EditBatch({ onClose, batchData }) {
     };
 
 
-const handleSave = () => {
-    // Prepare updated data object
-    const updatedData = {
-        batchId: batchData.batchId,
-        date: editDate, // Assuming editDate is already in YYYY-MM-DD format
-        weight: parseFloat(weight), // Convert weight to a number if needed
-        time: `${hours}:${minutes}${ampm}`,
+    const handleSave = () => {
+        // Prepare updated data object
+        const updatedData = {
+            batchId: batchData.batchId,
+            date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+            weight: parseFloat(weight), // Convert weight to a number if needed
+            time: `${hours}:${minutes}${ampm}`,
+        };
+
+        // Call the function to update wet leaves collection
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, false)
+            .then(response => {
+                console.log('Data updated successfully.');
+                onClose(); // Close the modal upon successful save
+            })
+            .catch(error => {
+                console.error('Failed to update data:', error);
+            });
     };
-
-    fetch('/data.json', {
-        method: 'PUT', // Assuming your backend supports PUT for updates
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Data updated successfully.');
-            // Optionally, you can show a success message or perform other actions upon successful save
-        } else {
-            console.error('Failed to update data.');
-        }
-    })
-    .catch(error => {
-        console.error('Error updating data:', error);
-    });
-
-    onClose(); // Close the modal
-};
 
 const handleExpired = () => {
     // Directly set status to "Expired" and save
