@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import BatchBox from './BatchBox'; 
-import { readBatches } from '../../../service/batches';
+import { readBatch, readBatches } from '../../../service/batches';
 
 function FilterDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,16 +12,16 @@ function FilterDropdown() {
   const statusOptions = ["None", "Processed", "Fresh", "Expired", "Exceeded"];
   const [isOpenStatusDropdown, setIsOpenStatusDropdown] = useState(false);
 
-  useEffect(() => {
-    // Fetch data from data.json
-    fetch('/data.json')
-      .then(response => response.json())
-      .then(data => {
-        // Set the fetched data
-        setBatchData(data);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+  // useEffect(() => {
+  //   // Fetch data from data.json
+  //   fetch('/data.json')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // Set the fetched data
+  //       setBatchData(data);
+  //     })
+  //     .catch(error => console.error('Error fetching data:', error));
+  // }, []);
 
   // useEffect(() => {
   //   // Fetch data from backend using readBatches
@@ -36,7 +36,31 @@ function FilterDropdown() {
 
   //   fetchBatches();
   // }, []);
-  
+
+
+  useEffect(() => {
+    readBatches()
+      .then((res) => {
+        console.log("Success : ", res);
+        let resArr = [];
+        res.data.forEach((dt) => {
+          resArr.push({
+            batchId: dt.batchId,
+            weight: dt.weight,
+            status: dt.status,
+            date: ["16 March 2024", "20 March 2024"], // Replace with actual date logic if needed
+            time: "02:45PM",
+            duration: "00:00:00"
+          })
+        }) 
+          setBatchData(resArr);
+        }
+      )
+      .catch((err) => {
+        console.error("Error fetching batches:", err);
+      });
+  }, []);
+    
   const toggleStatusDropdown = () => {
     setIsOpenStatusDropdown(!isOpenStatusDropdown);
   };
@@ -74,10 +98,10 @@ function FilterDropdown() {
   const renderBatchBoxes = () => {
     // Filter BatchBox data based on the selected date and status, or show all if "None" is selected
     const filteredBatchData = batchData.filter(batch => {
-      const batchDate = new Date(batch.date.replace(/,/g, ""));
+      const batchDate = new Date(batch.date[0]); // Adjust date parsing logic as per your actual data structure
       const matchesDate = !selectedDate || batchDate.toDateString() === selectedDate.toDateString();
       const matchesStatus = !selectedStatus || batch.status === selectedStatus;
-      
+  
       // Check if "None" is selected, if so, show all batches
       if (selectedStatus === "None") {
         return true; // Show all batches
@@ -88,9 +112,9 @@ function FilterDropdown() {
   
     // Sort filteredBatchData by date, newest to oldest
     filteredBatchData.sort((a, b) => {
-      const dateA = new Date(a.date.replace(/,/g, ""));
-      const dateB = new Date(b.date.replace(/,/g, ""));
-      return dateA - dateB; 
+      const dateA = new Date(a.date[0]);
+      const dateB = new Date(b.date[0]);
+      return dateB - dateA;
     });
   
     return (
