@@ -30,6 +30,7 @@ import XYZHome from "./components/XYZ/Mobile/XYZHome";
 import XYZNotif from "./components/XYZ/XYZNotif";
 import XYZNavigation from "./components/XYZ/Mobile/XYZNavigation";
 import SchedulePickup from "./components/XYZ/Mobile/SchedulePickup";
+import ArrivalConfirmation from "./components/XYZ/Mobile/ArrivalConfirmation";
 import AcceptedPackages from "./components/XYZ/Laptop/AcceptedPackages/AcceptedPackages";
 import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
@@ -83,6 +84,7 @@ function App() {
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
         <Route path="/xyz/m/shippinginformation" element={<XYZShippingInformation />}/>
+        <Route path="/xyz/m/arrivalconfirmation" element={<ArrivalConfirmation />}/>
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
