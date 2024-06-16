@@ -30,35 +30,35 @@ const UsersDetails = () => {
   const [editDate, setEditDate] = useState(null);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      
-      $sortBy = "Name";
-      if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
-        $sortBy="Name"
-      } else {
-        $sortBy = "CreatedDate"
-      }
-      
-      const resData = await getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole);
-      const userList = resData.map(user => ({
-        id: user.UserID,
-        name: user.FullName,
-        email: user.Email,
-        phone: user.Phone,
-        role: user.Role,
-        location: "",
-        createdDate: "" // Assuming created date is available
-      }));
-      setData(userList);
-      handleSearchAndSort(userList, sortKey);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    let $sortBy = "Name";
+    if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
+      $sortBy="Name"
+    } else {
+      $sortBy = "CreatedDate"
     }
-  };
+      
+    getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole)
+      .then(res => {
+        if(res.data.length > 0){
+          const userList = res.data.map(user => ({
+            id: user.UserID,
+            name: `${user.FirstName} ${user.LastName}`,
+            email: user.Email,
+            phone: user.Phone,
+            role: user.Role,
+            location: "",
+            createdDate: "" // Assuming created date is available
+          }));
+          setData(userList);
+          handleSearchAndSort(userList, sortKey);
+        } else {
+          console.error("No Data")
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching data:", err);
+      });
+  }, []);
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey);
