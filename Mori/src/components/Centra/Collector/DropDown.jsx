@@ -45,27 +45,52 @@ function FilterDropdown() {
 
   //   wetLeaves();
   // }, []);
-
+  
   useEffect(() => {
     const wetLeaves = async () => {
       try {
         const response = await readWetLeavesCollections();
         const batches = response.data.map((batch) => {
-          // Extract hours, minutes, seconds from the time string
+          // Extract hours, minutes from the time string
           const timeParts = batch.Time.split(':');
           const hours = parseInt(timeParts[0], 10);
           const minutes = parseInt(timeParts[1], 10);
-
+  
           // Format time into 12-hour format with AM/PM
           const formattedTime = formatTime(hours, minutes);
+  
+          // Calculate batch time as a Date object
+          const batchDateParts = batch.Date.split('-');
+          const batchTime = new Date(
+            batchDateParts[0], // year
+            batchDateParts[1] - 1, // month (months are 0-indexed in JavaScript Date)
+            batchDateParts[2], // day
+            hours,
+            minutes,
+            0 // seconds
+          );
+  
+          // Calculate current time
+          const currentTime = new Date();
+  
+          // Calculate duration in milliseconds: (Batch time + 4 hours) - Current time
+          const durationInMilliseconds = batchTime.getTime() + (4 * 60 * 60 * 1000) - currentTime.getTime();
+  
+          // Convert duration to hours, minutes, seconds
+          const hoursLeft = Math.floor(durationInMilliseconds / (1000 * 60 * 60));
+          const minutesLeft = Math.floor((durationInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+          const secondsLeft = Math.floor((durationInMilliseconds % (1000 * 60)) / 1000);
+  
+          // Format duration in HH:mm:ss format
+          const formattedDuration = `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
   
           return {
             batchId: batch.WetLeavesBatchID,
             weight: batch.Weight + "kg",
             date: formatDate(new Date(batch.Date)),
             time: formattedTime,
-            duration: formatDuration(batch.Duration),
-            status: batch.Status
+            status: batch.Status,
+            duration: formattedDuration
           };
         });
         setBatchData(batches);
@@ -84,16 +109,10 @@ function FilterDropdown() {
       return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
     };
   
-    const formatDuration = (duration) => {
-      // Assuming duration is in ISO 8601 format P7D (7 days)
-      const days = parseInt(duration.substring(1, duration.length - 1), 10);
-      const hours = days * 24; // Convert days to hours
-      return `${hours}:00:00`;
-    };
-  
     wetLeaves();
   }, []);
-    
+  
+  
   const toggleStatusDropdown = () => {
     setIsOpenStatusDropdown(!isOpenStatusDropdown);
   };
@@ -102,12 +121,12 @@ function FilterDropdown() {
     setSelectedStatus(status);
     setIsOpenStatusDropdown(false); // Close dropdown after selection
   };
-
+  
   const renderStatusOptions = () => {
     return (
       <div className={`absolute bottom-full left-0 mt-1 w-full bg-white rounded-md shadow-lg z-10 ${isOpenStatusDropdown ? '' : 'hidden'}`}
            style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                    <button
+        <button
           key="None"
           className={`block px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 ${selectedStatus === "None" ? 'font-semibold' : ''}`}
           onClick={() => selectStatus("None")}
@@ -126,6 +145,7 @@ function FilterDropdown() {
       </div>
     );
   };
+  
   
 
   const renderBatchBoxes = () => {

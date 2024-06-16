@@ -11,8 +11,8 @@ export const createWetLeavesCollection = async (centralId, date, time, weight, s
             Time: time,
             Weight: weight,
             Status: status,
-            Expired: expired,
-            Duration: duration,
+            // Expired: expired,
+            // Duration: duration,
         };
 
         return axios.post(host + "/secured/wet-leaves-collections/create", collectionDetails, {
@@ -63,7 +63,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, we
             Time: time,
             Weight: weight,
             Status: status,
-            Expired: expired,
+            // Expired: expired,
         };
 
         return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {

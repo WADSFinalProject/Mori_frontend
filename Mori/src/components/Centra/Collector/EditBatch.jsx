@@ -50,55 +50,56 @@ export default function EditBatch({ onClose, batchData }) {
     };
 
 
+
     const handleSave = () => {
+        // Format time
+        let formattedHours = hours;
+        if (ampm === "PM" && hours !== 12) {
+            formattedHours += 12;
+        } else if (ampm === "AM" && hours === 12) {
+            formattedHours = 0;
+        }
+        const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00.000000`;
+    
         // Prepare updated data object
         const updatedData = {
             batchId: batchData.batchId,
             date: editDate, // Assuming editDate is already in YYYY-MM-DD format
             weight: parseFloat(weight), // Convert weight to a number if needed
-            time: `${hours}:${minutes}${ampm}`,
+            time: formattedTime,
         };
-
-        // Call the function to update wet leaves collection
-        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, false)
+        
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status)
             .then(response => {
                 console.log('Data updated successfully.');
-                onClose(); // Close the modal upon successful save
+                onClose(); // Close the modal 
+                window.location.reload();
             })
             .catch(error => {
                 console.error('Failed to update data:', error);
             });
     };
 
-const handleExpired = () => {
-    // Directly set status to "Expired" and save
-    const updatedData = {
-        batchId: batchData.batchId,
-        status: "Expired"
+    const handleExpired = () => {
+        // Directly set status to "Expired" and save
+        const updatedData = {
+            batchId: batchData.batchId,
+            status: "Expired"
+        };
+    
+        updateWetLeavesCollection(batchData.batchId, updatedData.status)
+            .then(response => {
+                console.log('Batch status updated to Expired successfully.');
+                onClose(); // Close the modal upon successful update
+                window.location.reload(); // Reload the page if needed
+            })
+            .catch(error => {
+                console.error('Failed to update batch status:', error);
+            });
     };
-
-    fetch('/data.json', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Batch status updated to Expired successfully.');
-            // Optionally, perform any actions needed after status update
-        } else {
-            console.error('Failed to update batch status.');
-        }
-    })
-    .catch(error => {
-        console.error('Error updating batch status:', error);
-    });
-
-    onClose(); // Close the modal
-};
-
+    
+    
+    
 useEffect(() => {
     readWetLeavesCollections()
         .then(response => {
@@ -110,16 +111,30 @@ useEffect(() => {
                 const formattedDate = batch.Date.split('T')[0];
                 setEditDate(formattedDate);
                 setWeight(batch.Weight);
-                const [hour, minute] = batch.Time.split(':');
-                setHours(parseInt(hour));
-                setMinutes(parseInt(minute.substring(0, 2)));
-                setAmPm(minute.includes('AM') ? 'AM' : 'PM');
+                
+                // Extract hours, minutes, and am/pm from batch.Time
+                const timeParts = batch.Time.split(':');
+                let hours = parseInt(timeParts[0]);
+                const minutes = parseInt(timeParts[1].substring(0, 2));
+                const ampm = timeParts[1].includes('AM') ? 'AM' : 'PM';
+                
+                // Adjust hours for AM/PM format
+                if (hours === 0) {
+                    hours = 12; // Midnight (0) should display as 12 AM
+                } else if (hours > 12) {
+                    hours -= 12; // Convert PM hours to 12-hour format
+                }
+                
+                setHours(hours);
+                setMinutes(minutes);
+                setAmPm(ampm);
             } else {
                 console.log('Batch not found for batchId:', batchData.batchId);
             }
         })
         .catch(error => console.error('Error fetching data:', error));
 }, [batchData]);
+
 
     // useEffect(() => {
     //     // Fetch data from data.json
