@@ -185,34 +185,38 @@ export default function Processor() {
   }, []);
 
   useEffect(() => {
-    // Inside useEffect for fetching dried leaves
     const fetchDriedLeavesData = async () => {
-      try {
-          const response = await readDriedLeaves();
-          const collections = response;
+        try {
+            const response = await readDriedLeaves();
+            const collections = response.data; // Ensure you're accessing the data correctly
 
-          let totalDriedLeaves = 0;
-          collections.forEach((collection) => {
-              totalDriedLeaves += collection.Weight;
-          });
+            // Check if collections is an array before iterating
+            if (Array.isArray(collections)) {
+                let totalDriedLeaves = 0;
+                collections.forEach((collection) => {
+                    totalDriedLeaves += collection.Weight;
+                });
 
-          setDriedLeavesData({
-              ...driedLeavesData,
-              datasets: [
-                  {
-                      ...driedLeavesData.datasets[0],
-                      data: [totalDriedLeaves, 100 - totalDriedLeaves],
-                  },
-              ],
-          });
-      } catch (error) {
-          console.log("Error fetching dried leaves data: ", error);
-      }
+                setDriedLeavesData({
+                    ...driedLeavesData,
+                    datasets: [
+                        {
+                            ...driedLeavesData.datasets[0],
+                            data: [totalDriedLeaves, 100 - totalDriedLeaves],
+                        },
+                    ],
+                });
+            } else {
+                console.log("Expected an array of dried leaves data, but received:", collections);
+            }
+        } catch (error) {
+            console.log("Error fetching dried leaves data: ", error);
+        }
     };
-
 
     fetchDriedLeavesData();
   }, []);
+
   
 
   const Unfloureddriedleaves = {
