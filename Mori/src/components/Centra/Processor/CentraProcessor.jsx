@@ -9,7 +9,9 @@ import Chart from "chart.js/auto";
 import axios from "axios";
 import { readWetLeavesCollections } from "../../../service/wetLeaves.js";
 import { readDriedLeaves } from "../../../service/driedLeaves.js";
-
+import { readBatches } from "../../../service/batches.js";
+import { readDryingMachines } from "../../../service/dryingMachine.js";
+import { readFlouringMachines } from "../../../service/flouringMachine";
 
 const gaugeOptions = {
   responsive: true,
@@ -73,56 +75,38 @@ const ChartWithBox = ({ data, label, labelStyle }) => (
 export default function Processor() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
+  // const location = useLocation();
   const initialActiveTab = location.state?.activeTab || "drying"; // Default to drying tab if state not available
   const [activeTab, setActiveTab] = useState(initialActiveTab);
 
-  const [dryingMachines, setDryingMachines] = useState([
-    {
-      number: 1,
-      status: "FULL",
-      currentLoad: 24,
-      capacity: 30,
-      lastUpdated: "1 hour ago",
-    },
-    {
-      number: 2,
-      status: "FULL",
-      currentLoad: 30,
-      capacity: 30,
-      lastUpdated: "2 hours ago",
-    },
-    {
-      number: 3,
-      status: "EMPTY",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "30 minutes ago",
-    },
-  ]);
+  const [dryingMachines, setDryingMachines] = useState([]);
+  const [flouringMachines, setFlouringMachines] = useState([]);
 
-  const [flouringMachines, setFlouringMachines] = useState([
-    {
-      number: 1,
-      status: "FULL",
-      currentLoad: 24,
-      capacity: 30,
-      lastUpdated: "45 minutes ago",
-    },
-    {
-      number: 2,
-      status: "FULL",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "3 hours ago",
-    },
-    {
-      number: 3,
-      status: "EMPTY",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "1 hour ago",
-    },
-  ]);
+  useEffect(() => {
+  const fetchDryingMachines = async () => {
+    try {
+      const response = await readDryingMachines();
+      setDryingMachines(response.data);
+    } catch (error) {
+      console.log("Error fetching drying machines: ", error);
+    }
+  };
+
+  fetchDryingMachines();
+  }, []);
+
+useEffect(() => {
+  const fetchFlouringMachines = async () => {
+    try {
+      const response = await readFlouringMachines();
+      setFlouringMachines(response.data);
+    } catch (error) {
+      console.log("Error fetching flouring machines: ", error);
+    }
+  };
+
+  fetchFlouringMachines();
+  }, []);
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -148,6 +132,21 @@ export default function Processor() {
         data: [0, 100],
         backgroundColor: ["#838453", "#B2B472"],
         borderColor: ["#838453", "#B2B472"],
+        borderWidth: 1,
+        circumference: 360,
+        rotation: 0,
+        cutout: "75%",
+      },
+    ],
+  });
+
+  const [flouredLeavesData, setFlouredLeavesData] = useState({
+    labels: ["Floured Leaves", "Empty"],
+    datasets: [
+      {
+        data: [0, 100],
+        backgroundColor: ["#704B40", "#B78F82"],
+        borderColor: ["#704B40", "#B78F82"],
         borderWidth: 1,
         circumference: 360,
         rotation: 0,
@@ -188,9 +187,8 @@ export default function Processor() {
     const fetchDriedLeavesData = async () => {
         try {
             const response = await readDriedLeaves();
-            const collections = response.data; // Ensure you're accessing the data correctly
+            const collections = response.data;
 
-            // Check if collections is an array before iterating
             if (Array.isArray(collections)) {
                 let totalDriedLeaves = 0;
                 collections.forEach((collection) => {
@@ -217,37 +215,35 @@ export default function Processor() {
     fetchDriedLeavesData();
   }, []);
 
-  
+  useEffect(() => {
+    const fetchFlouredLeavesData = async () => {
+      try {
+        const response = await readBatches();
+        const batches = response.data;
 
-  const Unfloureddriedleaves = {
-    labels: ["Unfloured dried Leaves", "Empty"],
-    datasets: [
-      {
-        data: [10, 90],
-        backgroundColor: ["#838453", "#B2B472"],
-        borderColor: ["#838453", "#B2B472"],
-        borderWidth: 1,
-        circumference: 360,
-        rotation: 0,
-        cutout: "75%",
-      },
-    ],
-  };
+        let totalFlouredLeaves = 0;
+        batches.forEach((batch) => {
+          if (batch.FlouredDate) {
+            totalFlouredLeaves += batch.Weight;
+          }
+        });
 
-  const flouredleaves = {
-    labels: ["floured Leaves", "Empty"],
-    datasets: [
-      {
-        data: [30, 90],
-        backgroundColor: ["#704B40", "#B78F82"],
-        borderColor: ["#704B40", "#B78F82"],
-        borderWidth: 1,
-        circumference: 360,
-        rotation: 0,
-        cutout: "75%",
-      },
-    ],
-  };
+        setFlouredLeavesData({
+          ...flouredLeavesData,
+          datasets: [
+            {
+              ...flouredLeavesData.datasets[0],
+              data: [totalFlouredLeaves, 100 - totalFlouredLeaves],
+            },
+          ],
+        });
+      } catch (error) {
+        console.log("Error fetching floured leaves data: ", error);
+      }
+    };
+
+    fetchFlouredLeavesData();
+  }, []);
 
   const renderMachines = () => {
     const machines = activeTab === "drying" ? dryingMachines : flouringMachines;
@@ -256,7 +252,7 @@ export default function Processor() {
       const machineCardMarginClass = isLastCard ? "mb-10" : "mb-4";
       return (
         <MachineCard
-          key={machine.number}
+          key={machine.id}
           machine={machine}
           extraMarginClass={machineCardMarginClass}
         />
@@ -276,6 +272,8 @@ export default function Processor() {
       activeTab === "drying"
         ? `/dryingmachine/${machine.number}`
         : `/flouringmachine/${machine.number}`;
+
+    const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
 
     return (
       <div
@@ -340,7 +338,9 @@ export default function Processor() {
           </div>
         </div>
         <button
-          className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`start-btn text-white py-1 px-6 ${
+            machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           style={{
             backgroundColor: "#000000",
             width: "100%",
@@ -367,7 +367,7 @@ export default function Processor() {
           }}
         >
           <div>Last updated:</div>
-          <div style={{ fontWeight: "bold" }}>{machine.lastUpdated}</div>
+          <div style={{ fontWeight: "bold" }}>{lastUpdatedTime}</div>
         </div>
       </div>
     );
@@ -424,13 +424,13 @@ export default function Processor() {
             ) : (
               <div className="flex justify-center gap-4">
                 <ChartWithBox
-                  data={Unfloureddriedleaves}
+                  data={driedLeavesData}
                   label="Unfloured Dried Leaves"
                   backgroundColor="#828282"
                   labelStyle={{ color: "black", top: "20px" }}
                 />
                 <ChartWithBox
-                  data={flouredleaves}
+                  data={flouredLeavesData}
                   label="Floured Leaves"
                   backgroundColor="#d9d9d9"
                   labelStyle={{ top: "20px" }}
