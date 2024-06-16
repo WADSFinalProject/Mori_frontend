@@ -190,12 +190,18 @@ const UsersDetails = () => {
       email: userToEdit.email,
       phone: userToEdit.phone,
       role: userToEdit.role,
-      location: centraId,
+      location: "",
       birthdate: userToEdit.birthdate,
       address: userToEdit.address,
     });
     setEditDate(userToEdit.birthdate);
   };
+
+  useEffect(() => {
+    let user = newUser;
+    user.location = selectedCentra.centraId
+    setNewUser(user)
+  }, [selectedCentra])
 
   const handleDeleteClick = (index) => {
     setUserToDelete(sortedData[index]);
@@ -260,6 +266,7 @@ const UsersDetails = () => {
       console.log("Success update user: ", res);
 
       if(centraId == null){
+        console.log('no centra assigned')
         // add usercentra
         addUserCentra(newUser.location, res.data.UserID, true).then(res => {
           console.log('Success in adding userCentra');
@@ -267,11 +274,12 @@ const UsersDetails = () => {
           console.log('Adding userCentra Error : ', err)
         })
       } else {
+        console.log('about to update centra assigned')
         // update existing usercentra
         updateUserCentra(selectedCentra.id, newUser.location, res.data.UserID, true).then(res => {
           console.log('Success in updating userCentra');
         }).catch(err => {
-          console.log('Adding userCentra Error : ', err)
+          console.log('Adding userCentra Error : ', err);
         })
       }
       
@@ -287,7 +295,6 @@ const UsersDetails = () => {
     setEditVisible(false);
     setNewUser(initialNewUserState);
     setEditUserIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
   };
 
   return (
@@ -451,11 +458,11 @@ const UsersDetails = () => {
               placeholder="Location"
             >
               <option value="">Choose Centra Location</option>
-              {
-                centras.map(cent => (
-                  <option value={cent.value} {...newUser.location == cent.value ? 'selected' : ''}>{cent.label}</option>
-                ))
-              }
+              {centras.map((cent) => (
+                <option key={cent.value} value={cent.value} {...newUser.location == cent.value ? 'selected' : ''}>
+                  {cent.label}
+                </option>
+              ))}
             </select>
 
             <div className="col-span-1">
