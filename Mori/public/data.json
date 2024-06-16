@@ -4,7 +4,7 @@
       "weight": "12.9 kg",
       "status": "Fresh",
       "date": "13 March 2024",
-      "time": "02:40AM",
+      "time": "02:40 AM",
       "duration": "08:30:00"
     },
     {
@@ -12,7 +12,7 @@
       "weight": "12.4 kg",
       "status": "Near Expiry",
       "date": "14 March 2024",
-      "time": "02:45PM",
+      "time": "02:45 PM",
       "duration": "00:05:43"
     },
     {
@@ -20,7 +20,7 @@
       "weight": "12.5 kg",
       "status": "Exceeded",
       "date": "15 March 2024",
-      "time": "02:45PM",
+      "time": "02:45 PM",
       "duration": "00:05:43"
     },
     {
@@ -28,7 +28,7 @@
       "weight": "12.4 kg",
       "status": "Expired",
       "date": "16 March 2024",
-      "time": "02:45PM",
+      "time": "02:45 PM",
       "duration": "00:00:00"
     },
     {
@@ -36,7 +36,7 @@
       "weight": "12.4 kg",
       "status": "Processed",
       "date": "10 March 2024",
-      "time": "02:45PM",
+      "time": "02:45 PM",
       "duration": "00:00:00"
     },
     {
@@ -44,7 +44,7 @@
       "weight": "12.4 kg",
       "status": "Processed",
       "date": "12 March 2024",
-      "time": "02:45PM",
+      "time": "02:45 PM",
       "duration": "00:00:00"
     }
   ]

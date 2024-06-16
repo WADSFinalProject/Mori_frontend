@@ -5,6 +5,7 @@ import EditBatch from "./EditBatch"; // Import the EditBatch component
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { readBatches } from '../../../service/batches';
+import { readWetLeavesCollections } from "../../../service/wetLeaves";
 
 const CollectorMain = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
@@ -29,26 +30,28 @@ const CollectorMain = () => {
   // );
 
   useEffect(() => {
-    // Fetch data from backend using readBatches
-    const fetchBatches = async () => {
+    const wetLeaves = async () => {
       try {
-        const response = await readBatches();
-        const data = response.data;
-        setBatchData(data);
-
-        // Calculate the total weight
-        const weight = data.reduce(
-          (total, batch) => total + (parseFloat(batch.weight) || 0),
+        const response = await readWetLeavesCollections();
+        const batches = response.data.map((batch) => ({
+          batchId: batch.WetLeavesBatchID,
+          weight: batch.Weight, 
+        }));
+        setBatchData(batches);
+  
+        // Calculate total weight
+        const totalWeight = batches.reduce(
+          (total, batch) => total + parseFloat(batch.weight),
           0
         );
-        setTotalWeight(weight);
+        setTotalWeight(totalWeight);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching batches: ", error);
       }
     };
-
-    fetchBatches();
-  }, []);
+  
+    wetLeaves();
+  }, []);  
 
   return (
     <div>

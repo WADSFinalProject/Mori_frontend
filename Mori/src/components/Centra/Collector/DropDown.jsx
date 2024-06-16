@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import BatchBox from './BatchBox'; 
-import { readBatch, readBatches } from '../../../service/batches';
+import { readWetLeavesCollections } from '../../../service/wetLeaves';
 
 function FilterDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +11,7 @@ function FilterDropdown() {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const statusOptions = ["None", "Processed", "Fresh", "Expired", "Exceeded"];
   const [isOpenStatusDropdown, setIsOpenStatusDropdown] = useState(false);
+  const [timeLeft, setTimeLeft] = useState('');
 
   // useEffect(() => {
   //   // Fetch data from data.json
@@ -22,43 +23,75 @@ function FilterDropdown() {
   //     })
   //     .catch(error => console.error('Error fetching data:', error));
   // }, []);
-
+  
   // useEffect(() => {
-  //   // Fetch data from backend using readBatches
-  //   const fetchBatches = async () => {
+  //   const wetLeaves = async () => {
   //     try {
-  //       const response = await readBatches();
-  //       setBatchData(response.data);
+  //       const response = await readWetLeavesCollections();
+  //       const batches = response.data.map((batch) => ({
+  //         batchId: batch.WetLeavesBatchID,
+  //         weight: batch.Weight + "kg",
+  //         date: batch.Date,
+  //         time: batch.Time,
+  //         duration: batch.Duration,
+  //         status: batch.Status,
+
+  //       }));
+  //       setBatchData(batches);
   //     } catch (error) {
-  //       console.error('Error fetching data:', error);
+  //       console.error("Error fetching batches: ", error);
   //     }
   //   };
 
-  //   fetchBatches();
+  //   wetLeaves();
   // }, []);
 
-
   useEffect(() => {
-    readBatches()
-      .then((res) => {
-        console.log("Success : ", res);
-        let resArr = [];
-        res.data.forEach((dt) => {
-          resArr.push({
-            batchId: dt.batchId,
-            weight: dt.weight,
-            status: dt.status,
-            date: ["16 March 2024", "20 March 2024"], // Replace with actual date logic if needed
-            time: "02:45PM",
-            duration: "00:00:00"
-          })
-        }) 
-          setBatchData(resArr);
-        }
-      )
-      .catch((err) => {
-        console.error("Error fetching batches:", err);
-      });
+    const wetLeaves = async () => {
+      try {
+        const response = await readWetLeavesCollections();
+        const batches = response.data.map((batch) => {
+          // Extract hours, minutes, seconds from the time string
+          const timeParts = batch.Time.split(':');
+          const hours = parseInt(timeParts[0], 10);
+          const minutes = parseInt(timeParts[1], 10);
+
+          // Format time into 12-hour format with AM/PM
+          const formattedTime = formatTime(hours, minutes);
+  
+          return {
+            batchId: batch.WetLeavesBatchID,
+            weight: batch.Weight + "kg",
+            date: formatDate(new Date(batch.Date)),
+            time: formattedTime,
+            duration: formatDuration(batch.Duration),
+            status: batch.Status
+          };
+        });
+        setBatchData(batches);
+      } catch (error) {
+        console.error("Error fetching batches: ", error);
+      }
+    };
+  
+    const formatDate = (date) => {
+      return `${date.getDate()} ${date.toLocaleString('en-US', { month: 'long' })} ${date.getFullYear()}`;
+    };
+  
+    const formatTime = (hours, minutes) => {
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+      return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+    };
+  
+    const formatDuration = (duration) => {
+      // Assuming duration is in ISO 8601 format P7D (7 days)
+      const days = parseInt(duration.substring(1, duration.length - 1), 10);
+      const hours = days * 24; // Convert days to hours
+      return `${hours}:00:00`;
+    };
+  
+    wetLeaves();
   }, []);
     
   const toggleStatusDropdown = () => {
