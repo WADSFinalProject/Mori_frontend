@@ -30,27 +30,35 @@ const UsersDetails = () => {
   const [editDate, setEditDate] = useState(null);
 
   useEffect(() => {
-    getAllUsers()
-      .then((resData) => {
-        userList = [];
-        resData.forEach(user => {
-          // IDORole: 0, Email: "user@example.com", FullName: "string", Role: "string", Phone: "string", UserID: 1
-          userList.push({
-            id: user.UserID,
-            name: user.FullName,
-            email: user.Email,
-            phone: user.Phone,
-            role: user.Role,
-            location: "",
-            createdDate: ""
-          })
-        })
-        console.log('user List : ', userList)
-        setData(userList);
-        handleSearchAndSort(data, "name-a-z");
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      
+      $sortBy = "Name";
+      if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
+        $sortBy="Name"
+      } else {
+        $sortBy = "CreatedDate"
+      }
+      
+      const resData = await getAllUsers(0, 100, $sortBy, sortKey.includes('desc') ? 'desc' : 'asc', filterRole);
+      const userList = resData.map(user => ({
+        id: user.UserID,
+        name: user.FullName,
+        email: user.Email,
+        phone: user.Phone,
+        role: user.Role,
+        location: "",
+        createdDate: "" // Assuming created date is available
+      }));
+      setData(userList);
+      handleSearchAndSort(userList, sortKey);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey);
