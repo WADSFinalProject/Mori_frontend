@@ -99,7 +99,7 @@ export default function EditBatch({ onClose, batchData }) {
             expired: true,
         };
     
-        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, true)
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, updatedData.expired)
             .then(response => {
                 console.log('Data updated successfully.');
                 onClose(); // Close the modal 

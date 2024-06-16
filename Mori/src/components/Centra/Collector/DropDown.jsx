@@ -50,22 +50,24 @@ function FilterDropdown() {
                   const formattedDuration = `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
 
                   let status = batch.Status;
-                  let expired = false;
+                  let expired = batch.Expired
+                  // Example usage
+                console.log(`Status: ${status}, Expired: ${expired}`);
 
-                  if (durationInMilliseconds <= 0) {
-                      expired = true;
+                  if (durationInMilliseconds <= 0 && expired == true) {
                       status = "Expired";
-                  
+                  } else if (durationInMilliseconds <= 0 && expired == false) {
+                        status = "Exceeded";
                   } else if (durationInMilliseconds < (60 * 60 * 1000)) {
                       status = "Near Expiry";
                   } else if (durationInMilliseconds > (3 * 60 * 60 * 1000)) {
                       status = "Fresh";
                   }
 
-                  // Update status if necessary
-                  if (status == "Expired" || status === "Exceeded" || status === "Near Expiry" || status === "Fresh") {
-                      handleUpdateStatus(hours, minutes, batch, status);
-                  }
+                //   // Update status if necessary
+                //   if (status == "Expired" || status === "Exceeded" || status === "Near Expiry" || status === "Fresh") {
+                //       handleUpdateStatus(hours, minutes, batch, status);
+                //   }
 
                   return {
                       batchId: batch.WetLeavesBatchID,
