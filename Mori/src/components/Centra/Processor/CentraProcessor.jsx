@@ -7,7 +7,7 @@ import back from "../../../assets/back.png";
 import { Pie, Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import axios from "axios";
-import { readWetLeavesCollections, readWetLeavesCollection } from "../../../service/wetLeaves.js";
+import { readWetLeavesCollections } from "../../../service/wetLeaves.js";
 import { readDriedLeaves } from "../../../service/driedLeaves.js";
 
 
@@ -130,7 +130,7 @@ export default function Processor() {
     labels: ["Unprocessed Wet Leaves", "Empty"],
     datasets: [
       {
-        data: [0, 100], // Initial data, will be updated
+        data: [0, 100],
         backgroundColor: ["#538455", "#86B788"],
         borderColor: ["#538455", "#86B788"],
         borderWidth: 1,
@@ -140,26 +140,33 @@ export default function Processor() {
       },
     ],
   });
-  
+
+  const [driedLeavesData, setDriedLeavesData] = useState({
+    labels: ["Processed Dried Leaves", "Empty"],
+    datasets: [
+      {
+        data: [0, 100],
+        backgroundColor: ["#838453", "#B2B472"],
+        borderColor: ["#838453", "#B2B472"],
+        borderWidth: 1,
+        circumference: 360,
+        rotation: 0,
+        cutout: "75%",
+      },
+    ],
+  });
 
   useEffect(() => {
     const fetchWetLeavesData = async () => {
       try {
-        // Log the parameters being sent
-        const params = { skip: 0, limit: 100 };
-        console.log("Fetching wet leaves data with params:", params);
-
-
         const response = await readWetLeavesCollections();
-        const collections = response.data; // Assuming response.data contains the collections
+        const collections = response.data;
 
-        // Accumulate the data
         let totalWetLeaves = 0;
-        collections.forEach(collection => {
-          totalWetLeaves += collection.wetLeavesAmount; // Adjust property name as per your data structure
+        collections.forEach((collection) => {
+          totalWetLeaves += collection.Weight;
         });
 
-        // Update the state with the accumulated data
         setWetLeavesData({
           ...wetLeavesData,
           datasets: [
@@ -177,69 +184,35 @@ export default function Processor() {
     fetchWetLeavesData();
   }, []);
 
-  const [driedLeavesData, setDriedLeavesData] = useState({
-    labels: ["Dried Leaves", "Empty"],
-    datasets: [
-        {
-            data: [0, 100], // Initial data, will be updated
-            backgroundColor: ["#838453", "#B2B472"],
-            borderColor: ["#838453", "#B2B472"],
-            borderWidth: 1,
-            circumference: 360,
-            rotation: 0,
-            cutout: "75%",
-        },
-    ],
-  });
-
   useEffect(() => {
+    // Inside useEffect for fetching dried leaves
     const fetchDriedLeavesData = async () => {
-        try {
-            // Log the parameters being sent
-            const params = { skip: 0, limit: 100 };
-            console.log("Fetching dried leaves data with params:", params);
+      try {
+          const response = await readDriedLeaves();
+          const collections = response;
 
-            const response = await readDriedLeaves();
-            const collections = response.data; // Assuming response.data contains the collections
+          let totalDriedLeaves = 0;
+          collections.forEach((collection) => {
+              totalDriedLeaves += collection.Weight;
+          });
 
-            // Accumulate the data
-            let totalDriedLeaves = 0;
-            collections.forEach(collection => {
-                totalDriedLeaves += collection.driedLeavesAmount; // Adjust property name as per your data structure
-            });
-
-            // Update the state with the accumulated data
-            setDriedLeavesData({
-                ...driedLeavesData,
-                datasets: [
-                    {
-                        ...driedLeavesData.datasets[0],
-                        data: [totalDriedLeaves, 100 - totalDriedLeaves],
-                    },
-                ],
-            });
-        } catch (error) {
-            console.log("Error fetching dried leaves data: ", error);
-        }
+          setDriedLeavesData({
+              ...driedLeavesData,
+              datasets: [
+                  {
+                      ...driedLeavesData.datasets[0],
+                      data: [totalDriedLeaves, 100 - totalDriedLeaves],
+                  },
+              ],
+          });
+      } catch (error) {
+          console.log("Error fetching dried leaves data: ", error);
+      }
     };
+
 
     fetchDriedLeavesData();
   }, []);
-
-  // const [driedLeavesData, setDriedLeavesData] = useState({
-  //   labels: ["Dried Leaves", "Empty"],
-  //   datasets: [
-  //       {
-  //           data: [0, 100], // Initial data, will be updated
-  //           backgroundColor: ["#838453", "#B2B472"],
-  //           borderColor: ["#838453", "#B2B472"],
-  //           borderWidth: 1,
-  //           circumference: 360,
-  //           rotation: 0,
-  //           cutout: "75%",
-  //       },
-  //   ],
-  // });
   
 
   const Unfloureddriedleaves = {

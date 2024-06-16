@@ -3,7 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, duration) => {
+export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired) => {
     try {
         const collectionDetails = {
             CentralID: centralId,
@@ -12,7 +12,6 @@ export const createWetLeavesCollection = async (centralId, date, time, weight, s
             Weight: weight,
             Status: status,
             Expired: expired,
-            Duration: duration,
         };
 
         return axios.post(host + "/secured/wet-leaves-collections/create", collectionDetails, {
