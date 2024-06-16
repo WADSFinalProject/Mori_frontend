@@ -78,10 +78,7 @@ function App() {
           path="/dryingmachine/:machineNumber"
           element={<DryingMachine />}
         />
-        <Route
-          path="/flouringmachine/:machineNumber"
-          element={<FlouringMachine />}
-        />
+        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
@@ -91,20 +88,12 @@ function App() {
         <Route path="/xyz/m/home" element={<XYZHome />} />
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
-        <Route
-
-          path="/xyz/m/shippinginformation"
-          element={<XYZShippingInformation />}
-
-        />
+        <Route path="/xyz/m/shippinginformation" element={<XYZShippingInformation />}/>
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
-        <Route
-          path="/centradetailsmachine"
-          element={<CentraDetailsMachine />}
-        />
+        <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
 
         <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
