@@ -45,3 +45,26 @@ export const addNewUser = async (newUser) => {
         throw new Error(error);
     }
 };
+
+export const updateExistingUser = async (user) => {
+    try {
+        const userEntry = {
+            FirstName: user.firstName,
+            LastName: user.lastName,
+            Email: user.email,
+            Phone: user.phone,
+            Role: user.role,
+            BirthDate: user.birthdate,
+            Address: user.address
+        }
+
+        return axios.put(host + `/secured/users/${user.id}`, userEntry, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.error(error)
+        throw new Error(error)
+    }
+}
