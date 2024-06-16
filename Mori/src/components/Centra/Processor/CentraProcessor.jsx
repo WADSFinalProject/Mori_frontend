@@ -8,6 +8,8 @@ import { Pie, Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import axios from "axios";
 import { readWetLeavesCollections, readWetLeavesCollection } from "../../../service/wetLeaves.js";
+import { readDriedLeaves } from "../../../service/driedLeaves.js";
+
 
 const gaugeOptions = {
   responsive: true,
@@ -170,20 +172,52 @@ export default function Processor() {
     fetchWetLeavesData();
   }, []);
 
-  const driedLeavesData = {
+  const [driedLeavesData, setDriedLeavesData] = useState({
     labels: ["Dried Leaves", "Empty"],
     datasets: [
-      {
-        data: [20, 90],
-        backgroundColor: ["#838453", "#B2B472"],
-        borderColor: ["#838453", "#B2B472"],
-        borderWidth: 1,
-        circumference: 360,
-        rotation: 0,
-        cutout: "75%",
-      },
+        {
+            data: [0, 100], // Initial data, will be updated
+            backgroundColor: ["#838453", "#B2B472"],
+            borderColor: ["#838453", "#B2B472"],
+            borderWidth: 1,
+            circumference: 360,
+            rotation: 0,
+            cutout: "75%",
+        },
     ],
-  };
+  });
+
+  useEffect(() => {
+    const fetchDriedLeavesData = async () => {
+        try {
+            const response = await readDriedLeaves();
+            const collections = response.data; // Assuming response.data contains the collections
+
+            // Accumulate the data
+            let totalDriedLeaves = 0;
+            collections.forEach(collection => {
+                totalDriedLeaves += collection.driedLeavesAmount; // Adjust property name as per your data structure
+            });
+
+            // Update the state with the accumulated data
+            setDriedLeavesData({
+                ...driedLeavesData,
+                datasets: [
+                    {
+                        ...driedLeavesData.datasets[0],
+                        data: [totalDriedLeaves, 100 - totalDriedLeaves],
+                    },
+                ],
+            });
+        } catch (error) {
+            console.log("Error fetching dried leaves data: ", error);
+        }
+    };
+
+    fetchDriedLeavesData();
+  }, []);
+
+  
 
   const Unfloureddriedleaves = {
     labels: ["Unfloured dried Leaves", "Empty"],

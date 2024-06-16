@@ -61,6 +61,8 @@ function App() {
         <Route path="/centra/processor" element={<CentraProcessor />} />
         <Route path="/centra/notification" element={<CentraNotif />} />
         <Route path="/centra/arrangeshipment" element={<ArrangeShipment />} />
+        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
+        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         {/* ini harus ngikutin shipment idnya */}
         <Route path="/shipdetails" element={<ShipDetails />} />
 
@@ -74,8 +76,6 @@ function App() {
         <Route path="/schedulepickup" element={<SchedulePickup />} />
         <Route path="/stockbooking" element={<StockBooking />} />
         <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
-        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
-        <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
         <Route path="/xyz-stock-booking" element={<StockBooking />} />
