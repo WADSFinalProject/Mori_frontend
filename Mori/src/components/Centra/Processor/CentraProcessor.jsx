@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import { Link } from "react-router-dom";
 import bell from "../../../assets/bell.png";
@@ -6,6 +6,8 @@ import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
 import { Pie, Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
+import axios from "axios";
+import { readWetLeavesCollections, readWetLeavesCollection } from "../../../service/wetLeaves.js";
 
 const gaugeOptions = {
   responsive: true,
@@ -122,11 +124,11 @@ export default function Processor() {
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
-  const wetLeavesData = {
+  const [wetLeavesData, setWetLeavesData] = useState({
     labels: ["Unprocessed Wet Leaves", "Empty"],
     datasets: [
       {
-        data: [10, 90],
+        data: [0, 100], // Initial data, will be updated
         backgroundColor: ["#538455", "#86B788"],
         borderColor: ["#538455", "#86B788"],
         borderWidth: 1,
@@ -135,7 +137,38 @@ export default function Processor() {
         cutout: "75%",
       },
     ],
-  };
+  });
+  
+
+  useEffect(() => {
+    const fetchWetLeavesData = async () => {
+      try {
+        const response = await readWetLeavesCollections();
+        const collections = response.data; // Assuming response.data contains the collections
+
+        // Accumulate the data
+        let totalWetLeaves = 0;
+        collections.forEach(collection => {
+          totalWetLeaves += collection.wetLeavesAmount; // Adjust property name as per your data structure
+        });
+
+        // Update the state with the accumulated data
+        setWetLeavesData({
+          ...wetLeavesData,
+          datasets: [
+            {
+              ...wetLeavesData.datasets[0],
+              data: [totalWetLeaves, 100 - totalWetLeaves],
+            },
+          ],
+        });
+      } catch (error) {
+        console.log("Error fetching wet leaves data: ", error);
+      }
+    };
+
+    fetchWetLeavesData();
+  }, []);
 
   const driedLeavesData = {
     labels: ["Dried Leaves", "Empty"],
