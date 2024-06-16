@@ -1,19 +1,21 @@
 import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
-export const createWetLeavesCollection = async (centralId, date, weight, expired, expirationTime) => {
+export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, duration) => {
     try {
         const collectionDetails = {
             CentralID: centralId,
             Date: date,
+            Time: time,
             Weight: weight,
+            Status: status,
             Expired: expired,
-            ExpirationTime: expirationTime,
+            Duration: duration,
         };
 
-        return axios.post(host + "/secured/wet-leaves-collections", collectionDetails, {
+        return axios.post(host + "/secured/wet-leaves-collections/create", collectionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -26,7 +28,7 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
 
 export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/wet-leaves-collections", {
+        return axios.get(host + "/secured/wet-leaves-collections/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -54,13 +56,14 @@ export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     }
 };
 
-export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, expired, expirationTime) => {
+export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status, expired) => {
     try {
         const collectionDetails = {
             Date: date,
+            Time: time,
             Weight: weight,
+            Status: status,
             Expired: expired,
-            ExpirationTime: expirationTime,
         };
 
         return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
