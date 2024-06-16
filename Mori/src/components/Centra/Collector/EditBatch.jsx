@@ -20,6 +20,7 @@ export default function EditBatch({ onClose, batchData }) {
     const [hours, setHours] = useState(1);
     const [minutes, setMinutes] = useState(0);
     const [ampm, setAmPm] = useState("AM");
+    const [expired, setExpired] = useState(false); // Define expired state
 
     const handleHourChange = (event) => {
         setHours(parseInt(event.target.value));
@@ -67,7 +68,7 @@ export default function EditBatch({ onClose, batchData }) {
             time: formattedTime,
         };
         
-        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status)
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, expired)
             .then(response => {
                 console.log('Data updated successfully.');
                 onClose(); // Close the modal 
@@ -95,7 +96,7 @@ export default function EditBatch({ onClose, batchData }) {
             weight: parseFloat(weight), // Convert weight to a number if needed
             time: formattedTime,
             status: "Expired", // Always set status to "Expired" in this context
-            expired: expired,
+            expired: true,
         };
     
         updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, true)
