@@ -23,7 +23,7 @@ export const getAllUsers = async (skip = 0, limit = 100, sortBy = 'Name', sortOr
     }
 };
 
-export const addUser = async (newUser) => {
+export const addNewUser = async (newUser) => {
     try {
         const newUserEntry = {
             FirstName: newUser.firstName,
@@ -35,7 +35,7 @@ export const addUser = async (newUser) => {
             Address: newUser.address
         };
 
-        return await axios.post(host + "/users", newUserEntry, {
+        return axios.post(host + "/secured/users", newUserEntry, {
             headers: {
                 "Content-Type": "application/json",
             },

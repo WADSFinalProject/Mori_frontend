@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import DatePicker from "react-tailwindcss-datepicker";
-import { getAllUsers } from "../../../service/users";
+import { addNewUser, getAllUsers } from "../../../service/users";
 
 const UsersDetails = () => {
   const initialNewUserState = {
@@ -30,6 +30,10 @@ const UsersDetails = () => {
   const [editDate, setEditDate] = useState(null);
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     let $sortBy = "Name";
     if(sortKey.split('-')[0] == "name" || sortKey.split('-')[0] == "Name"){
       $sortBy="Name"
@@ -47,6 +51,8 @@ const UsersDetails = () => {
             phone: user.Phone,
             role: user.Role,
             location: "",
+            birthdate: user.BirthDate,
+            address: user.Address,
             createdDate: "" // Assuming created date is available
           }));
           setData(userList);
@@ -58,7 +64,7 @@ const UsersDetails = () => {
       .catch(err => {
         console.error("Error fetching data:", err);
       });
-  }, []);
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey);
@@ -179,22 +185,15 @@ const UsersDetails = () => {
       alert("Please fill in all fields");
       return;
     }
-
-    const newUserEntry = {
-      ...newUser,
-      name: `${newUser.firstName} ${newUser.lastName}`,
-      createdDate: new Date().toISOString(),
-    };
-
-    // const updatedData = [...data, newUserEntry];
-    addUser(newUser)
+    
+    addNewUser(newUser)
         .then((res) => {
           console.log("Success : ", res);
-          setData(updatedData);
+          
           setAddNewVisible(false);
           setNewUser(initialNewUserState);
           setEditDate(null);
-          handleSearchAndSort(updatedData, sortKey);
+          fetchData();
         })
         .catch((err) => {
           alert("Error : ", err);
