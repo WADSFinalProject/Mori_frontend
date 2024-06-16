@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import DatePicker from "react-tailwindcss-datepicker";
-import { addNewUser, getAllUsers, updateExistingUser } from "../../../service/users";
+import { addNewUser, deleteUser, getAllUsers, updateExistingUser } from "../../../service/users";
 import { getAllCentras } from "../../../service/centras";
-import { addUserCentra, getUserCentraByUser, updateUserCentra } from "../../../service/userCentra";
+import { addUserCentra, deleteUserCentra, getUserCentraByUser, updateUserCentra } from "../../../service/userCentra";
 
 const UsersDetails = () => {
   const initialNewUserState = {
@@ -193,18 +193,42 @@ const UsersDetails = () => {
     setNewUser(user);
   }, [selectedCentra]);
 
-  const handleDeleteClick = (index) => {
-    setUserToDelete(sortedData[index]);
+  const handleDeleteClick = () => {
+    console.log('Wanna delete : ', newUser)
+    setUserToDelete(newUser);
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editUserIndex);
-    setData(updatedData);
+  useEffect(() => {
+    if(isDeleteModalOpen){
+      handleDeleteClick()
+    }
+  }, [isDeleteModalOpen])
+
+  const handleConfirmDelete = (userId) => {
+    deleteUser(userId)
+      .then(res => {
+        // get user centra by user id
+        getUserCentraByUser(userId).then(res => {
+          // delete user centra data
+          deleteUserCentra(res.data.id).then(res => {
+            console.log('Success deleting user centra')
+          }).catch(err => {
+            console.log('User Centra delete failed');
+          });
+        }).catch(err => {
+          console.log('User Centra Mapping not found');
+        });
+
+      }).catch(err => {
+        console.error(err)
+        alert('Error deleting user : ', err)
+      })
+
     setEditVisible(false);
     setNewUser(initialNewUserState);
     setEditUserIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+    // handleSearchAndSort(updatedData, sortKey);
     setDeleteModalOpen(false);
   };
 
@@ -508,8 +532,8 @@ const UsersDetails = () => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        userName={userToDelete?.name}
+        onConfirm={() => handleConfirmDelete(userToDelete?.id)}
+        // userName={userToDelete?.name}
       />
     </div>
   );
