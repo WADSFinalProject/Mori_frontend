@@ -86,6 +86,7 @@ export default function Processor() {
   const fetchDryingMachines = async () => {
     try {
       const response = await readDryingMachines();
+      console.log("Drying Machines:", response.data); // Log drying machines data
       setDryingMachines(response.data);
     } catch (error) {
       console.log("Error fetching drying machines: ", error);
@@ -99,6 +100,7 @@ useEffect(() => {
   const fetchFlouringMachines = async () => {
     try {
       const response = await readFlouringMachines();
+      console.log("Flouring Machines:", response.data); // Log flouring machines data
       setFlouringMachines(response.data);
     } catch (error) {
       console.log("Error fetching flouring machines: ", error);
@@ -247,18 +249,21 @@ useEffect(() => {
 
   const renderMachines = () => {
     const machines = activeTab === "drying" ? dryingMachines : flouringMachines;
+    // console.log("Rendering Machines:", machines); // Log machines to be rendered
     return machines.map((machine, index) => {
+      const key = machine.id ? machine.id : index; // Ensure machine.id is unique and defined
       const isLastCard = index === machines.length - 1;
       const machineCardMarginClass = isLastCard ? "mb-10" : "mb-4";
       return (
         <MachineCard
-          key={machine.id}
+          key={key}
           machine={machine}
           extraMarginClass={machineCardMarginClass}
         />
       );
     });
   };
+  
 
   const MachineCard = ({ machine, extraMarginClass }) => {
     let chartColor = "#99D0D580"; // Default color when less than half
@@ -267,17 +272,19 @@ useEffect(() => {
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4"; // Color when more than half
     }
-
+  
     const linkTo =
       activeTab === "drying"
         ? `/dryingmachine/${machine.number}`
         : `/flouringmachine/${machine.number}`;
-
+  
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
-
+  
+    const machineStatusClass = (machine.status || "").toLowerCase();
+  
     return (
       <div
-        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`}
+        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
         style={{
           width: "auto",
           flexGrow: 1,
@@ -372,6 +379,7 @@ useEffect(() => {
       </div>
     );
   };
+
 
   return (
     <div className="bg-000000">
