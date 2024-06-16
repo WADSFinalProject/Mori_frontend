@@ -82,7 +82,7 @@ function App() {
         <Route path="/xyz/m/home" element={<XYZHome />} />
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
-        <Route path="/xyz/m/shippinginformation" element={<XYZShippingInformation />}/>
+        <Route path="/xyz/m/shippinginformation" element={<XYZShippingInformationMobile />}/>
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
