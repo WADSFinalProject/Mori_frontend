@@ -1,11 +1,12 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const getLocationDetails = async (location_id) => {
     try {
-        return axios.get(host + `/secured/location/${location_id}`, );
+        return api.get(host + `/secured/location/${location_id}`, );
     } catch (error) {
         console.log("Error getting location details: ", error);
         throw new Error(error);
@@ -14,7 +15,7 @@ export const getLocationDetails = async (location_id) => {
 
 export const getShipmentHistory = async (location_id) => {
     try {
-        return axios.get(host + `/secured/shipments/${location_id}/history`, );
+        return api.get(host + `/secured/shipments/${location_id}/history`, );
     } catch (error) {
         console.log("Error getting shipment history: ", error);
         throw new Error(error);

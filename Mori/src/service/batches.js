@@ -1,7 +1,7 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
 
 export const createBatch = async (description, dryingID, flouringID, driedDate, flouredDate) => {
     try {
@@ -13,7 +13,7 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
             FlouredDate: flouredDate,
         };
 
-        return axios.post(host + "/secured/batches", batchDetails, );
+        return api.post(host + "/secured/batches", batchDetails, );
     } catch (error) {
         console.log("Error creating batch: ", error);
         throw new Error(error);
@@ -22,7 +22,7 @@ export const createBatch = async (description, dryingID, flouringID, driedDate, 
 
 export const readBatches = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/batches", {
+        return api.get(host + "/secured/batches", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -39,7 +39,7 @@ export const readBatches = async (skip = 0, limit = 100) => {
 
 export const readBatch = async (batchId) => {
     try {
-        return axios.get(host + `/secured/batches/${batchId}`, );
+        return api.get(host + `/secured/batches/${batchId}`, );
     } catch (error) {
         console.log("Error reading batch: ", error);
         throw new Error(error);
@@ -54,7 +54,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
             DryingID: dryingID,
         };
 
-        return axios.put(host + `/secured/batches/${batchId}`, batchDetails, );
+        return api.put(host + `/secured/batches/${batchId}`, batchDetails, );
     } catch (error) {
         console.log("Error updating batch: ", error);
         throw new Error(error);
@@ -63,7 +63,7 @@ export const updateBatch = async (batchId, description, flouringID, dryingID) =>
 
 export const deleteBatch = async (batchId) => {
     try {
-        return axios.delete(host + `/secured/batches/${batchId}`, );
+        return api.delete(host + `/secured/batches/${batchId}`, );
     } catch (error) {
         console.log("Error deleting batch: ", error);
         throw new Error(error);

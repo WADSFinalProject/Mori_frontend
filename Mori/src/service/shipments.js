@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const addShipment = async (batch_id, description, status, weight, issue_description) => {
     try {
@@ -13,7 +14,7 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
             issue_description: issue_description,
         };
 
-        return axios.post(host + "/secured/shipments", shipmentDetails);
+        return api.post(host + "/secured/shipments", shipmentDetails);
     } catch (error) {
         console.log("Error adding shipment: ", error);
         throw new Error(error);
@@ -22,7 +23,7 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
 
 export const readShipments = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/shipments", {
+        return api.get(host + "/secured/shipments", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -44,7 +45,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
             issue_description: issue_description,
         };
 
-        return axios.put(host + `/secured/shipments/${shipment_id}`, shipmentDetails);
+        return api.put(host + `/secured/shipments/${shipment_id}`, shipmentDetails);
     } catch (error) {
         console.log("Error updating shipment: ", error);
         throw new Error(error);
@@ -53,7 +54,7 @@ export const updateShipment = async (shipment_id, batch_id, description, status,
 
 export const getShipmentDetails = async (shipment_id) => {
     try {
-        return axios.get(host + `/secured/shipments/${shipment_id}`);
+        return api.get(host + `/secured/shipments/${shipment_id}`);
     } catch (error) {
         console.log("Error getting shipment details: ", error);
         throw new Error(error);
@@ -62,7 +63,7 @@ export const getShipmentDetails = async (shipment_id) => {
 
 export const deleteShipment = async (shipment_id) => {
     try {
-        return axios.delete(host + `/secured/shipments/${shipment_id}`);
+        return api.delete(host + `/secured/shipments/${shipment_id}`);
     } catch (error) {
         console.log("Error deleting shipment: ", error);
         throw new Error(error);
@@ -75,7 +76,7 @@ export const confirmShipmentArrival = async (shipment_id, weight) => {
             weight: weight,
         };
 
-        return axios.post(host + `/secured/shipments/${shipment_id}/confirm`, shipmentDetails);
+        return api.post(host + `/secured/shipments/${shipment_id}/confirm`, shipmentDetails);
     } catch (error) {
         console.log("Error confirming shipment arrival: ", error);
         throw new Error(error);
@@ -88,7 +89,7 @@ export const reportShipmentIssue = async (shipment_id, description) => {
             description: description,
         };
 
-        return axios.post(host + `/secured/shipments/${shipment_id}/report`, issueDetails);
+        return api.post(host + `/secured/shipments/${shipment_id}/report`, issueDetails);
     } catch (error) {
         console.log("Error reporting shipment issue: ", error);
         throw new Error(error);
@@ -101,7 +102,7 @@ export const rescaleShipment = async (shipment_id, new_weight) => {
             new_weight: new_weight,
         };
 
-        return axios.put(host + `/secured/shipments/${shipment_id}/rescale`, weightDetails);
+        return api.put(host + `/secured/shipments/${shipment_id}/rescale`, weightDetails);
     } catch (error) {
         console.log("Error rescaling shipment: ", error);
         throw new Error(error);
@@ -115,7 +116,7 @@ export const schedulePickup = async (pickup_time, location) => {
             location: location,
         };
 
-        return axios.post(host + "/secured/shipments/schedule-pickup", pickupDetails);
+        return api.post(host + "/secured/shipments/schedule-pickup", pickupDetails);
     } catch (error) {
         console.log("Error scheduling pickup: ", error);
         throw new Error(error);

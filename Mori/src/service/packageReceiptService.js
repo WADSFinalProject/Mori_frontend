@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const createPackageReceipt = async (userID, packageID, totalWeight, timeAccepted, note, date) => {
     try {
@@ -14,11 +15,7 @@ export const createPackageReceipt = async (userID, packageID, totalWeight, timeA
             Date: date
         };
 
-        return await axios.post(host + "/secured/package_receipts", receiptDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.post(host + "/secured/package_receipts", receiptDetails, );
     } catch (error) {
         console.error("Error creating package receipt: ", error);
         throw new Error(error);
@@ -32,7 +29,7 @@ export const readPackageReceipts = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get(host + "/secured/package_receipts", {
+        return await api.get(host + "/secured/package_receipts", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -46,11 +43,7 @@ export const readPackageReceipts = async (skip = 0, limit = 100) => {
 
 export const getPackageReceiptDetails = async (receipt_id) => {
     try {
-        return await axios.get(host + `/secured/package_receipts/${receipt_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.get(host + `/secured/package_receipts/${receipt_id}`, );
     } catch (error) {
         console.error(`Error getting details of package receipt ${receipt_id}: `, error);
         throw new Error(error);
@@ -68,11 +61,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
             Date: date
         };
 
-        return await axios.put(host + `/secured/package_receipts/${receipt_id}`, receiptDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.put(host + `/secured/package_receipts/${receipt_id}`, receiptDetails, );
     } catch (error) {
         console.error(`Error updating package receipt ${receipt_id}: `, error);
         throw new Error(error);
@@ -81,11 +70,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
 
 export const deletePackageReceipt = async (receipt_id) => {
     try {
-        return await axios.delete(host + `/secured/package_receipts/${receipt_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.delete(host + `/secured/package_receipts/${receipt_id}`, );
     } catch (error) {
         console.error(`Error deleting package receipt ${receipt_id}: `, error);
         throw new Error(error);

@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const getAllWarehouses = async (skip = 0, limit = 100) => {
     try {
@@ -10,7 +11,7 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get(host + "/secured/warehouses", {
+        return await api.get(host + "/secured/warehouses", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -30,7 +31,7 @@ export const createWarehouse = async (PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.post(host + "/secured/warehouses", warehouseDetails, );
+        return await api.post(host + "/secured/warehouses", warehouseDetails, );
     } catch (error) {
         console.error("Error creating warehouse: ", error);
         throw new Error(error);
@@ -39,7 +40,7 @@ export const createWarehouse = async (PIC_name, email, phone) => {
 
 export const getWarehouseDetails = async (warehouse_id) => {
     try {
-        return await axios.get(host + `/secured/warehouses/${warehouse_id}`, );
+        return await api.get(host + `/secured/warehouses/${warehouse_id}`, );
     } catch (error) {
         console.error(`Error getting details of warehouse ${warehouse_id}: `, error);
         throw new Error(error);
@@ -54,7 +55,7 @@ export const updateWarehouse = async (warehouse_id, PIC_name, email, phone) => {
             phone: phone,
         };
 
-        return await axios.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, );
+        return await api.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, );
     } catch (error) {
         console.error(`Error updating warehouse ${warehouse_id}: `, error);
         throw new Error(error);
@@ -63,7 +64,7 @@ export const updateWarehouse = async (warehouse_id, PIC_name, email, phone) => {
 
 export const deleteWarehouse = async (warehouse_id) => {
     try {
-        return await axios.delete(host + `/secured/warehouses/${warehouse_id}` );
+        return await api.delete(host + `/secured/warehouses/${warehouse_id}` );
     } catch (error) {
         console.error(`Error deleting warehouse ${warehouse_id}: `, error);
         throw new Error(error);

@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const createReceivedPackage = async (expeditionID, userID, packageType, receivedDate, warehouseDestination) => {
     try {
@@ -13,7 +14,7 @@ export const createReceivedPackage = async (expeditionID, userID, packageType, r
             WarehouseDestination: warehouseDestination
         };
 
-        return await axios.post(host + "/secured/received_packages", packageDetails);
+        return await api.post(host + "/secured/received_packages", packageDetails);
     } catch (error) {
         console.error("Error creating received package: ", error);
         throw new Error(error);
@@ -27,7 +28,7 @@ export const readReceivedPackages = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get(host + "/secured/received_packages", {
+        return await api.get(host + "/secured/received_packages", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -41,7 +42,7 @@ export const readReceivedPackages = async (skip = 0, limit = 100) => {
 
 export const getReceivedPackageDetails = async (package_id) => {
     try {
-        return await axios.get(host + `/secured/received_packages/${package_id}`);
+        return await api.get(host + `/secured/received_packages/${package_id}`);
     } catch (error) {
         console.error(`Error getting details of received package ${package_id}: `, error);
         throw new Error(error);
@@ -58,7 +59,7 @@ export const updateReceivedPackage = async (package_id, expeditionID, userID, pa
             WarehouseDestination: warehouseDestination
         };
 
-        return await axios.put(host + `/secured/received_packages/${package_id}`, packageDetails);
+        return await api.put(host + `/secured/received_packages/${package_id}`, packageDetails);
     } catch (error) {
         console.error(`Error updating received package ${package_id}: `, error);
         throw new Error(error);
@@ -67,7 +68,7 @@ export const updateReceivedPackage = async (package_id, expeditionID, userID, pa
 
 export const deleteReceivedPackage = async (package_id) => {
     try {
-        return await axios.delete(host + `/secured/received_packages/${package_id}`);
+        return await api.delete(host + `/secured/received_packages/${package_id}`);
     } catch (error) {
         console.error(`Error deleting received package ${package_id}: `, error);
         throw new Error(error);

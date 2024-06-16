@@ -1,15 +1,12 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { host } from "./config";
+import { api } from '../contexts/api';
+
+
 
 export const getDriedDate = async (dryingId) => {
     try {
-        return axios.get(host + `/secured/drying-activities/${dryingId}/date`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.get(host + `/secured/drying-activities/${dryingId}/date`, );
     } catch (error) {
         console.log("Error getting dried date: ", error);
         throw new Error(error);
@@ -18,11 +15,7 @@ export const getDriedDate = async (dryingId) => {
 
 export const getFlouredDate = async (flouringId) => {
     try {
-        return axios.get(host + `/secured/flouring-activities/${flouringId}/date`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.get(host + `/secured/flouring-activities/${flouringId}/date`, );
     } catch (error) {
         console.log("Error getting floured date: ", error);
         throw new Error(error);
