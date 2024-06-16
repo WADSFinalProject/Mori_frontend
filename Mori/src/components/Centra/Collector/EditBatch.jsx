@@ -80,34 +80,34 @@ const handleSave = () => {
     onClose(); // Close the modal
 };
 
-// const handleExpired = () => {
-//     // Directly set status to "Expired" and save
-//     const updatedData = {
-//         batchId: batchData.batchId,
-//         status: "Expired"
-//     };
+const handleExpired = () => {
+    // Directly set status to "Expired" and save
+    const updatedData = {
+        batchId: batchData.batchId,
+        status: "Expired"
+    };
 
-//     fetch('/data.json', {
-//         method: 'PUT',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(updatedData),
-//     })
-//     .then(response => {
-//         if (response.ok) {
-//             console.log('Batch status updated to Expired successfully.');
-//             // Optionally, perform any actions needed after status update
-//         } else {
-//             console.error('Failed to update batch status.');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error updating batch status:', error);
-//     });
+    fetch('/data.json', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Batch status updated to Expired successfully.');
+            // Optionally, perform any actions needed after status update
+        } else {
+            console.error('Failed to update batch status.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating batch status:', error);
+    });
 
-//     onClose(); // Close the modal
-// };
+    onClose(); // Close the modal
+};
 
 useEffect(() => {
     readWetLeavesCollections()
