@@ -15,3 +15,26 @@ export const getAllUsers = async () => {
         throw new Error(error);
     }
 };
+
+export const addUser = async (newUser) => {
+    try {
+        const newUserEntry = {
+            FirstName: newUser.firstName,
+            LastName: newUser.lastName,
+            Email: newUser.email,
+            Phone: newUser.phone,
+            Role: newUser.role,
+            BirthDate: newUser.birthdate,
+            Address: newUser.address
+        };
+
+        return await axios.post(host + "/users", newUserEntry, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.error("Error adding user: ", error);
+        throw new Error(error);
+    }
+};

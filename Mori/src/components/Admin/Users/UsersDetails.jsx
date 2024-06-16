@@ -178,13 +178,20 @@ const UsersDetails = () => {
       createdDate: new Date().toISOString(),
     };
 
-    const updatedData = [...data, newUserEntry];
-    setData(updatedData);
-    setAddNewVisible(false);
-    setNewUser(initialNewUserState);
-    setEditDate(null);
-    handleSearchAndSort(updatedData, sortKey);
-  };
+    // const updatedData = [...data, newUserEntry];
+    addUser(newUser)
+        .then((res) => {
+          console.log("Success : ", res);
+          setData(updatedData);
+          setAddNewVisible(false);
+          setNewUser(initialNewUserState);
+          setEditDate(null);
+          handleSearchAndSort(updatedData, sortKey);
+        })
+        .catch((err) => {
+          alert("Error : ", err);
+        });
+  }
 
   const updateUser = () => {
     const updatedData = data.map((user, index) =>
