@@ -70,14 +70,8 @@ function App() {
         <Route path="/acceptedpackages" element={<AcceptedPackages />} />
         <Route path="/schedulepickup" element={<SchedulePickup />} />
         <Route path="/stockbooking" element={<StockBooking />} />
-        <Route
-          path="/XYZShippingInformation"
-          element={<XYZShippingInformation />}
-        />
-        <Route
-          path="/dryingmachine/:machineNumber"
-          element={<DryingMachine />}
-        />
+        <Route path="/XYZShippingInformation" element={<XYZShippingInformation />} />
+        <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         <Route path="/harbornotif" element={<HarborNotif />} />
         <Route path="/xyz-dashboard" element={<Dashboard />} />
