@@ -82,33 +82,160 @@ export default function Processor() {
   const [dryingMachines, setDryingMachines] = useState([]);
   const [flouringMachines, setFlouringMachines] = useState([]);
 
+  // make total leaves weight accessible
+  const [totalWetLeaves, setTotalWetLeaves] = useState(0);
+  const [totalDriedLeaves, setTotalDriedLeaves] = useState(0);
+  const [totalFlouredLeaves, setTotalFlouredLeaves] = useState(0);
+
+  const [dryingCapacities, setDryingCapacities] = useState([]);
+  const [flouringCapacities, setFlouringCapacities] = useState([]);
+
   useEffect(() => {
-  const fetchDryingMachines = async () => {
-    try {
-      const response = await readDryingMachines();
-      console.log("Drying Machines:", response.data); // Log drying machines data
-      setDryingMachines(response.data);
-    } catch (error) {
-      console.log("Error fetching drying machines: ", error);
-    }
-  };
-
-  fetchDryingMachines();
+    const fetchDryingMachines = async () => {
+      try {
+        const response = await readDryingMachines();
+        console.log("Drying Machines:", response.data); // Log drying machines data
+        
+        // Normalize the property names if necessary
+        const machinesWithProperties = response.data.map(machine => ({
+          ...machine,
+          capacity: machine.capacity || machine.Capacity, // Ensure 'capacity' is assigned correctly
+          currentLoad: 0, // Assuming starting with 0 load
+        }));
+  
+        setDryingCapacities(machinesWithProperties);
+        setDryingMachines(machinesWithProperties);
+      } catch (error) {
+        console.log("Error fetching drying machines: ", error);
+      }
+    };
+  
+    fetchDryingMachines();
   }, []);
+  
 
-useEffect(() => {
-  const fetchFlouringMachines = async () => {
-    try {
-      const response = await readFlouringMachines();
-      console.log("Flouring Machines:", response.data); // Log flouring machines data
-      setFlouringMachines(response.data);
-    } catch (error) {
-      console.log("Error fetching flouring machines: ", error);
+  console.log("Drying Capacity:", dryingCapacities);
+
+  // Handle distributing wet leaves weight to drying machines
+  const distributeWetLeavesToMachines = () => {
+    if (dryingCapacities.length === 0 || totalWetLeaves === 0) {
+      console.log("No machines or wet leaves data available.");
+      return;
     }
+  
+    const totalCapacity = dryingCapacities.reduce((total, machine) => total + machine.capacity, 0);
+  
+    if (totalCapacity < totalWetLeaves) {
+      console.log("Total capacity is less than total wet leaves weight.");
+      return;
+    }
+  
+    let remainingWeight = totalWetLeaves;
+    const machinesCopy = [...dryingCapacities];
+  
+    while (remainingWeight > 0) {
+      const randomIndex = Math.floor(Math.random() * machinesCopy.length);
+      const machine = machinesCopy[randomIndex];
+      const remainingCapacity = machine.capacity - machine.currentLoad;
+      const weightToAdd = Math.min(remainingWeight, remainingCapacity);
+      machine.currentLoad += weightToAdd;
+      remainingWeight -= weightToAdd;
+  
+      if (machine.currentLoad === machine.capacity) {
+        machinesCopy.splice(randomIndex, 1);
+      }
+    }
+  
+    setDryingCapacities(machinesCopy);
+  
+    machinesCopy.forEach(async machine => {
+      try {
+        await updateMachineCurrentLoad(machine.id, machine.currentLoad);
+      } catch (error) {
+        console.log(`Error updating machine ${machine.id} current load:`, error);
+      }
+    });
   };
+    // Trigger distribution when dryingMachines or totalWetLeaves changes
+    useEffect(() => {
+        distributeWetLeavesToMachines();
+    }, [dryingMachines, totalWetLeaves]);
 
-  fetchFlouringMachines();
+
+
+  useEffect(() => {
+    const fetchFlouringMachines = async () => {
+      try {
+        const response = await readFlouringMachines();
+        console.log("Flouring Machines:", response.data); // Log flouring machines data
+  
+        // Normalize the property names if necessary
+        const machinesWithProperties = response.data.map(machine => ({
+          ...machine,
+          capacity: machine.capacity || machine.Capacity, // Ensure 'capacity' is assigned correctly
+          currentLoad: 0, // Assuming starting with 0 load
+        }));
+  
+        setFlouringCapacities(machinesWithProperties);
+        setFlouringMachines(response.data);
+      } catch (error) {
+        console.log("Error fetching flouring machines: ", error);
+      }
+    };
+  
+    fetchFlouringMachines();
   }, []);
+  
+    
+
+  console.log("Flouring Capacity:", flouringCapacities);
+
+  // Handle distributing wet leaves weight to drying machines
+  const distributeDriedLeavesToMachines = () => {
+    if (flouringCapacities.length === 0 || totalDriedLeaves === 0) {
+      console.log("No machines or dried leaves data available.");
+      return;
+    }
+  
+    const totalCapacity = flouringCapacities.reduce((total, machine) => total + machine.capacity, 0);
+  
+    if (totalCapacity < totalDriedLeaves) {
+      console.log("Total capacity is less than total dried leaves weight.");
+      return;
+    }
+  
+    let remainingWeight = totalDriedLeaves;
+    const machinesCopy = [...flouringCapacities];
+  
+    while (remainingWeight > 0) {
+      const randomIndex = Math.floor(Math.random() * machinesCopy.length);
+      const machine = machinesCopy[randomIndex];
+      const remainingCapacity = machine.capacity - machine.currentLoad;
+      const weightToAdd = Math.min(remainingWeight, remainingCapacity);
+      machine.currentLoad += weightToAdd;
+      remainingWeight -= weightToAdd;
+  
+      if (machine.currentLoad === machine.capacity) {
+        machinesCopy.splice(randomIndex, 1);
+      }
+    }
+  
+    setFlouringCapacities(machinesCopy);
+  
+    machinesCopy.forEach(async machine => {
+      try {
+        await updateMachineCurrentLoad(machine.id, machine.currentLoad);
+      } catch (error) {
+        console.log(`Error updating machine ${machine.id} current load:`, error);
+      }
+    });
+  };
+  
+  // Trigger distribution when flouringMachines or totalDriedLeaves changes
+  useEffect(() => {
+    distributeDriedLeavesToMachines();
+  }, [flouringMachines, totalDriedLeaves]);
+  
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -161,12 +288,16 @@ useEffect(() => {
     const fetchWetLeavesData = async () => {
       try {
         const response = await readWetLeavesCollections();
+        console.log("WetLeaves:", response.data);
         const collections = response.data;
 
         let totalWetLeaves = 0;
         collections.forEach((collection) => {
           totalWetLeaves += collection.Weight;
         });
+
+        console.log("Total Weight of Wet Leaves:", totalWetLeaves);
+        setTotalWetLeaves(totalWetLeaves);
 
         setWetLeavesData({
           ...wetLeavesData,
@@ -189,6 +320,7 @@ useEffect(() => {
     const fetchDriedLeavesData = async () => {
         try {
             const response = await readDriedLeaves();
+            console.log("Dried Leaves:", response.data);
             const collections = response.data;
 
             if (Array.isArray(collections)) {
@@ -196,6 +328,9 @@ useEffect(() => {
                 collections.forEach((collection) => {
                     totalDriedLeaves += collection.Weight;
                 });
+
+                console.log("Total Weight of Dried Leaves:", totalDriedLeaves);
+                setTotalDriedLeaves(totalDriedLeaves);
 
                 setDriedLeavesData({
                     ...driedLeavesData,
@@ -221,6 +356,7 @@ useEffect(() => {
     const fetchFlouredLeavesData = async () => {
       try {
         const response = await readBatches();
+        console.log("Floured:", response.data);
         const batches = response.data;
 
         let totalFlouredLeaves = 0;
@@ -229,6 +365,9 @@ useEffect(() => {
             totalFlouredLeaves += batch.Weight;
           }
         });
+
+        console.log("Total Weight of Wet Leaves:", totalFlouredLeaves);
+        setTotalFlouredLeaves(totalFlouredLeaves);
 
         setFlouredLeavesData({
           ...flouredLeavesData,
@@ -246,6 +385,10 @@ useEffect(() => {
 
     fetchFlouredLeavesData();
   }, []);
+
+  console.log("Outside useEffect - Total Weight of Wet Leaves:", totalWetLeaves);
+  console.log("Outside useEffect - Total Weight of Dried Leaves:", totalDriedLeaves);
+  console.log("Outside useEffect - Total Weight of Floured Leaves:", totalFlouredLeaves);
 
   const renderMachines = () => {
     const machines = activeTab === "drying" ? dryingMachines : flouringMachines;
@@ -266,11 +409,11 @@ useEffect(() => {
   
 
   const MachineCard = ({ machine, extraMarginClass }) => {
-    let chartColor = "#99D0D580"; // Default color when less than half
+    let chartColor = "#99D0D580";
     if (machine.currentLoad === machine.capacity) {
-      chartColor = "#0F3F43"; // Color when full
+      chartColor = "#0F3F43";
     } else if (machine.currentLoad > machine.capacity / 2) {
-      chartColor = "#5D9EA4"; // Color when more than half
+      chartColor = "#5D9EA4";
     }
   
     const linkTo =
@@ -279,41 +422,21 @@ useEffect(() => {
         : `/flouringmachine/${machine.number}`;
   
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
-  
     const machineStatusClass = (machine.status || "").toLowerCase();
   
     return (
-      <div
-        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
-        style={{
-          width: "auto",
-          flexGrow: 1,
-          minWidth: "300px",
-          minHeight: "100px",
-          maxWidth: "none",
-          position: "relative",
-        }}
-      >
-        <div
-          className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
-          style={{ position: "absolute", left: "15px", top: "15px" }}
-        >
+      <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`} style={{ width: "auto", flexGrow: 1, minWidth: "300px", minHeight: "100px", maxWidth: "none", position: "relative" }}>
+        <div className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center" style={{ position: "absolute", left: "15px", top: "15px" }}>
           <span className="font-bold text-sm">{machine.number}</span>
         </div>
         <div className="machine-info flex justify-center items-center w-full mb-2">
-          <div
-            className="chart-container"
-            style={{ width: "150px", height: "120px", position: "relative" }}
-          >
+          <div className="chart-container" style={{ width: "150px", height: "120px", position: "relative" }}>
             <Doughnut
               data={{
                 labels: ["Current Load", "Capacity"],
                 datasets: [
                   {
-                    data: [
-                      machine.currentLoad,
-                      machine.capacity - machine.currentLoad,
-                    ],
+                    data: [machine.currentLoad, machine.capacity - machine.currentLoad],
                     backgroundColor: [chartColor, "#EFEFEF"],
                     borderWidth: 0,
                   },
@@ -321,64 +444,29 @@ useEffect(() => {
               }}
               options={gaugeOptions}
             />
-            <div
-              className="absolute inset-0 flex flex-col items-center justify-center"
-              style={{ fontSize: "0" }}
-            >
-              <span
-                className="font-vietnam font-bold"
-                style={{ fontSize: "24px", lineHeight: "1.2" }}
-              >
+            <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: "0" }}>
+              <span className="font-vietnam font-bold" style={{ fontSize: "24px", lineHeight: "1.2" }}>
                 {machine.currentLoad} kg
               </span>
-              <span
-                className="font-vietnam font-bold"
-                style={{
-                  fontSize: "12px",
-                  lineHeight: "1.2",
-                  marginBottom: "-30px",
-                }}
-              >
+              <span className="font-vietnam font-bold" style={{ fontSize: "12px", lineHeight: "1.2", marginBottom: "-30px" }}>
                 {`/ ${machine.capacity} kg`}
               </span>
             </div>
           </div>
         </div>
-        <button
-          className={`start-btn text-white py-1 px-6 ${
-            machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          style={{
-            backgroundColor: "#000000",
-            width: "100%",
-            borderRadius: "15px",
-            fontSize: "12px",
-          }}
-          disabled={machine.currentLoad === 0}
-        >
-          <Link
-            to={linkTo}
-            className="flex items-center justify-center h-full w-full"
-          >
+        <button className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`} style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }} disabled={machine.currentLoad === 0}>
+          <Link to={linkTo} className="flex items-center justify-center h-full w-full">
             START PROCESS
           </Link>
         </button>
-        <div
-          className="last-updated"
-          style={{
-            position: "absolute",
-            top: "5px",
-            right: "5px",
-            fontSize: "10px",
-            color: "#666666",
-          }}
-        >
+        <div className="last-updated" style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}>
           <div>Last updated:</div>
           <div style={{ fontWeight: "bold" }}>{lastUpdatedTime}</div>
         </div>
       </div>
     );
-  };
+  };  
+  
 
 
   return (
