@@ -53,7 +53,7 @@ const CentraDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (isAddNewVisible) {
+    if (isAddNewVisible || isEditVisible) {
       setNewLocation((prevState) => ({
         ...prevState,
         [name]: value,
@@ -67,19 +67,17 @@ const CentraDetails = () => {
   };
 
   const addLocation = () => {
-    if (
-      newLocation.location
-    ) {
+    if (newLocation.location) {
       createCentra(newLocation.location)
-        .then(res => {
-          console.log('Success create')
+        .then((res) => {
+          console.log("Success create");
           setAddNewVisible(false);
           setNewLocation(initialNewLocationState);
-          fetchData();    
+          fetchData();
         })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
       alert("Please fill in all fields");
     }
@@ -107,7 +105,7 @@ const CentraDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    deleteCentra(newLocation.id)
+    deleteCentra(locationToDelete.id)
       .then((res) => {
         console.log("Success : ", res);
         setEditVisible(false);
@@ -139,7 +137,7 @@ const CentraDetails = () => {
       .catch((err) => {
         console.log("Error : ", err);
       });
-  }
+  };
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -157,9 +155,8 @@ const CentraDetails = () => {
   };
 
   const handleSearchAndSort = (data, sortValue) => {
-    let filteredData = data.filter(
-      (row) =>
-        row.location.toLowerCase().includes(searchQuery.toLowerCase())
+    let filteredData = data.filter((row) =>
+      row.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortValue === "location-a-z") {
@@ -175,9 +172,7 @@ const CentraDetails = () => {
     const locationToEdit = sortedData[index];
     setCentraToEdit(locationToEdit);
     const originalIndex = data.findIndex(
-      (item) =>
-        item.id === locationToEdit.id &&
-        item.location === locationToEdit.location
+      (item) => item.id === locationToEdit.id && item.location === locationToEdit.location
     );
 
     setEditLocationIndex(originalIndex);
@@ -191,23 +186,22 @@ const CentraDetails = () => {
   };
 
   const editLocation = () => {
-    if (
-      newLocation.location
-    ) {
-      // call update api
-      updateCentraDetails(newLocation.id).then((res) => {
-        console.log("Success edit centra ");
-        setEditVisible(false);
-        setNewLocation(initialNewLocationState);
-        setEditLocationIndex(null);
-        fetchData();
-      }).catch(err => {
-        console.error(err)
-      });
+    if (newLocation.location) {
+      // call update API
+      updateCentraDetails(newLocation.id, newLocation.location)
+        .then((res) => {
+          console.log("Success edit centra");
+          setEditVisible(false);
+          setNewLocation(initialNewLocationState);
+          setEditLocationIndex(null);
+          fetchData();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
       alert("Please fill in all fields");
     }
-    setNewMachine(initialNewMachineState);
   };
 
   const handleBackToList = () => {
@@ -339,7 +333,7 @@ const CentraDetails = () => {
                   <button
                     type="button"
                     className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
-                    onClick={handleDeleteClick}
+                    onClick={() => handleDeleteClick(editLocationIndex)}
                   >
                     <div className="text-white font-vietnam text-base font-medium">
                       DELETE
@@ -361,7 +355,6 @@ const CentraDetails = () => {
                     onClick={isEditVisible ? editLocation : addLocation}
                   >
                     <div className="text-white font-vietnam text-base font-medium">
-                      
                       {isEditVisible ? 'EDIT CENTRA' : 'ADD CENTRA'}
                     </div>
                   </button>
@@ -430,17 +423,6 @@ const CentraDetails = () => {
                   </div>
                 </div>
               </div>
-              {isEditVisible && (
-                <button
-                  type="button"
-                  className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
-                  onClick={() => setDeleteModalOpen(true)}
-                >
-                  <div className="text-white font-vietnam text-base font-medium">
-                    DELETE
-                  </div>
-                </button>
-              )}
               <div>
                 <button
                   type="button"
@@ -453,7 +435,7 @@ const CentraDetails = () => {
                 </button>
                 <button
                   className="bg-[#CD4848] rounded py-3 px-6 mt-3 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                  onClick={null}
+                  onClick={addMachine}
                 >
                   <div className="text-white font-vietnam text-base font-medium">
                     ADD MACHINE
