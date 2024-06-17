@@ -85,28 +85,35 @@ export default function Processor() {
 
   const [dryingCapacities, setDryingCapacities] = useState([]);
   const [flouringCapacities, setFlouringCapacities] = useState([]);
+  const [machineId, setMachineId] = useState(null);
 
   useEffect(() => {
     const fetchDryingMachines = async () => {
       try {
         const response = await readDryingMachines();
         console.log("Drying Machines:", response.data);
-
+  
+        // Map response data to include additional properties if needed
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
         }));
-
+  
+        // Assuming MachineID is available directly in the response data
+        const machineId = machinesWithProperties.length > 0 ? machinesWithProperties[0].MachineID : null;
+        setMachineId(machineId); // Store MachineID in state
+  
         setDryingCapacities(machinesWithProperties);
         setDryingMachines(machinesWithProperties);
       } catch (error) {
         console.log("Error fetching drying machines: ", error);
       }
     };
-
+  
     fetchDryingMachines();
   }, []);
+  
 
   console.log("Drying Capacity:", dryingCapacities);
 
@@ -283,15 +290,15 @@ export default function Processor() {
         const response = await readWetLeavesCollections();
         console.log("WetLeaves:", response.data);
         const collections = response.data;
-
+        
         let totalWetLeaves = 0;
         collections.forEach((collection) => {
           totalWetLeaves += collection.Weight;
         });
-
+    
         console.log("Total Weight of Wet Leaves:", totalWetLeaves);
         setTotalWetLeaves(totalWetLeaves);
-
+    
         setWetLeavesData({
           ...wetLeavesData,
           datasets: [
@@ -305,9 +312,15 @@ export default function Processor() {
         console.log("Error fetching wet leaves data: ", error);
       }
     };
-
+    
     fetchWetLeavesData();
+    
   }, []);
+
+  const linkTo =
+  activeTab === "drying"
+    ? `/dryingmachine/${machineId}`
+    : `/flouringmachine/${machineId}`;
 
   useEffect(() => {
     const fetchDriedLeavesData = async () => {
@@ -409,12 +422,7 @@ export default function Processor() {
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
-  
-    const linkTo =
-      activeTab === "drying"
-        ? `/dryingmachine/${machine.number}`
-        : `/flouringmachine/${machine.number}`;
-  
+    
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
     const machineStatusClass = (machine.status || "").toLowerCase();
   
