@@ -11,12 +11,7 @@ import {
 const CentraDetails = () => {
   const initialNewLocationState = {
     id: 0,
-    location: "",
-    // picName: "",
-    // email: "",
-    // phone: "",
-    // dryingMachines: "",
-    // flouringMachines: "",
+    location: ""
   };
 
   const initialNewMachineState = {
@@ -73,23 +68,13 @@ const CentraDetails = () => {
 
   const addLocation = () => {
     if (
-      newLocation.location // &&
-      // newLocation.picName &&
-      // newLocation.email &&
-      // newLocation.phone &&
-      // newLocation.dryingMachines &&
-      // newLocation.flouringMachines
+      newLocation.location
     ) {
-      // const newLocationEntry = { ...newLocation };
-
       createCentra(newLocation.location)
         .then(res => {
           console.log('Success create')
-
-          // setData((prevState) => [...prevState, newLocationEntry]);
           setAddNewVisible(false);
           setNewLocation(initialNewLocationState);
-          // handleSearchAndSort([...data, newLocationEntry], sortKey);
           fetchData();    
         })
         .catch(err => {
@@ -122,15 +107,12 @@ const CentraDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    // const updatedData = data.filter((_, index) => index !== editLocationIndex);
     deleteCentra(newLocation.id)
       .then((res) => {
         console.log("Success : ", res);
-        // setData(updatedData);
         setEditVisible(false);
         setNewLocation(initialNewLocationState);
         setEditLocationIndex(null);
-        // handleSearchAndSort(updatedData, sortKey);
         setDeleteModalOpen(false);
         fetchData();
       })
@@ -149,12 +131,7 @@ const CentraDetails = () => {
         console.log("Success : ", res);
         const resArr = res.data.map((dt) => ({
           id: dt.CentralID,
-          location: dt.Address,
-          // picName: "Nama orang",
-          // email: "Nama@gmail.com",
-          // phone: "081816032859",
-          // dryingMachines: 3,
-          // flouringMachines: 1,
+          location: dt.Address
         }));
         setData(resArr);
         handleSearchAndSort(resArr, sortKey); // Update sortedData
@@ -182,22 +159,14 @@ const CentraDetails = () => {
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.location.toLowerCase().includes(searchQuery.toLowerCase()) // ||
-        // row.picName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        // row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        // row.phone.toLowerCase().includes(searchQuery.toLowerCase())
+        row.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortValue === "location-a-z") {
       filteredData.sort((a, b) => a.location.localeCompare(b.location));
     } else if (sortValue === "location-z-a") {
       filteredData.sort((a, b) => b.location.localeCompare(a.location));
-    } 
-    // else if (sortValue === "picname-a-z") {
-    //   filteredData.sort((a, b) => a.picName.localeCompare(b.picName));
-    // } else if (sortValue === "picname-z-a") {
-    //   filteredData.sort((a, b) => b.picName.localeCompare(a.picName));
-    // }
+    }
 
     setSortedData(filteredData);
   };
@@ -208,10 +177,7 @@ const CentraDetails = () => {
     const originalIndex = data.findIndex(
       (item) =>
         item.id === locationToEdit.id &&
-        item.location === locationToEdit.location // &&
-        // item.picName === locationToEdit.picName &&
-        // item.email === locationToEdit.email &&
-        // item.phone === locationToEdit.phone
+        item.location === locationToEdit.location
     );
 
     setEditLocationIndex(originalIndex);
@@ -220,12 +186,7 @@ const CentraDetails = () => {
     setAddMachineVisible(false);
     setNewLocation({
       id: locationToEdit.id,
-      location: locationToEdit.location,
-      // picName: locationToEdit.picName,
-      // email: locationToEdit.email,
-      // phone: locationToEdit.phone,
-      // dryingMachines: locationToEdit.dryingMachines,
-      // flouringMachines: locationToEdit.flouringMachines,
+      location: locationToEdit.location
     });
   };
 
@@ -236,6 +197,10 @@ const CentraDetails = () => {
     setNewLocation(initialNewLocationState);
     setNewMachine(initialNewMachineState);
   };
+
+  const editLocation = () => {
+    
+  }
 
   return (
     <div className="bg-transparent">
@@ -285,8 +250,6 @@ const CentraDetails = () => {
               >
                 <option value="location-a-z">Location (A to Z)</option>
                 <option value="location-z-a">Location (Z to A)</option>
-                {/* <option value="picname-a-z">PIC Name (A to Z)</option>
-                <option value="picname-z-a">PIC Name (Z to A)</option> */}
               </select>
             </div>
             <div className="flex flex-row gap-2">
@@ -356,17 +319,6 @@ const CentraDetails = () => {
                 />
               </div>
               <div className="col-span-2 flex justify-between">
-                {isEditVisible && (
-                  <button
-                    type="button"
-                    className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
-                    onClick={handleDeleteClick}
-                  >
-                    <div className="text-white font-vietnam text-base font-medium">
-                      DELETE
-                    </div>
-                  </button>
-                )}
                 <div>
                   <button
                     type="button"
@@ -480,6 +432,56 @@ const CentraDetails = () => {
                   </div>
                 </button>
               </div>
+            </>
+          )}
+          {isEditVisible && (
+            <>
+              <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
+                Edit Centra
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="font-vietnam text-lg font-medium">Location</div>
+                <input
+                  className="w-1/2 bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                  id="location"
+                  type="text"
+                  name="location"
+                  value={newLocation.location}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="col-span-2 flex justify-between">
+                <button
+                  type="button"
+                  className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
+                  onClick={() => setDeleteModalOpen(true)}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    DELETE
+                  </div>
+                </button>
+                <div>
+                  <button
+                    type="button"
+                    className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
+                    onClick={handleBackToList}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      CANCEL
+                    </div>
+                  </button>
+                  <button
+                    className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
+                    onClick={editLocation}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      EDIT CENTRA
+                    </div>
+                  </button>
+                </div>
+              </div>
+              
+              
             </>
           )}
         </div>
