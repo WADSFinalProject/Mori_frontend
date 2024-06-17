@@ -66,9 +66,10 @@ export default function EditBatch({ onClose, batchData }) {
             date: editDate, // Assuming editDate is already in YYYY-MM-DD format
             weight: parseFloat(weight), // Convert weight to a number if needed
             time: formattedTime,
+            dried: batchData.dried
         };
         
-        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, expired)
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, expired, batchData.dried)
             .then(response => {
                 console.log('Data updated successfully.');
                 onClose(); // Close the modal 

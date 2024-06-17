@@ -54,7 +54,6 @@ function FilterDropdown() {
                   let dried = batch.Dried;
                   // Example usage
                 console.log(`Status: ${status}, Expired: ${expired}`);
-
                   if (durationInMilliseconds <= 0 && expired == true) {
                       status = "Expired";
                   } else if (durationInMilliseconds <= 0 && expired == false) {
