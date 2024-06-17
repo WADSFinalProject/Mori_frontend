@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { readShipments } from "../../../service/shipments";
+import { readExpeditions } from "../../../service/shipments";
 
 const AdminShipmentDetails = () => {
   const data = [
@@ -123,28 +123,33 @@ const AdminShipmentDetails = () => {
   const [totalShipments, setTotalShipments] = useState(0);
 
   useEffect(() => {
-    readShipments()
+    readExpeditions()
       .then((res) => {
         console.log("Success : ", res);
-        resArr = [];
-        res.data.forEach((dt) => {
-          resArr.push({
-            id: dt.ID,
-            batchId: dt.batch_id,
-            shipmentId: dt.shipment_id,
-            driedDate: dt.driedDate,
-            flouredDate: dt.flouredDate,
-            weight: dt.weight,
-            status: dt.status,
-            checkpoint: dt.checkpoint,
-          });
+        const expeditions = res.data;
+  
+        const resArr = expeditions.map((expedition) => {
+          return {
+            id: index, // Incrementing ID from 0
+            batchId: expedition.batches, // Array of batch IDs
+            shipmentId: expedition.expedition.ExpeditionID,
+            driedDate: expedition.batches.DriedDate, 
+            flouredDate: expedition.batches.FlouredDate, 
+            weight: expedition.batches.weight , 
+            status: expedition.checkpoint_status, 
+            checkpointDate: expedition.checkpoint_statusdate,
+          };
         });
+
+  
+        // Set your state with resArr
+        setExpeditionData(resArr); // assuming you have a state setter for expedition data
       })
       .catch((err) => {
         console.log("Error : ", err);
       });
   }, []);
-
+  
   useEffect(() => {
     // Calculate total shipments count
     const uniqueShipmentIds = new Set(data.map((item) => item.shipmentId));
