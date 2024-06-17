@@ -97,6 +97,7 @@ export default function EditBatch({ onClose, batchData }) {
             time: formattedTime,
             status: "Expired", // Always set status to "Expired" in this context
             expired: true,
+            dried: false,
         };
     
         updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, updatedData.expired)
