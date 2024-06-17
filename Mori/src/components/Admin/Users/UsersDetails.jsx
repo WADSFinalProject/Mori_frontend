@@ -216,8 +216,6 @@ const UsersDetails = () => {
           }).catch(err => {
             console.log('User Centra delete failed');
           });
-        }).catch(err => {
-          console.log('User Centra Mapping not found');
         });
 
       }).catch(err => {

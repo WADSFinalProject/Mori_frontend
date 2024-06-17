@@ -42,20 +42,20 @@ const XyzDetails = () => {
 
   useEffect(() => {
     getAllWarehouses().then(res => {
-      warehouses = [];
+      let warehouses = [];
       res.data.forEach(wh => {
         warehouses.push({
           id: wh.id,
-          warehouseName: "Warehouse 1",
+          warehouseName: "-",
           email: wh.email,
           phone: wh.phone,
-          location: "Maulafa",
+          location: wh.location,
           createdDate: "2024-01-01T12:34:56Z"
         })
       })
 
-      setData(data);
-      handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
+      setData(warehouses);
+      handleSearchAndSort(warehouses, "warehouseName-a-z"); // Initial sort with fetched data
     }).catch(err => {
       console.log(err)
     })
