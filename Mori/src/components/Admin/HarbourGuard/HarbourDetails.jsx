@@ -5,6 +5,7 @@ import {
   addHarborGuard,
   getAllHarborGuards,
   modifyHarborGuard,
+  removeHarborGuard,
 } from "../../../service/harborGuardService";
 
 const HarbourDetails = () => {
@@ -35,13 +36,20 @@ const HarbourDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editHarbourIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewHarbour(initialNewHarbourState);
-    setEditHarbourIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
-    setDeleteModalOpen(false);
+    // const updatedData = data.filter((_, index) => index !== editHarbourIndex);
+    // setData(updatedData);
+
+    removeHarborGuard(newHarbour.id)
+      .then(res => {
+        setEditVisible(false);
+        setNewHarbour(initialNewHarbourState);
+        setEditHarbourIndex(null);
+        setDeleteModalOpen(false);
+        fetchData();
+      })
+      .catch(err => {
+        console.error(err)
+      });
   };
 
   useEffect(() => {
@@ -444,7 +452,7 @@ const HarbourDetails = () => {
                 <button
                   type="button"
                   className="px-4 py-2 text-white bg-[#852222] rounded-lg"
-                  onClick={() => setDeleteModalOpen(true)}
+                  onClick={handleDeleteClick}
                 >
                   Delete Harbour
                 </button>
