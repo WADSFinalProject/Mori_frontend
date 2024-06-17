@@ -190,6 +190,26 @@ const CentraDetails = () => {
     });
   };
 
+  const editLocation = () => {
+    if (
+      newLocation.location
+    ) {
+      // call update api
+      updateCentraDetails(newLocation.id).then((res) => {
+        console.log("Success edit centra ");
+        setEditVisible(false);
+        setNewLocation(initialNewLocationState);
+        setEditLocationIndex(null);
+        fetchData();
+      }).catch(err => {
+        console.error(err)
+      });
+    } else {
+      alert("Please fill in all fields");
+    }
+    setNewMachine(initialNewMachineState);
+  };
+
   const handleBackToList = () => {
     setAddNewVisible(false);
     setEditVisible(false);
@@ -197,10 +217,6 @@ const CentraDetails = () => {
     setNewLocation(initialNewLocationState);
     setNewMachine(initialNewMachineState);
   };
-
-  const editLocation = () => {
-    
-  }
 
   return (
     <div className="bg-transparent">
@@ -302,10 +318,10 @@ const CentraDetails = () => {
         </div>
       ) : (
         <div className="flex flex-col w-full gap-7">
-          {isAddNewVisible && (
+          {(isAddNewVisible || isEditVisible) && (
             <>
               <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-                Add Centra
+                {isEditVisible ? "Edit Centra" : "Add Centra"}
               </div>
               <div className="flex flex-col gap-3">
                 <div className="font-vietnam text-lg font-medium">Location</div>
@@ -319,6 +335,17 @@ const CentraDetails = () => {
                 />
               </div>
               <div className="col-span-2 flex justify-between">
+                {isEditVisible && (
+                  <button
+                    type="button"
+                    className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
+                    onClick={handleDeleteClick}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      DELETE
+                    </div>
+                  </button>
+                )}
                 <div>
                   <button
                     type="button"
@@ -331,10 +358,11 @@ const CentraDetails = () => {
                   </button>
                   <button
                     className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                    onClick={addLocation}
+                    onClick={isEditVisible ? editLocation : addLocation}
                   >
                     <div className="text-white font-vietnam text-base font-medium">
-                      ADD CENTRA
+                      
+                      {isEditVisible ? 'EDIT CENTRA' : 'ADD CENTRA'}
                     </div>
                   </button>
                 </div>
@@ -432,56 +460,6 @@ const CentraDetails = () => {
                   </div>
                 </button>
               </div>
-            </>
-          )}
-          {isEditVisible && (
-            <>
-              <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-                Edit Centra
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="font-vietnam text-lg font-medium">Location</div>
-                <input
-                  className="w-1/2 bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                  id="location"
-                  type="text"
-                  name="location"
-                  value={newLocation.location}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-span-2 flex justify-between">
-                <button
-                  type="button"
-                  className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
-                  onClick={() => setDeleteModalOpen(true)}
-                >
-                  <div className="text-white font-vietnam text-base font-medium">
-                    DELETE
-                  </div>
-                </button>
-                <div>
-                  <button
-                    type="button"
-                    className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
-                    onClick={handleBackToList}
-                  >
-                    <div className="text-white font-vietnam text-base font-medium">
-                      CANCEL
-                    </div>
-                  </button>
-                  <button
-                    className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                    onClick={editLocation}
-                  >
-                    <div className="text-white font-vietnam text-base font-medium">
-                      EDIT CENTRA
-                    </div>
-                  </button>
-                </div>
-              </div>
-              
-              
             </>
           )}
         </div>
