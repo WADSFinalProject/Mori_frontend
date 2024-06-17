@@ -50,7 +50,6 @@ const HarbourDetails = () => {
   const fetchData = () => {
     getAllHarborGuards()
     .then((res) => {
-      console.log("Success : ", res);
       let resArr = [];
       res.data.forEach((dt) => {
         resArr.push({
@@ -124,6 +123,7 @@ const HarbourDetails = () => {
     const harbourToEdit = sortedData[index];
     const originalIndex = data.findIndex(
       (item) =>
+        item.id === harbourToEdit.id &&
         item.harbourName === harbourToEdit.harbourName &&
         item.location === harbourToEdit.location &&
         item.phone === harbourToEdit.phone &&
@@ -135,6 +135,7 @@ const HarbourDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
     setNewHarbour({
+      id: harbourToEdit.id,
       harbourName: harbourToEdit.harbourName,
       location: harbourToEdit.location,
       phone: harbourToEdit.phone,
@@ -165,18 +166,21 @@ const HarbourDetails = () => {
       newHarbour.openingHour &&
       newHarbour.closingHour
     ) {
-      const newHarbourEntry = { ...newHarbour };
-
-      // setData((prevState) => [...prevState, newHarbourEntry]);
-      addHarborGuard()
+      addHarborGuard(
+        newHarbour.harbourName, 
+        newHarbour.location, 
+        newHarbour.phone, 
+        newHarbour.openingHour, 
+        newHarbour.closingHour
+      )
         .then((res) => {
-          console.log("Success : ", res);
           setAddNewVisible(false);
           setNewHarbour(initialNewHarbourState);
+          fetchData();
           handleSearchAndSort([...data, newHarbourEntry], sortKey);
         })
         .catch((err) => {
-          alert("Error : ", err);
+          console.error("Error : ", err);
         });
     } else {
       alert("Please fill in all fields");
