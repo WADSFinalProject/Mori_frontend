@@ -24,12 +24,19 @@ const gaugeOptions = {
   events: [],
 };
 
-const formatTime = (time) => {
-  const hours = Math.floor(time / 3600);
-  const minutes = Math.floor((time % 3600) / 60);
-  const seconds = time % 60;
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
+function parseISODuration(duration) {
+  const matches = duration.match(/P(?:(\d+)D)?/);
+  const days = matches[1] ? parseInt(matches[1], 10) : 0;
+  const totalSeconds = days * 24 * 60 * 60;
+  return totalSeconds;
+}
+
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -38,12 +45,11 @@ const formatDate = (dateString) => {
 };
 
 export default function DryingMachine() {
-  const { id } = useParams(); // Extract machine ID from URL
   const location = useLocation();
-  const { capacity, currentLoad } = location.state || {}; // Extract the data passed via Link
+  const { capacity, currentLoad, status, duration, id } = location.state || {}; 
 
-  const [machineData, setMachineData] = useState(null);
-  const [timer, setTimer] = useState(1); // 24 hours in seconds
+  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration });
+  const [timer, setTimer] = useState(parseISODuration(duration));
   const [timerInterval, setTimerInterval] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [buttonText, setButtonText] = useState("Start Process");
@@ -58,16 +64,12 @@ export default function DryingMachine() {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
-    // Simulate fetching machine data using the extracted ID
-    const dryingMachines = [
-      { id: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '1 hour ago' },
-      { id: 2, status: 'FULL', currentLoad: 30, capacity: 30, lastUpdated: '2 hours ago' },
-      { id: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '30 minutes ago' }
-    ];
+    // Log the received data to the console
+    console.log("Received data:", { id, capacity, currentLoad, status, duration });
 
-    const machine = dryingMachines.find(machine => machine.id === parseInt(id));
-    setMachineData(machine);
-  }, [id]);
+    // Fetch or set machine data here
+    setMachineData({ id, capacity, currentLoad, status, duration });
+  }, [id, capacity, currentLoad, status, duration]);
 
   const startProcess = () => {
     if (currentLoad < capacity) {
@@ -78,6 +80,9 @@ export default function DryingMachine() {
   };
 
   const startTimer = () => {
+    const totalSeconds = parseISODuration(duration);
+    setTimer(totalSeconds);
+
     if (!timerInterval) {
       const interval = setInterval(() => {
         setTimer(prevTimer => {
@@ -103,6 +108,11 @@ export default function DryingMachine() {
     }
   };
 
+  const handleFastForward = () => {
+    // Fast forward the timer by 1 hour (3600 seconds)
+    setTimer(prevTimer => Math.max(prevTimer - 3600, 0));
+  };
+
   const handleContinueProcess = () => {
     setShowConfirmation(false);
     startTimer();
@@ -115,25 +125,24 @@ export default function DryingMachine() {
   const handleRescale = () => {
     // Logic for rescaling goes here
   };
+
   const handleDateChange = (date) => {
     if (date) {
       setEditDate(date.startDate);
     }
   };
+
   const handleEditClick = () => {
     setEditMode(!editMode);
 
     if (!editMode) {
-      // Entering edit mode, populate edit states with current batch details
       setEditDate(batchDetails?.date || "");
       setEditTime(batchDetails?.time || "");
-      setEditWeight(batchDetails?.weight.toString() || ""); // Ensure it's a string for the input
+      setEditWeight(batchDetails?.weight.toString() || "");
 
-      // Format the time to include AM/PM if not already included
       const currentTime = batchDetails?.time || new Date().toLocaleTimeString();
       const [time, modifier] = currentTime.split(' ');
       if (!modifier) {
-        // Assume AM/PM from the system's locale or default to AM if unavailable
         const systemAmPm = new Date().toLocaleTimeString().split(' ')[1] || 'AM';
         setEditTime(`${time} ${systemAmPm}`);
       } else {
@@ -153,25 +162,19 @@ export default function DryingMachine() {
   };
 
   const handleCancelEdit = () => {
-    // Reset edit fields
     setEditDate(batchDetails?.date || "");
     setEditTime(batchDetails?.time || "");
     setEditWeight(batchDetails?.weight || "");
-
-    // Exit edit mode
     setEditMode(false);
   };
 
   const handleSaveEdit = () => {
-    // Update batch details with edited values
     setBatchDetails({
       ...batchDetails,
       date: editDate,
       time: editTime,
       weight: editWeight
     });
-
-    // Exit edit mode
     setEditMode(false);
   };
 
@@ -241,6 +244,19 @@ export default function DryingMachine() {
           >
             {buttonText}
           </button>
+          {inProgress && (
+            <button
+              className="fast-forward-btn text-white py-1 px-4 ml-4"
+              style={{
+                backgroundColor: "#FF4500",
+                borderRadius: "10px",
+                fontSize: "14px",
+              }}
+              onClick={handleFastForward}
+            >
+              Fast Forward 1 Hour
+            </button>
+          )}
         </div>
 
         <div className="flex justify-center items-center">
@@ -249,7 +265,7 @@ export default function DryingMachine() {
               data={{
                 labels: ['Time Left', ''],
                 datasets: [{
-                  data: [timer, 60 - timer],
+                  data: [timer, parseISODuration(duration) - timer],
                   backgroundColor: ['#4D946D', '#EFEFEF'],
                   borderWidth: 0
                 }]
@@ -265,7 +281,7 @@ export default function DryingMachine() {
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
               <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{formatTime(timer)}</span>
-              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {batchDetails?.time}</span>
+              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {new Date(Date.now() + timer * 1000).toLocaleTimeString()}</span>
             </div>
           </div>
         </div>

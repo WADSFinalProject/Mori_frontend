@@ -85,35 +85,40 @@ export default function Processor() {
 
   const [dryingCapacities, setDryingCapacities] = useState([]);
   const [flouringCapacities, setFlouringCapacities] = useState([]);
-  const [machineId, setMachineId] = useState(null);
+
+  const [selectedMachineId, setSelectedMachineId] = useState(null);
+
+  const [dryingMachineIds, setDryingMachineIds] = useState([]);
+  const [flouringMachineIds, setFlouringMachineIds] = useState([]);
 
   useEffect(() => {
     const fetchDryingMachines = async () => {
       try {
         const response = await readDryingMachines();
         console.log("Drying Machines:", response.data);
-  
+
         // Map response data to include additional properties if needed
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
         }));
-  
-        // Assuming MachineID is available directly in the response data
-        const machineId = machinesWithProperties.length > 0 ? machinesWithProperties[0].MachineID : null;
-        setMachineId(machineId); // Store MachineID in state
-  
+
+        // Extract all MachineIDs
+        const machineIds = machinesWithProperties.map(machine => machine.MachineID);
+
+        // Store all MachineIDs in state
+        setDryingMachineIds(machineIds);
+
         setDryingCapacities(machinesWithProperties);
         setDryingMachines(machinesWithProperties);
       } catch (error) {
         console.log("Error fetching drying machines: ", error);
       }
     };
-  
+
     fetchDryingMachines();
   }, []);
-  
 
   console.log("Drying Capacity:", dryingCapacities);
 
@@ -174,6 +179,12 @@ export default function Processor() {
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
         }));
+
+        // Extract all MachineIDs
+        const machineIds = machinesWithProperties.map(machine => machine.MachineID);
+
+        // Store all MachineIDs in state
+        setFlouringMachineIds(machineIds);
 
         setFlouringCapacities(machinesWithProperties);
         setFlouringMachines(machinesWithProperties);
@@ -238,6 +249,10 @@ export default function Processor() {
   }, [flouringMachines, totalDriedLeaves]);
 
   const handleTabClick = (tab) => setActiveTab(tab);
+
+  const handleMachineClick = (machineId) => {
+    setSelectedMachineId(machineId);
+  };
 
   const [wetLeavesData, setWetLeavesData] = useState({
     labels: ["Unprocessed Wet Leaves", "Empty"],
@@ -318,9 +333,11 @@ export default function Processor() {
   }, []);
 
   const linkTo =
-  activeTab === "drying"
-    ? `/dryingmachine/${machineId}`
-    : `/flouringmachine/${machineId}`;
+    activeTab === "drying"
+      ? `/dryingmachine/${selectedMachineId}`
+      : activeTab === "flouring"
+      ? `/flouringmachine/${selectedMachineId}`
+      : "#";
 
   useEffect(() => {
     const fetchDriedLeavesData = async () => {
@@ -410,21 +427,44 @@ export default function Processor() {
           key={key}
           machine={machine}
           extraMarginClass={machineCardMarginClass}
+          onClick={() => handleMachineClick(machine.MachineID)}
         />
       );
     });
   };
 
-  const MachineCard = ({ machine, extraMarginClass, activeTab }) => {
+  const MachineCard = ({ machine, extraMarginClass, onClick }) => {
+    const navigate = useNavigate();
+  
     let chartColor = "#99D0D580";
     if (machine.currentLoad === machine.capacity) {
       chartColor = "#0F3F43";
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
-    
+  
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
     const machineStatusClass = (machine.status || "").toLowerCase();
+  
+    const handleClick = () => {
+      console.log({
+        id: machine.MachineID,
+        capacity: machine.capacity,
+        status: machine.Status,
+        currentLoad: machine.currentLoad,
+        duration: machine.Duration,
+      });
+  
+      navigate(`/dryingmachine/${machine.MachineID}`, {
+        state: {
+          id: machine.MachineID,
+          capacity: machine.capacity,
+          status: machine.Status,
+          currentLoad: machine.currentLoad,
+          duration: machine.Duration,
+        },
+      });
+    };
   
     return (
       <div
@@ -437,6 +477,7 @@ export default function Processor() {
           maxWidth: "none",
           position: "relative",
         }}
+        onClick={handleClick}
       >
         <div
           className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
@@ -475,24 +516,16 @@ export default function Processor() {
             </div>
           </div>
         </div>
-        <Link
-          to={{
-            pathname: linkTo,
-            state: {
-              id: machine.id,
-              capacity: machine.capacity,
-              status: machine.status,
-              currentLoad: machine.currentLoad,
-            },
-          }}
+        <button
           className={`start-btn text-white py-1 px-6 ${
             machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }}
           disabled={machine.currentLoad === 0}
+          onClick={handleClick}
         >
           START PROCESS
-        </Link>
+        </button>
         <div
           className="last-updated"
           style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}
@@ -503,6 +536,9 @@ export default function Processor() {
       </div>
     );
   };
+  
+  
+
   return (
     <div className="bg-000000">
       {isMobile ? (
