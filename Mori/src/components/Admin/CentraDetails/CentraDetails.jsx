@@ -7,6 +7,8 @@ import {
   getAllCentras,
   updateCentraDetails,
 } from "../../../service/centras";
+import { addDryingMachine } from "../../../service/dryingMachine";
+import { addFlouringMachine } from "../../../service/flouringMachine";
 
 const CentraDetails = () => {
   const initialNewLocationState = {
@@ -20,6 +22,7 @@ const CentraDetails = () => {
     capacity: "",
     status: "",
     duration: "",
+    machineType: "",
   };
 
   const [data, setData] = useState([]);
@@ -89,11 +92,33 @@ const CentraDetails = () => {
       newMachine.type &&
       newMachine.capacity &&
       newMachine.status &&
-      newMachine.duration
+      newMachine.duration &&
+      newMachine.machineType
     ) {
-      setMachines((prevState) => [...prevState, newMachine]);
-      setAddMachineVisible(false);
-      setNewMachine(initialNewMachineState);
+      const { capacity, status, machineType } = newMachine;
+      if (machineType === "Drying") {
+        addDryingMachine(capacity, status)
+          .then((res) => {
+            console.log("Success add drying machine");
+            setAddMachineVisible(false);
+            setNewMachine(initialNewMachineState);
+            fetchData();
+          })
+          .catch((err) => {
+            console.error("Error adding drying machine: ", err);
+          });
+      } else if (machineType === "Flouring") {
+        addFlouringMachine(capacity, status)
+          .then((res) => {
+            console.log("Success add flouring machine");
+            setAddMachineVisible(false);
+            setNewMachine(initialNewMachineState);
+            fetchData();
+          })
+          .catch((err) => {
+            console.error("Error adding flouring machine: ", err);
+          });
+      }
     } else {
       alert("Please fill in all fields");
     }
@@ -421,6 +446,21 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
+                </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <div className="font-vietnam text-lg font-medium">
+                    Machine Type
+                  </div>
+                  <select
+                    name="machineType"
+                    value={newMachine.machineType}
+                    onChange={handleInputChange}
+                    className="col-span-1 p-2 border rounded-lg"
+                  >
+                    <option value="">Choose Machine Type</option>
+                    <option value="Drying">Drying</option>
+                    <option value="Flouring">Flouring</option>
+                  </select>
                 </div>
               </div>
               <div>
