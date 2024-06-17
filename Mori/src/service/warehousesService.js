@@ -24,15 +24,15 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
 
 export const createWarehouse = async (email, phone, stock, location) => {
     try {
-        const now = new Date();
-        const isoString = now.toISOString();
+        // const now = new Date();
+        // const isoString = now.toISOString();
 
         const warehouseDetails = {
             email: email,
             phone: phone,
             TotalStock: stock,
             location: location,
-            created_at: isoString
+            // created_at: isoString
         };
 
         return await axios.post(host + "/secured/warehouses", warehouseDetails, {
