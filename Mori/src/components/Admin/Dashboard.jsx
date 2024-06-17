@@ -203,16 +203,16 @@ const MainXYZ = () => {
             <p className="text-sm text-gray-500 ml-3">{formattedDate}</p>
           </div>
           <div className="relative flex items-center">
-            <button className="relative">
+            {/* <button className="relative">
               <img
                 src={user.hasNotification ? notifIcon : nonotifIcon}
                 alt="Notification Icon"
                 className="w-6 h-6 text-gray-600 mr-4"
               />
               {user.hasNotification && <span className=""></span>}
-            </button>
-            <div className="mx-2 h-5 border-l border-gray-400"></div>
-            <div className="ml-4 flex items-center">
+            </button> */}
+            {/* <div className="mx-2 h-5 border-l border-gray-400"></div> */}
+            <div className="mr-10 flex items-center">
               <span className="font-bold text-gray-600 mr-2">{user.name}</span>
               <button className="ml-2 mr-12" onClick={toggleDropdown}>
                 <img src={ArrowDown} alt="Arrow Down" className="w-4" />

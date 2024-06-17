@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { deleteShipment } from "../../../service/shipments";
+import { deleteExpedition } from "../../../service/shipments";
 
 export const TableComponent = ({ data, onDelete }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -10,15 +10,16 @@ export const TableComponent = ({ data, onDelete }) => {
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = (shipmentId) => {
-    deleteShipment(shipmentId)
+  const handleConfirmDelete = (expeditionId) => {
+    deleteExpedition(expeditionId)
       .then((res) => {
         console.log("Success : ", res);
-        setData(updatedData);
+        // setData(updatedData);
         setEditVisible(false);
         setNewUser(initialNewUserState);
-        handleSearchAndSort(updatedData, sortKey);
+        // handleSearchAndSort(updatedData, sortKey);
         setDeleteModalOpen(false);
+        onDelete();
       })
       .catch((err) => {
         alert("Error : ", err);
