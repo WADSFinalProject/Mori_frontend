@@ -45,7 +45,7 @@ export const readExpeditionsByCentra = async (centraId, skip = 0, limit = 100) =
     try {
         return axios.get(host + `/all_expeditions/${centraId}`, {
             params: {
-                centraId : centraId,
+                centraId: centraId,
                 skip: skip,
                 limit: limit,
             },
@@ -99,9 +99,9 @@ export const getShipmentDetails = async (shipment_id) => {
     }
 };
 
-export const deleteShipment = async (shipment_id) => {
+export const deleteExpedition = async (expedition_id) => {
     try {
-        return axios.delete(host + `/secured/shipments/${shipment_id}`, {
+        return axios.delete(host + `/secured/expeditions/${expedition_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

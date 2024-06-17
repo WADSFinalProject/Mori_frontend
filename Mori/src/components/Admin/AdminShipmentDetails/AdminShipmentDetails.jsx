@@ -10,53 +10,57 @@ const AdminShipmentDetails = () => {
   const [totalShipments, setTotalShipments] = useState(0);
 
   useEffect(() => {
-    readExpeditions()
-      .then((res) => {
-        console.log("Success : ", res);
-        const expeditions = res.data;
-
-        // Group batches by expedition ID
-        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-          const id = expedition.Expedition.CentralID.toString();
-          if (!acc[id]) {
-            acc[id] = {
-              id: id,
-              batchIds: [],
-              flouredDates: [],
-              driedDates: [],
-              weights: [],
-              status: expedition.status,
-              checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
-            };
-          }
-          acc[id].batchIds.push(expedition.BatchID);
-          acc[id].flouredDates.push(expedition.FlouredDate);
-          acc[id].driedDates.push(expedition.DriedDate);
-          acc[id].weights.push(expedition.Weight);
-          return acc;
-        }, {});
-
-        // Convert grouped data object to array
-        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
-          return {
-            id: index + 1,
-            shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
-            batchId: expedition.batchIds,
-            driedDate: expedition.driedDates,
-            flouredDate: expedition.flouredDates,
-            weight: expedition.weights,
-            status: expedition.status,
-            checkpoint: expedition.checkpoint,
-          };
-        });
-
-        // Set your state with resArr
-        setSortedData(resArr);
-      })
-      .catch((err) => {
-        console.log("Error : ", err);
-      });
+    fetchData();
   }, []);
+
+  const fetchData = () => {
+    readExpeditions()
+    .then((res) => {
+      console.log("Success : ", res);
+      const expeditions = res.data;
+
+      // Group batches by expedition ID
+      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+        const id = expedition.Expedition.CentralID.toString();
+        if (!acc[id]) {
+          acc[id] = {
+            id: id,
+            batchIds: [],
+            flouredDates: [],
+            driedDates: [],
+            weights: [],
+            status: expedition.status,
+            checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
+          };
+        }
+        acc[id].batchIds.push(expedition.BatchID);
+        acc[id].flouredDates.push(expedition.FlouredDate);
+        acc[id].driedDates.push(expedition.DriedDate);
+        acc[id].weights.push(expedition.Weight);
+        return acc;
+      }, {});
+
+      // Convert grouped data object to array
+      const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
+        return {
+          id: index + 1,
+          shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
+          batchId: expedition.batchIds,
+          driedDate: expedition.driedDates,
+          flouredDate: expedition.flouredDates,
+          weight: expedition.weights,
+          status: expedition.status,
+          checkpoint: expedition.checkpoint,
+        };
+      });
+
+      // Set your state with resArr
+      setSortedData(resArr);
+    })
+    .catch((err) => {
+      console.log("Error : ", err);
+    });
+  }
 
   useEffect(() => {
     // Calculate total shipments count
@@ -147,7 +151,7 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} />
+          <TableComponent data={sortedData} onDelete={fetchData}/>
         </div>
       </div>
     </div>
