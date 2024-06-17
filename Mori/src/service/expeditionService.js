@@ -3,7 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-export const createExpedition = async (AirwayBill, estimatedArrival, totalPackages, TotalWeight, expeditionDate, expeditionServiceDetails) => {
+export const createExpedition = async (AirwayBill, estimatedArrival, totalPackages, TotalWeight, expeditionDate, expeditionServiceDetails, batches) => {
     try {
         const expeditionDetails = {
             AirwayBill:AirwayBill,
@@ -15,7 +15,23 @@ export const createExpedition = async (AirwayBill, estimatedArrival, totalPackag
 
         };
 
-        return await axios.post(host + "/secured/expeditions", expeditionDetails, {
+        response = await axios.post(host + "/secured/expeditions", expeditionDetails, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const expeditionId = response.data.expeditionId
+
+        const contentDetails = {
+        
+            ExpeditionID: expeditionId,
+            BatchID: batches
+
+
+        }
+
+        return axios.post(host + "/secured/expedition_contents/", contentDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
