@@ -8,6 +8,7 @@ import {
 
 const HarbourDetails = () => {
   const initialNewHarbourState = {
+    id: 0,
     harbourName: "",
     location: "",
     phone: "",
@@ -43,25 +44,32 @@ const HarbourDetails = () => {
   };
 
   useEffect(() => {
-    getAllHarborGuards()
-      .then((res) => {
-        console.log("Success : ", res);
-        resArr = [];
-        res.data.forEach((dt) => {
-          resArr.push({
-            id: dt.HarbourID,
-            harbourName: dt.harbourName,
-            location: dt.location,
-            phone: dt.phone,
-            openingHour: dt.openingHour,
-            closingHour: dt.closingHour,
-          });
-        });
-      })
-      .catch((err) => {
-        console.log("Error : ", err);
-      });
+    fetchData();
   }, []);
+
+  const fetchData = () => {
+    getAllHarborGuards()
+    .then((res) => {
+      console.log("Success : ", res);
+      let resArr = [];
+      res.data.forEach((dt) => {
+        resArr.push({
+          id: dt.HarbourID,
+          harbourName: dt.HarbourName,
+          location: dt.Location,
+          phone: dt.phone,
+          openingHour: dt.OpeningHour,
+          closingHour: dt.ClosingHour,
+        });
+      });
+
+      setData(resArr);
+      handleSearchAndSort(resArr, sortKey); // Initial sort with fetched data
+    })
+    .catch((err) => {
+      console.log("Error : ", err);
+    });
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key

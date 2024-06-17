@@ -5,7 +5,7 @@ axios.defaults.withCredentials = true
 
 export const getAllHarborGuards = async () => {
     try {
-        return await axios.get(host + "/secured/harborguards", {
+        return await axios.get(host + "/secured/harborguard", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -16,15 +16,17 @@ export const getAllHarborGuards = async () => {
     }
 };
 
-export const addHarborGuard = async (PIC_name, email, phone) => {
+export const addHarborGuard = async (harbourName, location, phone, openingHour, closingHour) => {
     try {
         const guardDetails = {
-            PIC_name: PIC_name,
-            email: email,
+            HarbourName: harbourName,
+            Location: location,
             phone: phone,
+            OpeningHour: openingHour,
+            ClosingHour: closingHour
         };
 
-        return await axios.post(host + "/secured/harborguards", guardDetails, {
+        return await axios.post(host + "/secured/harborguard", guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
