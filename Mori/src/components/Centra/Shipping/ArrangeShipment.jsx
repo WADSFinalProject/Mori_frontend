@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const ArrangeShipment = () => {
   const { width } = useWindowSize();
@@ -8,6 +8,13 @@ const ArrangeShipment = () => {
   const [shippingMethod, setShippingMethod] = useState("");
   const [airwayBill, setAirwayBill] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const location = useLocation();
+  const { batches } = location.state || { batches: [] };
+
+  useEffect(() => {
+    console.log("Selected batches: ", batches); // Verify that batches are received
+  }, [batches]);
 
   useEffect(() => {
     // Check if both the shipping method and airway bill are provided
@@ -28,6 +35,18 @@ const ArrangeShipment = () => {
     "Wahana",
     "Ninja Express",
   ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle the form submission and pass the selected batch data alongside the airway bill and courier
+    const shipmentData = {
+      shippingMethod,
+      airwayBill,
+      batches,
+    };
+    console.log(shipmentData);
+    // Add the code to update the database with shipmentData
+  };
 
   return (
     <>
@@ -76,7 +95,7 @@ const ArrangeShipment = () => {
           </header>
 
           <main className="absolute mt-24 w-full flex flex-col items-start justify-start px-5">
-            <form id="shipment-form">
+            <form id="shipment-form" onSubmit={handleSubmit}>
               <div className="w-full justify-start items-start flex flex-col gap-2.5">
                 <div className="text-black text-base font-semibold font-vietnam select-none">
                   Shipping Method

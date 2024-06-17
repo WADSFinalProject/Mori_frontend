@@ -1,7 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ShippingBox = ({ batchId, weight, date, checked, onChange }) => {
+const ShippingBox = ({
+  batchId,
+  weight,
+  driedDate,
+  flouredDate,
+  checked,
+  onChange,
+}) => {
   const mainBgColor = checked ? "#eef1ff" : "whitesmoke";
 
   return (
@@ -50,11 +57,11 @@ const ShippingBox = ({ batchId, weight, date, checked, onChange }) => {
       <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-sm">
         <div className="self-stretch rounded-[20px] bg-white flex flex-row items-start justify-between py-2 px-4 gap-[20px]">
           <div className="relative font-medium inline-block">Dried Date</div>
-          <div className="relative font-medium inline-block">{date}</div>
+          <div className="relative font-medium inline-block">{driedDate}</div>
         </div>
         <div className="self-stretch rounded-[20px] bg-white flex flex-row items-start justify-between py-2 px-4 gap-[20px]">
           <div className="relative font-medium inline-block">Floured Date</div>
-          <div className="relative font-medium inline-block">{date}</div>
+          <div className="relative font-medium inline-block">{flouredDate}</div>
         </div>
       </div>
     </div>
