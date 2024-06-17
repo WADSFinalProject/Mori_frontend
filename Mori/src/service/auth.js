@@ -42,7 +42,7 @@ export const validateToken = async (token) => {
     }
 };
 
-export const setPassword = async (token, newPassword) => {
+export const setPass = async (token, newPassword) => {
     try {
         const passwordDetails = {
             token: token,
