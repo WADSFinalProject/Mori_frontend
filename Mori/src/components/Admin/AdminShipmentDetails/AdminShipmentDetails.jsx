@@ -8,7 +8,6 @@ const AdminShipmentDetails = () => {
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
-  const [expeditionData, setExpeditionData] = useState([]);
 
   useEffect(() => {
     readExpeditions()
@@ -16,21 +15,37 @@ const AdminShipmentDetails = () => {
         console.log("Success : ", res);
         const expeditions = res.data;
 
-        const resArr = expeditions.map((expedition, index) => {
+        // Group batches by AirwayBill
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const airwayBill = expedition.Expedition.AirwayBill.toString(); // Assuming AirwayBill is a string
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              airwayBill: airwayBill,
+              batchIds: [],
+              driedDates: [],
+              status: expedition.Status,
+              checkpoint: `${expedition.Status} | ${new Date(expedition.ExpeditionDate).toLocaleString()}`,
+            };
+          }
+          acc[airwayBill].batchIds.push(expedition.BatchID);
+          acc[airwayBill].driedDates.push(expedition.DriedDate);
+          return acc;
+        }, {});
+
+        // Convert grouped data object to array
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
           return {
-            id: index + 1, // Incrementing ID from 1
-            batchId: expedition.batches.map(batch => batch.BatchID), // Array of batch IDs
-            shipmentId: expedition.expedition.ExpeditionID,
-            driedDate: expedition.batches.map(batch => batch.DriedDate),
-            flouredDate: expedition.batches.map(batch => batch.FlouredDate),
-            weight: expedition.batches.map(batch => batch.Weight),
-            status: expedition.expedition.Status,
+            id: index + 1,
+            shipmentId: expedition.airwayBill,
+            batchId: expedition.batchIds.join(", "), // Convert batchIds array to a string representation
+            driedDate: expedition.driedDates.join(", "), // Convert driedDates array to a string representation
+            status: expedition.status,
             checkpoint: expedition.checkpoint,
           };
         });
 
         // Set your state with resArr
-        setExpeditionData(resArr);
+        setSortedData(resArr);
       })
       .catch((err) => {
         console.log("Error : ", err);
@@ -39,13 +54,13 @@ const AdminShipmentDetails = () => {
 
   useEffect(() => {
     // Calculate total shipments count
-    const uniqueShipmentIds = new Set(expeditionData.map((item) => item.shipmentId));
+    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
     setTotalShipments(uniqueShipmentIds.size);
-  }, [expeditionData]);
+  }, [sortedData]);
 
   useEffect(() => {
     handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery, expeditionData]);
+  }, [filterKey, searchQuery]);
 
   const handleFilterChange = (filterValue) => {
     setFilterKey(filterValue);
@@ -57,7 +72,7 @@ const AdminShipmentDetails = () => {
   };
 
   const handleSearchAndFilter = (searchValue, filterValue) => {
-    let filteredData = expeditionData.filter((row) =>
+    let filteredData = sortedData.filter((row) =>
       row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -77,10 +92,10 @@ const AdminShipmentDetails = () => {
 
         <div className="flex flex-col p-4 rounded bg-[#00000033] w-1/4 gap-1">
           <div className="text-[#828282] font-vietnam text-sm font-medium">
-            Total Shipment
+            Total Shipments
           </div>
           <div className="text-black font-vietnam text-3xl font-semibold">
-            {sortedData.length} Shipment
+            {sortedData.length} Shipments
           </div>
         </div>
 
