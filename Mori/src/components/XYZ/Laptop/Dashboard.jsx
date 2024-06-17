@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import moriLogo from "../../../assets/XYZ/BlackMori.png";
 import semicircle from "../../../assets/XYZ/semicircle.png";
@@ -12,14 +12,41 @@ import AcceptedPackages from "././AcceptedPackages/AcceptedPackages";
 import StockBooking from "./StockBooking/StockBooking";
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { getWarehouseDetails } from "../../../service/warehousesService";
 
 const MainXYZ = () => {
 
   const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
-  const [warehouseDropdownVisible, setWarehouseDropdownVisible] =
-    useState(false);
+  const [machines, setMachines] = useState([]);
+  const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
+
+    useEffect(() => {
+      if (selectedWarehouse) {
+          fetchWarehouseDetails(selectedWarehouse);
+      }
+  }, [selectedWarehouse]);
+
+  const fetchWarehouseDetails = async (warehouse_id) => {
+      console.log("Warehouse ID:", warehouse_id); // Check the type and value
+      try {
+          const details = await getWarehouseDetails(warehouse_id);
+          setWarehouseDetails(details);
+      } catch (error) {
+          console.error("Failed to fetch warehouse details:", error);
+      }
+  };
+
+  // Format machines data to match the required structure
+  const formattedMachines = machines.map(machine => ({
+      id: machine.id, // Assuming `id` is available in `machine`
+      location: machine.location,
+      currentLoad: machine.totalStock,
+      capacity: 50, // Assuming capacity is static or fetched from another source
+      lastUpdated: machine.lastUpdated || "1 Minute Ago", // Assuming `lastUpdated` exists or default to "1 Minute Ago"
+  }));
+
 
     const chartData = {
       labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
@@ -84,58 +111,58 @@ const MainXYZ = () => {
 
   const warehouses = ["Kupang", "Warehouse 1", "Warehouse 2"]; // Add other warehouses as needed
 
-  const machinesByWarehouse = {
-    Kupang: [
-      {
-        location: "Kecamatan Semau",
-        currentLoad: 31.1,
-        capacity: 50,
-        lastUpdated: "1 Minute Ago",
-      },
-      {
-        location: "Kecamatan Kupang Barat",
-        currentLoad: 50,
-        capacity: 50,
-        lastUpdated: "1 Minute Ago",
-      },
-      {
-        location: "Kecamatan Amarasi",
-        currentLoad: 31.1,
-        capacity: 50,
-        lastUpdated: "1 Minute Ago",
-      },
-    ],
-    "Warehouse 1": [
-      {
-        location: "Location 1",
-        currentLoad: 20,
-        capacity: 40,
-        lastUpdated: "2 Minutes Ago",
-      },
-      {
-        location: "Location 2",
-        currentLoad: 30,
-        capacity: 50,
-        lastUpdated: "3 Minutes Ago",
-      },
-    ],
-    "Warehouse 2": [
-      {
-        location: "Location A",
-        currentLoad: 15,
-        capacity: 30,
-        lastUpdated: "4 Minutes Ago",
-      },
-      {
-        location: "Location B",
-        currentLoad: 25,
-        capacity: 50,
-        lastUpdated: "5 Minutes Ago",
-      },
-    ],
-  };
+  // const machinesByWarehouse = {
+  //   Kupang: [
+  //     {
+  //       location: "Kecamatan Semau",
+  //       currentLoad: 31.1,
+  //       capacity: 50,
+  //       lastUpdated: "1 Minute Ago",
+  //     },
+  //     {
+  //       location: "Kecamatan Kupang Barat",
+  //       currentLoad: 50,
+  //       capacity: 50,
+  //       lastUpdated: "1 Minute Ago",
+  //     },
+  //     {
+  //       location: "Kecamatan Amarasi",
+  //       currentLoad: 31.1,
+  //       capacity: 50,
+  //       lastUpdated: "1 Minute Ago",
+  //     },
+  //   ],
+  //   "Warehouse 1": [
+  //     {
+  //       location: "Location 1",
+  //       currentLoad: 20,
+  //       capacity: 40,
+  //       lastUpdated: "2 Minutes Ago",
+  //     },
+  //     {
+  //       location: "Location 2",
+  //       currentLoad: 30,
+  //       capacity: 50,
+  //       lastUpdated: "3 Minutes Ago",
+  //     },
+  //   ],
+  //   "Warehouse 2": [
+  //     {
+  //       location: "Location A",
+  //       currentLoad: 15,
+  //       capacity: 30,
+  //       lastUpdated: "4 Minutes Ago",
+  //     },
+  //     {
+  //       location: "Location B",
+  //       currentLoad: 25,
+  //       capacity: 50,
+  //       lastUpdated: "5 Minutes Ago",
+  //     },
+  //   ],
+  // };
 
-  const machines = machinesByWarehouse[selectedWarehouse];
+  // const machines = machinesByWarehouse[selectedWarehouse];
 
   // Variables for the dynamic content
   const batchAvailable = 42;
@@ -552,7 +579,7 @@ const MainXYZ = () => {
                   )}
                 </div>
               </div>
-              <DashboardMachineCard machines={machines} />
+              {machines.length > 0 && <DashboardMachineCard machines={formattedMachines} />}
             </>
           )}
           {activePage === "Help Center" && <div>Help Center Content</div>}
