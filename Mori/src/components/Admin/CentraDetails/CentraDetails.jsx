@@ -95,9 +95,9 @@ const CentraDetails = () => {
       newMachine.duration &&
       newMachine.machineType
     ) {
-      const { capacity, status, machineType } = newMachine;
+      const { centraId, capacity, status, machineType, duration } = newMachine;
       if (machineType === "Drying") {
-        addDryingMachine(capacity, status)
+        addDryingMachine(centraId, capacity, status, duration)
           .then((res) => {
             console.log("Success add drying machine");
             setAddMachineVisible(false);
@@ -108,7 +108,7 @@ const CentraDetails = () => {
             console.error("Error adding drying machine: ", err);
           });
       } else if (machineType === "Flouring") {
-        addFlouringMachine(capacity, status)
+        addFlouringMachine(centraId, capacity, status, duration)
           .then((res) => {
             console.log("Success add flouring machine");
             setAddMachineVisible(false);
@@ -123,6 +123,7 @@ const CentraDetails = () => {
       alert("Please fill in all fields");
     }
   };
+  
 
   const handleDeleteClick = (index) => {
     setLocationToDelete(sortedData[index]);
@@ -395,6 +396,22 @@ const CentraDetails = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between gap-16">
                   <div className="flex flex-col gap-3 w-full">
+                    <div className="font-vietnam text-lg font-medium">Centra</div>
+                    <select
+                      name="centraId"
+                      value={newMachine.centraId}
+                      onChange={handleInputChange}
+                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                    >
+                      <option value="">Choose Centra</option>
+                      {data.map((centra) => (
+                        <option key={centra.id} value={centra.id}>
+                          {centra.location}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-3 w-full">
                     <div className="font-vietnam text-lg font-medium">Type</div>
                     <input
                       className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
@@ -405,10 +422,10 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
+                </div>
+                <div className="flex flex-row justify-between gap-16">
                   <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Capacity
-                    </div>
+                    <div className="font-vietnam text-lg font-medium">Capacity</div>
                     <input
                       className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                       id="capacity"
@@ -418,12 +435,8 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
-                </div>
-                <div className="flex flex-row justify-between gap-16">
                   <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Status
-                    </div>
+                    <div className="font-vietnam text-lg font-medium">Status</div>
                     <input
                       className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                       id="status"
@@ -433,19 +446,17 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Duration
-                    </div>
-                    <input
-                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                      id="duration"
-                      type="text"
-                      name="duration"
-                      value={newMachine.duration}
-                      onChange={handleInputChange}
-                    />
-                  </div>
+                </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <div className="font-vietnam text-lg font-medium">Duration</div>
+                  <input
+                    className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                    id="duration"
+                    type="text"
+                    name="duration"
+                    value={newMachine.duration}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className="flex flex-col gap-3 w-full">
                   <div className="font-vietnam text-lg font-medium">
@@ -455,7 +466,7 @@ const CentraDetails = () => {
                     name="machineType"
                     value={newMachine.machineType}
                     onChange={handleInputChange}
-                    className="col-span-1 p-2 border rounded-lg"
+                    className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                   >
                     <option value="">Choose Machine Type</option>
                     <option value="Drying">Drying</option>

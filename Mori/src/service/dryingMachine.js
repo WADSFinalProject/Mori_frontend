@@ -3,11 +3,13 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const addDryingMachine = async (capacity, status) => {
+export const addDryingMachine = async (centraId, capacity, status, duration) => {
     try {
         const machineDetails = {
+            CentraID: centraId,
             Capacity: capacity,
             Status: status,
+            Duration: duration,
         };
 
         return axios.post(host + "/secured/drying-machine/create/", machineDetails, {
