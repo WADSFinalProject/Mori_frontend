@@ -4,10 +4,13 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import {
   addHarborGuard,
   getAllHarborGuards,
+  modifyHarborGuard,
+  removeHarborGuard,
 } from "../../../service/harborGuardService";
 
 const HarbourDetails = () => {
   const initialNewHarbourState = {
+    id: 0,
     harbourName: "",
     location: "",
     phone: "",
@@ -33,35 +36,48 @@ const HarbourDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editHarbourIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewHarbour(initialNewHarbourState);
-    setEditHarbourIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
-    setDeleteModalOpen(false);
+    // const updatedData = data.filter((_, index) => index !== editHarbourIndex);
+    // setData(updatedData);
+
+    removeHarborGuard(newHarbour.id)
+      .then(res => {
+        setEditVisible(false);
+        setNewHarbour(initialNewHarbourState);
+        setEditHarbourIndex(null);
+        setDeleteModalOpen(false);
+        fetchData();
+      })
+      .catch(err => {
+        console.error(err)
+      });
   };
 
   useEffect(() => {
-    getAllHarborGuards()
-      .then((res) => {
-        console.log("Success : ", res);
-        resArr = [];
-        res.data.forEach((dt) => {
-          resArr.push({
-            id: dt.HarbourID,
-            harbourName: dt.harbourName,
-            location: dt.location,
-            phone: dt.phone,
-            openingHour: dt.openingHour,
-            closingHour: dt.closingHour,
-          });
-        });
-      })
-      .catch((err) => {
-        console.log("Error : ", err);
-      });
+    fetchData();
   }, []);
+
+  const fetchData = () => {
+    getAllHarborGuards()
+    .then((res) => {
+      let resArr = [];
+      res.data.forEach((dt) => {
+        resArr.push({
+          id: dt.HarbourID,
+          harbourName: dt.HarbourName,
+          location: dt.Location,
+          phone: dt.phone,
+          openingHour: dt.OpeningHour,
+          closingHour: dt.ClosingHour,
+        });
+      });
+
+      setData(resArr);
+      handleSearchAndSort(resArr, sortKey); // Initial sort with fetched data
+    })
+    .catch((err) => {
+      console.log("Error : ", err);
+    });
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -116,6 +132,7 @@ const HarbourDetails = () => {
     const harbourToEdit = sortedData[index];
     const originalIndex = data.findIndex(
       (item) =>
+        item.id === harbourToEdit.id &&
         item.harbourName === harbourToEdit.harbourName &&
         item.location === harbourToEdit.location &&
         item.phone === harbourToEdit.phone &&
@@ -127,6 +144,7 @@ const HarbourDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
     setNewHarbour({
+      id: harbourToEdit.id,
       harbourName: harbourToEdit.harbourName,
       location: harbourToEdit.location,
       phone: harbourToEdit.phone,
@@ -157,18 +175,20 @@ const HarbourDetails = () => {
       newHarbour.openingHour &&
       newHarbour.closingHour
     ) {
-      const newHarbourEntry = { ...newHarbour };
-
-      // setData((prevState) => [...prevState, newHarbourEntry]);
-      addHarborGuard()
+      addHarborGuard(
+        newHarbour.harbourName, 
+        newHarbour.location, 
+        newHarbour.phone, 
+        newHarbour.openingHour, 
+        newHarbour.closingHour
+      )
         .then((res) => {
-          console.log("Success : ", res);
           setAddNewVisible(false);
           setNewHarbour(initialNewHarbourState);
-          handleSearchAndSort([...data, newHarbourEntry], sortKey);
+          fetchData();
         })
         .catch((err) => {
-          alert("Error : ", err);
+          console.error("Error : ", err);
         });
     } else {
       alert("Please fill in all fields");
@@ -176,15 +196,33 @@ const HarbourDetails = () => {
   };
 
   const updateHarbour = () => {
-    const updatedData = data.map((harbour, index) =>
-      index === editHarbourIndex ? { ...newHarbour } : harbour
-    );
+    if (
+      newHarbour.harbourName &&
+      newHarbour.location &&
+      newHarbour.phone &&
+      newHarbour.openingHour &&
+      newHarbour.closingHour
+    ) {
+      modifyHarborGuard(
+        newHarbour.id,
+        newHarbour.harbourName, 
+        newHarbour.location, 
+        newHarbour.phone, 
+        newHarbour.openingHour, 
+        newHarbour.closingHour
+      ).then(res => {
+        setEditVisible(false);
+        setNewHarbour(initialNewHarbourState);
+        setEditHarbourIndex(null);
+        fetchData();
+      })
+      .catch(err => {
+        console.error(err)
+      })
 
-    setData(updatedData);
-    setEditVisible(false);
-    setNewHarbour(initialNewHarbourState);
-    setEditHarbourIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+    } else {
+      alert("Please fill in all fields");
+    }
   };
 
   const uniqueLocations = [...new Set(data.map((item) => item.location))];
@@ -414,7 +452,7 @@ const HarbourDetails = () => {
                 <button
                   type="button"
                   className="px-4 py-2 text-white bg-[#852222] rounded-lg"
-                  onClick={() => setDeleteModalOpen(true)}
+                  onClick={handleDeleteClick}
                 >
                   Delete Harbour
                 </button>

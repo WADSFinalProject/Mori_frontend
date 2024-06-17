@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { createWarehouse, getAllWarehouses } from "../../../service/warehousesService";
+import { createWarehouse, deleteWarehouse, editWarehouse, getAllWarehouses } from "../../../service/warehousesService";
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
-    warehouseName: '',
+    id: 0,
     email: '',
     phone: '',
     location: '',
+    stock: 0,
     createdDate: new Date().toISOString().substring(0, 10), // Format: YYYY-MM-DD
   };
 
@@ -31,35 +32,45 @@ const XyzDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editWarehouseIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewWarehouse(initialNewWarehouseState);
-    setEditWarehouseIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
-    setDeleteModalOpen(false);
+    deleteWarehouse(newWarehouse.id)
+      .then(res => {
+        console.log('Delete success');
+
+        setEditVisible(false);
+        setNewWarehouse(initialNewWarehouseState);
+        setEditWarehouseIndex(null);
+        fetchData();
+        setDeleteModalOpen(false);
+      })
+      .catch(err => {
+        alert('Delete error : ', err)
+      })
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     getAllWarehouses().then(res => {
-      warehouses = [];
+      let warehouses = [];
       res.data.forEach(wh => {
         warehouses.push({
           id: wh.id,
-          warehouseName: "Warehouse 1",
           email: wh.email,
           phone: wh.phone,
-          location: "Maulafa",
+          location: wh.location,
+          stock: wh.TotalStock,
           createdDate: "2024-01-01T12:34:56Z"
         })
       })
 
-      setData(data);
-      handleSearchAndSort(data, "warehouseName-a-z"); // Initial sort with fetched data
+      setData(warehouses);
+      handleSearchAndSort(warehouses, "warehouseName-a-z"); // Initial sort with fetched data
     }).catch(err => {
       console.log(err)
     })
-  }, []);
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -84,7 +95,6 @@ const XyzDetails = () => {
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.warehouseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -96,15 +106,7 @@ const XyzDetails = () => {
       );
     }
 
-    if (sortValue === "warehouseName-a-z") {
-      filteredData.sort((a, b) =>
-        a.warehouseName.localeCompare(b.warehouseName)
-      );
-    } else if (sortValue === "warehouseName-z-a") {
-      filteredData.sort((a, b) =>
-        b.warehouseName.localeCompare(a.warehouseName)
-      );
-    } else if (sortValue === "createdDate-asc") {
+    if (sortValue === "createdDate-asc") {
       filteredData.sort(
         (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
       );
@@ -112,6 +114,10 @@ const XyzDetails = () => {
       filteredData.sort(
         (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
       );
+    } else if (sortValue === "stock-asc") {
+      filteredData.sort((a, b) => a.stock-b.stock);
+    } else if (sortValue === "stock-desc") {
+      filteredData.sort((a, b) => b.stock-a.stock);
     }
 
     setSortedData(filteredData);
@@ -128,7 +134,8 @@ const XyzDetails = () => {
     setWarehouseEdit(warehouseToEdit)
     const originalIndex = data.findIndex(
       item =>
-        item.warehouseName === warehouseToEdit.warehouseName &&
+        item.id === warehouseEdit.id &&
+        item.stock === warehouseToEdit.stock &&
         item.email === warehouseToEdit.email &&
         item.phone === warehouseToEdit.phone &&
         item.location === warehouseToEdit.location &&
@@ -139,7 +146,8 @@ const XyzDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
     setNewWarehouse({
-      warehouseName: warehouseToEdit.warehouseName,
+      id: warehouseEdit.id,
+      stock: warehouseToEdit.stock,
       email: warehouseToEdit.email,
       phone: warehouseToEdit.phone,
       location: warehouseToEdit.location,
@@ -163,24 +171,21 @@ const XyzDetails = () => {
 
   const addWarehouse = () => {
     if (
-      newWarehouse.warehouseName &&
+      newWarehouse.stock &&
       newWarehouse.email &&
       newWarehouse.phone &&
-      newWarehouse.location &&
-      newWarehouse.createdDate
+      newWarehouse.location
     ) {
-      // const newWarehouseEntry = { ...newWarehouse };
-
-      // setData((prevState) => [...prevState, newWarehouseEntry]);
-      createWarehouse("dummy_name", newWarehouse.email, newWarehouse.phone)
+      createWarehouse(newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
         .then(res => {
           console.log('Success add new warehouse')
           setAddNewVisible(false);
           setNewWarehouse(initialNewWarehouseState);
+          fetchData();
           handleSearchAndSort([...data, newWarehouseEntry], sortKey);
         })
         .catch(err => {
-          console.log(err)
+          alert(err)
         });
     } else {
       alert('Please fill in all fields');
@@ -189,21 +194,22 @@ const XyzDetails = () => {
 
   const updateWarehouse = () => {
     if (
-      newWarehouse.warehouseName &&
+      newWarehouse.stock &&
       newWarehouse.email &&
       newWarehouse.phone &&
       newWarehouse.location &&
       newWarehouse.createdDate
     ) {
-      updateWarehouse(warehouseEdit.id, "dummy_name_edit", warehouseEdit.email, warehouseEdit.phone)
+      editWarehouse(newWarehouse.id, newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
         .then(res => {
           console.log(res)
           setEditVisible(false);
           setNewWarehouse(initialNewWarehouseState);
           setEditWarehouseIndex(null);
-          handleSearchAndSort(updatedData, sortKey);
+          fetchData();
+          
         })
-        .catch(err => console.log(err))
+        .catch(err => alert(err))
     } else {
       alert('Please fill in all fields');
     }
@@ -264,14 +270,10 @@ const XyzDetails = () => {
                   value={sortKey}
                   onChange={handleSortChange}
                 >
-                  <option value="warehouseName-a-z">
-                    Warehouse Name (A to Z)
-                  </option>
-                  <option value="warehouseName-z-a">
-                    Warehouse Name (Z to A)
-                  </option>
                   <option value="createdDate-asc">Created Date (↑)</option>
                   <option value="createdDate-desc">Created Date (↓)</option>
+                  <option value="stock-asc">Stock (↑)</option>
+                  <option value="stock-desc">Stock (↓)</option>
                 </select>
               </div>
               <div className="flex flex-row gap-2 items-center">
@@ -322,13 +324,6 @@ const XyzDetails = () => {
           </div>
           <form className="grid grid-cols-2 gap-4">
             <input
-              name="warehouseName"
-              value={newWarehouse.warehouseName}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Warehouse Name"
-            />
-            <input
               name="email"
               value={newWarehouse.email}
               onChange={handleInputChange}
@@ -341,6 +336,13 @@ const XyzDetails = () => {
               onChange={handleInputChange}
               className="col-span-2 p-2 border rounded-lg"
               placeholder="Phone"
+            />
+            <input
+              name="stock"
+              value={newWarehouse.stock}
+              onChange={handleInputChange}
+              className="col-span-2 p-2 border rounded-lg"
+              placeholder="Stock"
             />
             <input
               name="location"
