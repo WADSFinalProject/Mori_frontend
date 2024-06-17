@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { createWarehouse, editWarehouse, getAllWarehouses } from "../../../service/warehousesService";
+import { createWarehouse, deleteWarehouse, editWarehouse, getAllWarehouses } from "../../../service/warehousesService";
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
@@ -32,13 +32,19 @@ const XyzDetails = () => {
   };
 
   const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editWarehouseIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewWarehouse(initialNewWarehouseState);
-    setEditWarehouseIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
-    setDeleteModalOpen(false);
+    deleteWarehouse(newWarehouse.id)
+      .then(res => {
+        console.log('Delete success');
+
+        setEditVisible(false);
+        setNewWarehouse(initialNewWarehouseState);
+        setEditWarehouseIndex(null);
+        fetchData();
+        setDeleteModalOpen(false);
+      })
+      .catch(err => {
+        alert('Delete error : ', err)
+      })
   };
 
   useEffect(() => {
