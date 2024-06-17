@@ -26,7 +26,7 @@ export const createExpedition = async (AirwayBill, estimatedArrival, totalPackag
         const contentDetails = {
         
             ExpeditionID: expeditionId,
-            BatchID: batches
+            BatchIDs: batches
 
 
         }
