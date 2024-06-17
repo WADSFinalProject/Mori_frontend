@@ -1,6 +1,6 @@
-  import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
@@ -402,26 +402,33 @@ export default function Processor() {
     });
   };
 
-  const MachineCard = ({ machine, extraMarginClass }) => {
+  const MachineCard = ({ machine, extraMarginClass, activeTab }) => {
     let chartColor = "#99D0D580";
     if (machine.currentLoad === machine.capacity) {
       chartColor = "#0F3F43";
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
-
+  
     const linkTo =
       activeTab === "drying"
         ? `/dryingmachine/${machine.number}`
         : `/flouringmachine/${machine.number}`;
-
+  
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
     const machineStatusClass = (machine.status || "").toLowerCase();
-
+  
     return (
       <div
         className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
-        style={{ width: "auto", flexGrow: 1, minWidth: "300px", minHeight: "100px", maxWidth: "none", position: "relative" }}
+        style={{
+          width: "auto",
+          flexGrow: 1,
+          minWidth: "300px",
+          minHeight: "100px",
+          maxWidth: "none",
+          position: "relative",
+        }}
       >
         <div
           className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
@@ -430,7 +437,10 @@ export default function Processor() {
           <span className="font-bold text-sm">{machine.number}</span>
         </div>
         <div className="machine-info flex justify-center items-center w-full mb-2">
-          <div className="chart-container" style={{ width: "150px", height: "120px", position: "relative" }}>
+          <div
+            className="chart-container"
+            style={{ width: "150px", height: "120px", position: "relative" }}
+          >
             <Doughnut
               data={{
                 labels: ["Current Load", "Capacity"],
@@ -444,7 +454,10 @@ export default function Processor() {
               }}
               options={gaugeOptions}
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: "0" }}>
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center"
+              style={{ fontSize: "0" }}
+            >
               <span className="font-vietnam font-bold" style={{ fontSize: "24px", lineHeight: "1.2" }}>
                 {machine.currentLoad} kg
               </span>
@@ -454,15 +467,24 @@ export default function Processor() {
             </div>
           </div>
         </div>
-        <button
-          className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+        <Link
+          to={{
+            pathname: linkTo,
+            state: {
+              id: machine.id,
+              capacity: machine.capacity,
+              status: machine.status,
+              currentLoad: machine.currentLoad,
+            },
+          }}
+          className={`start-btn text-white py-1 px-6 ${
+            machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }}
           disabled={machine.currentLoad === 0}
         >
-          <Link to={linkTo} className="flex items-center justify-center h-full w-full">
-            START PROCESS
-          </Link>
-        </button>
+          START PROCESS
+        </Link>
         <div
           className="last-updated"
           style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}
@@ -473,7 +495,6 @@ export default function Processor() {
       </div>
     );
   };
-
   return (
     <div className="bg-000000">
       {isMobile ? (
