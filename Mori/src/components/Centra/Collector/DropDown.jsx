@@ -50,7 +50,8 @@ function FilterDropdown() {
                   const formattedDuration = `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
 
                   let status = batch.Status;
-                  let expired = batch.Expired
+                  let expired = batch.Expired;
+                //   let dried = batch.Dried;
                   // Example usage
                 console.log(`Status: ${status}, Expired: ${expired}`);
 
@@ -58,6 +59,8 @@ function FilterDropdown() {
                       status = "Expired";
                   } else if (durationInMilliseconds <= 0 && expired == false) {
                         status = "Exceeded";
+                  } else if (dried == true) {
+                        status = "Processed";
                   } else if (durationInMilliseconds < (60 * 60 * 1000)) {
                       status = "Near Expiry";
                   } else if (durationInMilliseconds > (3 * 60 * 60 * 1000)) {
