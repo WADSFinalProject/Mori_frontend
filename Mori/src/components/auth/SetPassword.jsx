@@ -1,8 +1,100 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect }  from "react";
+import { Link , useLocation} from "react-router-dom";
 import moriLogo from '../../assets/moriBlack.png'; 
+import axios from "axios"; 
+
 
 export default function SetPassword() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+
+
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const urlToken = query.get('token');
+
+
+  
+
+  useEffect(() => {
+    axios
+     .get("http://localhost:8000/users/validate-link", {
+        params: {
+          token: urlToken,
+        },
+      })
+     .then((response) => {
+        if (response.data.valid) {
+          setIsValid(true);
+        } else {
+          setErrorMessage(response.data.error);
+          setIsValid(false);
+        }
+      })
+     .catch((error) => {
+        console.log("Error validating token:", error);
+        setIsValid(false);
+      });
+  }, []);
+
+  
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+  
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      setSubmitting(false);
+      return;
+    }
+
+    const passwordData = {
+      token: urlToken,
+      new_password: password,
+    };
+  
+    try {
+
+      const response = await axios.post("http://localhost:8000/users/setpassword",passwordData);
+  
+      if (response && response.data) {
+        setSuccessMessage(response.data.message);
+      } else {
+        setErrorMessage("An error occurred while setting password");
+      }
+  
+      setSubmitting(false);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400 || error.response.status === 401) {
+          setErrorMessage("Invalid token");
+        } else {
+          setErrorMessage("An error occurred while setting password");
+        }
+      } else {
+        setErrorMessage("An error occurred while setting password");
+      }
+    
+      setSubmitting(false);
+    }
+  };
+
+  if(!isValid){
+    return (
+      <div>
+        <h1>Link is no longer available</h1>
+      </div>
+    );
+  
+  }
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-200 ">
 
@@ -13,7 +105,7 @@ export default function SetPassword() {
         <div className="bg-white w-80 sm:w-80 md:w-80 lg:w-90 xl:w-90 p-10 rounded-3xl sh gap-40 mx-auto">
             <h1 className="text-3xl pb-2.5 font-bold font-vietnam">Set Password</h1>
 
-            <form className="mt-0.1">
+            <form onSubmit={handleSubmit} className="mt-0.1">
 
               {/* New Password Field */}
               <div className="flex flex-col items-start relative w-full">
@@ -22,6 +114,8 @@ export default function SetPassword() {
                     type="password"
                     placeholder="Enter Password"
                     className="w-full py-px pt-1 pl-0 bg-transparent outline-none focus:ring-0 border-0 border-b-2 border-gray placeholder:text-gray focus:outline-none text-gray placeholder:text-xs"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   
                   {/* Eye icon to toggle password visibility */}
@@ -62,6 +156,8 @@ export default function SetPassword() {
                     type="password"
                     placeholder="Confirm Password"
                     className="w-full py-px pt-1 pl-0 bg-transparent outline-none focus:ring-0 border-0 border-b-2 border-gray placeholder:text-gray focus:outline-none text-gray placeholder:text-xs"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                   
                   {/* Eye icon to toggle password visibility */}
@@ -96,12 +192,14 @@ export default function SetPassword() {
                                 
                 {/* Login button */}
                 <button 
-                  type="button"
+                  type="submit"
                   className="bg-zinc-500 hover:bg-zinc-700  text-white text-sm font-light font-vietnam py-2.5 px-7 rounded-xl mt-4 w-full"
                 >
                   CONFIRM
                 </button>
             </form>
+            {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+            {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
 
           </div>
         </div>
