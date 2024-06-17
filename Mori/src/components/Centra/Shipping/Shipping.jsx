@@ -30,12 +30,14 @@ const Shipping = () => {
     const fetchBatches = async () => {
       try {
         const response = await readBatches();
-        const batches = response.data.map((batch) => ({
-          id: batch.ProductID,
-          weight: batch.Weight + "kg",
-          driedDate: batch.DriedDate,
-          flouredDate: batch.FlouredDate,
-        }));
+        const batches = response.data
+          .filter((batch) => !batch.Shipped) // Filter out shipped batches
+          .map((batch) => ({
+            id: batch.ProductID,
+            weight: batch.Weight + "kg",
+            driedDate: batch.DriedDate,
+            flouredDate: batch.FlouredDate,
+          }));
         setBatchToShip(batches);
         setCheckedState(new Array(batches.length).fill(false));
       } catch (error) {
