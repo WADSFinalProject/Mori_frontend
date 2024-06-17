@@ -3,7 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired) => {
+export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, dried) => {
     try {
         const collectionDetails = {
             CentralID: centralId,
@@ -12,6 +12,7 @@ export const createWetLeavesCollection = async (centralId, date, time, weight, s
             Weight: weight,
             Status: status,
             Expired: expired,
+            Dried: dried,
             // Duration: duration,
         };
 
@@ -56,7 +57,7 @@ export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     }
 };
 
-export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status, expired) => {
+export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status, expired, dried) => {
     try {
         const collectionDetails = {
             Date: date,
@@ -64,6 +65,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, we
             Weight: weight,
             Status: status,
             Expired: expired,
+            Dried: dried,
         };
 
         return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
