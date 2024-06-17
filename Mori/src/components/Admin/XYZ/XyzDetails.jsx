@@ -5,10 +5,10 @@ import { createWarehouse, getAllWarehouses } from "../../../service/warehousesSe
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
-    warehouseName: '',
     email: '',
     phone: '',
     location: '',
+    stock: 0,
     createdDate: new Date().toISOString().substring(0, 10), // Format: YYYY-MM-DD
   };
 
@@ -41,15 +41,19 @@ const XyzDetails = () => {
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     getAllWarehouses().then(res => {
       let warehouses = [];
       res.data.forEach(wh => {
         warehouses.push({
           id: wh.id,
-          warehouseName: "-",
           email: wh.email,
           phone: wh.phone,
           location: wh.location,
+          stock: wh.TotalStock,
           createdDate: "2024-01-01T12:34:56Z"
         })
       })
@@ -59,7 +63,7 @@ const XyzDetails = () => {
     }).catch(err => {
       console.log(err)
     })
-  }, []);
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -84,7 +88,6 @@ const XyzDetails = () => {
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.warehouseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -96,15 +99,7 @@ const XyzDetails = () => {
       );
     }
 
-    if (sortValue === "warehouseName-a-z") {
-      filteredData.sort((a, b) =>
-        a.warehouseName.localeCompare(b.warehouseName)
-      );
-    } else if (sortValue === "warehouseName-z-a") {
-      filteredData.sort((a, b) =>
-        b.warehouseName.localeCompare(a.warehouseName)
-      );
-    } else if (sortValue === "createdDate-asc") {
+    if (sortValue === "createdDate-asc") {
       filteredData.sort(
         (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
       );
@@ -112,6 +107,10 @@ const XyzDetails = () => {
       filteredData.sort(
         (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
       );
+    } else if (sortValue === "stock-asc") {
+      filteredData.sort((a, b) => a.stock-b.stock);
+    } else if (sortValue === "stock-desc") {
+      filteredData.sort((a, b) => b.stock-a.stock);
     }
 
     setSortedData(filteredData);
@@ -128,7 +127,7 @@ const XyzDetails = () => {
     setWarehouseEdit(warehouseToEdit)
     const originalIndex = data.findIndex(
       item =>
-        item.warehouseName === warehouseToEdit.warehouseName &&
+        item.stock === warehouseToEdit.stock &&
         item.email === warehouseToEdit.email &&
         item.phone === warehouseToEdit.phone &&
         item.location === warehouseToEdit.location &&
@@ -139,7 +138,7 @@ const XyzDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
     setNewWarehouse({
-      warehouseName: warehouseToEdit.warehouseName,
+      stock: warehouseToEdit.stock,
       email: warehouseToEdit.email,
       phone: warehouseToEdit.phone,
       location: warehouseToEdit.location,
@@ -163,20 +162,17 @@ const XyzDetails = () => {
 
   const addWarehouse = () => {
     if (
-      newWarehouse.warehouseName &&
+      newWarehouse.stock &&
       newWarehouse.email &&
       newWarehouse.phone &&
-      newWarehouse.location &&
-      newWarehouse.createdDate
+      newWarehouse.location
     ) {
-      // const newWarehouseEntry = { ...newWarehouse };
-
-      // setData((prevState) => [...prevState, newWarehouseEntry]);
-      createWarehouse("dummy_name", newWarehouse.email, newWarehouse.phone)
+      createWarehouse(newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
         .then(res => {
           console.log('Success add new warehouse')
           setAddNewVisible(false);
           setNewWarehouse(initialNewWarehouseState);
+          fetchData();
           handleSearchAndSort([...data, newWarehouseEntry], sortKey);
         })
         .catch(err => {
@@ -264,14 +260,10 @@ const XyzDetails = () => {
                   value={sortKey}
                   onChange={handleSortChange}
                 >
-                  <option value="warehouseName-a-z">
-                    Warehouse Name (A to Z)
-                  </option>
-                  <option value="warehouseName-z-a">
-                    Warehouse Name (Z to A)
-                  </option>
                   <option value="createdDate-asc">Created Date (↑)</option>
                   <option value="createdDate-desc">Created Date (↓)</option>
+                  <option value="stock-asc">Stock (↑)</option>
+                  <option value="stock-desc">Stock (↓)</option>
                 </select>
               </div>
               <div className="flex flex-row gap-2 items-center">
@@ -322,13 +314,6 @@ const XyzDetails = () => {
           </div>
           <form className="grid grid-cols-2 gap-4">
             <input
-              name="warehouseName"
-              value={newWarehouse.warehouseName}
-              onChange={handleInputChange}
-              className="col-span-2 p-2 border rounded-lg"
-              placeholder="Warehouse Name"
-            />
-            <input
               name="email"
               value={newWarehouse.email}
               onChange={handleInputChange}
@@ -341,6 +326,13 @@ const XyzDetails = () => {
               onChange={handleInputChange}
               className="col-span-2 p-2 border rounded-lg"
               placeholder="Phone"
+            />
+            <input
+              name="stock"
+              value={newWarehouse.stock}
+              onChange={handleInputChange}
+              className="col-span-2 p-2 border rounded-lg"
+              placeholder="Stock"
             />
             <input
               name="location"
