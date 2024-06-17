@@ -49,6 +49,7 @@ const MainXYZ = () => {
       // Handle error state if needed
     }
   };
+  
     const chartData = {
       labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
       datasets: [
