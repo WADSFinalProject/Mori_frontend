@@ -15,20 +15,24 @@ const AdminShipmentDetails = () => {
         console.log("Success : ", res);
         const expeditions = res.data;
 
-        // Group batches by AirwayBill
+        // Group batches by expedition ID
         const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-          const airwayBill = expedition.Expedition.AirwayBill.toString(); // Assuming AirwayBill is a string
-          if (!acc[airwayBill]) {
-            acc[airwayBill] = {
-              airwayBill: airwayBill,
+          const id = expedition.Expedition.CentralID.toString();
+          if (!acc[id]) {
+            acc[id] = {
+              id: id,
               batchIds: [],
+              flouredDates: [],
               driedDates: [],
-              status: expedition.Status,
-              checkpoint: `${expedition.Status} | ${new Date(expedition.ExpeditionDate).toLocaleString()}`,
+              weights: [],
+              status: expedition.status,
+              checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
             };
           }
-          acc[airwayBill].batchIds.push(expedition.BatchID);
-          acc[airwayBill].driedDates.push(expedition.DriedDate);
+          acc[id].batchIds.push(expedition.BatchID);
+          acc[id].flouredDates.push(expedition.FlouredDate);
+          acc[id].driedDates.push(expedition.DriedDate);
+          acc[id].weights.push(expedition.Weight);
           return acc;
         }, {});
 
@@ -36,9 +40,11 @@ const AdminShipmentDetails = () => {
         const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
           return {
             id: index + 1,
-            shipmentId: expedition.airwayBill,
-            batchId: expedition.batchIds.join(", "), // Convert batchIds array to a string representation
-            driedDate: expedition.driedDates.join(", "), // Convert driedDates array to a string representation
+            shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
+            batchId: expedition.batchIds,
+            driedDate: expedition.driedDates,
+            flouredDate: expedition.flouredDates,
+            weight: expedition.weights,
             status: expedition.status,
             checkpoint: expedition.checkpoint,
           };
