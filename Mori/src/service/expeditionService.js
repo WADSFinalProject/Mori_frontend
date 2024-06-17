@@ -8,7 +8,7 @@ export const createExpedition = async (AirwayBill, estimatedArrival, totalPackag
         const expeditionDetails = {
             AirwayBill:AirwayBill,
             EstimatedArrival: estimatedArrival,
-            TotalWeight,
+            TotalWeight:TotalWeight,
             TotalPackages: totalPackages,
             ExpeditionDate: expeditionDate,
             ExpeditionServiceDetails: expeditionServiceDetails,
