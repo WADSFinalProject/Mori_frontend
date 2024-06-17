@@ -5,12 +5,14 @@ function getStatusStyles(status) {
   switch (status) {
     case 'Fresh':
       return { backgroundColor: '#99D0D580', color: '#000000' };
-    case 'Near Expiry':
+    case 'Near expiry':
       return { backgroundColor: '#CD484866', color: '#000000' };
     case 'Exceeded':
       return { backgroundColor: '#CD4848', color: '#FFFFFF' };
     case 'Expired':
       return { backgroundColor: '#818181', color: '#FFFFFF' };
+    case 'Processed':
+      return { backgroundColor: '#9AD1B380', color: '#000000' };
     default:
       return { backgroundColor: '', color: '' };
   }
@@ -41,21 +43,24 @@ const BatchBox = ({ batchId, status, date, time, weight, duration, selectedDate 
       setTimeLeft(prevTime => {
         const [hours, minutes, seconds] = prevTime.split(':').map(Number);
         let totalSeconds = hours * 3600 + minutes * 60 + seconds;
-
+  
         if (totalSeconds > 0) {
           totalSeconds -= 1;
+        } else {
+          clearInterval(timer); // Stop the timer when it reaches 00:00:00
         }
-
+  
         const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
         const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const s = String(totalSeconds % 60).padStart(2, '0');
-
+  
         return `${h}:${m}:${s}`;
       });
     }, 1000);
-
+  
     return () => clearInterval(timer);
   }, []);
+  
 
   return (
     <div className="self-stretch rounded-2xl overflow-hidden flex flex-col items-start justify-start p-4 pb-0.5 gap-[1px]" style={{ backgroundColor: 'white' }}>
