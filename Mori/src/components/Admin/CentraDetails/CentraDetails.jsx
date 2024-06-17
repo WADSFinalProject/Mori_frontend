@@ -437,14 +437,16 @@ const CentraDetails = () => {
                   </div>
                   <div className="flex flex-col gap-3 w-full">
                     <div className="font-vietnam text-lg font-medium">Status</div>
-                    <input
-                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                      id="status"
-                      type="text"
+                    <select
                       name="status"
                       value={newMachine.status}
                       onChange={handleInputChange}
-                    />
+                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                    >
+                      <option value="">Choose Status</option>
+                      <option value="idle">Idle</option>
+                      <option value="running">Running</option>
+                    </select>
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 w-full">
@@ -496,7 +498,6 @@ const CentraDetails = () => {
               </div>
             </>
           )}
-
         </div>
       )}
       <DeleteConfirmationModal
