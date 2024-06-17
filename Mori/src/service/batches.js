@@ -54,24 +54,40 @@ export const readBatch = async (batchId) => {
     }
 };
 
-export const updateBatch = async (batchId, description, flouringID, dryingID) => {
-    try {
-        const batchDetails = {
-            Description: description,
-            FlouringID: flouringID,
-            DryingID: dryingID,
-        };
+// export const updateBatch = async (batchId, description, flouringID, dryingID) => {
+//     try {
+//         const batchDetails = {
+//             Description: description,
+//             FlouringID: flouringID,
+//             DryingID: dryingID,
+//         };
 
-        return axios.put(host + `/secured/batches/${batchId}`, batchDetails, {
+//         return axios.put(host + `/secured/batches/${batchId}`, batchDetails, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//         });
+//     } catch (error) {
+//         console.log("Error updating batch: ", error);
+//         throw new Error(error);
+//     }
+// };
+
+export const BatchShipped = async (batchId) => {  // ini langsung set the shipped status jadi True HEHEHEHEH
+    try {
+
+        return axios.put(host +`secured/batchesShipped/${batch_id}`, batchDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
+
     } catch (error) {
-        console.log("Error updating batch: ", error);
+        console.log("Error updating batch status: ", error);
         throw new Error(error);
     }
-};
+}
+
 
 export const deleteBatch = async (batchId) => {
     try {
