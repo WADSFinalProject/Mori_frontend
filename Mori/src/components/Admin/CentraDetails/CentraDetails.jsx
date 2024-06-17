@@ -454,6 +454,7 @@ const CentraDetails = () => {
                     id="duration"
                     type="text"
                     name="duration"
+                    placeholder="HH:MM:SS"
                     value={newMachine.duration}
                     onChange={handleInputChange}
                   />
@@ -495,6 +496,7 @@ const CentraDetails = () => {
               </div>
             </>
           )}
+
         </div>
       )}
       <DeleteConfirmationModal

@@ -9,7 +9,7 @@ export const addDryingMachine = async (centraId, capacity, status, duration) => 
             CentraID: centraId,
             Capacity: capacity,
             Status: status,
-            Duration: duration,
+            Duration: duration, // Ensure this matches the expected format
         };
 
         return axios.post(host + "/secured/drying-machine/create/", machineDetails, {
