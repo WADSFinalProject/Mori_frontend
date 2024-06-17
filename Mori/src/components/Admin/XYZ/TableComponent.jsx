@@ -12,13 +12,13 @@ export const TableComponent = ({ data, onEditClick }) => {
         <thead className="sticky bg-white top-0">
           <tr>
             <th className="text-base font-medium text-center border-b-2 py-3">
-              Warehouse Name
-            </th>
-            <th className="text-base font-medium text-center border-b-2 py-3">
               Email
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
               Phone
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Stock
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
               Location
@@ -40,13 +40,6 @@ export const TableComponent = ({ data, onEditClick }) => {
               }`}
             >
               <td
-                className={`font-semibold text-black text-base text-center py-4 ${
-                  index === data.length - 1 ? "border-b-0" : "border-b-2"
-                }`}
-              >
-                {row.warehouseName}
-              </td>
-              <td
                 className={`font-normal text-black text-base text-center py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
                 }`}
@@ -59,6 +52,13 @@ export const TableComponent = ({ data, onEditClick }) => {
                 }`}
               >
                 {row.phone}
+              </td>
+              <td
+                className={`font-semibold text-black text-base text-center py-4 ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                }`}
+              >
+                {row.stock}
               </td>
               <td
                 className={`font-normal text-black text-base text-center py-4 ${
