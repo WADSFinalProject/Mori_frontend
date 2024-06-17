@@ -121,7 +121,7 @@ const AdminShipmentDetails = () => {
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
-
+  const [expeditionData, setExpeditionData] = useState([])
   useEffect(() => {
     readExpeditions()
       .then((res) => {
@@ -143,7 +143,7 @@ const AdminShipmentDetails = () => {
 
   
         // Set your state with resArr
-        setExpeditionData(resArr); // assuming you have a state setter for expedition data
+        setExpeditionData(resArr); 
       })
       .catch((err) => {
         console.log("Error : ", err);
@@ -154,7 +154,7 @@ const AdminShipmentDetails = () => {
     // Calculate total shipments count
     const uniqueShipmentIds = new Set(data.map((item) => item.shipmentId));
     setTotalShipments(uniqueShipmentIds.size);
-  }, [data]);
+  }, [expeditionData]);
 
   useEffect(() => {
     handleSearchAndFilter(searchQuery, filterKey);
