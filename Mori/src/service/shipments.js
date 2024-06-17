@@ -41,6 +41,27 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
     }
 };
 
+export const readExpeditionsByCentra = async (centraId, skip = 0, limit = 100) => {
+    try {
+        return axios.get(host + `/all_expeditions/${centraId}`, {
+            params: {
+                centraId : centraId,
+                skip: skip,
+                limit: limit,
+            },
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error reading shipments: ", error);
+        throw new Error(error);
+    }
+};
+
+
+
+
 
 
 export const updateShipment = async (shipment_id, batch_id, description, status, weight, issue_description) => {

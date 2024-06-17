@@ -136,8 +136,8 @@ const AdminShipmentDetails = () => {
             driedDate: expedition.batches.DriedDate, 
             flouredDate: expedition.batches.FlouredDate, 
             weight: expedition.batches.Weight , 
-            status: expedition.checkpoint_status, 
-            checkpointDate: expedition.checkpoint_statusdate,
+            status: expedition.expedition.Status, 
+            checkpoint: expedition.checkpoint,
           };
         });
 
