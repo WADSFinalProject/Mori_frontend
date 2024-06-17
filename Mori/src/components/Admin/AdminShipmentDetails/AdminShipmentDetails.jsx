@@ -135,7 +135,7 @@ const AdminShipmentDetails = () => {
             shipmentId: expedition.expedition.ExpeditionID,
             driedDate: expedition.batches.DriedDate, 
             flouredDate: expedition.batches.FlouredDate, 
-            weight: expedition.batches.weight , 
+            weight: expedition.batches.Weight , 
             status: expedition.checkpoint_status, 
             checkpointDate: expedition.checkpoint_statusdate,
           };

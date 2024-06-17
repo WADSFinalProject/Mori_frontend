@@ -89,7 +89,6 @@ export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
     }
 };
 
-<<<<<<< Updated upstream
 export const getWetLeavesConversion  = async (centraId) => {
     try {
         return axios.get(host + `/secured/wet-leaves-collections/conversion`, {
@@ -102,7 +101,6 @@ export const getWetLeavesConversion  = async (centraId) => {
         throw new Error(error);
     }
 };
-=======
 export const getWetLeavesWeight = async(centraId) => {
     try{
         return axios.get(host +"/wet-leaves-totalWeight/"), {
@@ -116,4 +114,3 @@ export const getWetLeavesWeight = async(centraId) => {
     }
 };
 
->>>>>>> Stashed changes

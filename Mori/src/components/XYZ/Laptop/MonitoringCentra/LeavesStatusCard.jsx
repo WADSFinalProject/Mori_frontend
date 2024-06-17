@@ -66,7 +66,7 @@ const LeavesStatusDashboard = () => {
 
   const warehouseData = {
 
-    weights =  getWetLeavesWeight(12)
+    // weights =  getWetLeavesWeight(12)
     
     Kupang: {
       personInCharge: { name: 'John Doe', email: 'john.doe@kupang.com' },
