@@ -6,6 +6,8 @@ import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBox from './DryingMachineBox'; // Import the DryingMachineBoxDashboard component
 import FlouringMachineBox from './FlouringMachineBox';
 
+import { getWetLeavesWeight } from '../../../../service/wetLeaves';
+
 const LeavesStatusCard = ({ title, totalWeight, proportions, colors, labels }) => {
   const calculateWeights = (total) => {
     return proportions.map(proportion => (total * proportion).toFixed(1));
@@ -63,6 +65,9 @@ const LeavesStatusDashboard = () => {
   const warehouses = ['Kupang', 'Warehouse 1', 'Warehouse 2']; // Add other warehouses as needed
 
   const warehouseData = {
+
+    weights =  getWetLeavesWeight(12)
+    
     Kupang: {
       personInCharge: { name: 'John Doe', email: 'john.doe@kupang.com' },
       wetLeaves: { totalWeight: 28.1, proportions: [13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1], colors: ['#CCE8EA', '#4D946D', '#CD4848'], labels: ['Wet Leaves', 'Drying', 'Near Expiry'] },
