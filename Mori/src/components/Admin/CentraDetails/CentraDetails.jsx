@@ -28,6 +28,31 @@ const CentraDetails = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [locationToDelete, setLocationToDelete] = useState(null);
   const [centraToEdit, setCentraToEdit] = useState(null);
+  const [machines, setMachines] = useState([]);
+  const [isAddNewVisible2, setIsAddNewVisible2] = useState(false);
+  const [newMachine, setNewMachine] = useState({
+    type: '',
+    capacity: '',
+    status: '',
+    duration: ''
+  });
+
+
+  const handleClick = () => {
+    if (isAddNewVisible2) {
+      setMachines([...machines, newMachine]);
+      setNewMachine({ type: '', capacity: '', status: '', duration: '' });
+    }
+    setIsAddNewVisible2(!isAddNewVisible2);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewMachine((prevMachine) => ({
+      ...prevMachine,
+      [name]: value,
+    }));
+  };
 
   const handleDeleteClick = (index) => {
     setLocationToDelete(sortedData[index]);
@@ -174,6 +199,7 @@ const CentraDetails = () => {
     }
   };
 
+
   const updateLocation = () => {
     if (
       newLocation.location &&
@@ -289,22 +315,6 @@ const CentraDetails = () => {
               className="col-span-1 p-2 border rounded-lg"
               placeholder="Location"
             />
-            <input
-              type="number"
-              name="dryingMachines"
-              value={newLocation.dryingMachines}
-              onChange={handleInputChange}
-              className="col-span-1 p-2 border rounded-lg"
-              placeholder="Drying Machines"
-            />
-            <input
-              type="number"
-              name="flouringMachines"
-              value={newLocation.flouringMachines}
-              onChange={handleInputChange}
-              className="col-span-1 p-2 border rounded-lg"
-              placeholder="Flouring Machines"
-            />
             <div className="col-span-2 flex justify-between">
               {isEditVisible && (
                 <button
@@ -330,6 +340,164 @@ const CentraDetails = () => {
                 >
                   {isAddNewVisible ? "Add Location" : "Save Changes"}
                 </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-white bg-[#CD4848] rounded-lg ml-2"
+                  onClick={handleClick}
+                >
+                  {isAddNewVisible2 ? "Save Changes" : "Add Machine"}
+                </button>
+
+                {isAddNewVisible2 && (
+        <div className="my-4 p-4 border rounded-lg">
+          <input
+            type="text"
+            name="type"
+            placeholder="Machine Type"
+            value={newMachine.type}
+            onChange={handleChange}
+            className="px-2 py-1 border rounded mr-2"
+          />
+          <input
+            type="text"
+            name="capacity"
+            placeholder="Capacity"
+            value={newMachine.capacity}
+            onChange={handleChange}
+            className="px-2 py-1 border rounded mr-2"
+          />
+          <input
+            type="text"
+            name="status"
+            placeholder="Status"
+            value={newMachine.status}
+            onChange={handleChange}
+            className="px-2 py-1 border rounded mr-2"
+          />
+          <input
+            type="text"
+            name="duration"
+            placeholder="Duration"
+            value={newMachine.duration}
+            onChange={handleChange}
+            className="px-2 py-1 border rounded"
+          />
+        </div>
+      )}
+
+      <table className="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th className="py-2">Type</th>
+            <th className="py-2">Capacity</th>
+            <th className="py-2">Status</th>
+            <th className="py-2">Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {machines.map((machine, index) => (
+            <tr key={index} className="border-t">
+              <td className="py-2">{machine.type}</td>
+              <td className="py-2">{machine.capacity}</td>
+              <td className="py-2">{machine.status}</td>
+              <td className="py-2">{machine.duration}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <table className="w-full border-separate border-spacing-0">
+        <thead className="sticky bg-white top-0">
+          <tr>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Machine Type
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Capacity
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Status
+            </th>
+            <th className="text-base font-medium text-center border-b-2 py-3">
+              Duration
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {machines.map((machine, index) => (
+            <tr key={index} className="border-t border-gray-300">
+              <td className="py-2 border-r border-gray-300">{machine.type}</td>
+              <td className="py-2 border-r border-gray-300">{machine.capacity}</td>
+              <td className="py-2 border-r border-gray-300">{machine.status}</td>
+              <td className="py-2">{machine.duration}</td>
+            </tr>
+          ))}
+          {data.map((row, index) => (
+            <tr
+              key={index}
+              className={`${
+                index === data.length - 1 ? "border-b-0" : "border-b-2"
+              } border-t border-gray-300`}
+            >
+              <td
+                className={`font-semibold text-black text-base text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                {row.location}
+              </td>
+              <td
+                className={`font-normal text-black text-base text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                {row.picName}
+              </td>
+              <td
+                className={`font-normal text-base text-black text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                {row.email}
+              </td>
+              <td
+                className={`font-normal text-base text-black text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                {row.phone}
+              </td>
+              <td
+                className={`font-semibold text-black text-sm text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                <div className="bg-[#9AD1B3] py-2 rounded-md inline-block px-4">
+                  {row.dryingMachines} Machines
+                </div>
+              </td>
+              <td
+                className={`font-semibold text-black text-sm text-center ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                } py-4`}
+              >
+                <div className="bg-[#E0EA74] py-2 rounded-md inline-block px-4">
+                  {row.flouringMachines} Machines
+                </div>
+              </td>
+              <td
+                className={`py-4 ${
+                  index === data.length - 1 ? "border-b-0" : "border-b-2"
+                }`}
+              >
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+
+            
               </div>
             </div>
           </form>
