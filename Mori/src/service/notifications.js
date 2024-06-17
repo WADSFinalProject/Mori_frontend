@@ -1,11 +1,11 @@
 import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
-export const getNotifications = async () => {
+export const getNotifications = async (centraid) => {
     try {
-        return axios.get(host + "/secured/notifications", {
+        return await axios.get(`${host}/secured/notifications/12`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -15,3 +15,4 @@ export const getNotifications = async () => {
         throw new Error(error);
     }
 };
+
