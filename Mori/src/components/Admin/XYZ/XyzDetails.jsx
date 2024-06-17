@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { createWarehouse, getAllWarehouses } from "../../../service/warehousesService";
+import { createWarehouse, editWarehouse, getAllWarehouses } from "../../../service/warehousesService";
 
 const XyzDetails = () => {
   const initialNewWarehouseState = {
+    id: 0,
     email: '',
     phone: '',
     location: '',
@@ -127,6 +128,7 @@ const XyzDetails = () => {
     setWarehouseEdit(warehouseToEdit)
     const originalIndex = data.findIndex(
       item =>
+        item.id === warehouseEdit.id &&
         item.stock === warehouseToEdit.stock &&
         item.email === warehouseToEdit.email &&
         item.phone === warehouseToEdit.phone &&
@@ -138,6 +140,7 @@ const XyzDetails = () => {
     setEditVisible(true);
     setAddNewVisible(false);
     setNewWarehouse({
+      id: warehouseEdit.id,
       stock: warehouseToEdit.stock,
       email: warehouseToEdit.email,
       phone: warehouseToEdit.phone,
@@ -176,7 +179,7 @@ const XyzDetails = () => {
           handleSearchAndSort([...data, newWarehouseEntry], sortKey);
         })
         .catch(err => {
-          console.log(err)
+          alert(err)
         });
     } else {
       alert('Please fill in all fields');
@@ -185,21 +188,22 @@ const XyzDetails = () => {
 
   const updateWarehouse = () => {
     if (
-      newWarehouse.warehouseName &&
+      newWarehouse.stock &&
       newWarehouse.email &&
       newWarehouse.phone &&
       newWarehouse.location &&
       newWarehouse.createdDate
     ) {
-      updateWarehouse(warehouseEdit.id, "dummy_name_edit", warehouseEdit.email, warehouseEdit.phone)
+      editWarehouse(newWarehouse.id, newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
         .then(res => {
           console.log(res)
           setEditVisible(false);
           setNewWarehouse(initialNewWarehouseState);
           setEditWarehouseIndex(null);
-          handleSearchAndSort(updatedData, sortKey);
+          fetchData();
+          
         })
-        .catch(err => console.log(err))
+        .catch(err => alert(err))
     } else {
       alert('Please fill in all fields');
     }
