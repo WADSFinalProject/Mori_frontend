@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import NoteModal from "./NoteModal";
-import { deleteShipment } from "../../../../service/shipments";
 
 export const TableComponent = ({ data, onDelete}) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
