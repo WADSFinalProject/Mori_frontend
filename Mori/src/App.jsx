@@ -88,7 +88,6 @@ function App() {
         <Route path="/xyz/m/arrivalconfirmation" element={<ArrivalConfirmation />}/>
         <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />}/>
         <Route path="/xyz/m/shippinginformation" element={<XYZShippingInformationMobile />}/>
-
         {/* hrs ikutin shipment id */}
         <Route path="/xyz/m/shipmentdetails" element={<XYZShipDetails />}/>
 
