@@ -89,3 +89,16 @@ export const deleteFlouringMachine = async (machineId) => {
         throw new Error(error);
     }
 };
+
+// export const updateFlouringMachine = async (machineId, updateData) => {
+//     try {
+//         return axios.put(host + `/secured/flouring_machines/${machineId}`, updateData, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//         });
+//     } catch (error) {
+//         console.log("Error updating flouring machine: ", error);
+//         throw new Error(error);
+//     }
+// };

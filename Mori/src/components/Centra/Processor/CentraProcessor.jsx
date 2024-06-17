@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+  import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import { Link } from "react-router-dom";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
-import { Pie, Doughnut } from "react-chartjs-2";
-import Chart from "chart.js/auto";
-import axios from "axios";
+import { Doughnut } from "react-chartjs-2";
 import { readWetLeavesCollections } from "../../../service/wetLeaves.js";
 import { readDriedLeaves } from "../../../service/driedLeaves.js";
 import { readBatches } from "../../../service/batches.js";
@@ -75,14 +73,12 @@ const ChartWithBox = ({ data, label, labelStyle }) => (
 export default function Processor() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
-  // const location = useLocation();
-  const initialActiveTab = location.state?.activeTab || "drying"; // Default to drying tab if state not available
+  const initialActiveTab = "drying"; // Default to drying tab if state not available
   const [activeTab, setActiveTab] = useState(initialActiveTab);
 
   const [dryingMachines, setDryingMachines] = useState([]);
   const [flouringMachines, setFlouringMachines] = useState([]);
 
-  // make total leaves weight accessible
   const [totalWetLeaves, setTotalWetLeaves] = useState(0);
   const [totalDriedLeaves, setTotalDriedLeaves] = useState(0);
   const [totalFlouredLeaves, setTotalFlouredLeaves] = useState(0);
@@ -94,60 +90,55 @@ export default function Processor() {
     const fetchDryingMachines = async () => {
       try {
         const response = await readDryingMachines();
-        console.log("Drying Machines:", response.data); // Log drying machines data
-        
-        // Normalize the property names if necessary
+        console.log("Drying Machines:", response.data);
+
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
-          capacity: machine.capacity || machine.Capacity, // Ensure 'capacity' is assigned correctly
-          currentLoad: 0, // Assuming starting with 0 load
+          capacity: machine.capacity || machine.Capacity,
+          currentLoad: 0,
         }));
-  
+
         setDryingCapacities(machinesWithProperties);
         setDryingMachines(machinesWithProperties);
       } catch (error) {
         console.log("Error fetching drying machines: ", error);
       }
     };
-  
+
     fetchDryingMachines();
   }, []);
-  
 
   console.log("Drying Capacity:", dryingCapacities);
 
-  // Handle distributing wet leaves weight to drying machines
   const distributeWetLeavesToMachines = () => {
     if (dryingCapacities.length === 0 || totalWetLeaves === 0) {
       console.log("No machines or wet leaves data available.");
       return;
     }
-  
-    const totalCapacity = dryingCapacities.reduce((total, machine) => total + machine.capacity, 0);
-  
-    if (totalCapacity < totalWetLeaves) {
-      console.log("Total capacity is less than total wet leaves weight.");
-      return;
-    }
-  
+
     let remainingWeight = totalWetLeaves;
     const machinesCopy = [...dryingCapacities];
-  
-    while (remainingWeight > 0) {
+
+    while (remainingWeight > 0 && machinesCopy.length > 0) {
       const randomIndex = Math.floor(Math.random() * machinesCopy.length);
       const machine = machinesCopy[randomIndex];
       const remainingCapacity = machine.capacity - machine.currentLoad;
       const weightToAdd = Math.min(remainingWeight, remainingCapacity);
-      machine.currentLoad += weightToAdd;
-      remainingWeight -= weightToAdd;
-  
-      if (machine.currentLoad === machine.capacity) {
+
+      if (weightToAdd > 0) {
+        machine.currentLoad += weightToAdd;
+        remainingWeight -= weightToAdd;
+
+        if (machine.currentLoad === machine.capacity) {
+          machinesCopy.splice(randomIndex, 1);
+        }
+      } else {
         machinesCopy.splice(randomIndex, 1);
       }
     }
-  
+
     setDryingCapacities(machinesCopy);
-  
+
     machinesCopy.forEach(async machine => {
       try {
         await updateMachineCurrentLoad(machine.id, machine.currentLoad);
@@ -155,73 +146,73 @@ export default function Processor() {
         console.log(`Error updating machine ${machine.id} current load:`, error);
       }
     });
+
+    if (remainingWeight > 0) {
+      console.log(`Remaining wet leaves weight: ${remainingWeight}`);
+    }
   };
-    // Trigger distribution when dryingMachines or totalWetLeaves changes
-    useEffect(() => {
-        distributeWetLeavesToMachines();
-    }, [dryingMachines, totalWetLeaves]);
 
-
+  useEffect(() => {
+    distributeWetLeavesToMachines();
+  }, [dryingMachines, totalWetLeaves]);
 
   useEffect(() => {
     const fetchFlouringMachines = async () => {
       try {
         const response = await readFlouringMachines();
-        console.log("Flouring Machines:", response.data); // Log flouring machines data
-  
-        // Normalize the property names if necessary
+        console.log("Flouring Machines:", response.data);
+
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
-          capacity: machine.capacity || machine.Capacity, // Ensure 'capacity' is assigned correctly
-          currentLoad: 0, // Assuming starting with 0 load
+          capacity: machine.capacity || machine.Capacity,
+          currentLoad: 0,
         }));
-  
+
         setFlouringCapacities(machinesWithProperties);
-        setFlouringMachines(response.data);
+        setFlouringMachines(machinesWithProperties);
       } catch (error) {
         console.log("Error fetching flouring machines: ", error);
       }
     };
-  
+
     fetchFlouringMachines();
   }, []);
-  
-    
 
   console.log("Flouring Capacity:", flouringCapacities);
 
-  // Handle distributing wet leaves weight to drying machines
+  const updateMachineCurrentLoad = async (machineId, currentLoad) => {
+    console.log(`Simulating update for machine ${machineId} with current load ${currentLoad}`);
+  };
+
   const distributeDriedLeavesToMachines = () => {
     if (flouringCapacities.length === 0 || totalDriedLeaves === 0) {
       console.log("No machines or dried leaves data available.");
       return;
     }
-  
-    const totalCapacity = flouringCapacities.reduce((total, machine) => total + machine.capacity, 0);
-  
-    if (totalCapacity < totalDriedLeaves) {
-      console.log("Total capacity is less than total dried leaves weight.");
-      return;
-    }
-  
+
     let remainingWeight = totalDriedLeaves;
     const machinesCopy = [...flouringCapacities];
-  
-    while (remainingWeight > 0) {
+
+    while (remainingWeight > 0 && machinesCopy.length > 0) {
       const randomIndex = Math.floor(Math.random() * machinesCopy.length);
       const machine = machinesCopy[randomIndex];
       const remainingCapacity = machine.capacity - machine.currentLoad;
       const weightToAdd = Math.min(remainingWeight, remainingCapacity);
-      machine.currentLoad += weightToAdd;
-      remainingWeight -= weightToAdd;
-  
-      if (machine.currentLoad === machine.capacity) {
+
+      if (weightToAdd > 0) {
+        machine.currentLoad += weightToAdd;
+        remainingWeight -= weightToAdd;
+
+        if (machine.currentLoad === machine.capacity) {
+          machinesCopy.splice(randomIndex, 1);
+        }
+      } else {
         machinesCopy.splice(randomIndex, 1);
       }
     }
-  
+
     setFlouringCapacities(machinesCopy);
-  
+
     machinesCopy.forEach(async machine => {
       try {
         await updateMachineCurrentLoad(machine.id, machine.currentLoad);
@@ -229,13 +220,15 @@ export default function Processor() {
         console.log(`Error updating machine ${machine.id} current load:`, error);
       }
     });
+
+    if (remainingWeight > 0) {
+      console.log(`Remaining dried leaves weight: ${remainingWeight}`);
+    }
   };
-  
-  // Trigger distribution when flouringMachines or totalDriedLeaves changes
+
   useEffect(() => {
     distributeDriedLeavesToMachines();
   }, [flouringMachines, totalDriedLeaves]);
-  
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -318,35 +311,35 @@ export default function Processor() {
 
   useEffect(() => {
     const fetchDriedLeavesData = async () => {
-        try {
-            const response = await readDriedLeaves();
-            console.log("Dried Leaves:", response.data);
-            const collections = response.data;
+      try {
+        const response = await readDriedLeaves();
+        console.log("Dried Leaves:", response.data);
+        const collections = response.data;
 
-            if (Array.isArray(collections)) {
-                let totalDriedLeaves = 0;
-                collections.forEach((collection) => {
-                    totalDriedLeaves += collection.Weight;
-                });
+        if (Array.isArray(collections)) {
+          let totalDriedLeaves = 0;
+          collections.forEach((collection) => {
+            totalDriedLeaves += collection.Weight;
+          });
 
-                console.log("Total Weight of Dried Leaves:", totalDriedLeaves);
-                setTotalDriedLeaves(totalDriedLeaves);
+          console.log("Total Weight of Dried Leaves:", totalDriedLeaves);
+          setTotalDriedLeaves(totalDriedLeaves);
 
-                setDriedLeavesData({
-                    ...driedLeavesData,
-                    datasets: [
-                        {
-                            ...driedLeavesData.datasets[0],
-                            data: [totalDriedLeaves, 100 - totalDriedLeaves],
-                        },
-                    ],
-                });
-            } else {
-                console.log("Expected an array of dried leaves data, but received:", collections);
-            }
-        } catch (error) {
-            console.log("Error fetching dried leaves data: ", error);
+          setDriedLeavesData({
+            ...driedLeavesData,
+            datasets: [
+              {
+                ...driedLeavesData.datasets[0],
+                data: [totalDriedLeaves, 100 - totalDriedLeaves],
+              },
+            ],
+          });
+        } else {
+          console.log("Expected an array of dried leaves data, but received:", collections);
         }
+      } catch (error) {
+        console.log("Error fetching dried leaves data: ", error);
+      }
     };
 
     fetchDriedLeavesData();
@@ -392,7 +385,9 @@ export default function Processor() {
 
   const renderMachines = () => {
     const machines = activeTab === "drying" ? dryingMachines : flouringMachines;
-    // console.log("Rendering Machines:", machines); // Log machines to be rendered
+    if (!machines || machines.length === 0) {
+      return <div>No machines available</div>;
+    }
     return machines.map((machine, index) => {
       const key = machine.id ? machine.id : index; // Ensure machine.id is unique and defined
       const isLastCard = index === machines.length - 1;
@@ -406,7 +401,6 @@ export default function Processor() {
       );
     });
   };
-  
 
   const MachineCard = ({ machine, extraMarginClass }) => {
     let chartColor = "#99D0D580";
@@ -415,18 +409,24 @@ export default function Processor() {
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
-  
+
     const linkTo =
       activeTab === "drying"
         ? `/dryingmachine/${machine.number}`
         : `/flouringmachine/${machine.number}`;
-  
+
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
     const machineStatusClass = (machine.status || "").toLowerCase();
-  
+
     return (
-      <div className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`} style={{ width: "auto", flexGrow: 1, minWidth: "300px", minHeight: "100px", maxWidth: "none", position: "relative" }}>
-        <div className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center" style={{ position: "absolute", left: "15px", top: "15px" }}>
+      <div
+        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
+        style={{ width: "auto", flexGrow: 1, minWidth: "300px", minHeight: "100px", maxWidth: "none", position: "relative" }}
+      >
+        <div
+          className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
+          style={{ position: "absolute", left: "15px", top: "15px" }}
+        >
           <span className="font-bold text-sm">{machine.number}</span>
         </div>
         <div className="machine-info flex justify-center items-center w-full mb-2">
@@ -454,20 +454,25 @@ export default function Processor() {
             </div>
           </div>
         </div>
-        <button className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`} style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }} disabled={machine.currentLoad === 0}>
+        <button
+          className={`start-btn text-white py-1 px-6 ${machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+          style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }}
+          disabled={machine.currentLoad === 0}
+        >
           <Link to={linkTo} className="flex items-center justify-center h-full w-full">
             START PROCESS
           </Link>
         </button>
-        <div className="last-updated" style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}>
+        <div
+          className="last-updated"
+          style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}
+        >
           <div>Last updated:</div>
           <div style={{ fontWeight: "bold" }}>{lastUpdatedTime}</div>
         </div>
       </div>
     );
-  };  
-  
-
+  };
 
   return (
     <div className="bg-000000">
