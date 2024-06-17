@@ -213,7 +213,7 @@ const StockManagement = () => {
                 <img src={back} alt="back" className="w-5 mr-2" />
               </button>
               <div className="font-vietnam text-xl font-bold select-none">
-                Shipping Information
+                Stock Management
               </div>
               <svg
                 className="hover:cursor-pointer"
