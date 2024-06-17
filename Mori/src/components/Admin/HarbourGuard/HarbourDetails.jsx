@@ -4,6 +4,7 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import {
   addHarborGuard,
   getAllHarborGuards,
+  modifyHarborGuard,
 } from "../../../service/harborGuardService";
 
 const HarbourDetails = () => {
@@ -177,7 +178,6 @@ const HarbourDetails = () => {
           setAddNewVisible(false);
           setNewHarbour(initialNewHarbourState);
           fetchData();
-          handleSearchAndSort([...data, newHarbourEntry], sortKey);
         })
         .catch((err) => {
           console.error("Error : ", err);
@@ -188,15 +188,33 @@ const HarbourDetails = () => {
   };
 
   const updateHarbour = () => {
-    const updatedData = data.map((harbour, index) =>
-      index === editHarbourIndex ? { ...newHarbour } : harbour
-    );
+    if (
+      newHarbour.harbourName &&
+      newHarbour.location &&
+      newHarbour.phone &&
+      newHarbour.openingHour &&
+      newHarbour.closingHour
+    ) {
+      modifyHarborGuard(
+        newHarbour.id,
+        newHarbour.harbourName, 
+        newHarbour.location, 
+        newHarbour.phone, 
+        newHarbour.openingHour, 
+        newHarbour.closingHour
+      ).then(res => {
+        setEditVisible(false);
+        setNewHarbour(initialNewHarbourState);
+        setEditHarbourIndex(null);
+        fetchData();
+      })
+      .catch(err => {
+        console.error(err)
+      })
 
-    setData(updatedData);
-    setEditVisible(false);
-    setNewHarbour(initialNewHarbourState);
-    setEditHarbourIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+    } else {
+      alert("Please fill in all fields");
+    }
   };
 
   const uniqueLocations = [...new Set(data.map((item) => item.location))];

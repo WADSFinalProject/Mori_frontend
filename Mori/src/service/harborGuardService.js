@@ -50,15 +50,18 @@ export const showHarborGuard = async (guard_id) => {
     }
 };
 
-export const modifyHarborGuard = async (guard_id, PIC_name, email, phone) => {
+export const modifyHarborGuard = async (id, harbourName, location, phone, openingHour, closingHour) => {
     try {
         const guardDetails = {
-            PIC_name: PIC_name,
-            email: email,
+            HarbourID: id,
+            HarbourName: harbourName,
+            Location: location,
             phone: phone,
+            OpeningHour: openingHour,
+            ClosingHour: closingHour
         };
 
-        return await axios.put(host + `/secured/harborguards/${guard_id}`, guardDetails, {
+        return await axios.put(host + `/secured/harborguard/${id}`, guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -71,7 +74,7 @@ export const modifyHarborGuard = async (guard_id, PIC_name, email, phone) => {
 
 export const removeHarborGuard = async (guard_id) => {
     try {
-        return await axios.delete(host + `/secured/harborguards/${guard_id}`, {
+        return await axios.delete(host + `/secured/harborguard/${guard_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
