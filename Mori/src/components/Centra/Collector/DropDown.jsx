@@ -12,89 +12,79 @@ function FilterDropdown() {
     const statusOptions = ["None", "Fresh", "Processed", "Near Expiry", "Exceeded", "Expired"];
     const [isOpenStatusDropdown, setIsOpenStatusDropdown] = useState(false);
     const [ampm, setAmPm] = useState("AM");
-    
+    const [expired, setExpired] = useState(false); // Define expired state
+
     useEffect(() => {
-        const wetLeaves = async () => {
-            try {
-                const response = await readWetLeavesCollections();
-                const batches = response.data.map((batch) => {
-                    const timeParts = batch.Time.split(':');
-                    const hours = parseInt(timeParts[0], 10);
-                    const minutes = parseInt(timeParts[1], 10);
+      const wetLeaves = async () => {
+          try {
+              const response = await readWetLeavesCollections();
+              const batches = response.data.map((batch) => {
+                  const timeParts = batch.Time.split(':');
+                  const hours = parseInt(timeParts[0], 10);
+                  const minutes = parseInt(timeParts[1], 10);
 
-                    const formattedTime = formatTime(hours, minutes);
+                  const formattedTime = formatTime(hours, minutes);
 
-                    const batchDateParts = batch.Date.split('-');
-                    const batchTime = new Date(
-                        batchDateParts[0],
-                        batchDateParts[1] - 1,
-                        batchDateParts[2],
-                        hours,
-                        minutes,
-                        0
-                    );
+                  const batchDateParts = batch.Date.split('-');
+                  const batchTime = new Date(
+                      batchDateParts[0],
+                      batchDateParts[1] - 1,
+                      batchDateParts[2],
+                      hours,
+                      minutes,
+                      0
+                  );
 
-                    const currentTime = new Date();
+                  const currentTime = new Date();
 
-                    let durationInMilliseconds = batchTime.getTime() + (4 * 60 * 60 * 1000) - currentTime.getTime();
+                  let durationInMilliseconds = batchTime.getTime() + (4 * 60 * 60 * 1000) - currentTime.getTime();
 
-                    if (durationInMilliseconds < 0) {
-                        durationInMilliseconds = 0;
-                    }
+                  if (durationInMilliseconds < 0) {
+                      durationInMilliseconds = 0;
+                  }
 
-                    const hoursLeft = Math.floor(durationInMilliseconds / (1000 * 60 * 60));
-                    const minutesLeft = Math.floor((durationInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
-                    const secondsLeft = Math.floor((durationInMilliseconds % (1000 * 60)) / 1000);
+                  const hoursLeft = Math.floor(durationInMilliseconds / (1000 * 60 * 60));
+                  const minutesLeft = Math.floor((durationInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+                  const secondsLeft = Math.floor((durationInMilliseconds % (1000 * 60)) / 1000);
 
-                    const formattedDuration = `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+                  const formattedDuration = `${hoursLeft.toString().padStart(2, '0')}:${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
 
+                  let status = batch.Status;
+                  let expired = batch.Expired
+                  // Example usage
+                console.log(`Status: ${status}, Expired: ${expired}`);
 
-                  let status = "";
-                  if (durationInMilliseconds <= 0) {
-                      status = "Exceeded";
+                  if (durationInMilliseconds <= 0 && expired == true) {
+                      status = "Expired";
+                  } else if (durationInMilliseconds <= 0 && expired == false) {
+                        status = "Exceeded";
                   } else if (durationInMilliseconds < (60 * 60 * 1000)) {
                       status = "Near Expiry";
                   } else if (durationInMilliseconds > (3 * 60 * 60 * 1000)) {
                       status = "Fresh";
-                  } else {
-                      status = batch.Status;
                   }
 
-                  if (status === "Exceeded" || status === "Near Expiry" || status === "Fresh") {
-                    handleUpdateStatus(hours, minutes, batch, status);
-                }
+                //   // Update status if necessary
+                //   if (status == "Expired" || status === "Exceeded" || status === "Near Expiry" || status === "Fresh") {
+                //       handleUpdateStatus(hours, minutes, batch, status);
+                //   }
 
+                  return {
+                      batchId: batch.WetLeavesBatchID,
+                      weight: batch.Weight + "kg",
+                      date: formatDate(new Date(batch.Date)),
+                      time: formattedTime,
+                      status: status,
+                      duration: formattedDuration
+                  };
+              });
 
-                    // let status = "";
-                    // if (durationInMilliseconds <= 0) {
-                    //     status = "Exceeded";
-                    // } else if (durationInMilliseconds < (60 * 60 * 1000)) {
-                    //     status = "Near Expiry";
-                    // } else if (durationInMilliseconds > (3 * 60 * 60 * 1000)) {
-                    //     status = "Fresh";
-                    // } else {
-                    //     status = batch.Status;
-                    // }
+              setBatchData(batches);
+          } catch (error) {
+              console.error("Error fetching batches: ", error);
+          }
+      };
 
-                    // if (status === "Exceeded" || status === "Near Expiry" || status === "Fresh") {
-                    //     handleUpdateStatus(hours, minutes, batch, status);
-                    // }
-
-                    return {
-                        batchId: batch.WetLeavesBatchID,
-                        weight: batch.Weight + "kg",
-                        date: formatDate(new Date(batch.Date)),
-                        time: formattedTime,
-                        status: status,
-                        duration: formattedDuration
-                    };
-                });
-
-                setBatchData(batches);
-            } catch (error) {
-                console.error("Error fetching batches: ", error);
-            }
-        };
 
         const formatDate = (date) => {
             return `${date.getDate()} ${date.toLocaleString('en-US', { month: 'long' })} ${date.getFullYear()}`;

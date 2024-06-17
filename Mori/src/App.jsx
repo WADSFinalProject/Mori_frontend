@@ -91,7 +91,6 @@ function App() {
         {/* hrs ikutin shipment id */}
         <Route path="/xyz/m/shipmentdetails" element={<XYZShipDetails />}/>
 
-
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
