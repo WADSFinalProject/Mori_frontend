@@ -85,3 +85,16 @@ export const deleteDriedLeaf = async (leafId) => {
         throw new Error(error);
     }
 };
+
+export const getdryingConversion = async (centraId) =>  {
+    try {
+        return axios.get(host + `/secured/dried_leaves/conversion`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error retrieving conversion rate: ", error);
+        throw new Error(error);
+    }
+};

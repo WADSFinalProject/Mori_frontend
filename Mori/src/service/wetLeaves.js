@@ -89,3 +89,29 @@ export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
         throw new Error(error);
     }
 };
+
+export const getWetLeavesConversion  = async (centraId) => {
+    try {
+        return axios.get(host + `/secured/wet-leaves-collections/conversion`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error getting wet leaves conversion rate: ", error);
+        throw new Error(error);
+    }
+};
+export const getWetLeavesWeight = async(centraId) => {
+    try{
+        return axios.get(host +"/wet-leaves-totalWeight/"), {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    }catch (error) {
+        console.log("Error retrieving weights: ", error);
+        throw new Error(error);
+    }
+};
+
