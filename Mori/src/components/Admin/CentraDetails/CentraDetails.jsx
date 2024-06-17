@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import {
+  createCentra,
   deleteCentra,
   getAllCentras,
   updateCentraDetails,
@@ -9,15 +10,17 @@ import {
 
 const CentraDetails = () => {
   const initialNewLocationState = {
+    id: 0,
     location: "",
-    picName: "",
-    email: "",
-    phone: "",
-    dryingMachines: "",
-    flouringMachines: "",
+    // picName: "",
+    // email: "",
+    // phone: "",
+    // dryingMachines: "",
+    // flouringMachines: "",
   };
 
   const initialNewMachineState = {
+    centraId: "",
     type: "",
     capacity: "",
     status: "",
@@ -70,19 +73,28 @@ const CentraDetails = () => {
 
   const addLocation = () => {
     if (
-      newLocation.location &&
-      newLocation.picName &&
-      newLocation.email &&
-      newLocation.phone &&
-      newLocation.dryingMachines &&
-      newLocation.flouringMachines
+      newLocation.location // &&
+      // newLocation.picName &&
+      // newLocation.email &&
+      // newLocation.phone &&
+      // newLocation.dryingMachines &&
+      // newLocation.flouringMachines
     ) {
-      const newLocationEntry = { ...newLocation };
+      // const newLocationEntry = { ...newLocation };
 
-      setData((prevState) => [...prevState, newLocationEntry]);
-      setAddNewVisible(false);
-      setNewLocation(initialNewLocationState);
-      handleSearchAndSort([...data, newLocationEntry], sortKey);
+      createCentra(newLocation.location)
+        .then(res => {
+          console.log('Success create')
+
+          // setData((prevState) => [...prevState, newLocationEntry]);
+          setAddNewVisible(false);
+          setNewLocation(initialNewLocationState);
+          // handleSearchAndSort([...data, newLocationEntry], sortKey);
+          fetchData();    
+        })
+        .catch(err => {
+          console.error(err)
+        })
     } else {
       alert("Please fill in all fields");
     }
@@ -90,6 +102,7 @@ const CentraDetails = () => {
 
   const addMachine = () => {
     if (
+      newMachine.centraId &&
       newMachine.type &&
       newMachine.capacity &&
       newMachine.status &&
@@ -108,17 +121,18 @@ const CentraDetails = () => {
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = (centraId) => {
+  const handleConfirmDelete = () => {
     // const updatedData = data.filter((_, index) => index !== editLocationIndex);
-    deleteCentra(centraId)
+    deleteCentra(newLocation.id)
       .then((res) => {
         console.log("Success : ", res);
-        setData(updatedData);
+        // setData(updatedData);
         setEditVisible(false);
         setNewLocation(initialNewLocationState);
         setEditLocationIndex(null);
-        handleSearchAndSort(updatedData, sortKey);
+        // handleSearchAndSort(updatedData, sortKey);
         setDeleteModalOpen(false);
+        fetchData();
       })
       .catch((err) => {
         alert("Error : ", err);
@@ -126,17 +140,21 @@ const CentraDetails = () => {
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     getAllCentras()
       .then((res) => {
         console.log("Success : ", res);
         const resArr = res.data.map((dt) => ({
           id: dt.CentralID,
           location: dt.Address,
-          picName: "Nama orang",
-          email: "Nama@gmail.com",
-          phone: "081816032859",
-          dryingMachines: 3,
-          flouringMachines: 1,
+          // picName: "Nama orang",
+          // email: "Nama@gmail.com",
+          // phone: "081816032859",
+          // dryingMachines: 3,
+          // flouringMachines: 1,
         }));
         setData(resArr);
         handleSearchAndSort(resArr, sortKey); // Update sortedData
@@ -144,7 +162,7 @@ const CentraDetails = () => {
       .catch((err) => {
         console.log("Error : ", err);
       });
-  }, []);
+  }
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -164,21 +182,22 @@ const CentraDetails = () => {
   const handleSearchAndSort = (data, sortValue) => {
     let filteredData = data.filter(
       (row) =>
-        row.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.picName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.phone.toLowerCase().includes(searchQuery.toLowerCase())
+        row.location.toLowerCase().includes(searchQuery.toLowerCase()) // ||
+        // row.picName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        // row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        // row.phone.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortValue === "location-a-z") {
       filteredData.sort((a, b) => a.location.localeCompare(b.location));
     } else if (sortValue === "location-z-a") {
       filteredData.sort((a, b) => b.location.localeCompare(a.location));
-    } else if (sortValue === "picname-a-z") {
-      filteredData.sort((a, b) => a.picName.localeCompare(b.picName));
-    } else if (sortValue === "picname-z-a") {
-      filteredData.sort((a, b) => b.picName.localeCompare(a.picName));
-    }
+    } 
+    // else if (sortValue === "picname-a-z") {
+    //   filteredData.sort((a, b) => a.picName.localeCompare(b.picName));
+    // } else if (sortValue === "picname-z-a") {
+    //   filteredData.sort((a, b) => b.picName.localeCompare(a.picName));
+    // }
 
     setSortedData(filteredData);
   };
@@ -188,10 +207,11 @@ const CentraDetails = () => {
     setCentraToEdit(locationToEdit);
     const originalIndex = data.findIndex(
       (item) =>
-        item.location === locationToEdit.location &&
-        item.picName === locationToEdit.picName &&
-        item.email === locationToEdit.email &&
-        item.phone === locationToEdit.phone
+        item.id === locationToEdit.id &&
+        item.location === locationToEdit.location // &&
+        // item.picName === locationToEdit.picName &&
+        // item.email === locationToEdit.email &&
+        // item.phone === locationToEdit.phone
     );
 
     setEditLocationIndex(originalIndex);
@@ -199,12 +219,13 @@ const CentraDetails = () => {
     setAddNewVisible(false);
     setAddMachineVisible(false);
     setNewLocation({
+      id: locationToEdit.id,
       location: locationToEdit.location,
-      picName: locationToEdit.picName,
-      email: locationToEdit.email,
-      phone: locationToEdit.phone,
-      dryingMachines: locationToEdit.dryingMachines,
-      flouringMachines: locationToEdit.flouringMachines,
+      // picName: locationToEdit.picName,
+      // email: locationToEdit.email,
+      // phone: locationToEdit.phone,
+      // dryingMachines: locationToEdit.dryingMachines,
+      // flouringMachines: locationToEdit.flouringMachines,
     });
   };
 
@@ -264,8 +285,8 @@ const CentraDetails = () => {
               >
                 <option value="location-a-z">Location (A to Z)</option>
                 <option value="location-z-a">Location (Z to A)</option>
-                <option value="picname-a-z">PIC Name (A to Z)</option>
-                <option value="picname-z-a">PIC Name (Z to A)</option>
+                {/* <option value="picname-a-z">PIC Name (A to Z)</option>
+                <option value="picname-z-a">PIC Name (Z to A)</option> */}
               </select>
             </div>
             <div className="flex flex-row gap-2">
@@ -334,14 +355,38 @@ const CentraDetails = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <button
-                className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                onClick={addLocation}
-              >
-                <div className="text-white font-vietnam text-base font-medium">
-                  ADD CENTRA
+              <div className="col-span-2 flex justify-between">
+                {isEditVisible && (
+                  <button
+                    type="button"
+                    className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
+                    onClick={handleDeleteClick}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      DELETE
+                    </div>
+                  </button>
+                )}
+                <div>
+                  <button
+                    type="button"
+                    className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
+                    onClick={handleBackToList}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      CANCEL
+                    </div>
+                  </button>
+                  <button
+                    className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
+                    onClick={addLocation}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      ADD CENTRA
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
             </>
           )}
           {isAddMachineVisible && (
@@ -405,14 +450,36 @@ const CentraDetails = () => {
                   </div>
                 </div>
               </div>
-              <button
-                className="bg-[#CD4848] rounded py-3 px-6 mt-3 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                onClick={null}
-              >
-                <div className="text-white font-vietnam text-base font-medium">
-                  ADD MACHINE
-                </div>
-              </button>
+              {isEditVisible && (
+                <button
+                  type="button"
+                  className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
+                  onClick={() => setDeleteModalOpen(true)}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    DELETE
+                  </div>
+                </button>
+              )}
+              <div>
+                <button
+                  type="button"
+                  className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
+                  onClick={handleBackToList}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    CANCEL
+                  </div>
+                </button>
+                <button
+                  className="bg-[#CD4848] rounded py-3 px-6 mt-3 items-center justify-center w-fit hover:bg-[#CD4848]/80"
+                  onClick={null}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    ADD MACHINE
+                  </div>
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -420,7 +487,7 @@ const CentraDetails = () => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => handleConfirmDelete(locationToDelete?.id)}
+        onConfirm={handleConfirmDelete}
         locationName={locationToDelete?.location}
       />
     </div>

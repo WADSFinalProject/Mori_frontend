@@ -9,7 +9,7 @@ export const TableComponent = ({ data, onEditClick }) => {
             <th className="text-base font-medium text-center border-b-2 py-3">
               Location
             </th>
-            <th className="text-base font-medium text-center border-b-2 py-3">
+            {/* <th className="text-base font-medium text-center border-b-2 py-3">
               PIC Name
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
@@ -23,7 +23,7 @@ export const TableComponent = ({ data, onEditClick }) => {
             </th>
             <th className="text-base font-medium text-center border-b-2 py-3">
               Flouring Machines
-            </th>
+            </th> */}
             <th className="text-base font-medium text-center border-b-2 py-3">
               Actions
             </th>
@@ -44,7 +44,7 @@ export const TableComponent = ({ data, onEditClick }) => {
               >
                 {row.location}
               </td>
-              <td
+              {/* <td
                 className={`font-normal text-black text-base text-center ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
                 } py-4`}
@@ -82,7 +82,7 @@ export const TableComponent = ({ data, onEditClick }) => {
                 <div className="bg-[#E0EA74] py-2 rounded-md inline-block px-4">
                   {row.flouringMachines} Machines
                 </div>
-              </td>
+              </td> */}
               <td
                 className={`py-4 ${
                   index === data.length - 1 ? "border-b-0" : "border-b-2"
