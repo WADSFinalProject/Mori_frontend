@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import ShippingBox from "./ShippingBox";
-import StatusComponent from "./StatusComponent";
 import "./Shipping.css";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { readBatches } from "../../../service/batches";
 
 const Shipping = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
   const { height } = useWindowSize(); // Get the window height using the useWindowSize hook
-  // Check if the window width is greater than a mobile device width (e.g., 640px)
+  const navigate = useNavigate(); // useNavigate hook to programmatically navigate
 
   const headerHeight = 90;
   const footerHeight = 40;
@@ -68,71 +67,15 @@ const Shipping = () => {
   const checkedCount = checkedState.filter(Boolean).length;
   const batchText = checkedCount === 1 ? "Batch" : "Batches";
 
-  // Dummy data for Shipped tab
-  const shipmentData = [
-    {
-      id: "98478",
-      status: "Missing",
-      batches: [10201, 10273, 10279, 10330, 10345],
-      totalWeight: 72.3,
-      collected: "15 March 2024",
-      time: "07:00 PM",
-    },
-    {
-      id: "34523",
-      status: "Shipped",
-      batches: [10205, 10284],
-      totalWeight: 85.5,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "23498",
-      status: "To Deliver",
-      batches: [10199, 10288, 10305, 10348],
-      totalWeight: 60.2,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "89572",
-      status: "Completed",
-      batches: [10211],
-      totalWeight: 90.1,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "56839",
-      status: "Missing",
-      batches: [10215, 10297, 10315, 10350, 10360, 10370],
-      totalWeight: 75.0,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-  ];
+  const selectedBatches = batchToShip.filter(
+    (batch, index) => checkedState[index]
+  );
 
-  // Filter the data based on the selected filter
-  const filteredData = shipmentData.filter((shipment) => {
-    if (filter === "all") return true;
-    return shipment.status.toLowerCase() === filter.replace("-", " ");
-  });
-
-  // Sort the filtered data
-  const sortedData = filteredData.sort((a, b) => {
-    switch (sort) {
-      case "new-old":
-        return new Date(b.collected) - new Date(a.collected);
-      case "old-new":
-        return new Date(a.collected) - new Date(b.collected);
-      case "heavy-light":
-        return b.totalWeight - a.totalWeight;
-      case "light-heavy":
-        return a.totalWeight - b.totalWeight;
-      default:
-        return 0;
-    }
-  });
+  const handleShipClick = () => {
+    navigate("/centra/arrangeshipment", {
+      state: { batches: selectedBatches },
+    });
+  };
 
   return (
     <div className="max-w-[640px] h-screen relative bg-slate-50 overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border leading-[normal] tracking-[normal] ml-auto mr-auto">
@@ -228,13 +171,13 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center text-base">
               {checkedCount} {batchText}
             </p>
-            <Link
-              to="/centra/arrangeshipment"
+            <button
+              onClick={handleShipClick}
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </Link>
+            </button>
           </div>
         )}
         {allChecked && (
@@ -250,13 +193,13 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center">
               {checkedCount} {batchText}
             </p>
-            <Link
-              to="/centra/arrangeshipment"
+            <button
+              onClick={handleShipClick}
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </Link>
+            </button>
           </div>
         )}
 
