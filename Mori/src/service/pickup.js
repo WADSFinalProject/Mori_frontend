@@ -12,7 +12,7 @@ export const createPickup = async (xyzID, expeditionID, warehouseID, pickupTime)
             pickup_time: pickupTime, // Ensure this matches the expected format
         };
 
-        return axios.post(host + "/pickup/", pickupDetails, {
+        return axios.post(host + "/secured/pickup/", pickupDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -38,7 +38,7 @@ export const readPickup = async (pickupId) => {
 
 export const readPickups = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/pickup/", {
+        return axios.get(host + "/secured/pickup/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -62,7 +62,7 @@ export const updatePickup = async (pickupId, xyzID, expeditionID, warehouseID, p
             pickup_time: pickupTime, // Ensure this matches the expected format
         };
 
-        return axios.put(host + `/pickup/${pickupId}`, pickupDetails, {
+        return axios.put(host + `/secured/pickup/${pickupId}`, pickupDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -75,7 +75,7 @@ export const updatePickup = async (pickupId, xyzID, expeditionID, warehouseID, p
 
 export const deletePickup = async (pickupId) => {
     try {
-        return axios.delete(host + `/pickup/${pickupId}`, {
+        return axios.delete(host + `/secured/pickup/${pickupId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
