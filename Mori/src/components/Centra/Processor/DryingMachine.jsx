@@ -6,6 +6,10 @@ import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
 import { useWindowSize } from 'react-use';
+import axios from 'axios';
+import { host } from "../../../service/config.js";
+import { addDryingActivity } from "../../../service/dryingActivity";
+
 
 const gaugeOptions = {
   responsive: true,
@@ -63,19 +67,50 @@ export default function DryingMachine() {
   const isMobile = width <= 640;
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
+
   useEffect(() => {
     // Log the received data to the console
     console.log("Received data:", { id, capacity, currentLoad, status, duration });
 
     // Fetch or set machine data here
     setMachineData({ id, capacity, currentLoad, status, duration });
-  }, [id, capacity, currentLoad, status, duration]);
 
-  const startProcess = () => {
+    const fetchActivity = async () => {
+      try {
+        const response = await axios.get(`${host}/secured/drying_activity/${id}`);
+        const { startTime } = response.data;
+        if (startTime) {
+          const timeElapsed = (new Date().getTime() - new Date(startTime).getTime()) / 1000;
+          const totalDuration = parseISODuration(duration);
+          setTimer(Math.max(totalDuration - timeElapsed, 0));
+          setIsRunning(true);
+        }
+      } catch (error) {
+        console.log("Error fetching drying activity: ", error);
+      }
+    };
+
+    fetchActivity();
+
+    const interval = setInterval(() => {
+      if (isRunning && timer > 0) {
+        setTimer(prevTimer => prevTimer - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [id, capacity, currentLoad, status, duration, isRunning, timer]);
+
+  const startProcess = async () => {
     if (currentLoad < capacity) {
       setShowConfirmation(true);
       return;
     }
+    const startTime = new Date().toISOString();
+    localStorage.setItem(`dryingStartTime_${id}`, startTime);
+    await addDryingActivity(id, currentLoad, id);
     startTimer();
   };
 

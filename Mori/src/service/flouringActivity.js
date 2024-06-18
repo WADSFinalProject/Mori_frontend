@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { host } from "./config";
 
-const host = 'your_backend_host_url'; // Replace with your backend host URL
+axios.defaults.withCredentials = true;
 
 export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
     try {

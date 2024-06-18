@@ -87,9 +87,10 @@ export default function Processor() {
   const [flouringCapacities, setFlouringCapacities] = useState([]);
 
   const [selectedMachineId, setSelectedMachineId] = useState(null);
-
   const [dryingMachineIds, setDryingMachineIds] = useState([]);
   const [flouringMachineIds, setFlouringMachineIds] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDryingMachines = async () => {
@@ -250,8 +251,20 @@ export default function Processor() {
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
-  const handleMachineClick = (machineId) => {
-    setSelectedMachineId(machineId);
+  const handleMachineClick = (selectedMachineId) => {
+    setSelectedMachineId(selectedMachineId);
+
+    const linkTo =
+      activeTab === "drying"
+        ? `/dryingmachine/${selectedMachineId}`
+        : activeTab === "flouring"
+        ? `/flouringmachine/${selectedMachineId}`
+        : "#";
+
+    // Navigate to the URL if it's not the default "#"
+    if (linkTo !== "#") {
+      navigate(linkTo);
+    }
   };
 
   const [wetLeavesData, setWetLeavesData] = useState({
@@ -305,15 +318,15 @@ export default function Processor() {
         const response = await readWetLeavesCollections();
         console.log("WetLeaves:", response.data);
         const collections = response.data;
-        
+
         let totalWetLeaves = 0;
         collections.forEach((collection) => {
           totalWetLeaves += collection.Weight;
         });
-    
+
         console.log("Total Weight of Wet Leaves:", totalWetLeaves);
         setTotalWetLeaves(totalWetLeaves);
-    
+
         setWetLeavesData({
           ...wetLeavesData,
           datasets: [
@@ -327,17 +340,9 @@ export default function Processor() {
         console.log("Error fetching wet leaves data: ", error);
       }
     };
-    
-    fetchWetLeavesData();
-    
-  }, []);
 
-  const linkTo =
-    activeTab === "drying"
-      ? `/dryingmachine/${selectedMachineId}`
-      : activeTab === "flouring"
-      ? `/flouringmachine/${selectedMachineId}`
-      : "#";
+    fetchWetLeavesData();
+  }, []);
 
   useEffect(() => {
     const fetchDriedLeavesData = async () => {
@@ -389,7 +394,7 @@ export default function Processor() {
           }
         });
 
-        console.log("Total Weight of Wet Leaves:", totalFlouredLeaves);
+        console.log("Total Weight of Floured Leaves:", totalFlouredLeaves);
         setTotalFlouredLeaves(totalFlouredLeaves);
 
         setFlouredLeavesData({
@@ -428,44 +433,46 @@ export default function Processor() {
           machine={machine}
           extraMarginClass={machineCardMarginClass}
           onClick={() => handleMachineClick(machine.MachineID)}
+          activeTab={activeTab} // Pass the activeTab to the MachineCard component
         />
       );
     });
   };
 
-  const MachineCard = ({ machine, extraMarginClass, onClick }) => {
+  const MachineCard = ({ machine, extraMarginClass, onClick, activeTab }) => {
     const navigate = useNavigate();
-  
+
     let chartColor = "#99D0D580";
     if (machine.currentLoad === machine.capacity) {
       chartColor = "#0F3F43";
     } else if (machine.currentLoad > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
-  
+
     const lastUpdatedTime = new Date(machine.lastUpdated).toLocaleString();
     const machineStatusClass = (machine.status || "").toLowerCase();
-  
+
     const handleClick = () => {
-      console.log({
-        id: machine.MachineID,
-        capacity: machine.capacity,
-        status: machine.Status,
-        currentLoad: machine.currentLoad,
-        duration: machine.Duration,
-      });
-  
-      navigate(`/dryingmachine/${machine.MachineID}`, {
-        state: {
-          id: machine.MachineID,
-          capacity: machine.capacity,
-          status: machine.Status,
-          currentLoad: machine.currentLoad,
-          duration: machine.Duration,
-        },
-      });
+      const linkTo =
+        activeTab === "drying"
+          ? `/dryingmachine/${machine.MachineID}`
+          : activeTab === "flouring"
+          ? `/flouringmachine/${machine.MachineID}`
+          : "#";
+
+      if (linkTo !== "#") {
+        navigate(linkTo, {
+          state: {
+            id: machine.MachineID,
+            capacity: machine.capacity,
+            status: machine.Status,
+            currentLoad: machine.currentLoad,
+            duration: machine.Duration,
+          },
+        });
+      }
     };
-  
+
     return (
       <div
         className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machineStatusClass}`}
@@ -536,8 +543,6 @@ export default function Processor() {
       </div>
     );
   };
-  
-  
 
   return (
     <div className="bg-000000">

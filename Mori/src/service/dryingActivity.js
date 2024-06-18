@@ -1,14 +1,15 @@
 import axios from 'axios';
+import { host } from "./config";
 
-const host = 'your_backend_host_url'; // Replace with your backend host URL
+axios.defaults.withCredentials = true;
 
-export const addDryingActivity = async (centralID, weight, dryingMachineID, time) => {
+export const addDryingActivity = async (centralID, weight, dryingMachineID) => {
     try {
         const dryingActivityDetails = {
             CentralID: centralID,
             Weight: weight,
             DryingMachineID: dryingMachineID,
-            Time: time,
+            Time: new Date().toISOString(), // Store the current time
         };
 
         return await axios.post(`${host}/secured/drying_activity/create`, dryingActivityDetails, {
