@@ -11,7 +11,7 @@ const AcceptedPackages = () => {
 
         // Group batches by expedition ID
         const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-          const id = expedition.Expedition.CentralID.toString();
+          const id = expedition?.Expedition?.CentralID;
           if (!acc[id]) {
             acc[id] = {
               id: id,

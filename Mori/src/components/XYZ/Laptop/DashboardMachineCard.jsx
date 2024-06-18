@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Doughnut } from 'react-chartjs-2';
 
 const gaugeOptions = {
@@ -62,7 +63,22 @@ const MachineCard = ({ machine, extraMarginClass, onClick }) => {
   );
 };
 
+MachineCard.propTypes = {
+  machine: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    currentLoad: PropTypes.number.isRequired,
+    capacity: PropTypes.number.isRequired,
+    lastUpdated: PropTypes.string,
+  }).isRequired,
+  extraMarginClass: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
 const DashboardMachineCard = ({ machines }) => {
+  if (!machines || machines.length === 0) {
+    return <div>No machines available.</div>;
+  }
+
   return (
     <div className="dashboard-machine-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {machines.map((machine, index) => (
@@ -75,6 +91,17 @@ const DashboardMachineCard = ({ machines }) => {
       ))}
     </div>
   );
+};
+
+DashboardMachineCard.propTypes = {
+  machines: PropTypes.arrayOf(
+    PropTypes.shape({
+      location: PropTypes.string.isRequired,
+      currentLoad: PropTypes.number.isRequired,
+      capacity: PropTypes.number.isRequired,
+      lastUpdated: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default DashboardMachineCard;
