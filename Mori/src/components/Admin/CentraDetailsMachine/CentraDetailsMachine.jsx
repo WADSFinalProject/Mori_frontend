@@ -1,14 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LeavesStatusDashboard from './LeavesStatusCard';
 import PersonInChargeBox from './PersonInChargeBox';
 import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
-import LeavesStatusCard from "./LeavesStatusCard";
-import DryingMachineBox from "./DryingMachineBox";
-import FlouringMachineBox from "./FlouringMachineBox";
+// import { getLeavesStatus } from '../../services/leavesService';
+// import { getDryingMachines, getFlouringMachines } from '../../services/machinesService';
 
-const CentraDetailsMachine = () => {
+const CentraDetailsMachine = ({ centraId }) => {
+  const [leavesStatus, setLeavesStatus] = useState(null);
+  const [dryingMachines, setDryingMachines] = useState([]);
+  const [flouringMachines, setFlouringMachines] = useState([]);
+  const [personInCharge, setPersonInCharge] = useState({ name: '', email: '' });
+  const [flouringSchedule, setFlouringSchedule] = useState({ every: 0, nearest: '' });
+
+  useEffect(() => {
+    if (centraId) {
+      fetchData(centraId);
+    }
+  }, [centraId]);
+
+  const fetchData = async (id) => {
+    try {
+      // const leavesData = await getLeavesStatus(id);
+      // setLeavesStatus(leavesData);
+
+      // const dryingMachinesData = await getDryingMachines(id);
+      // setDryingMachines(dryingMachinesData);
+
+      // const flouringMachinesData = await getFlouringMachines(id);
+      // setFlouringMachines(flouringMachinesData);
+
+      // Mock data for person in charge and flouring schedule
+      setPersonInCharge({ name: 'John Doe', email: 'john.doe@example.com' });
+      setFlouringSchedule({ every: 3, nearest: '2' });
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -18,17 +49,17 @@ const CentraDetailsMachine = () => {
       </div>
 
       <div>
-        <LeavesStatusDashboard />
+        {leavesStatus && <LeavesStatusDashboard data={leavesStatus} />}
       </div>
 
       <div className="mt-6 flex gap-6">
         <div className="flex-grow flex flex-col gap-6">
           <div className="flex gap-6">
             <PersonInChargeBox
-              name="John Doe"
-              email="john.doe@example.com"
+              name={personInCharge.name}
+              email={personInCharge.email}
             />
-            <FlouringScheduleBox every={3} nearest={"2"} />
+            <FlouringScheduleBox every={flouringSchedule.every} nearest={flouringSchedule.nearest} />
           </div>
         </div>
       </div>
@@ -38,7 +69,7 @@ const CentraDetailsMachine = () => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <DryingMachineBoxDashboard />
+        <DryingMachineBoxDashboard data={dryingMachines} />
       </div>
 
       <div className="mt-4 text-black text-[28px] font-semibold font-['Be Vietnam Pro'] mb-4">
@@ -46,7 +77,7 @@ const CentraDetailsMachine = () => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <FlouringMachineBoxDashboard />
+        <FlouringMachineBoxDashboard data={flouringMachines} />
       </div>
     </div>
   );
