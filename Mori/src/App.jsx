@@ -64,7 +64,7 @@ function App() {
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         {/* ini harus ngikutin shipment idnya */}
-        <Route path="/shipdetails" element={<ShipDetails />} />
+        <Route path="/centra/shipdetails/:awb" element={<ShipDetails />} />
 
         {/* HARBOUR GUARD */}
         <Route path="/harbor/home" element={<HarborHome />} />

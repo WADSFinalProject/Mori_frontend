@@ -47,7 +47,8 @@ const StatusComponent = ({
 
   return (
     <Link
-      to="/shipdetails"
+      to={`/centra/shipdetails/${id}`}
+      state={{ awb: id }} // Passing the AWB as state to the route
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
@@ -119,7 +120,7 @@ const StatusComponent = ({
             className="relative font-medium font-vietnam"
             style={{ color: statusBackgroundColor }}
           >
-            Track Your Shipment
+            Shipment Details
           </b>
         </div>
         <svg
