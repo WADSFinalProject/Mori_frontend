@@ -12,8 +12,22 @@ const AdminShipmentDetails = () => {
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Calculate total shipments count
+    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
+    setTotalShipments(uniqueShipmentIds.size);
+  }, [sortedData]);
+
+  useEffect(() => {
+    handleSearchAndFilter(searchQuery, filterKey);
+  }, [filterKey, searchQuery]);
+
+  const fetchData = () => {
     readExpeditions()
-      .then(async (res) => {
+      .then((res) => {
         console.log("Fetched Expeditions: ", res.data);
         const expeditions = res.data;
 
@@ -79,20 +93,11 @@ const AdminShipmentDetails = () => {
       .catch((err) => {
         console.log("Error: ", err);
       });
-  }, []);
-
-  useEffect(() => {
-    // Calculate total shipments count
-    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
-    setTotalShipments(uniqueShipmentIds.size);
-  }, [sortedData]);
-
-  useEffect(() => {
-    handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
+  };
 
   const handleFilterChange = (filterValue) => {
     setFilterKey(filterValue);
+    handleSearchAndFilter(searchQuery, filterValue);
   };
 
   const handleSearchChange = (e) => {
@@ -122,18 +127,20 @@ const AdminShipmentDetails = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (shipmentToDelete) {
-      try {
-        await deleteExpedition(shipmentToDelete);
-        setSortedData(sortedData.filter((expedition) => expedition.expeditionID !== shipmentToDelete));
-        closeDeleteModal();
-      } catch (error) {
-        console.error("Failed to delete shipment:", error);
-      }
+      deleteExpedition(shipmentToDelete)
+        .then((res) => {
+          console.log("Deleted expedition: ", res);
+          setIsDeleteModalOpen(false);
+          fetchData(); // Refresh the data after deletion
+        })
+        .catch((err) => {
+          console.error("Error deleting expedition: ", err);
+        });
     }
   };
-  
+
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5 mt-8">
@@ -183,9 +190,10 @@ const AdminShipmentDetails = () => {
               onChange={(e) => handleFilterChange(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="To Deliver">To Deliver</option>
-              <option value="Completed">Completed</option>
-              <option value="Shipped">Shipped</option>
+              <option value="PKG_Delivered">PKG_Delivered</option>
+              <option value="PKG_Delivering">PKG_Delivering</option>
+              <option value="XYZ_PickingUp">XYZ_PickingUp</option>
+              <option value="XYZ_Completed">XYZ_Completed</option>
               <option value="Missing">Missing</option>
             </select>
           </div>
