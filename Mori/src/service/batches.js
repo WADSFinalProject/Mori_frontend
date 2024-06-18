@@ -79,18 +79,14 @@ export const readBatch = async (batchId) => {
 //     }
 // };
 
-export const BatchShipped = async (batchId) => {
+export const BatchShipped = async (batches) => {
   // ini langsung set the shipped status jadi True HEHEHEHEH
   try {
-    return axios.put(
-      host + `secured/batchesShipped/${batch_id}`,
-      batchDetails,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return axios.put(host + `secured/batchesShipped/`, batches, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (error) {
     console.log("Error updating batch status: ", error);
     throw new Error(error);
