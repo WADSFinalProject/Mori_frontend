@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
+import ArrowDown from "../../assets/XYZ/arrowdown.png";
+
+const conversionRates = [
+  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
+  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
+  // Add more conversion rate data here...
+];
 
 const DashboardContent = () => {
 
@@ -9,17 +16,28 @@ const DashboardContent = () => {
     const harborCount = 22;
     const xyzCount = 30;
     const userCount = 120;
-
+    const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
+    const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
+    
+  
+    const toggleConversionRateDropdown = () => {
+      setConversionRateDropdownVisible(!conversionRateDropdownVisible);
+    };
+  
+    const selectConversionRate = (conversionRate) => {
+      setSelectedConversionRate(conversionRate);
+      setConversionRateDropdownVisible(false);
+    };
+  
     const chartData = {
-        labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
-        datasets: [
-          {
-            data: [47.1, 40],
-            backgroundColor: ['#176E76', '#4D946D'],
-            borderWidth: 0,
-          },
-        ],
-      };
+      datasets: [
+        {
+          data: [selectedConversionRate.conversionRate, 100 - selectedConversionRate.conversionRate],
+          backgroundColor: ['#176E76', '#E0E0E0'],
+        },
+      ],
+    };
+  
     
       const gaugeOptions = {
         cutout: '70%',
@@ -95,7 +113,7 @@ const DashboardContent = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="fill-current text-gray-500 mr-1"
                                 style={{ marginBottom: '-0.65em' }}>
-                                <path d="M12.8777 11.4269C12.658 11.6604 12.4908 11.9328 12.3764 12.2442C12.2619 12.5509 12.2047 12.8806 12.2047 13.2332C12.2047 13.3293 12.2115 13.4255 12.2253 13.5216H7.85027C7.86401 13.4301 7.87088 13.3362 7.87088 13.24C7.87088 12.8554 7.79762 12.496 7.6511 12.1617C7.50916 11.8229 7.30998 11.5276 7.05357 11.2758C6.80174 11.0193 6.50641 10.8202 6.16758 10.6782C5.83333 10.5317 5.47619 10.4584 5.09615 10.4584C4.71154 10.4584 4.34982 10.5317 4.01099 10.6782C3.67674 10.8202 3.38141 11.0193 3.125 11.2758C2.87317 11.5276 2.67399 11.8229 2.52747 12.1617C2.38553 12.496 2.31456 12.8554 2.31456 13.24C2.31456 13.3362 2.32143 13.4301 2.33516 13.5216H1.86813C1.46062 13.5216 1.11722 13.4507 0.837912 13.3087C0.563187 13.1714 0.354853 12.9653 0.212912 12.6906C0.0709707 12.4113 0 12.0679 0 11.6604V2.64938C0 2.03583 0.157967 1.57109 0.473901 1.25515C0.789835 0.939217 1.25458 0.78125 1.86813 0.78125H11.0096C11.6232 0.78125 12.0879 0.941506 12.4038 1.26202C12.7198 1.57795 12.8777 2.04041 12.8777 2.64938V11.4269ZM13.8187 4.57246H15.6456C15.9844 4.57246 16.2729 4.61825 16.511 4.70982C16.7491 4.8014 16.9712 4.95936 17.1772 5.18372L19.5124 7.82109C19.7047 8.03629 19.8329 8.24233 19.897 8.43922C19.9657 8.63152 20 8.89709 20 9.23592V11.6604C20 12.2648 19.8443 12.7249 19.533 13.0409C19.2216 13.3614 18.7637 13.5216 18.1593 13.5216H17.7404C17.7541 13.4255 17.761 13.3293 17.761 13.2332C17.761 12.8486 17.6854 12.4891 17.5343 12.1549C17.3878 11.816 17.1841 11.5207 16.9231 11.2689C16.6667 11.0125 16.369 10.8133 16.0302 10.6714C15.696 10.5248 15.3365 10.4516 14.9519 10.4516C14.7459 10.4516 14.5467 10.4791 14.3544 10.534C14.1621 10.5844 13.9835 10.6553 13.8187 10.7469V4.57246ZM15.5975 8.95433H18.6745C18.6607 8.87649 18.6355 8.80323 18.5989 8.73455C18.5623 8.66587 18.5165 8.60176 18.4615 8.54224L16.3668 6.19334C16.234 6.04224 16.1081 5.94609 15.989 5.90488C15.87 5.86367 15.7326 5.84306 15.5769 5.84306H14.9725V8.32933C14.9725 8.52163 15.0275 8.67502 15.1374 8.78949C15.2518 8.89938 15.4052 8.95433 15.5975 8.95433ZM5.09615 15.2181C4.72985 15.2181 4.3956 15.1288 4.09341 14.9502C3.79579 14.7716 3.55769 14.5313 3.37912 14.2291C3.20513 13.9314 3.11813 13.6018 3.11813 13.24C3.11813 12.8737 3.20513 12.5418 3.37912 12.2442C3.55769 11.942 3.79579 11.7039 4.09341 11.5299C4.3956 11.3513 4.72985 11.262 5.09615 11.262C5.45788 11.262 5.78755 11.3513 6.08516 11.5299C6.38736 11.7039 6.62775 11.942 6.80632 12.2442C6.98489 12.5418 7.07418 12.8737 7.07418 13.24C7.07418 13.6018 6.98489 13.9314 6.80632 14.2291C6.62775 14.5313 6.38965 14.7716 6.09203 14.9502C5.79441 15.1288 5.46245 15.2181 5.09615 15.2181ZM14.9794 15.2181C14.6177 15.2181 14.2857 15.1288 13.9835 14.9502C13.6859 14.7716 13.4478 14.5313 13.2692 14.2291C13.0907 13.9269 13.0014 13.5949 13.0014 13.2332C13.0014 12.8669 13.0907 12.5349 13.2692 12.2373C13.4478 11.9351 13.6859 11.697 13.9835 11.523C14.2857 11.3444 14.6177 11.2552 14.9794 11.2552C15.3457 11.2552 15.6777 11.3444 15.9753 11.523C16.2729 11.697 16.511 11.9351 16.6896 12.2373C16.8681 12.5349 16.9574 12.8669 16.9574 13.2332C16.9574 13.5995 16.8681 13.9314 16.6896 14.2291C16.5156 14.5313 16.2775 14.7716 15.9753 14.9502C15.6777 15.1288 15.3457 15.2181 14.9794 15.2181Z" fill="black" fill-opacity="0.6"/>
+                                <path d="M12.8777 11.4269C12.658 11.6604 12.4908 11.9328 12.3764 12.2442C12.2619 12.5509 12.2047 12.8806 12.2047 13.2332C12.2047 13.3293 12.2115 13.4255 12.2253 13.5216H7.85027C7.86401 13.4301 7.87088 13.3362 7.87088 13.24C7.87088 12.8554 7.79762 12.496 7.6511 12.1617C7.50916 11.8229 7.30998 11.5276 7.05357 11.2758C6.80174 11.0193 6.50641 10.8202 6.16758 10.6782C5.83333 10.5317 5.47619 10.4584 5.09615 10.4584C4.71154 10.4584 4.34982 10.5317 4.01099 10.6782C3.67674 10.8202 3.38141 11.0193 3.125 11.2758C2.87317 11.5276 2.67399 11.8229 2.52747 12.1617C2.38553 12.496 2.31456 12.8554 2.31456 13.24C2.31456 13.3362 2.32143 13.4301 2.33516 13.5216H1.86813C1.46062 13.5216 1.11722 13.4507 0.837912 13.3087C0.563187 13.1714 0.354853 12.9653 0.212912 12.6906C0.0709707 12.4113 0 12.0679 0 11.6604V2.64938C0 2.03583 0.157967 1.57109 0.473901 1.25515C0.789835 0.939217 1.25458 0.78125 1.86813 0.78125H11.0096C11.6232 0.78125 12.0879 0.941506 12.4038 1.26202C12.7198 1.57795 12.8777 2.04041 12.8777 2.64938V11.4269ZM13.8187 4.57246H15.6456C15.9844 4.57246 16.2729 4.61825 16.511 4.70982C16.7491 4.8014 16.9712 4.95936 17.1772 5.18372L19.5124 7.82109C19.7047 8.03629 19.8329 8.24233 19.897 8.43922C19.9657 8.63152 20 8.89709 20 9.23592V11.6604C20 12.2648 19.8443 12.7249 19.533 13.0409C19.2216 13.3614 18.7637 13.5216 18.1593 13.5216H17.7404C17.7541 13.4255 17.761 13.3293 17.761 13.2332C17.761 12.8486 17.6854 12.4891 17.5343 12.1549C17.3878 11.816 17.1841 11.5207 16.9231 11.2689C16.6667 11.0125 16.369 10.8133 16.0302 10.6714C15.696 10.5248 15.3365 10.4516 14.9519 10.4516C14.7459 10.4516 14.5467 10.4791 14.3544 10.534C14.1621 10.5844 13.9835 10.6553 13.8187 10.7469V4.57246ZM15.5975 8.95433H18.6745C18.6607 8.87649 18.6355 8.80323 18.5989 8.73455C18.5623 8.66587 18.5165 8.60176 18.4615 8.54224L16.3668 6.19334C16.234 6.04224 16.1081 5.94609 15.989 5.90488C15.87 5.86367 15.7326 5.84306 15.5769 5.84306H14.9725V8.32933C14.9725 8.52163 15.0275 8.67502 15.1374 8.78949C15.2518 8.89938 15.4052 8.95433 15.5975 8.95433ZM5.09615 15.2181C4.72985 15.2181 4.3956 15.1288 4.09341 14.9502C3.79579 14.7716 3.55769 14.5313 3.37912 14.2291C3.20513 13.9314 3.11813 13.6018 3.11813 13.24C3.11813 12.8737 3.20513 12.5418 3.37912 12.2442C3.55769 11.942 3.79579 11.7039 4.09341 11.5299C4.3956 11.3513 4.72985 11.262 5.09615 11.262C5.45788 11.262 5.78755 11.3513 6.08516 11.5299C6.38736 11.7039 6.62775 11.942 6.80632 12.2442C6.98489 12.5418 7.07418 12.8737 7.07418 13.24C7.07418 13.6018 6.98489 13.9314 6.80632 14.2291C6.62775 14.5313 6.38965 14.7716 6.09203 14.9502C5.79441 15.1288 5.46245 15.2181 5.09615 15.2181ZM14.9794 15.2181C14.6177 15.2181 14.2857 15.1288 13.9835 14.9502C13.6859 14.7716 13.4478 14.5313 13.2692 14.2291C13.0907 13.9269 13.0014 13.5949 13.0014 13.2332C13.0014 12.8669 13.0907 12.5349 13.2692 12.2373C13.4478 11.9351 13.6859 11.697 13.9835 11.523C14.2857 11.3444 14.6177 11.2552 14.9794 11.2552C15.3457 11.2552 15.6777 11.3444 15.9753 11.523C16.2729 11.697 16.511 11.9351 16.6896 12.2373C16.8681 12.5349 16.9574 12.8669 16.9574 13.2332C16.9574 13.5995 16.8681 13.9314 16.6896 14.2291C16.5156 14.5313 16.2775 14.7716 15.9753 14.9502C15.6777 15.1288 15.3457 15.2181 14.9794 15.2181Z" fill="black" fillOpacity="0.6"/>
                             </svg>
                             Shipment
                         </span>
@@ -165,30 +183,52 @@ const DashboardContent = () => {
                 </div>
 
                 <div className="w-full lg:w-2/3 mt-6">
-                    <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-                            <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
-                            <div className="flex items-center justify-center h-full">
-                            <div className="relative w-48 h-48">
-                                <Doughnut data={chartData} options={gaugeOptions} />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
-                                <span className="text-4xl font-bold">87.1%</span>
-                                <span className="text-[#A7AD6F] text-lg">^12.1%</span>
-                                </div>
-                            </div>
-                            </div>
-                            <div className="flex mt-3 flex-wrap">
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">47.1% Wet to Dry Leaves</span>
-                                </div>
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">40% Dry to Floured Leaves</span>
-                                </div>
-                            </div>
-
-                        </div>
+                <div className="relative z-30">
+                  <button
+                    className="flex items-center text-[#A7AD6F] font-semibold"
+                    onClick={toggleConversionRateDropdown}
+                  >
+                    {selectedConversionRate.id}
+                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                  </button>
+                  {conversionRateDropdownVisible && (
+                    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                      {conversionRates.map((conversionRate) => (
+                        <button
+                          key={conversionRate.id}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                          onClick={() => selectConversionRate(conversionRate)}
+                        >
+                          {conversionRate.id} - Conversion Rate
+                        </button>
+                      ))}
                     </div>
+                  )}
+      <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+        <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
+        <div className="flex items-center justify-center h-full">
+          <div className="relative w-48 h-48">
+            <Doughnut data={chartData} options={gaugeOptions} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
+              <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
+              <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex mt-3 flex-wrap">
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+             
                 </div>
 
             </div>
