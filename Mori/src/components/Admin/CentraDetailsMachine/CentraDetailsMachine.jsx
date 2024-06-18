@@ -4,8 +4,81 @@ import PersonInChargeBox from './PersonInChargeBox';
 import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
-// import { getWetLeavesStatus, getDriedLeavesStatus, getFlouredLeavesStatus } from '../../services/leavesService';
-// import { getDryingMachines, getFlouringMachines } from '../../services/machinesService';
+
+const dummyWetLeavesStatus = {
+  totalWeight: 28.1,
+  proportions: [13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1], // Example proportions
+};
+
+const dummyDriedLeavesStatus = {
+  totalWeight: 26.8,
+  proportions: [13.7 / 26.8, 5.1 / 26.8], // Example proportions
+};
+
+const dummyFlouredLeavesStatus = {
+  totalWeight: 29.4,
+  proportions: [13.7 / 29.4, 4.3 / 29.4], // Example proportions
+};
+
+const dummyDryingMachines = [
+  {
+    machineNumber: 1,
+    driedDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 24.1,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 0, // Duration in minutes
+  },
+  {
+    machineNumber: 2,
+    driedDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 30,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 20, // Duration in minutes
+  },
+  {
+    machineNumber: 3,
+    driedDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 17.2,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 0, // Duration in minutes
+  },
+];
+
+const dummyFlouringMachines = [
+  {
+    machineNumber: 1,
+    flouredDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 24.1,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 0,
+  },
+  {
+    machineNumber: 2,
+    flouredDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 30,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 25,
+  },
+  {
+    machineNumber: 3,
+    flouredDate: '13 March 2024',
+    startTime: '02:45 PM',
+    filledWeight: 17.2,
+    totalWeight: 30,
+    lastUpdated: '1 Minute Ago',
+    duration: 0,
+  },
+];
 
 const CentraDetailsMachine = ({ centraId, location }) => {
   const [wetLeavesStatus, setWetLeavesStatus] = useState(null);
@@ -18,33 +91,24 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
   useEffect(() => {
     if (centraId) {
-      fetchData(centraId);
+      fetchDummyData();
     }
   }, [centraId]);
 
-  const fetchData = async (id) => {
+  const fetchDummyData = async () => {
     try {
-      // const wetLeavesData = await getWetLeavesStatus(id);
-      // setWetLeavesStatus(wetLeavesData);
-
-      // const driedLeavesData = await getDriedLeavesStatus(id);
-      // setDriedLeavesStatus(driedLeavesData);
-
-      // const flouredLeavesData = await getFlouredLeavesStatus(id);
-      // setFlouredLeavesStatus(flouredLeavesData);
-
-      // const dryingMachinesData = await getDryingMachines(id);
-      // setDryingMachines(dryingMachinesData);
-
-      // const flouringMachinesData = await getFlouringMachines(id);
-      // setFlouringMachines(flouringMachinesData);
+      setWetLeavesStatus(dummyWetLeavesStatus);
+      setDriedLeavesStatus(dummyDriedLeavesStatus);
+      setFlouredLeavesStatus(dummyFlouredLeavesStatus);
+      setDryingMachines(dummyDryingMachines);
+      setFlouringMachines(dummyFlouringMachines);
 
       // Mock data for person in charge and flouring schedule
       setPersonInCharge({ name: 'John Doe', email: 'john.doe@example.com' });
       setFlouringSchedule({ every: 3, nearest: '2' });
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching dummy data:', error);
     }
   };
 
@@ -52,7 +116,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-black text-[28px] font-bold font-['Be Vietnam Pro'] mb-4">
-          Centra {location}
+          {location}
         </h1>
       </div>
 

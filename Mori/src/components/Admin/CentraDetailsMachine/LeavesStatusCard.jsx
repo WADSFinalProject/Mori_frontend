@@ -51,27 +51,27 @@ const LeavesStatusCard = ({ title, totalWeight, proportions, colors, labels }) =
   );
 };
 
-const LeavesStatusDashboard = () => {
+const LeavesStatusDashboard = ({ wetLeaves, driedLeaves, flouredLeaves }) => {
   return (
     <div className="flex flex-wrap gap-6">
       <LeavesStatusCard
         title="Wet Leaves"
-        totalWeight={28.1}
-        proportions={[13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1]}
+        totalWeight={wetLeaves.totalWeight}
+        proportions={wetLeaves.proportions}
         colors={['#CCE8EA', '#4D946D', '#CD4848']}
         labels={['Wet Leaves', 'Drying', 'Near Expiry']}
       />
       <LeavesStatusCard
         title="Dried Leaves"
-        totalWeight={26.8}
-        proportions={[13.7 / 26.8, 5.1 / 26.8]}
+        totalWeight={driedLeaves.totalWeight}
+        proportions={driedLeaves.proportions}
         colors={['#9AD1B3', '#A7AD6F']}
         labels={['Wet Leaves', 'Drying']}
       />
       <LeavesStatusCard
         title="Floured Leaves"
-        totalWeight={29.4}
-        proportions={[13.7 / 29.4, 4.3 / 29.4]}
+        totalWeight={flouredLeaves.totalWeight}
+        proportions={flouredLeaves.proportions}
         colors={['#666666', '#E0EA74']}
         labels={['To Ship', 'Floured Leaves']}
       />
@@ -80,3 +80,4 @@ const LeavesStatusDashboard = () => {
 };
 
 export default LeavesStatusDashboard;
+
