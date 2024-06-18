@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from 'react-use'; 
 import { Link, useNavigate } from "react-router-dom";
+import { getExpeditionNotifications } from '../../service/notifshipment'; 
 
 export default function HarborNotif() {
     const { width } = useWindowSize(); 
     const isMobile = width <= 640;
     const navigate = useNavigate();
+    const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const fetchedNotifications = await getExpeditionNotifications();
+                console.log("Fetched Notifications:", fetchedNotifications);
+                setNotifications(fetchedNotifications);
+            } catch (error) {
+                console.log("Error fetching notifications:", error);
+            }
+        };
+
+        fetchNotifications();
+    }, []);
 
     return (
         <div>
@@ -76,67 +92,29 @@ export default function HarborNotif() {
                             <h2 className="text-gray-500 text-xl font-bold">Today</h2>
                         </div>
 
-                        {/* Unopened Card */}
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CDE8D9" }}>
-                            <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#5D9EA4" }}></div>
-                            <div className="flex flex-col items-start w-full">
-                                <div className="relative">
-                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Package #ID</strong> has arrived</p>
-                                        <p className="text-gray-500">
-                                            <span>09:00 AM -</span>
-                                            <span> 2 minutes ago</span>
-                                        </p>
+                        {/* Render Notifications */}
+                        {notifications.map((notification, index) => (
+                            <div
+                                key={index}
+                                className="m-5 relative rounded-lg"
+                                style={{ backgroundColor: notification.isOpened ? "#EFEFEF" : "#CDE8D9" }}
+                            >
+                                <div
+                                    className="absolute top-4 right-4 h-4 w-4 rounded-full"
+                                    style={{ backgroundColor: notification.isOpened ? "#FFF" : "#5D9EA4" }}
+                                ></div>
+                                <div className="flex flex-col items-start w-full">
+                                    <div className="relative">
+                                        <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
+                                            <p><strong>{notification.message}</strong></p>
+                                            <p className="text-gray-500">
+                                                <span>{new Date(notification.timestamp).toLocaleString()}</span>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#CDE8D9" }}>
-                            <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#5D9EA4" }}></div>
-                            <div className="flex flex-col items-start w-full">
-                                <div className="relative">
-                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Package #ID</strong> is being delivered by Franz Sinatra</p>
-                                        <p className="text-gray-500">
-                                            <span>09:00 AM -</span>
-                                            <span> 2 minutes ago</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Opened Card */}
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#EFEFEF" }}>
-                            <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#FFF" }}></div>
-                            <div className="flex flex-col items-start w-full">
-                                <div className="relative">
-                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Package #ID</strong> has arrived</p>
-                                        <p className="text-gray-500">
-                                            <span>09:00 AM -</span>
-                                            <span> 2 minutes ago</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="m-5 relative rounded-lg" style={{ backgroundColor: "#EFEFEF" }}>
-                            <div className="absolute top-4 right-4 h-4 w-4 rounded-full" style={{ backgroundColor: "#FFF" }}></div>
-                            <div className="flex flex-col items-start w-full">
-                                <div className="relative">
-                                    <div className="ml-6 mt-5 mb-3" style={{ position: 'relative', width: '250px', height: '75px' }}>
-                                        <p><strong>Package #ID</strong> has been declared missing</p>
-                                        <p className="text-gray-500">
-                                            <span>09:00 AM -</span>
-                                            <span> 2 minutes ago</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             ) : (

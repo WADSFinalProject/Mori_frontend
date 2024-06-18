@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
-import hamburgBlack from "../../assets/hamburgBlack.png";
-import settingsLogo from "../../assets/settingsLogo.png";
 import { Link, useNavigate } from "react-router-dom";
+import { getExpeditionNotifications } from '../../service/notifshipment'; 
 
 export default function XYZNotif() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
-
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const fetchedNotifications = await getExpeditionNotifications();
+        console.log("Fetched Notifications:", fetchedNotifications);
+        setNotifications(fetchedNotifications);
+      } catch (error) {
+        console.log("Error fetching notifications:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
 
   return (
     <div>
@@ -73,135 +86,49 @@ export default function XYZNotif() {
             </nav>
           </header>
 
-          {/* notif cards */}
+          {/* Notification Cards */}
           <div>
-            {/* today */}
+            {/* Today */}
             <div className="mt-5 ml-5">
               <h2 className="text-gray-500 text-xl font-bold">Today</h2>
             </div>
 
-            {/* Unopened card */}
-            <div
-              className="m-5 relative rounded-lg"
-              style={{ backgroundColor: "#9AD1B380" }}
-            >
-              <div
-                className="absolute top-4 right-4 h-4 w-4 rounded-full"
-                style={{ backgroundColor: "#4D946D" }}
-              ></div>
-              <div className="flex flex-col items-start w-full">
-                <div className="relative">
+            {/* Render Notifications */}
+            {notifications.length > 0 ? (
+              notifications.map((notification, index) => (
+                <div
+                  key={index}
+                  className="m-5 relative rounded-lg"
+                  style={{ backgroundColor: notification.isOpened ? "#EFEFEF" : "#9AD1B380" }}
+                >
                   <div
-                    className="ml-6 mb-5 mt-5"
-                    style={{
-                      position: "relative",
-                      width: "250px",
-                      height: "75px",
-                    }}
-                  >
-                    <p>
-                      <strong>Package #ID</strong> is being delivered by John
-                      Doe
-                    </p>
-                    <p className="text-gray-500">
-                      <span>09:00 AM -</span>
-                      <span> 2 minutes ago</span>
-                    </p>
+                    className="absolute top-4 right-4 h-4 w-4 rounded-full"
+                    style={{ backgroundColor: notification.isOpened ? "#FFF" : "#4D946D" }}
+                  ></div>
+                  <div className="flex flex-col items-start w-full">
+                    <div className="relative">
+                      <div
+                        className="ml-6 mb-5 mt-5"
+                        style={{
+                          position: "relative",
+                          width: "250px",
+                          height: "75px",
+                        }}
+                      >
+                        <p><strong>{notification.message}</strong></p>
+                        <p className="text-gray-500">
+                          <span>{new Date(notification.timestamp).toLocaleString()}</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="mt-5 ml-5">
+                <h2 className="text-gray-500 text-xl font-bold">No notifications found</h2>
               </div>
-            </div>
-
-            <div
-              className="m-5 relative rounded-lg"
-              style={{ backgroundColor: "#9AD1B380" }}
-            >
-              <div
-                className="absolute top-4 right-4 h-4 w-4 rounded-full"
-                style={{ backgroundColor: "#4D946D" }}
-              ></div>
-              <div className="flex flex-col items-start w-full">
-                <div className="relative">
-                  <div
-                    className="ml-6 mt-5"
-                    style={{
-                      position: "relative",
-                      width: "250px",
-                      height: "75px",
-                    }}
-                  >
-                    <p>
-                      <strong>Package #ID</strong> has arrived
-                    </p>
-                    <p className="text-gray-500">
-                      <span>09:00 AM -</span>
-                      <span> 2 minutes ago</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Opened card */}
-            <div
-              className="m-5 relative rounded-lg"
-              style={{ backgroundColor: "#EFEFEF" }}
-            >
-              <div
-                className="absolute top-4 right-4 h-4 w-4 rounded-full"
-                style={{ backgroundColor: "" }}
-              ></div>
-              <div className="flex flex-col items-start w-full">
-                <div className="relative">
-                  <div
-                    className="ml-6 mt-5"
-                    style={{
-                      position: "relative",
-                      width: "250px",
-                      height: "75px",
-                    }}
-                  >
-                    <p>
-                      <strong>Package #ID</strong> has arrived
-                    </p>
-                    <p className="text-gray-500">
-                      <span>09:00 AM -</span>
-                      <span> 2 minutes ago</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="m-5 relative rounded-lg"
-              style={{ backgroundColor: "#EFEFEF" }}
-            >
-              <div
-                className="absolute top-4 right-4 h-4 w-4 rounded-full"
-                style={{ backgroundColor: "" }}
-              ></div>
-              <div className="flex flex-col items-start w-full">
-                <div className="relative">
-                  <div
-                    className="ml-6 mt-5"
-                    style={{
-                      position: "relative",
-                      width: "250px",
-                      height: "75px",
-                    }}
-                  >
-                    <p>
-                      <strong>Package #ID</strong> has arrived
-                    </p>
-                    <p className="text-gray-500">
-                      <span>09:00 AM -</span>
-                      <span> 2 minutes ago</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       ) : (
