@@ -15,34 +15,60 @@ const StockManagement = () => {
 
   const [sort, setSort] = useState("heavy-light");
   const [location, setLocation] = useState("All");
-  const [warehouseId, setWarehouseId] = useState(22); // Default warehouseId to 22
+  const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
+  const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
   useEffect(() => {
-    fetchWarehouseDetails(warehouseId);
+    fetchAllWarehouses(); // Fetch all warehouse details on component mount
+  }, []);
+
+  useEffect(() => {
+    if (warehouseId !== null) {
+      fetchWarehouseDetails(warehouseId);
+    }
   }, [warehouseId]); // Fetch data when warehouseId changes
 
-  const fetchWarehouseDetails = async (warehouse_id) => {
+  const fetchAllWarehouses = async () => {
     try {
-      const response = await getWarehouseDetails(warehouse_id);
+      const response = await getAllWarehouses();
       const data = response.data;
-      console.log('Raw data from backend:', data);
-
-      // Transform the data if needed
-      const transformedData = {
-        location: data.location,
-        currentLoad: data.TotalStock,
-        capacity: 50, // Assuming capacity is always 50 based on your example
-        lastUpdated: null, // You can set this to null or customize as needed
-      };
-      console.log('Transformed data:', transformedData);
-
-      setMachines([transformedData]); // Ensure transformedData is in an array if setMachines expects an array
+      setWarehouses(data);
+      console.log("All warehouse details:", data); // Log all warehouse details
     } catch (error) {
-      console.error('Error fetching warehouse details:', error);
-      // Handle error state if needed
+      console.error("Error fetching all warehouses: ", error);
     }
   };
+
+const fetchWarehouseDetails = async (warehouse_id) => {
+  try {
+    const response = await getWarehouseDetails(warehouse_id);
+    const data = response.data;
+    console.log('Raw data from backend:', data);
+
+    // Check if data is an array
+    if (Array.isArray(data)) {
+      // Transform the data if needed
+      const transformedData = data.map(item => ({
+        location: item.location,
+        currentLoad: item.TotalStock,
+        capacity: item.Capacity, // Assuming capacity is provided by the backend
+        lastUpdated: item.lastUpdated || null, // Customize as needed
+      }));
+      console.log('Transformed data:', transformedData);
+
+      setMachines(transformedData); // Update machines with transformed data
+      console.log('Machines state:', machines); // Log machines state to debug
+    } else {
+      console.error('Data is not an array:', data);
+      // Handle case where data is not an array if needed
+    }
+  } catch (error) {
+    console.error('Error fetching warehouse details:', error);
+    // Handle error state if needed
+  }
+};
+
 
   // const [machines, setMachines] = useState([
   //   {
@@ -223,7 +249,7 @@ const StockManagement = () => {
       const machineCardMarginClass = isLastCard ? "mb-10" : "mb-4";
       return (
         <MachineCard
-          key={machine.number}
+          key={machine.location + index} // Ensure a unique key
           machine={machine}
           extraMarginClass={machineCardMarginClass}
           onClick={() => handleCardClick(machine.location)} // Pass the location on click
@@ -231,7 +257,7 @@ const StockManagement = () => {
       );
     });
   };
-
+  
   return (
     <div className="bg-000000">
       {isMobile ? (
