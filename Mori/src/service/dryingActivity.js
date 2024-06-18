@@ -3,14 +3,17 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const addDryingActivity = async (centralID, weight, dryingMachineID) => {
+export const addDryingActivity = async (centralID, weight, dryingMachineID, duration) => {
     try {
+        const currentTime = new Date();
         const dryingActivityDetails = {
             CentralID: centralID,
             Weight: weight,
             DryingMachineID: dryingMachineID,
-            Time: new Date().toISOString(), // Store the current time
+            EndTime: new Date(currentTime.getTime() + duration * 1000).toISOString(), // Calculate EndTime using duration
         };
+
+        console.log("Sending drying activity details:", dryingActivityDetails);
 
         return await axios.post(`${host}/secured/drying_activity/create`, dryingActivityDetails, {
             headers: {
@@ -18,7 +21,7 @@ export const addDryingActivity = async (centralID, weight, dryingMachineID) => {
             },
         });
     } catch (error) {
-        console.log("Error adding drying activity: ", error);
+        console.log("Error adding drying activity: ", error.response?.data || error.message);
         throw new Error(error);
     }
 };
