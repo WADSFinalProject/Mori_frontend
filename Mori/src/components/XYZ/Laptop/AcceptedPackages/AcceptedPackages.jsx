@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent"
-import { readExpeditions } from "../../../../service/shipments";
+import { readExpeditions } from "../../../../service/expeditionService";
 
 const AcceptedPackages = () => {
 
 
   useEffect(() => {
     readExpeditions()
-      .then(async (res) => {
-        console.log("Fetched Expeditions: ", res.data);
+      .then((res) => {
+        console.log("Fetched Expeditions:", res.data);
         const expeditions = res.data;
 
-        // Group batches by expedition AirwayBill and fetch additional data
         const groupedExpeditions = expeditions.reduce((acc, expedition) => {
           const expeditionDetails = expedition?.expedition;
 
           if (!expeditionDetails || !expedition.batches) {
-            console.log("Skipping expedition due to missing details or batches: ", expedition);
+            console.log("Skipping expedition due to missing details or batches:", expedition);
             return acc; // Skip if essential data is missing
           }
 
@@ -46,28 +45,28 @@ const AcceptedPackages = () => {
           return acc;
         }, {});
 
-        console.log("Grouped Expeditions: ", groupedExpeditions);
+        console.log("Grouped Expeditions:", groupedExpeditions);
 
-        // Convert grouped data object to array and filter by status 'XYZ_Completed'
         const resArr = Object.values(groupedExpeditions)
           .filter((expedition) => expedition.status === "XYZ_Completed")
           .flatMap((expedition) => {
             return expedition.batchIds.map((batchId, index) => ({
               batchId: batchId,
-              airwayBill: expedition.id,
+              shipmentId: expedition.id,
               driedDate: expedition.driedDates[index],
               flouredDate: expedition.flouredDates[index],
               weight: expedition.weights[index],
             }));
           });
 
-        console.log("Resulting Array: ", resArr);
+        console.log("Resulting Array:", resArr);
         setSortedData(resArr);
       })
       .catch((err) => {
-        console.log("Error: ", err);
+        console.log("Error:", err);
       });
   }, []);
+
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState("new-old");
   const [searchQuery, setSearchQuery] = useState("");

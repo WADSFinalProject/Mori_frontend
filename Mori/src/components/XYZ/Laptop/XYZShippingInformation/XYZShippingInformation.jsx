@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
-import { readExpeditions } from "../../../../service/expeditionService";
+import { readExpeditions, deleteExpedition } from "../../../../service/expeditionService";
 import { getPackageReceiptDetails } from "../../../../service/packageReceiptService";
+import { readPickup } from "../../../../service/pickup";
 
 const XYZShippingInformation = () => {
   useEffect(() => {
@@ -66,12 +67,12 @@ const XYZShippingInformation = () => {
 
         // Set your state with resArr
         setSortedData(resArr);
-        setFilteredData(resArr); 
       })
       .catch((err) => {
         console.log("Error: ", err);
       });
   }, []);
+
 
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
