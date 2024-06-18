@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
@@ -12,6 +12,7 @@ const StockManagement = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
   const navigate = useNavigate();
+  const location2 = useLocation();
 
   const [sort, setSort] = useState("heavy-light");
   const [location, setLocation] = useState("All");
@@ -19,6 +20,17 @@ const StockManagement = () => {
   const [machines, setMachines] = useState([]);
   const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
+  const handleBackNavigation = () => {
+    const currentPath = location2.pathname;
+
+    if (currentPath === '/xyz/m/stockmanagement') {
+      navigate('/xyz/m/home');
+    } else if (currentPath.startsWith('/xyz/m/stockdetail/')) {
+      navigate(-1);
+    }
+  };
+
+  
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
   }, []);
@@ -58,7 +70,7 @@ const StockManagement = () => {
           location: item.location,
           currentLoad: item.TotalStock,
           capacity: item.Capacity, // Assuming capacity is provided by the backend
-          lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
+          // lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
           stock_history: item.stock_history.map(history => ({
             change: history.change_amount,
             date: formatDate(history.change_date),
@@ -273,7 +285,7 @@ const StockManagement = () => {
         <div>
           <header className="w-full pt-4 h-16 fixed top-0 left-0 z-50 bg-white">
             <div className="flex flex-row justify-between mx-6 items-center">
-              <button onClick={() => navigate(-1)}>
+            <button onClick={handleBackNavigation}>
                 <img src={back} alt="back" className="w-5 mr-2" />
               </button>
               <div className="font-vietnam text-xl font-bold select-none">
