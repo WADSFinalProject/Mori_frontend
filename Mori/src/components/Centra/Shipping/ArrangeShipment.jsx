@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { createExpedition } from "../../../service/expeditionService";
+import { BatchShipped } from "../../../service/batches";
 
 const ArrangeShipment = () => {
   const { width } = useWindowSize();
@@ -10,6 +12,7 @@ const ArrangeShipment = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const { batches } = location.state || { batches: [] };
 
   useEffect(() => {
@@ -36,16 +39,37 @@ const ArrangeShipment = () => {
     "Ninja Express",
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle the form submission and pass the selected batch data alongside the airway bill and courier
-    const shipmentData = {
-      shippingMethod,
-      airwayBill,
-      batches,
-    };
-    console.log(shipmentData);
-    // Add the code to update the database with shipmentData
+    const totalWeight = batches.reduce(
+      (sum, batch) => sum + parseFloat(batch.weight),
+      0
+    );
+    const totalPackages = batches.length;
+    const expeditionDate = new Date();
+    const estimatedArrival = new Date(expeditionDate);
+    estimatedArrival.setDate(expeditionDate.getDate() + 5);
+
+    try {
+      const response = await createExpedition(
+        airwayBill.toString(),
+        estimatedArrival.toISOString(),
+        totalPackages,
+        totalWeight,
+        expeditionDate.toISOString(),
+        shippingMethod,
+        batches.map((batch) => batch.id)
+      );
+
+      // Mark each batch as shipped
+      await Promise.all(batches.map((batch) => BatchShipped(batch.id)));
+
+      alert("Expedition created successfully!");
+      navigate("/centra/shipping"); // Navigate back to shipping page after successful creation
+    } catch (error) {
+      console.error("Error creating expedition: ", error);
+      alert("Failed to create expedition. Please try again.");
+    }
   };
 
   return (
