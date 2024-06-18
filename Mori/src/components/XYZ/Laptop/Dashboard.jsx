@@ -79,7 +79,7 @@ const MainXYZ = () => {
         location: item.location,
         currentLoad: item.TotalStock,
         capacity: item.Capacity, // Assuming capacity is provided by the backend
-        lastUpdated: item.lastUpdated || null, // Customize as needed
+        // lastUpdated: item.lastUpdated || null, // Customize as needed
       }));
       console.log('Transformed data:', transformedData);
 

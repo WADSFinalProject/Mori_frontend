@@ -70,7 +70,7 @@ const StockManagement = () => {
           location: item.location,
           currentLoad: item.TotalStock,
           capacity: item.Capacity, // Assuming capacity is provided by the backend
-          lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
+          // lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
           stock_history: item.stock_history.map(history => ({
             change: history.change_amount,
             date: formatDate(history.change_date),

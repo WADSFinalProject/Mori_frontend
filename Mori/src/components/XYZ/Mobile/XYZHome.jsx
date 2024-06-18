@@ -210,7 +210,7 @@ export default function XYZHome() {
             color: "#666666",
           }}
         >
-          <div>Last updated:</div>
+          {/* <div>Last updated:</div> */}
           <div style={{ fontWeight: "bold" }}>{machine.lastUpdated}</div>
         </div>
       </div>
