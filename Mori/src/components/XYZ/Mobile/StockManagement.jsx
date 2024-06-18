@@ -40,35 +40,39 @@ const StockManagement = () => {
     }
   };
 
-const fetchWarehouseDetails = async (warehouse_id) => {
-  try {
-    const response = await getWarehouseDetails(warehouse_id);
-    const data = response.data;
-    console.log('Raw data from backend:', data);
-
-    // Check if data is an array
-    if (Array.isArray(data)) {
-      // Transform the data if needed
-      const transformedData = data.map(item => ({
-        location: item.location,
-        currentLoad: item.TotalStock,
-        capacity: item.Capacity, // Assuming capacity is provided by the backend
-        lastUpdated: item.lastUpdated || null, // Customize as needed
-      }));
-      console.log('Transformed data:', transformedData);
-
-      setMachines(transformedData); // Update machines with transformed data
-      console.log('Machines state:', machines); // Log machines state to debug
-    } else {
-      console.error('Data is not an array:', data);
-      // Handle case where data is not an array if needed
+  const fetchWarehouseDetails = async (warehouse_id) => {
+    try {
+      const response = await getWarehouseDetails(warehouse_id);
+      const data = response.data;
+      console.log('Raw data from backend:', data);
+  
+      // Check if data is an array
+      if (Array.isArray(data)) {
+        // Transform the data if needed
+        const transformedData = data.map(item => ({
+          location: item.location,
+          currentLoad: item.TotalStock,
+          capacity: item.Capacity, // Assuming capacity is provided by the backend
+          lastUpdated: item.lastUpdated || null, // Customize as needed
+          stock_history: item.stock_history.map(history => ({
+            change: history.change_amount,
+            date: history.change_date,
+            type: history.change_amount.startsWith('+') ? 'Income' : 'Usage'
+          }))
+        }));
+        console.log('Transformed data:', transformedData);
+  
+        setMachines(transformedData); // Update machines with transformed data
+        console.log('Machines state:', machines); // Log machines state to debug
+      } else {
+        console.error('Data is not an array:', data);
+        // Handle case where data is not an array if needed
+      }
+    } catch (error) {
+      console.error('Error fetching warehouse details:', error);
+      // Handle error state if needed
     }
-  } catch (error) {
-    console.error('Error fetching warehouse details:', error);
-    // Handle error state if needed
-  }
-};
-
+  };
 
   // const [machines, setMachines] = useState([
   //   {

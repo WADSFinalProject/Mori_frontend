@@ -3,8 +3,6 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import back from "../../../assets/back.png";
 import MachineCard from "../MachineCard";
-import point from "../../../assets/point.png";
-import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 
 const StockDetail = () => {
   const { location } = useParams();
@@ -43,7 +41,7 @@ const StockDetail = () => {
 
           <div className="machine-status my-4 px-4 mt-16">
             {filteredMachines.map((machine, index) => (
-              <div key={machine.number} className="mb-2">
+              <div key={machine.location + index} className="mb-2">
                 <MachineCard machine={machine} extraMarginClass="mb-2" />
               </div>
             ))}
@@ -51,20 +49,17 @@ const StockDetail = () => {
 
           <div className="bg-white py-2 px-4 border-t border-gray-400 mt-2">
             <h2 className="font-bold text-lg mb-2">History</h2>
-            {/* {filteredMachines[0].history
-              .slice(0, showAllHistory ? filteredMachines[0].history.length : 3)
+            {filteredMachines.length > 0 && filteredMachines[0].stock_history
+              .slice(0, showAllHistory ? filteredMachines[0].stock_history.length : 3)
               .map((entry, index) => (
                 <div
                   key={index}
                   className="flex justify-between items-center text-sm text-gray-600 mb-4"
                 >
-                  {" "}
-
                   <div>
                     <p className="font-bold">
-                      {entry.type} #{entry.id}
-                    </p>{" "}
-   
+                      {entry.type}
+                    </p>
                     <p>{entry.date}</p>
                   </div>
                   <p
@@ -73,8 +68,8 @@ const StockDetail = () => {
                     {entry.change}
                   </p>
                 </div>
-              ))} */}
-            {/* {filteredMachines[0].history.length > 3 && (
+              ))}
+            {filteredMachines.length > 0 && filteredMachines[0].stock_history.length > 3 && (
               <div className="text-center border-t border-gray-400 py-2">
                 <button
                   className="text-xs font-bold text-gray-500"
@@ -83,9 +78,7 @@ const StockDetail = () => {
                   {showAllHistory ? "SHOW LESS" : "VIEW ALL"}
                 </button>
               </div>
-            )} */}
-            <div className="text-center border-t border-gray-400 py-2">
-            </div>
+            )}
           </div>
         </div>
       ) : (
