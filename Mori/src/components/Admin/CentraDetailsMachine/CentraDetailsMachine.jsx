@@ -4,21 +4,7 @@ import PersonInChargeBox from './PersonInChargeBox';
 import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
-
-const dummyLeavesStatus = {
-  wetLeaves: {
-    totalWeight: 28.1,
-    proportions: [13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1], // Example proportions
-  },
-  driedLeaves: {
-    totalWeight: 26.8,
-    proportions: [13.7 / 26.8, 5.1 / 26.8], // Example proportions
-  },
-  flouredLeaves: {
-    totalWeight: 29.4,
-    proportions: [13.7 / 29.4, 4.3 / 29.4], // Example proportions
-  }
-};
+import { getLeavesData } from '../../../service/centras';
 
 const dummyDryingMachines = [
   {
@@ -89,24 +75,44 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
   useEffect(() => {
     if (centraId) {
-      fetchDummyData();
+      fetchData();
     }
   }, [centraId]);
 
-  const fetchDummyData = async () => {
+  const fetchData = async () => {
     try {
-      // Fetching combined leaves status
-      setLeavesStatus(dummyLeavesStatus);
-      
-      setDryingMachines(dummyDryingMachines);
-      setFlouringMachines(dummyFlouringMachines);
+      const response = await getLeavesData(centraId);
+
+      // Process the response to fit the expected structure
+      const { wetLeaves, driedLeaves, flouredLeaves } = response.data;
+
+      const processedLeavesStatus = {
+        wetLeaves: {
+          totalWeight: wetLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
+          proportions: wetLeaves.map(leaf => leaf.Weight / wetLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
+        },
+        driedLeaves: {
+          totalWeight: driedLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
+          proportions: driedLeaves.map(leaf => leaf.Weight / driedLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
+        },
+        flouredLeaves: {
+          totalWeight: flouredLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
+          proportions: flouredLeaves.map(leaf => leaf.Weight / flouredLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
+        },
+      };
+
+      setLeavesStatus(processedLeavesStatus);
+
+      // Process the drying and flouring machines data if needed
+      setDryingMachines(dummyDryingMachines); // Replace with actual data processing if needed
+      setFlouringMachines(dummyFlouringMachines); // Replace with actual data processing if needed
 
       // Mock data for person in charge and flouring schedule
       setPersonInCharge({ name: 'John Doe', email: 'john.doe@example.com' });
       setFlouringSchedule({ every: 3, nearest: '2' });
 
     } catch (error) {
-      console.error('Error fetching dummy data:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
