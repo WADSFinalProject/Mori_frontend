@@ -1,11 +1,13 @@
-import axios from "axios";
+// import api from "api";
+
+import { getApi } from '../contexts/api';
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
 
+const api = getApi()
 export const getDriedDate = async (dryingId) => {
     try {
-        return axios.get(host + `/secured/drying-activities/${dryingId}/date`, {
+        return api.get(host + `/secured/drying-activities/${dryingId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -18,7 +20,7 @@ export const getDriedDate = async (dryingId) => {
 
 export const getFlouredDate = async (flouringId) => {
     try {
-        return axios.get(host + `/secured/flouring-activities/${flouringId}/date`, {
+        return api.get(host + `/secured/flouring-activities/${flouringId}/date`, {
             headers: {
                 "Content-Type": "application/json",
             },

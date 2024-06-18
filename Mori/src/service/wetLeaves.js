@@ -1,7 +1,7 @@
-import axios from "axios";
+import { getApi } from '../contexts/api';
 import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+const api = getApi()
 
 export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, dried) => {
     try {
@@ -16,11 +16,7 @@ export const createWetLeavesCollection = async (centralId, date, time, weight, s
             // Duration: duration,
         };
 
-        return axios.post(host + "/secured/wet-leaves-collections/create", collectionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.post(host + "/secured/wet-leaves-collections/create", collectionDetails);
     } catch (error) {
         console.log("Error creating wet leaves collection: ", error);
         throw new Error(error);
@@ -29,14 +25,12 @@ export const createWetLeavesCollection = async (centralId, date, time, weight, s
 
 export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/wet-leaves-collections/", {
+        return api.get(host + "/secured/wet-leaves-collections/", {
             params: {
                 skip: skip,
                 limit: limit,
-            },
-            headers: {
-                "Content-Type": "application/json",
-            },
+            }
+        
         });
     } catch (error) {
         console.log("Error reading wet leaves collections: ", error);
@@ -46,11 +40,7 @@ export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
 
 export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.get(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.get(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`);
     } catch (error) {
         console.log("Error reading wet leaves collection: ", error);
         throw new Error(error);
@@ -68,11 +58,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, we
             Dried: dried,
         };
 
-        return axios.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails);
     } catch (error) {
         console.log("Error updating wet leaves collection: ", error);
         throw new Error(error);
@@ -81,11 +67,7 @@ export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, we
 
 export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
     try {
-        return axios.delete(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.delete(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`);
     } catch (error) {
         console.log("Error deleting wet leaves collection: ", error);
         throw new Error(error);
@@ -94,11 +76,7 @@ export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
 
 export const getWetLeavesConversion  = async (centraId) => {
     try {
-        return axios.get(host + `/secured/wet-leaves-collections/conversion`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.get(host + `/secured/wet-leaves-collections/conversion`);
     } catch (error) {
         console.log("Error getting wet leaves conversion rate: ", error);
         throw new Error(error);
@@ -106,11 +84,7 @@ export const getWetLeavesConversion  = async (centraId) => {
 };
 export const getWetLeavesWeight = async(centraId) => {
     try{
-        return axios.get(host +"/wet-leaves-totalWeight/"), {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }
+        return api.get(host +"/wet-leaves-totalWeight/")
     }catch (error) {
         console.log("Error retrieving weights: ", error);
         throw new Error(error);

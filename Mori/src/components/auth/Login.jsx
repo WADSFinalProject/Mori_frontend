@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWindowSize } from 'react-use';
+import { useAuth } from '../../contexts/authContext'; // Ensure this path is correct
+import { loginUser, verifyUser } from '../../service/auth'; // Ensure this path is correct
 import LaptopBG from '../../assets/LOGIN/LaptopBG.png';
 import mori from '../../assets/LOGIN/mori.png';
 import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
-import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
-import Cookies from 'universal-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+import { useCheckMobileScreen } from '../../contexts/utils';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -35,7 +39,9 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
 
-  const cookies = new Cookies();
+  const navigate = useNavigate()
+
+ const { setToken } = useAuth();
 
   const LoadingScreen = () => (
     <div className="text-center">
@@ -133,13 +139,40 @@ const Login = () => {
       })
   };
   
+  const isMobile = useCheckMobileScreen(
+
+  )
   const handleLoginVerificationSubmit = () => {
     verifyUser(loginCredentials.email, verificationCode.join(''))
       .then(res => {
         console.log("Login Verification Code Submitted:", verificationCode.join(""));
         alert('Login verified successfully!');
 
-        cookies.set('access_token', res.data.access_token, { path: '/' })
+        const { access_token } = res.data;
+        setToken(access_token);
+
+     
+
+        const decodedToken = jwtDecode(access_token);
+        console.log("Decoded Token:", decodedToken);
+    
+        const role = decodedToken.role;
+        console.log("User Role:", role);
+
+     
+
+            // Role-based redirection logic
+            if (role === "Centra") {
+                navigate("/centra/home");
+            } else if (role === "Guard") {
+                navigate("/harbor/home");
+            } else if (role === "xyz" && isMobile) {
+                navigate("/xyz/m/home");
+            } else if (role === "xyz" && !isMobile) {
+                navigate("/xyz/d/xyz-dashboard");
+            } else if (role === "Admin") {
+                navigate("/admin-dashboard");
+            }
 
         setShowCodeEntry(false);
         setIsLoggedIn(false);

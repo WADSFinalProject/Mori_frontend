@@ -42,7 +42,7 @@ export const validateToken = async (token) => {
     }
 };
 
-export const setPassword = async (token, newPassword) => {
+export const setPass = async (token, newPassword) => {
     try {
         const passwordDetails = {
             token: token,
@@ -149,19 +149,19 @@ export const verifyUser = async (email, code) => {
     }
 };
 
-export const refreshToken = async (refreshToken) => {
-    try {
-        return axios.post(host + "/token/refresh", {}, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: true,
-        });
-    } catch (error) {
-        console.log("Error refreshing token: ", error);
-        throw new Error(error);
-    }
-};
+// export const refreshToken = async (refreshToken) => {
+//     try {
+//         return axios.post(host + "/token/refresh", {}, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             withCredentials: true,
+//         });
+//     } catch (error) {
+//         console.log("Error refreshing token: ", error);
+//         throw new Error(error);
+//     }
+// };
 
 export const resendCode = async () => {
     try {
@@ -200,4 +200,22 @@ export const accessProtectedRoute = async () => {
         console.log("Error accessing protected route: ", error);
         throw new Error(error);
     }
+};
+
+
+
+export const getNewAccessToken = async () => {
+  try {
+    const response = await axios.post(host + '/token/refresh',{
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (response.data.access_token) {
+      return response.data.access_token;
+    }
+  } catch (error) {
+    console.error('Error refreshing access token:', error);
+  }
+  return null;
 };

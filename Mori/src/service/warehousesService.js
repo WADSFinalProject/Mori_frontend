@@ -1,7 +1,7 @@
-import axios from "axios";
+import { getApi } from '../contexts/api';
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
+const api = getApi()
 
 export const getAllWarehouses = async (skip = 0, limit = 100) => {
     try {
@@ -10,10 +10,8 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get(host + "/secured/warehouses", {
-            headers: {
-                "Content-Type": "application/json",
-            },
+        return await api.get(host + "/secured/warehouses", {
+        
             params: params
         });
     } catch (error) {
@@ -35,11 +33,7 @@ export const createWarehouse = async (email, phone, stock, location) => {
             // created_at: isoString
         };
 
-        return await axios.post(host + "/secured/warehouses", warehouseDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.post(host + "/secured/warehouses", warehouseDetails);
     } catch (error) {
         console.error("Error creating warehouse: ", error);
         throw new Error(error);
@@ -48,7 +42,7 @@ export const createWarehouse = async (email, phone, stock, location) => {
 
 export const getWarehouseDetails = async (warehouse_id) => {
     try {
-        return await axios.get(host + `/secured/warehouses/${warehouse_id}`, {
+        return await api.get(host + `/secured/warehouses/${warehouse_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -68,7 +62,7 @@ export const editWarehouse = async (warehouse_id, email, phone, stock, location)
             location: location,
         };
 
-        return await axios.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, {
+        return await api.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -81,7 +75,7 @@ export const editWarehouse = async (warehouse_id, email, phone, stock, location)
 
 export const deleteWarehouse = async (warehouse_id) => {
     try {
-        return await axios.delete(host + `/secured/warehouses/${warehouse_id}`, {
+        return await api.delete(host + `/secured/warehouses/${warehouse_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

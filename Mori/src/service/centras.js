@@ -1,11 +1,10 @@
-import axios from "axios";
+import { getApi } from '../contexts/api';
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
-
+const api = getApi()
 export const getAllCentras = async () => {
     try {
-        return axios.get(host + "/secured/centras", {
+        return api.get(host + "/secured/centras", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -22,7 +21,7 @@ export const createCentra = async (address) => {
             Address: address,
         };
 
-        return axios.post(host + "/secured/centras", centraDetails, {
+        return api.post(host + "/secured/centras", centraDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -35,7 +34,7 @@ export const createCentra = async (address) => {
 
 export const getCentraDetails = async (centra_id) => {
     try {
-        return await axios.get(host + `/secured/centras/${centra_id}`, {
+        return await api.get(host + `/secured/centras/${centra_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -52,7 +51,7 @@ export const updateCentraDetails = async (centra_id, address) => {
             Address: address,
         };
 
-        return await axios.put(host + `/secured/centras/${centra_id}`, centraDetails, {
+        return await api.put(host + `/secured/centras/${centra_id}`, centraDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -65,7 +64,7 @@ export const updateCentraDetails = async (centra_id, address) => {
 
 export const deleteCentra = async (centra_id) => {
     try {
-        return await axios.delete(host + `/secured/centras/${centra_id}`, {
+        return await api.delete(host + `/secured/centras/${centra_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
