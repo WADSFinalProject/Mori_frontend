@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { readExpeditions } from "../../../service/shipments";
+import { readExpeditions, deleteExpedition } from "../../../service/expeditionService";
 
 const AdminShipmentDetails = () => {
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState(null);
 
   useEffect(() => {
     readExpeditions()
@@ -29,6 +31,7 @@ const AdminShipmentDetails = () => {
           if (!acc[airwayBill]) {
             acc[airwayBill] = {
               id: airwayBill,
+              expeditionID: expeditionDetails.ExpeditionID, // Store ExpeditionID for deletion
               batchIds: [],
               flouredDates: [],
               driedDates: [],
@@ -57,6 +60,7 @@ const AdminShipmentDetails = () => {
           return {
             id: index + 1,
             shipmentId: expedition.id,
+            expeditionID: expedition.expeditionID, // Include ExpeditionID
             batchId: expedition.batchIds,
             driedDate: expedition.driedDates,
             flouredDate: expedition.flouredDates,
@@ -76,8 +80,6 @@ const AdminShipmentDetails = () => {
         console.log("Error: ", err);
       });
   }, []);
-
-  
 
   useEffect(() => {
     // Calculate total shipments count
@@ -110,6 +112,28 @@ const AdminShipmentDetails = () => {
     setSortedData(filteredData);
   };
 
+  const openDeleteModal = (expeditionID) => {
+    setShipmentToDelete(expeditionID);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShipmentToDelete(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (shipmentToDelete) {
+      try {
+        await deleteExpedition(shipmentToDelete);
+        setSortedData(sortedData.filter((expedition) => expedition.expeditionID !== shipmentToDelete));
+        closeDeleteModal();
+      } catch (error) {
+        console.error("Failed to delete shipment:", error);
+      }
+    }
+  };
+  
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5 mt-8">
@@ -168,9 +192,18 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={null}/>
+          <TableComponent
+            data={sortedData}
+            onDelete={openDeleteModal}
+          />
         </div>
       </div>
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        shipmentId={shipmentToDelete}
+      />
     </div>
   );
 };

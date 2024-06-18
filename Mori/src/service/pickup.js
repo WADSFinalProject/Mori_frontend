@@ -25,7 +25,7 @@ export const createPickup = async (xyzID, expeditionID, warehouseID, pickupTime)
 
 export const readPickup = async (pickupId) => {
     try {
-        return axios.get(host + `/pickup/${pickupId}`, {
+        return axios.get(host + `/secured/pickup/${pickupId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
