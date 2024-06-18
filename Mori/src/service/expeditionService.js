@@ -22,8 +22,8 @@ export const createExpedition = async (
       ExpeditionServiceDetails: expeditionServiceDetails,
     };
 
-    response = await axios.post(
-      host + "/secured/expeditions",
+    const response = await axios.post(
+      `${host}/secured/expeditions`,
       expeditionDetails,
       {
         headers: {
@@ -39,7 +39,7 @@ export const createExpedition = async (
       BatchIDs: batches,
     };
 
-    return axios.post(host + "/secured/expedition_contents/", contentDetails, {
+    return axios.post(`${host}/secured/expedition_contents/`, contentDetails, {
       headers: {
         "Content-Type": "application/json",
       },

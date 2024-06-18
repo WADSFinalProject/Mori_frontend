@@ -62,7 +62,7 @@ const ArrangeShipment = () => {
       );
 
       // Mark each batch as shipped
-      await Promise.all(batches.map((batch) => BatchShipped(batch.id)));
+      await BatchShipped({ batch_ids: batches.map((batch) => batch.id) });
 
       alert("Expedition created successfully!");
       navigate("/centra/shipping"); // Navigate back to shipping page after successful creation
