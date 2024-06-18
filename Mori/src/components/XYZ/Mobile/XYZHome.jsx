@@ -45,12 +45,30 @@ export default function XYZHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
 
+  const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
-  const [warehouseId, setWarehouseId] = useState(22); // Default warehouseId to 22
+  const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
   useEffect(() => {
-    fetchWarehouseDetails(warehouseId);
+    fetchAllWarehouses(); // Fetch all warehouse details on component mount
+  }, []);
+
+  useEffect(() => {
+    if (warehouseId !== null) {
+      fetchWarehouseDetails(warehouseId);
+    }
   }, [warehouseId]); // Fetch data when warehouseId changes
+
+  const fetchAllWarehouses = async () => {
+    try {
+      const response = await getAllWarehouses();
+      const data = response.data;
+      setWarehouses(data);
+      console.log("All warehouse details:", data); // Log all warehouse details
+    } catch (error) {
+      console.error("Error fetching all warehouses: ", error);
+    }
+  };
 
   const fetchWarehouseDetails = async (warehouse_id) => {
     try {
@@ -58,40 +76,39 @@ export default function XYZHome() {
       const data = response.data;
       console.log('Raw data from backend:', data);
 
-      // Transform the data if needed
-      const transformedData = {
-        location: data.location,
-        currentLoad: data.TotalStock,
-        capacity: 50, // Assuming capacity is always 50 based on your example
-        lastUpdated: null, // You can set this to null or customize as needed
-      };
-      console.log('Transformed data:', transformedData);
+      // Check if data is an array
+      if (Array.isArray(data)) {
+        // Transform the data if needed
+        const transformedData = data.map(item => ({
+          location: item.location,
+          currentLoad: item.TotalStock,
+          capacity: item.Capacity, // Assuming capacity is provided by the backend
+          lastUpdated: item.lastUpdated || null, // Customize as needed
+        }));
+        console.log('Transformed data:', transformedData);
 
-      setMachines([transformedData]); // Ensure transformedData is in an array if setMachines expects an array
+        setMachines(transformedData); // Update machines with transformed data
+        console.log('Machines state:', machines); // Log machines state to debug
+      } else {
+        console.error('Data is not an array:', data);
+        // Handle case where data is not an array if needed
+      }
     } catch (error) {
       console.error('Error fetching warehouse details:', error);
       // Handle error state if needed
     }
   };
 
-  // const [machinesData, setMachines] = useState([
-  //   {
-  //     location: "Kecamatan Semau",
-  //     status: "FULL",
-  //     currentLoad: 31.1,
-  //     capacity: 50,
-  //     lastUpdated: "1 hour ago",
-  //   },
-  // ]);
-
-  const renderMachines = () => {
-    return machines.map((machine, index) => (
+  const renderMachine = () => {
+    if (machines.length === 0) return null;
+    const machine = machines[0];
+    return (
       <MachineCard
         key={machine.location}
         machine={machine}
-        extraMarginClass={index === machines.length - 1 ? "mb-10" : "mb-4"}
+        extraMarginClass="mb-10"
       />
-    ));
+    );
   };
 
   const MachineCard = ({ machine, extraMarginClass }) => {
@@ -280,11 +297,12 @@ export default function XYZHome() {
                 Current Stock Management
               </h2>
             </div>
-            <div className="machine-status my-4">{renderMachines()}</div>
+            <div className="machine-status my-4">{renderMachine()}</div>
 
             {/* View all locations */}
             <div className="mt-[-20px]">
-              <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+            <Link to="/xyz/m/stockmanagement">
+              <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex cursor-pointer">
                 <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">
                   View All
                 </div>
@@ -294,7 +312,8 @@ export default function XYZHome() {
                   className="w-[6.69px] h-[11.87px] relative"
                 />
               </div>
-            </div>
+            </Link>
+          </div>
           </div>
           {/* Quick Access */}
           <div className="p-5">
