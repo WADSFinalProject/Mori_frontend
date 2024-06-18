@@ -14,6 +14,12 @@ import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 
+const conversionRates = [
+  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
+  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
+  // Add more conversion rate data here...
+];
+
 const MainXYZ = () => {
 
   const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
@@ -27,6 +33,19 @@ const MainXYZ = () => {
   const toDeliverCount = 2;
   const completedCount = 2;
   const missingCount = 2;
+  const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
+  const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
+  
+
+  const toggleConversionRateDropdown = () => {
+    setConversionRateDropdownVisible(!conversionRateDropdownVisible);
+  };
+
+  const selectConversionRate = (conversionRate) => {
+    setSelectedConversionRate(conversionRate);
+    setConversionRateDropdownVisible(false);
+  };
+
 
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
@@ -73,15 +92,14 @@ const MainXYZ = () => {
   };
   
   const chartData = {
-    labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
     datasets: [
       {
-        data: [47.1, 40],
-        backgroundColor: ['#176E76', '#4D946D'],
-        borderWidth: 0,
+        data: [selectedConversionRate.conversionRate, 100 - selectedConversionRate.conversionRate],
+        backgroundColor: ['#176E76', '#E0E0E0'],
       },
     ],
   };
+
 
   const gaugeOptions = {
     cutout: '70%',
@@ -399,6 +417,7 @@ const MainXYZ = () => {
                       </svg>
                       Shipping Information
                     </h3>
+                    
                     <div className="mb-4 border border-gray-300 rounded-lg p-6">
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
                         <span className="font-bold text-xl">Shipped</span>
@@ -442,32 +461,54 @@ const MainXYZ = () => {
                   </div>
                 </div>
 
+
                 <div className="w-full lg:w-2/3 mt-6">
-                    <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-                            <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
-                            <div className="flex items-center justify-center h-full">
-                            <div className="relative w-48 h-48">
-                                <Doughnut data={chartData} options={gaugeOptions} />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
-                                <span className="text-4xl font-bold">87.1%</span>
-                                <span className="text-[#A7AD6F] text-lg">^12.1%</span>
-                                </div>
-                            </div>
-                            </div>
-                            <div className="flex mt-3 flex-wrap">
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">47.1% Wet to Dry Leaves</span>
-                                </div>
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">40% Dry to Floured Leaves</span>
-                                </div>
-                            </div>
-
-                        </div>
+                <div className="relative z-30">
+                  <button
+                    className="flex items-center text-[#A7AD6F] font-semibold"
+                    onClick={toggleConversionRateDropdown}
+                  >
+                    {selectedConversionRate.id}
+                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                  </button>
+                  {conversionRateDropdownVisible && (
+                    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                      {conversionRates.map((conversionRate) => (
+                        <button
+                          key={conversionRate.id}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                          onClick={() => selectConversionRate(conversionRate)}
+                        >
+                          {conversionRate.id} - Conversion Rate
+                        </button>
+                      ))}
                     </div>
+                  )}
+                </div>
 
+      <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+        <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
+        <div className="flex items-center justify-center h-full">
+          <div className="relative w-48 h-48">
+            <Doughnut data={chartData} options={gaugeOptions} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
+              <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
+              <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex mt-3 flex-wrap">
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
+          </div>
+        </div>
+      </div>
+    </div>
               </div>
             </div>
           )}
