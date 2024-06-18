@@ -23,6 +23,10 @@ const MainXYZ = () => {
   const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
   const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
+  const shippedCount = 2;
+  const toDeliverCount = 2;
+  const completedCount = 2;
+  const missingCount = 2;
 
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
