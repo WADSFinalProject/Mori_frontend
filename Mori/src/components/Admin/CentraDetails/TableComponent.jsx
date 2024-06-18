@@ -4,15 +4,18 @@ import CentraDetailsMachine from '../CentraDetailsMachine/CentraDetailsMachine';
 export const TableComponent = ({ data, onEditClick }) => {
   const [isCentraDetailsVisible, setIsCentraDetailsVisible] = useState(false);
   const [selectedCentraID, setSelectedCentraID] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const handleButtonClick = (centraId) => {
+  const handleButtonClick = (centraId, location) => {
     setSelectedCentraID(centraId);
+    setSelectedLocation(location);
     setIsCentraDetailsVisible(true);
   };
 
   const handleClose = () => {
     setIsCentraDetailsVisible(false);
     setSelectedCentraID(null);
+    setSelectedLocation(null);
   };
 
   return (
@@ -68,7 +71,7 @@ export const TableComponent = ({ data, onEditClick }) => {
                   </button>
                   <button
                     className="pl-[0.075rem] flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => handleButtonClick(row.id)}
+                    onClick={() => handleButtonClick(row.id, row.location)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +113,7 @@ export const TableComponent = ({ data, onEditClick }) => {
               </svg>
               <span className="font-bold text-l">Back</span>
             </button>
-            <CentraDetailsMachine centraId={selectedCentraID} />
+            <CentraDetailsMachine centraId={selectedCentraID} location={selectedLocation} />
           </div>
         </div>
       )}
