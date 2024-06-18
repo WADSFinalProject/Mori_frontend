@@ -15,52 +15,57 @@ const AdminShipmentDetails = () => {
 
   const fetchData = () => {
     readExpeditions()
-    .then((res) => {
-      console.log("Success : ", res);
-      const expeditions = res.data;
-
-      // Group batches by expedition ID
-      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-        const id = expedition.Expedition.CentralID.toString();
-        if (!acc[id]) {
-          acc[id] = {
-            id: id,
-            batchIds: [],
-            flouredDates: [],
-            driedDates: [],
-            weights: [],
+      .then((res) => {
+        // console.log("Success: ", res);
+        const expeditions = res.data;
+  
+        // Group batches by expedition ID
+        const groupedExpeditions = expeditions.reduce((acc, item) => {
+          const { expedition, batches, checkpoint_status, checkpoint_statusdate } = item;
+          const { ExpeditionID, ExpeditionDate, EstimatedArrival, Status } = expedition;
+          const id = ExpeditionID.toString();
+          if (!acc[id]) {
+            acc[id] = {
+              id: id,
+              batchIds: [],
+              driedDates: [],
+              flouredDates: [],
+              weights: [],
+              status: Status,
+              checkpoint: `${checkpoint_status} | ${new Date(checkpoint_statusdate).toLocaleString()}`,
+            };
+          }
+          acc[id].batchIds.push(...batches.map(batch => `#${batch.BatchID}`));
+          acc[id].weights.push(...batches.map(batch => `${batch.Weight}kg`));
+          // Assuming driedDate and flouredDate are part of the expedition object, which are not provided in the example
+          // Replace with actual date fields if available
+          acc[id].driedDates.push(new Date(ExpeditionDate).toLocaleDateString());
+          acc[id].flouredDates.push(new Date(EstimatedArrival).toLocaleDateString());
+          return acc;
+        }, {});
+  
+        // Convert grouped data object to array
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
+          return {
+            id: index + 1,
+            shipmentId: expedition.id,
+            batchId: expedition.batchIds,
+            driedDate: expedition.driedDates,
+            flouredDate: expedition.flouredDates,
+            weight: expedition.weights,
             status: expedition.status,
-            checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
+            checkpoint: expedition.checkpoint,
           };
-        }
-        acc[id].batchIds.push(expedition.BatchID);
-        acc[id].flouredDates.push(expedition.FlouredDate);
-        acc[id].driedDates.push(expedition.DriedDate);
-        acc[id].weights.push(expedition.Weight);
-        return acc;
-      }, {});
-
-      // Convert grouped data object to array
-      const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
-        return {
-          id: index + 1,
-          shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
-          batchId: expedition.batchIds,
-          driedDate: expedition.driedDates,
-          flouredDate: expedition.flouredDates,
-          weight: expedition.weights,
-          status: expedition.status,
-          checkpoint: expedition.checkpoint,
-        };
+        });
+  
+        // Set your state with resArr
+        setSortedData(resArr);
+      })
+      .catch((err) => {
+        console.log("Error: ", err);
       });
-
-      // Set your state with resArr
-      setSortedData(resArr);
-    })
-    .catch((err) => {
-      console.log("Error : ", err);
-    });
-  }
+  };
+  
 
   useEffect(() => {
     // Calculate total shipments count
