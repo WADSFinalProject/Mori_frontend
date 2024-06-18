@@ -80,7 +80,7 @@ export const getLeavesData = async (centralId) => {
     try {
         return axios.get(`${host}/secured/leaves`, {
             params: {
-                central_id: centralId,
+                centra_id: centralId,
             },
             headers: {
                 "Content-Type": "application/json",
