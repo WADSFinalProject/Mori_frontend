@@ -10,40 +10,48 @@ const AdminShipmentDetails = () => {
   const [totalShipments, setTotalShipments] = useState(0);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = () => {
     readExpeditions()
-      .then((res) => {
-        // console.log("Success: ", res);
+      .then(async (res) => {
+        console.log("Fetched Expeditions: ", res.data);
         const expeditions = res.data;
-  
-        // Group batches by expedition ID
-        const groupedExpeditions = expeditions.reduce((acc, item) => {
-          const { expedition, batches, checkpoint_status, checkpoint_statusdate } = item;
-          const { ExpeditionID, ExpeditionDate, EstimatedArrival, Status } = expedition;
-          const id = ExpeditionID.toString();
-          if (!acc[id]) {
-            acc[id] = {
-              id: id,
+
+        // Group batches by expedition AirwayBill and fetch additional data
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const expeditionDetails = expedition?.expedition;
+
+          if (!expeditionDetails || !expedition.batches) {
+            console.log("Skipping expedition due to missing details or batches: ", expedition);
+            return acc; // Skip if essential data is missing
+          }
+
+          const airwayBill = expeditionDetails.AirwayBill;
+
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
               batchIds: [],
-              driedDates: [],
               flouredDates: [],
+              driedDates: [],
               weights: [],
-              status: Status,
-              checkpoint: `${checkpoint_status} | ${new Date(checkpoint_statusdate).toLocaleString()}`,
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
             };
           }
-          acc[id].batchIds.push(...batches.map(batch => `#${batch.BatchID}`));
-          acc[id].weights.push(...batches.map(batch => `${batch.Weight}kg`));
-          // Assuming driedDate and flouredDate are part of the expedition object, which are not provided in the example
-          // Replace with actual date fields if available
-          acc[id].driedDates.push(new Date(ExpeditionDate).toLocaleDateString());
-          acc[id].flouredDates.push(new Date(EstimatedArrival).toLocaleDateString());
+
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(batch.FlouredDate);
+            acc[airwayBill].driedDates.push(batch.DriedDate);
+            acc[airwayBill].weights.push(batch.Weight);
+          });
+
           return acc;
         }, {});
-  
+
+        console.log("Grouped Expeditions: ", groupedExpeditions);
+
         // Convert grouped data object to array
         const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
           return {
@@ -55,16 +63,20 @@ const AdminShipmentDetails = () => {
             weight: expedition.weights,
             status: expedition.status,
             checkpoint: expedition.checkpoint,
+            receptionNotes: "Null",
           };
         });
-  
+
+        console.log("Resulting Array: ", resArr);
+
         // Set your state with resArr
         setSortedData(resArr);
       })
       .catch((err) => {
         console.log("Error: ", err);
       });
-  };
+  }, []);
+
   
 
   useEffect(() => {
@@ -156,7 +168,7 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={fetchData}/>
+          <TableComponent data={sortedData} onDelete={null}/>
         </div>
       </div>
     </div>
