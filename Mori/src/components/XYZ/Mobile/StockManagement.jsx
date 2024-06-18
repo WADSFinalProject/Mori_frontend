@@ -6,6 +6,7 @@ import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
 import arrowright from "../../../assets/arrowright.png";
 import MachineCard from "../MachineCard"; // Import the MachineCard component
+import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 
 const StockManagement = () => {
   const { width } = useWindowSize();
@@ -14,145 +15,173 @@ const StockManagement = () => {
 
   const [sort, setSort] = useState("heavy-light");
   const [location, setLocation] = useState("All");
+  const [warehouseId, setWarehouseId] = useState(22); // Default warehouseId to 22
+  const [machines, setMachines] = useState([]);
 
-  const [machines, setMachines] = useState([
-    {
-      number: 1,
-      currentLoad: 24,
-      capacity: 50,
-      lastUpdated: "1 minute ago",
-      location: "Kecamatan Semau",
-      details: {
-        name: "Nama Orang",
-        phone: "(+62) 849-1289-2947",
-        email: "nama@xyz.id",
-        address:
-          "Jl. Batuinan Raya 1 No. 2b, RT.7/RW.8, Desa Batuinan, Semau, Kupang, Nusa Tenggara Timur, ID, 19218",
-      },
-      currentStock: 38.1,
-      history: [
-        {
-          type: "Shipment",
-          id: 10201,
-          date: "19 March 2024 07:08 PM",
-          change: "+42.3 kg",
-        },
-        {
-          type: "Usage",
-          id: 10273,
-          date: "19 March 2024 01:12 PM",
-          change: "-40.4 kg",
-        },
-        {
-          type: "Shipment",
-          id: 10279,
-          date: "18 March 2024 09:08 AM",
-          change: "+25.2 kg",
-        },
-      ],
-    },
-    {
-      number: 2,
-      currentLoad: 30,
-      capacity: 50,
-      lastUpdated: "5 minutes ago",
-      location: "Kecamatan Kupang",
-      details: {
-        name: "Nama Kupang",
-        phone: "(+62) 812-3456-7890",
-        email: "kupang@xyz.id",
-        address:
-          "Jl. Kupang Indah No. 3, RT.4/RW.9, Desa Kupang, Kupang, Nusa Tenggara Timur, ID, 19219",
-      },
-      currentStock: 35.2,
-      history: [
-        {
-          type: "Shipment",
-          id: 10202,
-          date: "19 March 2024 07:10 PM",
-          change: "+41.1 kg",
-        },
-        {
-          type: "Usage",
-          id: 10274,
-          date: "19 March 2024 01:14 PM",
-          change: "-39.2 kg",
-        },
-        {
-          type: "Shipment",
-          id: 10280,
-          date: "18 March 2024 09:10 AM",
-          change: "+24.5 kg",
-        },
-        {
-          type: "Shipment",
-          id: 10282,
-          date: "18 March 2024 09:10 AM",
-          change: "+24.5 kg",
-        },
-        {
-          type: "Usage",
-          id: 10281,
-          date: "18 March 2024 09:10 AM",
-          change: "-24.5 kg",
-        },
-      ],
-    },
-    {
-      number: 3,
-      currentLoad: 50,
-      capacity: 50,
-      lastUpdated: "10 minutes ago",
-      location: "Kecamatan Oebobo",
-      details: {
-        name: "Nama Oebobo",
-        phone: "(+62) 813-4567-8901",
-        email: "oebobo@xyz.id",
-        address:
-          "Jl. Oebobo Baru No. 5, RT.6/RW.7, Desa Oebobo, Kupang, Nusa Tenggara Timur, ID, 19220",
-      },
-      currentStock: 42.2,
+  useEffect(() => {
+    fetchWarehouseDetails(warehouseId);
+  }, [warehouseId]); // Fetch data when warehouseId changes
 
-      history: [
-        {
-          id: 10203,
-          type: "Shipment",
-          date: "18 March 2024 07:00 AM",
-          change: "+50.0 kg",
-        },
-        {
-          id: 10275,
-          type: "Usage",
-          date: "18 March 2024 01:00 PM",
-          change: "-10.0 kg",
-        },
-      ],
-    },
-    {
-      number: 4,
-      currentLoad: 20,
-      capacity: 50,
-      lastUpdated: "15 minutes ago",
-      location: "Kecamatan Tegal",
-      details: {
-        name: "Nama Tegal",
-        phone: "(+62) 814-5678-9012",
-        email: "tegal@xyz.id",
-        address:
-          "Jl. Tegal Asri No. 7, RT.8/RW.6, Desa Tegal, Kupang, Nusa Tenggara Timur, ID, 19221",
-      },
-      currentStock: 50,
+  const fetchWarehouseDetails = async (warehouse_id) => {
+    try {
+      const response = await getWarehouseDetails(warehouse_id);
+      const data = response.data;
+      console.log('Raw data from backend:', data);
 
-      history: [
-        {
-          id: 10204,
-          type: "Shipment",
-          date: "17 March 2024 09:00 AM",
-          change: "+20.0 kg",
-        },
-      ],
-    },
-  ]);
+      // Transform the data if needed
+      const transformedData = {
+        location: data.location,
+        currentLoad: data.TotalStock,
+        capacity: 50, // Assuming capacity is always 50 based on your example
+        lastUpdated: null, // You can set this to null or customize as needed
+      };
+      console.log('Transformed data:', transformedData);
+
+      setMachines([transformedData]); // Ensure transformedData is in an array if setMachines expects an array
+    } catch (error) {
+      console.error('Error fetching warehouse details:', error);
+      // Handle error state if needed
+    }
+  };
+
+  // const [machines, setMachines] = useState([
+  //   {
+  //     number: 1,
+  //     currentLoad: 24,
+  //     capacity: 50,
+  //     lastUpdated: "1 minute ago",
+  //     location: "Kecamatan Semau",
+  //     details: {
+  //       name: "Nama Orang",
+  //       phone: "(+62) 849-1289-2947",
+  //       email: "nama@xyz.id",
+  //       address:
+  //         "Jl. Batuinan Raya 1 No. 2b, RT.7/RW.8, Desa Batuinan, Semau, Kupang, Nusa Tenggara Timur, ID, 19218",
+  //     },
+  //     currentStock: 38.1,
+  //     history: [
+  //       {
+  //         type: "Shipment",
+  //         id: 10201,
+  //         date: "19 March 2024 07:08 PM",
+  //         change: "+42.3 kg",
+  //       },
+  //       {
+  //         type: "Usage",
+  //         id: 10273,
+  //         date: "19 March 2024 01:12 PM",
+  //         change: "-40.4 kg",
+  //       },
+  //       {
+  //         type: "Shipment",
+  //         id: 10279,
+  //         date: "18 March 2024 09:08 AM",
+  //         change: "+25.2 kg",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     number: 2,
+  //     currentLoad: 30,
+  //     capacity: 50,
+  //     lastUpdated: "5 minutes ago",
+  //     location: "Kecamatan Kupang",
+  //     details: {
+  //       name: "Nama Kupang",
+  //       phone: "(+62) 812-3456-7890",
+  //       email: "kupang@xyz.id",
+  //       address:
+  //         "Jl. Kupang Indah No. 3, RT.4/RW.9, Desa Kupang, Kupang, Nusa Tenggara Timur, ID, 19219",
+  //     },
+  //     currentStock: 35.2,
+  //     history: [
+  //       {
+  //         type: "Shipment",
+  //         id: 10202,
+  //         date: "19 March 2024 07:10 PM",
+  //         change: "+41.1 kg",
+  //       },
+  //       {
+  //         type: "Usage",
+  //         id: 10274,
+  //         date: "19 March 2024 01:14 PM",
+  //         change: "-39.2 kg",
+  //       },
+  //       {
+  //         type: "Shipment",
+  //         id: 10280,
+  //         date: "18 March 2024 09:10 AM",
+  //         change: "+24.5 kg",
+  //       },
+  //       {
+  //         type: "Shipment",
+  //         id: 10282,
+  //         date: "18 March 2024 09:10 AM",
+  //         change: "+24.5 kg",
+  //       },
+  //       {
+  //         type: "Usage",
+  //         id: 10281,
+  //         date: "18 March 2024 09:10 AM",
+  //         change: "-24.5 kg",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     number: 3,
+  //     currentLoad: 50,
+  //     capacity: 50,
+  //     lastUpdated: "10 minutes ago",
+  //     location: "Kecamatan Oebobo",
+  //     details: {
+  //       name: "Nama Oebobo",
+  //       phone: "(+62) 813-4567-8901",
+  //       email: "oebobo@xyz.id",
+  //       address:
+  //         "Jl. Oebobo Baru No. 5, RT.6/RW.7, Desa Oebobo, Kupang, Nusa Tenggara Timur, ID, 19220",
+  //     },
+  //     currentStock: 42.2,
+
+  //     history: [
+  //       {
+  //         id: 10203,
+  //         type: "Shipment",
+  //         date: "18 March 2024 07:00 AM",
+  //         change: "+50.0 kg",
+  //       },
+  //       {
+  //         id: 10275,
+  //         type: "Usage",
+  //         date: "18 March 2024 01:00 PM",
+  //         change: "-10.0 kg",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     number: 4,
+  //     currentLoad: 20,
+  //     capacity: 50,
+  //     lastUpdated: "15 minutes ago",
+  //     location: "Kecamatan Tegal",
+  //     details: {
+  //       name: "Nama Tegal",
+  //       phone: "(+62) 814-5678-9012",
+  //       email: "tegal@xyz.id",
+  //       address:
+  //         "Jl. Tegal Asri No. 7, RT.8/RW.6, Desa Tegal, Kupang, Nusa Tenggara Timur, ID, 19221",
+  //     },
+  //     currentStock: 50,
+
+  //     history: [
+  //       {
+  //         id: 10204,
+  //         type: "Shipment",
+  //         date: "17 March 2024 09:00 AM",
+  //         change: "+20.0 kg",
+  //       },
+  //     ],
+  //   },
+  // ]);
 
   const [filteredMachines, setFilteredMachines] = useState(machines);
 

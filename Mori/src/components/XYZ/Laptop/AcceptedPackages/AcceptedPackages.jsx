@@ -1,97 +1,148 @@
 import React, { useState, useEffect } from "react";
-import { TableComponent } from "./TableComponent";
+import { TableComponent } from "./TableComponent"
+import { readExpeditions } from "../../../../service/shipments";
 
 const AcceptedPackages = () => {
-  const data = [
-    {
-      id: 1,
-      batchId: "#10201",
-      shipmentId: "100029837238",
-      driedDate: "11/11/24",
-      flouredDate: "11/11/24",
-      weight: "23kg",
-    },
-    {
-      id: 2,
-      batchId: "#10202",
-      shipmentId: "100029837239",
-      driedDate: "11/12/24",
-      flouredDate: "11/12/24",
-      weight: "24kg",
-    },
-    {
-      id: 3,
-      batchId: "#10203",
-      shipmentId: "100029837240",
-      driedDate: "11/13/24",
-      flouredDate: "11/13/24",
-      weight: "25kg",
-    },
-    {
-      id: 4,
-      batchId: "#10204",
-      shipmentId: "100029837241",
-      driedDate: "11/14/24",
-      flouredDate: "11/14/24",
-      weight: "26kg",
-    },
-    {
-      id: 5,
-      batchId: "#10205",
-      shipmentId: "100029837242",
-      driedDate: "11/15/24",
-      flouredDate: "11/15/24",
-      weight: "27kg",
-    },
-    {
-      id: 6,
-      batchId: "#10206",
-      shipmentId: "100029837243",
-      driedDate: "11/16/24",
-      flouredDate: "11/16/24",
-      weight: "28kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-  ];
+  useEffect(() => {
+    readExpeditions()
+      .then((res) => {
+        console.log("Success : ", res);
+        const expeditions = res.data;
+
+        // Group batches by expedition ID
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const id = expedition?.Expedition?.CentralID;
+          if (!acc[id]) {
+            acc[id] = {
+              id: id,
+              batchIds: [],
+              flouredDates: [],
+              driedDates: [],
+              weights: [],
+              status: expedition.status,
+              checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
+            };
+          }
+          acc[id].batchIds.push(expedition.BatchID);
+          acc[id].flouredDates.push(expedition.FlouredDate);
+          acc[id].driedDates.push(expedition.DriedDate);
+          acc[id].weights.push(expedition.Weight);
+          return acc;
+        }, {});
+
+        // Convert grouped data object to array
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
+          return {
+            id: index + 1,
+            shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
+            batchId: expedition.batchIds,
+            driedDate: expedition.driedDates,
+            flouredDate: expedition.flouredDates,
+            weight: expedition.weights,
+            status: expedition.status,
+            checkpoint: expedition.checkpoint,
+          };
+        });
+
+        // Set your state with resArr
+        setSortedData(resArr);
+      })
+      .catch((err) => {
+        console.log("Error : ", err);
+      });
+  }, []);
+  
+
+  // const data = [
+  //   {
+  //     id: 1,
+  //     batchId: "#10201",
+  //     shipmentId: "100029837238",
+  //     driedDate: "11/11/24",
+  //     flouredDate: "11/11/24",
+  //     weight: "23kg",
+  //   },
+  //   {
+  //     id: 2,
+  //     batchId: "#10202",
+  //     shipmentId: "100029837239",
+  //     driedDate: "11/12/24",
+  //     flouredDate: "11/12/24",
+  //     weight: "24kg",
+  //   },
+  //   {
+  //     id: 3,
+  //     batchId: "#10203",
+  //     shipmentId: "100029837240",
+  //     driedDate: "11/13/24",
+  //     flouredDate: "11/13/24",
+  //     weight: "25kg",
+  //   },
+  //   {
+  //     id: 4,
+  //     batchId: "#10204",
+  //     shipmentId: "100029837241",
+  //     driedDate: "11/14/24",
+  //     flouredDate: "11/14/24",
+  //     weight: "26kg",
+  //   },
+  //   {
+  //     id: 5,
+  //     batchId: "#10205",
+  //     shipmentId: "100029837242",
+  //     driedDate: "11/15/24",
+  //     flouredDate: "11/15/24",
+  //     weight: "27kg",
+  //   },
+  //   {
+  //     id: 6,
+  //     batchId: "#10206",
+  //     shipmentId: "100029837243",
+  //     driedDate: "11/16/24",
+  //     flouredDate: "11/16/24",
+  //     weight: "28kg",
+  //   },
+  //   {
+  //     id: 7,
+  //     batchId: "#10207",
+  //     shipmentId: "100029837244",
+  //     driedDate: "11/17/24",
+  //     flouredDate: "11/17/24",
+  //     weight: "29kg",
+  //   },
+  //   {
+  //     id: 7,
+  //     batchId: "#10207",
+  //     shipmentId: "100029837244",
+  //     driedDate: "11/17/24",
+  //     flouredDate: "11/17/24",
+  //     weight: "29kg",
+  //   },
+  //   {
+  //     id: 7,
+  //     batchId: "#10207",
+  //     shipmentId: "100029837244",
+  //     driedDate: "11/17/24",
+  //     flouredDate: "11/17/24",
+  //     weight: "29kg",
+  //   },
+  //   {
+  //     id: 7,
+  //     batchId: "#10207",
+  //     shipmentId: "100029837244",
+  //     driedDate: "11/17/24",
+  //     flouredDate: "11/17/24",
+  //     weight: "29kg",
+  //   },
+  //   {
+  //     id: 7,
+  //     batchId: "#10207",
+  //     shipmentId: "100029837244",
+  //     driedDate: "11/17/24",
+  //     flouredDate: "11/17/24",
+  //     weight: "29kg",
+  //   },
+  // ];
 
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState("new-old");
@@ -116,7 +167,7 @@ const AcceptedPackages = () => {
   };
 
   const handleSearchAndSort = (sortValue = sortKey) => {
-    let filteredData = data.filter(
+    let filteredData = sortedData.filter(
       (row) =>
         row.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.shipmentId.toLowerCase().includes(searchQuery.toLowerCase())
