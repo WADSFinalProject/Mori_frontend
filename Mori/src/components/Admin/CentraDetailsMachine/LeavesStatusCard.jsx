@@ -51,7 +51,9 @@ const LeavesStatusCard = ({ title, totalWeight, proportions, colors, labels }) =
   );
 };
 
-const LeavesStatusDashboard = ({ wetLeaves, driedLeaves, flouredLeaves }) => {
+const LeavesStatusDashboard = ({ data }) => {
+  const { wetLeaves, driedLeaves, flouredLeaves } = data;
+
   return (
     <div className="flex flex-wrap gap-6">
       <LeavesStatusCard
@@ -80,4 +82,3 @@ const LeavesStatusDashboard = ({ wetLeaves, driedLeaves, flouredLeaves }) => {
 };
 
 export default LeavesStatusDashboard;
-

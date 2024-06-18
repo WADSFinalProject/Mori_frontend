@@ -5,19 +5,19 @@ import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
 
-const dummyWetLeavesStatus = {
-  totalWeight: 28.1,
-  proportions: [13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1], // Example proportions
-};
-
-const dummyDriedLeavesStatus = {
-  totalWeight: 26.8,
-  proportions: [13.7 / 26.8, 5.1 / 26.8], // Example proportions
-};
-
-const dummyFlouredLeavesStatus = {
-  totalWeight: 29.4,
-  proportions: [13.7 / 29.4, 4.3 / 29.4], // Example proportions
+const dummyLeavesStatus = {
+  wetLeaves: {
+    totalWeight: 28.1,
+    proportions: [13.7 / 28.1, 5.1 / 28.1, 4.3 / 28.1], // Example proportions
+  },
+  driedLeaves: {
+    totalWeight: 26.8,
+    proportions: [13.7 / 26.8, 5.1 / 26.8], // Example proportions
+  },
+  flouredLeaves: {
+    totalWeight: 29.4,
+    proportions: [13.7 / 29.4, 4.3 / 29.4], // Example proportions
+  }
 };
 
 const dummyDryingMachines = [
@@ -81,9 +81,7 @@ const dummyFlouringMachines = [
 ];
 
 const CentraDetailsMachine = ({ centraId, location }) => {
-  const [wetLeavesStatus, setWetLeavesStatus] = useState(null);
-  const [driedLeavesStatus, setDriedLeavesStatus] = useState(null);
-  const [flouredLeavesStatus, setFlouredLeavesStatus] = useState(null);
+  const [leavesStatus, setLeavesStatus] = useState(null);
   const [dryingMachines, setDryingMachines] = useState([]);
   const [flouringMachines, setFlouringMachines] = useState([]);
   const [personInCharge, setPersonInCharge] = useState({ name: '', email: '' });
@@ -97,9 +95,9 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
   const fetchDummyData = async () => {
     try {
-      setWetLeavesStatus(dummyWetLeavesStatus);
-      setDriedLeavesStatus(dummyDriedLeavesStatus);
-      setFlouredLeavesStatus(dummyFlouredLeavesStatus);
+      // Fetching combined leaves status
+      setLeavesStatus(dummyLeavesStatus);
+      
       setDryingMachines(dummyDryingMachines);
       setFlouringMachines(dummyFlouringMachines);
 
@@ -121,12 +119,8 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       </div>
 
       <div>
-        {wetLeavesStatus && driedLeavesStatus && flouredLeavesStatus && (
-          <LeavesStatusDashboard 
-            wetLeaves={wetLeavesStatus} 
-            driedLeaves={driedLeavesStatus} 
-            flouredLeaves={flouredLeavesStatus} 
-          />
+        {leavesStatus && (
+          <LeavesStatusDashboard data={leavesStatus} />
         )}
       </div>
 
