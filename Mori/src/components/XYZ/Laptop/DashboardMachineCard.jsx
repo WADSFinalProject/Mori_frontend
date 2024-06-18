@@ -56,7 +56,7 @@ const MachineCard = ({ machine, extraMarginClass, onClick }) => {
         </div>
       </div>
       <div className="last-updated" style={{ position: 'absolute', top: '5px', right: '5px', fontSize: '10px', color: '#666666' }}>
-        <div>Last updated:</div>
+        {/* <div>Last updated:</div> */}
         <div style={{ fontWeight: 'bold' }}>{machine.lastUpdated}</div>
       </div>
     </div>
