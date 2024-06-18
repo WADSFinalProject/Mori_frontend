@@ -20,13 +20,30 @@ const MainXYZ = () => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
   const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
-  const warehouses = ["Kupang", "Warehouse 1", "Warehouse 2"]; // Add other warehouses as needed
-  const [warehouseId, setWarehouseId] = useState(22); // Default warehouseId to 22
+  const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
+  const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
   useEffect(() => {
-    fetchWarehouseDetails(warehouseId);
+    fetchAllWarehouses(); // Fetch all warehouse details on component mount
+  }, []);
+
+  useEffect(() => {
+    if (warehouseId !== null) {
+      fetchWarehouseDetails(warehouseId);
+    }
   }, [warehouseId]); // Fetch data when warehouseId changes
+
+  const fetchAllWarehouses = async () => {
+    try {
+      const response = await getAllWarehouses();
+      const data = response.data;
+      setWarehouses(data);
+      console.log("All warehouse details:", data); // Log all warehouse details
+    } catch (error) {
+      console.error("Error fetching all warehouses: ", error);
+    }
+  };
 
   const fetchWarehouseDetails = async (warehouse_id) => {
     try {
@@ -35,42 +52,43 @@ const MainXYZ = () => {
       console.log('Raw data from backend:', data);
 
       // Transform the data if needed
-      const transformedData = {
-        location: data.location,
-        currentLoad: data.TotalStock,
-        capacity: 50, // Assuming capacity is always 50 based on your example
-        lastUpdated: null, // You can set this to null or customize as needed
-      };
+      const transformedData = data.map(item => ({
+        location: item.location,
+        currentLoad: item.TotalStock,
+        capacity: item.Capacity, // Assuming capacity is provided by the backend
+        lastUpdated: item.lastUpdated || null, // Customize as needed
+      }));
       console.log('Transformed data:', transformedData);
 
-      setMachines([transformedData]); // Ensure transformedData is in an array if setMachines expects an array
+      setMachines(transformedData); // Update machines with transformed data
+      console.log('Machines state:', machines); // Log machines state to debug
     } catch (error) {
       console.error('Error fetching warehouse details:', error);
       // Handle error state if needed
     }
   };
   
-    const chartData = {
-      labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
-      datasets: [
-        {
-          data: [47.1, 40],
-          backgroundColor: ['#176E76', '#4D946D'],
-          borderWidth: 0,
-        },
-      ],
-    };
-  
-    const gaugeOptions = {
-      cutout: '70%',
-      plugins: {
-        legend: {
-          display: false,
-        },
+  const chartData = {
+    labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
+    datasets: [
+      {
+        data: [47.1, 40],
+        backgroundColor: ['#176E76', '#4D946D'],
+        borderWidth: 0,
       },
-      rotation: 270,
-      circumference: 180,
-    };
+    ],
+  };
+
+  const gaugeOptions = {
+    cutout: '70%',
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    rotation: 270,
+    circumference: 180,
+  };
 
   // Editable user state
   const initialUserState = {
@@ -110,70 +128,6 @@ const MainXYZ = () => {
     setSelectedWarehouse(warehouse);
     setWarehouseDropdownVisible(false);
   };
-
-  
-  // const machinesByWarehouse = {
-  //   Kupang: [
-  //     {
-  //       location: "Kecamatan Semau",
-  //       currentLoad: 31.1,
-  //       capacity: 50,
-  //       lastUpdated: "1 Minute Ago",
-  //     },
-  //     {
-  //       location: "Kecamatan Kupang Barat",
-  //       currentLoad: 50,
-  //       capacity: 50,
-  //       lastUpdated: "1 Minute Ago",
-  //     },
-  //     {
-  //       location: "Kecamatan Amarasi",
-  //       currentLoad: 31.1,
-  //       capacity: 50,
-  //       lastUpdated: "1 Minute Ago",
-  //     },
-  //   ],
-  //   "Warehouse 1": [
-  //     {
-  //       location: "Location 1",
-  //       currentLoad: 20,
-  //       capacity: 40,
-  //       lastUpdated: "2 Minutes Ago",
-  //     },
-  //     {
-  //       location: "Location 2",
-  //       currentLoad: 30,
-  //       capacity: 50,
-  //       lastUpdated: "3 Minutes Ago",
-  //     },
-  //   ],
-  //   "Warehouse 2": [
-  //     {
-  //       location: "Location A",
-  //       currentLoad: 15,
-  //       capacity: 30,
-  //       lastUpdated: "4 Minutes Ago",
-  //     },
-  //     {
-  //       location: "Location B",
-  //       currentLoad: 25,
-  //       capacity: 50,
-  //       lastUpdated: "5 Minutes Ago",
-  //     },
-  //   ],
-  // };
-
-  // const machines = machinesByWarehouse[selectedWarehouse];
-
-  // Variables for the dynamic content
-  const batchAvailable = 42;
-  const invoiceId = "Invoice #102018";
-  const invoiceAmount = "IDR 1,100,000.00";
-  const payBeforeDate = "PAY BEFORE MAY 8, 2024";
-  const shippedCount = 2;
-  const toDeliverCount = 2;
-  const completedCount = 2;
-  const missingCount = 2;
 
   // Generate date, month, and year options
   const days = Array.from({ length: 31 }, (_, i) =>
@@ -532,39 +486,46 @@ const MainXYZ = () => {
 
           {/* Stock Management Page */}
           {activePage === "Stock Management" && (
-            <>
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Stock Management</h1>
-                <div className="relative">
-                  <button
-                    className="flex items-center text-[#A7AD6F] font-semibold"
-                    onClick={toggleWarehouseDropdown}
-                  >
-                    Warehouse {selectedWarehouse}
-                    <img
-                      src={ArrowDown}
-                      alt="Arrow Down"
-                      className="ml-2 w-4"
-                    />
-                  </button>
-                  {warehouseDropdownVisible && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-20">
-                      {warehouses.map((warehouse) => (
-                        <button
-                          key={warehouse}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                          onClick={() => selectWarehouse(warehouse)}
-                        >
-                          {warehouse}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Stock Management</h1>
+            <div className="relative">
+              <button
+                className="flex items-center text-[#A7AD6F] font-semibold"
+                onClick={toggleWarehouseDropdown}
+              >
+                Warehouse {selectedWarehouse}
+                <img
+                  src={ArrowDown}
+                  alt="Arrow Down"
+                  className="ml-2 w-4"
+                />
+              </button>
+              {warehouseDropdownVisible && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-20">
+                  {warehouses.map((warehouse) => (
+                    <button
+                      key={warehouse.id}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                      onClick={() => selectWarehouse(warehouse)}
+                    >
+                      {warehouse.location}
+                    </button>
+                  ))}
                 </div>
-              </div>
-              <DashboardMachineCard machines={machines} />
-            </>
-          )}
+              )}
+            </div>
+          </div>
+          <div className="machine-cards">
+                {machines.length > 0 ? (
+                  <DashboardMachineCard machines={machines} />
+                ) : (
+                  <p>No machines available.</p>
+                )}
+          </div>
+        </>
+      )}
+
           {activePage === "Help Center" && <div>Help Center Content</div>}
           {activePage === "Settings" && (
             <div className="">

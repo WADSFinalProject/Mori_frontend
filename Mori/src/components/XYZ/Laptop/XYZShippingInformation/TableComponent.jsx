@@ -164,8 +164,8 @@ export const TableComponent = ({ data, onDelete}) => {
         x2="5"
         y2="31"
         stroke="#CD4848"
-        stroke-linecap="round"
-        stroke-dasharray="2 3"
+        strokeLinecap="round"
+        strokeDasharray="2 3"
       />
     </svg>
   );
