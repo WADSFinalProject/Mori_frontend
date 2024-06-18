@@ -11,10 +11,10 @@ const StatusComponent = ({
 }) => {
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "PKG_Delivering":
+      case "Shipping":
         return "#9AD1B3"; // Light blue for "Shipping"
-      case "PKG_Delivered":
-        return "#BEC8FA"; // Green for "Delivered"
+      case "Delivered":
+        return "#838948"; // Green for "Delivered"
       case "Missing":
         return "#EBB6B6"; // Light red for "Missing"
       default:
@@ -24,10 +24,10 @@ const StatusComponent = ({
 
   const getStatusFilter = (status) => {
     switch (status) {
-      case "PKG_Delivering":
+      case "Shipping":
         return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipping"
-      case "PKG_Delivered":
-        return "brightness(0) saturate(100%) invert(77%) sepia(5%) saturate(2116%) hue-rotate(195deg) brightness(103%) contrast(96%)"; // Green for "Delivered"
+      case "Delivered":
+        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Delivered"
       case "Missing":
         return "brightness(0) saturate(100%) invert(69%) sepia(25%) saturate(651%) hue-rotate(311deg) brightness(118%) contrast(85%)"; // Light red for "Missing"
       default:
@@ -35,28 +35,20 @@ const StatusComponent = ({
     }
   };
 
-  const getDisplayStatus = (status) => {
-    switch (status) {
-      case "PKG_Delivering":
-        return "Shipping";
-      case "PKG_Delivered":
-        return "Delivered";
-      case "Missing":
-        return "Missing";
-      default:
-        return status;
-    }
+  const statusMap = {
+    PKG_Delivering: "Shipping",
+    PKG_Delivered: "Delivered",
+    Missing: "Missing",
   };
 
-  const statusBackgroundColor = getStatusBackgroundColor(status);
-  const statusFilter = getStatusFilter(status);
-  const displayStatus = getDisplayStatus(status);
+  const displayStatus = statusMap[status];
+  const statusBackgroundColor = getStatusBackgroundColor(displayStatus);
+  const statusFilter = getStatusFilter(displayStatus);
 
   return (
     <Link
       to="/shipdetails"
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
-      // onclick go to shipment details page
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
         <div>
@@ -68,7 +60,10 @@ const StatusComponent = ({
 
         <div
           className="rounded-md flex flex-row items-center justify-center py-2 px-3 text-xs"
-          style={{ backgroundColor: statusBackgroundColor }}
+          style={{
+            backgroundColor: statusBackgroundColor,
+            color: displayStatus === "Delivered" ? "white" : "inherit",
+          }}
         >
           <div className="relative font-medium font-vietnam">
             {displayStatus}
@@ -77,7 +72,7 @@ const StatusComponent = ({
       </div>
 
       <div className="text-zinc-500 text-base font-vietnam">
-        Created <b>{collected}</b> at <b>{time}</b>
+        Collected <b>{collected}</b> at <b>{time}</b>
       </div>
 
       <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 gap-[8px] text-base text-[#404040] overflow-x-auto">

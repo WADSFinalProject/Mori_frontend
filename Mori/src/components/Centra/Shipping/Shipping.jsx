@@ -65,6 +65,7 @@ const Shipping = () => {
             time: expedition.expedition.ExpeditionDate.split("T")[1].split(
               "."
             )[0],
+            expeditionDate: expedition.expedition.ExpeditionDate,
           }));
         setShipmentData(expeditions);
       } catch (error) {
@@ -109,16 +110,21 @@ const Shipping = () => {
   // Filter the data based on the selected filter
   const filteredData = shipmentData.filter((shipment) => {
     if (filter === "all") return true;
-    return shipment.status.toLowerCase() === filter.replace("-", " ");
+    const statusMap = {
+      PKG_Delivering: "Shipping",
+      PKG_Delivered: "Delivered",
+      Missing: "Missing",
+    };
+    return statusMap[shipment.status] === filter;
   });
 
   // Sort the filtered data
   const sortedData = filteredData.sort((a, b) => {
     switch (sort) {
       case "new-old":
-        return new Date(b.collected) - new Date(a.collected);
+        return new Date(b.expeditionDate) - new Date(a.expeditionDate);
       case "old-new":
-        return new Date(a.collected) - new Date(b.collected);
+        return new Date(a.expeditionDate) - new Date(b.expeditionDate);
       case "heavy-light":
         return b.totalWeight - a.totalWeight;
       case "light-heavy":
@@ -329,10 +335,9 @@ const Shipping = () => {
               onChange={(e) => setFilter(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="to-deliver">To Deliver</option>
-              <option value="shipped">Shipped</option>
-              <option value="completed">Completed</option>
-              <option value="missing">Missing</option>
+              <option value="Shipping">Shipping</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Missing">Missing</option>
             </select>
           </div>
 

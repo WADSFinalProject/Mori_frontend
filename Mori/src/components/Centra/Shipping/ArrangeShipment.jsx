@@ -46,7 +46,13 @@ const ArrangeShipment = () => {
       0
     );
     const totalPackages = batches.length;
+
+    // Get the current date in UTC
     const expeditionDate = new Date();
+
+    // Manually adjust to WITA (UTC+8)
+    expeditionDate.setHours(expeditionDate.getHours() + 8);
+
     const estimatedArrival = new Date(expeditionDate);
     estimatedArrival.setDate(expeditionDate.getDate() + 5);
 
