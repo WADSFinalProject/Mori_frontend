@@ -68,7 +68,7 @@ const LeavesStatusDashboard = ({ data }) => {
         totalWeight={driedLeaves.totalWeight}
         proportions={driedLeaves.proportions}
         colors={['#9AD1B3', '#A7AD6F']}
-        labels={['Wet Leaves', 'Drying']}
+        labels={['Dried Leaves', 'Flouring']}
       />
       <LeavesStatusCard
         title="Floured Leaves"
