@@ -39,12 +39,17 @@ const StockManagement = () => {
       console.error("Error fetching all warehouses: ", error);
     }
   };
-
   const fetchWarehouseDetails = async (warehouse_id) => {
     try {
       const response = await getWarehouseDetails(warehouse_id);
       const data = response.data;
       console.log('Raw data from backend:', data);
+  
+      // Function to format the date
+      const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        return new Date(dateString).toLocaleString('en-GB', options); // Adjust locale and options as needed
+      };
   
       // Check if data is an array
       if (Array.isArray(data)) {
@@ -53,10 +58,10 @@ const StockManagement = () => {
           location: item.location,
           currentLoad: item.TotalStock,
           capacity: item.Capacity, // Assuming capacity is provided by the backend
-          lastUpdated: item.lastUpdated || null, // Customize as needed
+          lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
           stock_history: item.stock_history.map(history => ({
             change: history.change_amount,
-            date: history.change_date,
+            date: formatDate(history.change_date),
             type: history.change_amount.startsWith('+') ? 'Income' : 'Usage'
           }))
         }));
@@ -73,7 +78,7 @@ const StockManagement = () => {
       // Handle error state if needed
     }
   };
-
+  
   // const [machines, setMachines] = useState([
   //   {
   //     number: 1,
