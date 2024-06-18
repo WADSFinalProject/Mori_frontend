@@ -4,6 +4,7 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import { readExpeditions, deleteExpedition } from "../../../service/expeditionService";
 
 const AdminShipmentDetails = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,9 +18,9 @@ const AdminShipmentDetails = () => {
 
   useEffect(() => {
     // Calculate total shipments count
-    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
+    const uniqueShipmentIds = new Set(originalData.map((item) => item.shipmentId));
     setTotalShipments(uniqueShipmentIds.size);
-  }, [sortedData]);
+  }, [originalData]);
 
   useEffect(() => {
     handleSearchAndFilter(searchQuery, filterKey);
@@ -87,7 +88,8 @@ const AdminShipmentDetails = () => {
 
         console.log("Resulting Array: ", resArr);
 
-        // Set your state with resArr
+        // Set original data and sorted data state
+        setOriginalData(resArr);
         setSortedData(resArr);
       })
       .catch((err) => {
@@ -106,7 +108,7 @@ const AdminShipmentDetails = () => {
   };
 
   const handleSearchAndFilter = (searchValue, filterValue) => {
-    let filteredData = sortedData.filter((row) =>
+    let filteredData = originalData.filter((row) =>
       row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
