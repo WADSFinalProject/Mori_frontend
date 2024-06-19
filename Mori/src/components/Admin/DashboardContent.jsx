@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import ArrowDown from "../../assets/XYZ/arrowdown.png";
@@ -18,8 +18,17 @@ const DashboardContent = () => {
     const userCount = 120;
     const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
     const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
+    const [originalData, setOriginalData] = useState([]);
+    const [sortedData, setSortedData] = useState([]);
+    const [totalShipments, setTotalShipments] = useState(0);
+
+    useEffect(() => {
+      // Calculate total shipments count
+      const uniqueShipmentIds = new Set(originalData.map((item) => item.shipmentId));
+      setTotalShipments(uniqueShipmentIds.size);
+    }, [originalData]);
+
     
-  
     const toggleConversionRateDropdown = () => {
       setConversionRateDropdownVisible(!conversionRateDropdownVisible);
     };
@@ -118,7 +127,7 @@ const DashboardContent = () => {
                             Shipment
                         </span>
                         <div className="bg-[#CECECE] text-white rounded-lg px-8 py-2">
-                            <span className="text-xl text-black">{shipmentCount}</span>
+                            <span className="text-xl text-black">{totalShipments}</span>
                         </div>
                         </div>
 

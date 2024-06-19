@@ -47,8 +47,8 @@ const XYZShippingInformation = () => {
 
           expedition.batches.forEach((batch) => {
             acc[airwayBill].batchIds.push(batch.BatchID);
-            acc[airwayBill].flouredDates.push(batch.FlouredDate);
-            acc[airwayBill].driedDates.push(batch.DriedDate);
+            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
             acc[airwayBill].weights.push(batch.Weight);
           });
 
