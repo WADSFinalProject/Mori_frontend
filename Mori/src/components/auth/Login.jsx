@@ -7,7 +7,7 @@ import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
 
-import {jwtDecode} from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode'; 
 
 import { useAuth } from '../../contexts/authContext';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,6 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
-
 
   const { accessToken, saveAccessToken } = useAuth();
   const navigate = useNavigate()
@@ -355,6 +354,7 @@ const handleLoginVerificationSubmit = () => {
                           placeholder="Enter Email"
                           type="email"
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="email"
                         />
                       </div>
                       <button
@@ -381,6 +381,7 @@ const handleLoginVerificationSubmit = () => {
                           onKeyDown={(e) => handleKeyDown(e, index)}
                           className="w-10 h-10 text-lg text-center border-2 border-gray-300"
                           autoFocus={index === 0}
+                          autoComplete="one-time-code"
                         />
                       ))}
                     </div>
@@ -423,6 +424,7 @@ const handleLoginVerificationSubmit = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
@@ -450,6 +452,7 @@ const handleLoginVerificationSubmit = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
@@ -486,6 +489,7 @@ const handleLoginVerificationSubmit = () => {
                           placeholder="Enter Email"
                           type="email"
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="email"
                         />
                       </div>
                       <div>
@@ -498,6 +502,7 @@ const handleLoginVerificationSubmit = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="current-password"
                           />
                           <button 
                             type="button"
@@ -573,6 +578,7 @@ const handleLoginVerificationSubmit = () => {
                         placeholder="Enter Email"
                         type="email"
                         className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full lg:w-96 font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                        autoComplete="email"
                       />
                     </div>
                     <button
@@ -603,6 +609,7 @@ const handleLoginVerificationSubmit = () => {
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         className="w-12 h-12 text-xl text-center border-2 border-gray-300"
                         autoFocus={index === 0}
+                        autoComplete="one-time-code"
                       />
                     ))}
                   </div>
@@ -650,6 +657,7 @@ const handleLoginVerificationSubmit = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
@@ -677,6 +685,7 @@ const handleLoginVerificationSubmit = () => {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
@@ -717,6 +726,7 @@ const handleLoginVerificationSubmit = () => {
                         placeholder="Enter Email"
                         type="email"
                         className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full lg:w-96 font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                        autoComplete="email"
                       />
                     </div>
                     <div>
@@ -729,6 +739,7 @@ const handleLoginVerificationSubmit = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="current-password"
                         />
                         <button 
                           type="button"
