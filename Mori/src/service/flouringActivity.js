@@ -85,7 +85,6 @@ export const deleteFlouringActivity = async (flouringID) => {
     }
 };
 
-
 export const getFlouringActivities_byMachine = async (machine_id) => {
     try {
         return await axios.get(`${host}/secured/flouring-activities/machine/${machine_id}`, {

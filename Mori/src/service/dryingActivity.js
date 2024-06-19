@@ -72,7 +72,6 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
     }
 };
 
-
 export const getDryingActivity_Bymachine = async (machineID) => {
     try {
         return await axios.get(`${host}/secured/drying-activities/machine/${machineID}`, {
@@ -85,7 +84,6 @@ export const getDryingActivity_Bymachine = async (machineID) => {
         throw new Error(error);
     }
 };
-
 
 export const deleteDryingActivity = async (dryingID) => {
     try {

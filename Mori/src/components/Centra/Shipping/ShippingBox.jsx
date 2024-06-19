@@ -19,7 +19,7 @@ const ShippingBox = ({
       <div className="self-stretch flex flex-row flex-wrap items-start justify-start gap-[12px]">
         <label className="p-0 m-0 h-5 w-5 cursor-pointer flex items-center justify-center appearance-none border-2 border-solid rounded-md border-slate-500 relative">
           <input
-            className="opacity-0 absolute h-full w-full"
+            className="opacity-0 absolute h-full w-full cursor-pointer"
             type="checkbox"
             checked={checked}
             onChange={onChange}

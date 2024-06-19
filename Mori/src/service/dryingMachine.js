@@ -3,7 +3,6 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-
 export const addDryingMachine = async (centraId, capacity, status, duration) => {
     try {
         const machineDetails = {

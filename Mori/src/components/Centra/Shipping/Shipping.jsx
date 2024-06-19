@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import ShippingBox from "./ShippingBox";
+import StatusComponent from "./StatusComponent";
 import "./Shipping.css";
 import { useNavigate, Link } from "react-router-dom";
+import { readExpeditions } from "../../../service/expeditionService";
 import { readBatches } from "../../../service/batches";
 
 const Shipping = () => {
@@ -19,6 +21,7 @@ const Shipping = () => {
   const [sort, setSort] = useState("new-old");
   const [batchToShip, setBatchToShip] = useState([]);
   const [checkedState, setCheckedState] = useState([]);
+  const [shipmentData, setShipmentData] = useState([]);
 
   useEffect(() => {
     const availableHeight = height - (headerHeight + footerHeight);
@@ -44,7 +47,34 @@ const Shipping = () => {
       }
     };
 
+    const fetchExpeditions = async () => {
+      try {
+        const response = await readExpeditions();
+        const expeditions = response.data
+          .filter((expedition) =>
+            ["PKG_Delivering", "PKG_Delivered", "Missing"].includes(
+              expedition.expedition.Status
+            )
+          )
+          .map((expedition) => ({
+            id: expedition.expedition.AirwayBill,
+            status: expedition.expedition.Status,
+            batches: expedition.batches.map((batch) => batch.BatchID),
+            totalWeight: expedition.expedition.TotalWeight,
+            collected: expedition.expedition.ExpeditionDate.split("T")[0],
+            time: expedition.expedition.ExpeditionDate.split("T")[1].split(
+              "."
+            )[0],
+            expeditionDate: expedition.expedition.ExpeditionDate,
+          }));
+        setShipmentData(expeditions);
+      } catch (error) {
+        console.error("Error fetching shipments: ", error);
+      }
+    };
+
     fetchBatches();
+    fetchExpeditions();
   }, []);
 
   const handleCheckboxChange = (index) => {
@@ -76,6 +106,33 @@ const Shipping = () => {
       state: { batches: selectedBatches },
     });
   };
+
+  // Filter the data based on the selected filter
+  const filteredData = shipmentData.filter((shipment) => {
+    if (filter === "all") return true;
+    const statusMap = {
+      PKG_Delivering: "Shipping",
+      PKG_Delivered: "Delivered",
+      Missing: "Missing",
+    };
+    return statusMap[shipment.status] === filter;
+  });
+
+  // Sort the filtered data
+  const sortedData = filteredData.sort((a, b) => {
+    switch (sort) {
+      case "new-old":
+        return new Date(b.expeditionDate) - new Date(a.expeditionDate);
+      case "old-new":
+        return new Date(a.expeditionDate) - new Date(b.expeditionDate);
+      case "heavy-light":
+        return b.totalWeight - a.totalWeight;
+      case "light-heavy":
+        return a.totalWeight - b.totalWeight;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="max-w-[640px] h-screen relative bg-slate-50 overflow-hidden flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border leading-[normal] tracking-[normal] ml-auto mr-auto">
@@ -180,7 +237,7 @@ const Shipping = () => {
             </button>
           </div>
         )}
-        {allChecked && (
+        {allChecked && batchToShip.length !== 0 && (
           // All checkboxes selected
           <div className="relative grid grid-cols-3 w-full items-center justify-center text-[#828282] mb-[0.465rem]">
             <button
@@ -278,10 +335,9 @@ const Shipping = () => {
               onChange={(e) => setFilter(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="to-deliver">To Deliver</option>
-              <option value="shipped">Shipped</option>
-              <option value="completed">Completed</option>
-              <option value="missing">Missing</option>
+              <option value="Shipping">Shipping</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Missing">Missing</option>
             </select>
           </div>
 
