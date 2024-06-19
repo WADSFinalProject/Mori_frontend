@@ -24,29 +24,23 @@ const AdminShipmentDetails = () => {
 
   useEffect(() => {
     handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
+  }, [filterKey, searchQuery, originalData]);
 
   const fetchData = () => {
     readExpeditions()
       .then((res) => {
-        console.log("Fetched Expeditions: ", res.data);
         const expeditions = res.data;
-
-        // Group batches by expedition AirwayBill and fetch additional data
         const groupedExpeditions = expeditions.reduce((acc, expedition) => {
           const expeditionDetails = expedition?.expedition;
-
           if (!expeditionDetails || !expedition.batches) {
-            console.log("Skipping expedition due to missing details or batches: ", expedition);
-            return acc; // Skip if essential data is missing
+            return acc;
           }
 
           const airwayBill = expeditionDetails.AirwayBill;
-
           if (!acc[airwayBill]) {
             acc[airwayBill] = {
               id: airwayBill,
-              expeditionID: expeditionDetails.ExpeditionID, // Store ExpeditionID for deletion
+              expeditionID: expeditionDetails.ExpeditionID,
               batchIds: [],
               flouredDates: [],
               driedDates: [],
@@ -68,23 +62,18 @@ const AdminShipmentDetails = () => {
           return acc;
         }, {});
 
-        console.log("Grouped Expeditions: ", groupedExpeditions);
-
-        // Convert grouped data object to array
-        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
-          return {
-            id: index + 1,
-            shipmentId: expedition.id,
-            expeditionID: expedition.expeditionID, // Include ExpeditionID
-            batchId: expedition.batchIds,
-            driedDate: expedition.driedDates,
-            flouredDate: expedition.flouredDates,
-            weight: expedition.weights,
-            status: expedition.status,
-            checkpoint: expedition.checkpoint,
-            receptionNotes: "Null",
-          };
-        });
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+          id: index + 1,
+          shipmentId: expedition.id,
+          expeditionID: expedition.expeditionID,
+          batchId: expedition.batchIds,
+          driedDate: expedition.driedDates,
+          flouredDate: expedition.flouredDates,
+          weight: expedition.weights,
+          status: expedition.status,
+          checkpoint: expedition.checkpoint,
+          receptionNotes: "Null",
+        }));
 
         console.log("Resulting Array: ", resArr);
 
@@ -93,7 +82,7 @@ const AdminShipmentDetails = () => {
         setSortedData(resArr);
       })
       .catch((err) => {
-        console.log("Error: ", err);
+        console.error("Error: ", err);
       });
   };
 
@@ -133,9 +122,10 @@ const AdminShipmentDetails = () => {
     if (shipmentToDelete) {
       deleteExpedition(shipmentToDelete)
         .then((res) => {
-          console.log("Deleted expedition: ", res);
+          setOriginalData((prevData) =>
+            prevData.filter((item) => item.expeditionID !== shipmentToDelete)
+          );
           setIsDeleteModalOpen(false);
-          fetchData(); // Refresh the data after deletion
         })
         .catch((err) => {
           console.error("Error deleting expedition: ", err);
@@ -155,7 +145,7 @@ const AdminShipmentDetails = () => {
             Total Shipments
           </div>
           <div className="text-black font-vietnam text-3xl font-semibold">
-            {sortedData.length} Shipments
+            {totalShipments} Shipments
           </div>
         </div>
 
@@ -185,7 +175,6 @@ const AdminShipmentDetails = () => {
             <div className="font-vietnam font-semibold text-md items-center">
               Filter By:
             </div>
-            {/* Filter */}
             <select
               className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
               value={filterKey}
@@ -202,10 +191,7 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent
-            data={sortedData}
-            onDelete={openDeleteModal}
-          />
+          <TableComponent data={sortedData} onDelete={openDeleteModal} />
         </div>
       </div>
       <DeleteConfirmationModal

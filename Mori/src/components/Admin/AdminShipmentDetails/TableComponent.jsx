@@ -5,8 +5,10 @@ import { deleteExpedition } from "../../../service/shipments";
 export const TableComponent = ({ data, onDelete }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
+  
   const handleDeleteClick = (index) => {
-    setUserToDelete(sortedData[index]);
+    // setUserToDelete(sortedData[index]);
+    setShipmentToDelete(data[index]);
     setDeleteModalOpen(true);
   };
 
@@ -19,7 +21,7 @@ export const TableComponent = ({ data, onDelete }) => {
         setNewUser(initialNewUserState);
         // handleSearchAndSort(updatedData, sortKey);
         setDeleteModalOpen(false);
-        onDelete();
+        // onDelete();
       })
       .catch((err) => {
         alert("Error : ", err);
@@ -484,7 +486,7 @@ export const TableComponent = ({ data, onDelete }) => {
                 <div className="flex items-center justify-center gap-2">
                   <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => setDeleteModalOpen(true)}
+                    onClick={() => handleDeleteClick(index)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
