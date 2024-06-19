@@ -14,16 +14,18 @@ export const createExpedition = async (
 ) => {
   try {
     const expeditionDetails = {
-      AirwayBill: AirwayBill,
+      AirwayBill,
       EstimatedArrival: estimatedArrival,
-      TotalWeight: TotalWeight,
+      TotalWeight,
       TotalPackages: totalPackages,
       ExpeditionDate: expeditionDate,
       ExpeditionServiceDetails: expeditionServiceDetails,
     };
 
-    response = await axios.post(
-      host + "/secured/expeditions",
+    console.log("Creating expedition with details: ", expeditionDetails);
+
+    const response = await axios.post(
+      `${host}/secured/expeditions`,
       expeditionDetails,
       {
         headers: {
@@ -32,6 +34,8 @@ export const createExpedition = async (
       }
     );
 
+    console.log("Expedition created, response: ", response.data);
+
     const expeditionId = response.data.expeditionId;
 
     const contentDetails = {
@@ -39,7 +43,9 @@ export const createExpedition = async (
       BatchIDs: batches,
     };
 
-    return axios.post(host + "/secured/expedition_contents/", contentDetails, {
+    console.log("Creating expedition content with details: ", contentDetails);
+
+    return axios.post(`${host}/secured/expedition_contents`, contentDetails, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -52,10 +58,10 @@ export const createExpedition = async (
 
 export const readExpeditions = async (skip = 0, limit = 100) => {
   try {
-    return await axios.get(host + "/secured/all_expeditions", {
+    return await axios.get(`${host}/secured/all_expeditions`, {
       params: {
-        skip: skip,
-        limit: limit,
+        skip,
+        limit,
       },
       headers: {
         "Content-Type": "application/json",
@@ -69,15 +75,10 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
 
 export const readExpeditions_byAWB = async (awb) => {
   try {
-    const params = {
-      awb,
-    };
-
-    return await axios.get(host + `/secured/expedition/airwaybill/${awb}`, {
+    return await axios.get(`${host}/secured/expedition/airwaybill/${awb}`, {
       headers: {
         "Content-Type": "application/json",
       },
-      params: params,
     });
   } catch (error) {
     console.error("Error reading expeditions: ", error);
@@ -87,7 +88,7 @@ export const readExpeditions_byAWB = async (awb) => {
 
 export const getExpeditionDetails = async (expedition_id) => {
   try {
-    return await axios.get(host + `/secured/expeditions/${expedition_id}`, {
+    return await axios.get(`${host}/secured/expeditions/${expedition_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -101,37 +102,15 @@ export const getExpeditionDetails = async (expedition_id) => {
   }
 };
 
-// export const updateExpedition = async (expedition_id, estimatedArrival, totalPackages, expeditionDate, expeditionServiceDetails, destination, centralID) => {
-//     try {
-//         const expeditionDetails = {
-//             EstimatedArrival: estimatedArrival,
-//             TotalPackages: totalPackages,
-//             ExpeditionDate: expeditionDate,
-//             ExpeditionServiceDetails: expeditionServiceDetails,
-//             Destination: destination,
-//             CentralID: centralID
-//         };
-
-//         return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, {
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-//     } catch (error) {
-//         console.error(`Error updating expedition ${expedition_id}: `, error);
-//         throw new Error(error);
-//     }
-// };
-
 export const updateExpeditionStatus = async (awb, new_status) => {
   try {
     const expeditionDetails = {
-      awb: awb,
+      awb,
       status: new_status,
     };
 
     return await axios.put(
-      host + `/secured/expedition/${awb}/status`,
+      `${host}/secured/expedition/${awb}/status`,
       expeditionDetails,
       {
         headers: {
@@ -147,7 +126,7 @@ export const updateExpeditionStatus = async (awb, new_status) => {
 
 export const deleteExpedition = async (expedition_id) => {
   try {
-    return await axios.delete(host + `/secured/expeditions/${expedition_id}`, {
+    return await axios.delete(`${host}/secured/expeditions/${expedition_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -161,7 +140,7 @@ export const deleteExpedition = async (expedition_id) => {
 export const getStatus_byAwb = async (awb) => {
   try {
     return await axios.get(
-      host + `/secured/checkpointstatus/airwaybill/${awb}`,
+      `${host}/secured/checkpointstatus/airwaybill/${awb}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -170,6 +149,34 @@ export const getStatus_byAwb = async (awb) => {
     );
   } catch (error) {
     console.error(`Error getting checkpoint: `, error);
+    throw new Error(error);
+  }
+};
+
+export const createCheckpointStatus = async (
+  airwaybill,
+  status,
+  statusdate
+) => {
+  try {
+    const checkpointStatusData = {
+      status,
+      statusdate,
+    };
+
+    const response = await axios.post(
+      `${host}/secured/checkpoint_statuses?airwaybill=${airwaybill}`,
+      checkpointStatusData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating checkpoint status: ", error);
     throw new Error(error);
   }
 };

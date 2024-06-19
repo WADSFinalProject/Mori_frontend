@@ -3,6 +3,7 @@ import { useWindowSize } from "react-use";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createExpedition } from "../../../service/expeditionService";
 import { BatchShipped } from "../../../service/batches";
+import { createCheckpointStatus } from "../../../service/expeditionService"; // Import the function
 
 const ArrangeShipment = () => {
   const { width } = useWindowSize();
@@ -69,6 +70,13 @@ const ArrangeShipment = () => {
 
       // Mark each batch as shipped
       await BatchShipped({ batch_ids: batches.map((batch) => batch.id) });
+
+      // Create initial checkpoint status
+      await createCheckpointStatus(
+        airwayBill.toString(),
+        "In Transit to Harbour Guard",
+        expeditionDate.toISOString()
+      );
 
       alert("Expedition created successfully!");
       navigate("/centra/shipping"); // Navigate back to shipping page after successful creation
@@ -137,15 +145,11 @@ const ArrangeShipment = () => {
                   onChange={(e) => setShippingMethod(e.target.value)}
                 >
                   <option value={""}>Choose</option>
-                  <option value="JNE">JNE</option>
-                  <option value="SiCepat">SiCepat</option>
-                  <option value="J&T">J&T</option>
-                  <option value="Pos Indonesia">Pos Indonesia</option>
-                  <option value="Tiki">Tiki</option>
-                  <option value="Ninja Express">Ninja Express</option>
-                  <option value="Lion Parcel">Lion Parcel</option>
-                  <option value="Anteraja">Anteraja</option>
-                  <option value="Wahana">Wahana</option>
+                  {kurir.map((kurirName) => (
+                    <option key={kurirName} value={kurirName}>
+                      {kurirName}
+                    </option>
+                  ))}
                 </select>
 
                 <div className="text-black text-base font-semibold font-vietnam mt-4 select-none">
@@ -165,10 +169,10 @@ const ArrangeShipment = () => {
                     <br />
                   </span>
                   <span className="text-zinc-500 text-md font-normal font-vietnam leading-none">
-                    Your air waybill is an 11 digit number, normally located on
-                    your carrier's shipping label, but you may also find it in
-                    any of their email communications or directly from your
-                    online account.
+                    Your airway bill is a unique combination of letters and
+                    numbers, normally located on your carrier's shipping label,
+                    but you may also find it in any of their email
+                    communications or directly from your online account.
                   </span>
                 </div>
 
