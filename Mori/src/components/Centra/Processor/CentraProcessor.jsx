@@ -97,15 +97,15 @@ export default function Processor() {
       try {
         const response = await readDryingMachines();
         console.log("Drying Machines:", response.data);
-
+  
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
         }));
-
+  
         setDryingMachines(machinesWithProperties);
-
+  
         // Check if randomized data exists in localStorage
         const storedDryingCapacities = localStorage.getItem("dryingCapacities");
         if (storedDryingCapacities) {
@@ -117,25 +117,25 @@ export default function Processor() {
         console.log("Error fetching drying machines: ", error);
       }
     };
-
+  
     fetchDryingMachines();
   }, []);
-
+  
   useEffect(() => {
     const fetchWetLeavesData = async () => {
       try {
         const response = await readWetLeavesCollections();
         console.log("WetLeaves:", response.data);
         const collections = response.data;
-
+  
         let totalWetLeaves = 0;
         collections.forEach((collection) => {
           totalWetLeaves += collection.Weight;
         });
-
+  
         console.log("Total Weight of Wet Leaves:", totalWetLeaves);
         setTotalWetLeaves(totalWetLeaves);
-
+  
         setWetLeavesData({
           ...wetLeavesData,
           datasets: [
@@ -149,148 +149,141 @@ export default function Processor() {
         console.log("Error fetching wet leaves data: ", error);
       }
     };
-
+  
     fetchWetLeavesData();
   }, []);
-
+  
   const distributeWetLeavesToMachines = (machinesWithProperties) => {
     if (!machinesWithProperties || machinesWithProperties.length === 0 || totalWetLeaves === 0) {
       console.log("No machines or wet leaves data available.");
       return;
     }
-
+  
     let remainingWeight = totalWetLeaves;
     const machinesCopy = [...machinesWithProperties];
-
-    while (remainingWeight > 0 && machinesCopy.length > 0) {
-      const randomIndex = Math.floor(Math.random() * machinesCopy.length);
-      const machine = machinesCopy[randomIndex];
-      const remainingCapacity = machine.capacity - machine.currentLoad;
-      const weightToAdd = Math.min(remainingWeight, remainingCapacity);
-
-      if (weightToAdd > 0) {
-        machine.currentLoad += weightToAdd;
-        remainingWeight -= weightToAdd;
-
-        if (machine.currentLoad === machine.capacity) {
-          machinesCopy.splice(randomIndex, 1);
+  
+    machinesCopy.forEach(machine => {
+      if (machine.Load == null) {
+        const remainingCapacity = machine.capacity - machine.currentLoad;
+        const weightToAdd = Math.min(remainingWeight, remainingCapacity);
+  
+        if (weightToAdd > 0) {
+          machine.currentLoad += weightToAdd;
+          remainingWeight -= weightToAdd;
+  
+          if (machine.currentLoad === machine.capacity) {
+            console.log(`Machine ${machine.MachineID} reached full capacity.`);
+          }
+        } else {
+          console.log(`Machine ${machine.MachineID} has no remaining capacity.`);
         }
       } else {
-        machinesCopy.splice(randomIndex, 1);
-      }
-    }
-
-    setDryingCapacities(machinesCopy);
-    localStorage.setItem("dryingCapacities", JSON.stringify(machinesCopy)); // Store randomized data in localStorage
-
-    machinesCopy.forEach(async machine => {
-      try {
-        await updateMachineCurrentLoad(machine.id, machine.currentLoad);
-      } catch (error) {
-        console.log(`Error updating machine ${machine.id} current load:`, error);
+        console.log(`Machine ${machine.MachineID} already has a load.`);
       }
     });
-
+  
+    setDryingCapacities(machinesCopy);
+    localStorage.setItem("dryingCapacities", JSON.stringify(machinesCopy)); // Store randomized data in localStorage
+  
+    machinesCopy.forEach(async machine => {
+      try {
+        await updateMachineCurrentLoad(machine.MachineID, machine.currentLoad);
+      } catch (error) {
+        console.log(`Error updating machine ${machine.MachineID} current load:`, error);
+      }
+    });
+  
     if (remainingWeight > 0) {
       console.log(`Remaining wet leaves weight: ${remainingWeight}`);
     }
   };
-
+  
   useEffect(() => {
     if (dryingMachines.length > 0 && totalWetLeaves > 0) {
       distributeWetLeavesToMachines(dryingMachines);
     }
   }, [dryingMachines, totalWetLeaves]);
-
+  
   useEffect(() => {
     const fetchFlouringMachines = async () => {
       try {
         const response = await readFlouringMachines();
         console.log("Flouring Machines:", response.data);
-
+  
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
         }));
-
-        // Extract all MachineIDs
-        const machineIds = machinesWithProperties.map(machine => machine.MachineID);
-
-        // Store all MachineIDs in state
-        setFlouringMachineIds(machineIds);
-
-        setFlouringCapacities(machinesWithProperties);
+  
         setFlouringMachines(machinesWithProperties);
+  
+        // Check if randomized data exists in localStorage
+        const storedFlouringCapacities = localStorage.getItem("flouringCapacities");
+        if (storedFlouringCapacities) {
+          setFlouringCapacities(JSON.parse(storedFlouringCapacities));
+        } else {
+          distributeDriedLeavesToMachines(machinesWithProperties);
+        }
       } catch (error) {
         console.log("Error fetching flouring machines: ", error);
       }
     };
-
+  
     fetchFlouringMachines();
   }, []);
-
-  console.log("Flouring Capacity:", flouringCapacities);
-
-  const updateMachineCurrentLoad = async (machineId, currentLoad) => {
-    console.log(`Simulating update for machine ${machineId} with current load ${currentLoad}`);
-  };
-
-  const distributeDriedLeavesToMachines = () => {
-    if (flouringCapacities.length === 0 || totalDriedLeaves === 0) {
+  
+  const distributeDriedLeavesToMachines = (machinesWithProperties) => {
+    if (!machinesWithProperties || machinesWithProperties.length === 0 || totalDriedLeaves === 0) {
       console.log("No machines or dried leaves data available.");
       return;
     }
-
-    // Check if randomized data already exists in localStorage
-    const storedFlouringCapacities = localStorage.getItem("flouringCapacities");
-    if (storedFlouringCapacities) {
-      setFlouringCapacities(JSON.parse(storedFlouringCapacities));
-      return;
-    }
-
+  
     let remainingWeight = totalDriedLeaves;
-    const machinesCopy = [...flouringCapacities];
-
-    while (remainingWeight > 0 && machinesCopy.length > 0) {
-      const randomIndex = Math.floor(Math.random() * machinesCopy.length);
-      const machine = machinesCopy[randomIndex];
-      const remainingCapacity = machine.capacity - machine.currentLoad;
-      const weightToAdd = Math.min(remainingWeight, remainingCapacity);
-
-      if (weightToAdd > 0) {
-        machine.currentLoad += weightToAdd;
-        remainingWeight -= weightToAdd;
-
-        if (machine.currentLoad === machine.capacity) {
-          machinesCopy.splice(randomIndex, 1);
+    const machinesCopy = [...machinesWithProperties];
+  
+    machinesCopy.forEach(machine => {
+      if (machine.Load == null) {
+        const remainingCapacity = machine.capacity - machine.currentLoad;
+        const weightToAdd = Math.min(remainingWeight, remainingCapacity);
+  
+        if (weightToAdd > 0) {
+          machine.currentLoad += weightToAdd;
+          remainingWeight -= weightToAdd;
+  
+          if (machine.currentLoad === machine.capacity) {
+            console.log(`Machine ${machine.MachineID} reached full capacity.`);
+          }
+        } else {
+          console.log(`Machine ${machine.MachineID} has no remaining capacity.`);
         }
       } else {
-        machinesCopy.splice(randomIndex, 1);
-      }
-    }
-
-    setFlouringCapacities(machinesCopy);
-    localStorage.setItem("flouringCapacities", JSON.stringify(machinesCopy)); // Store randomized data in localStorage
-
-    machinesCopy.forEach(async machine => {
-      try {
-        await updateMachineCurrentLoad(machine.id, machine.currentLoad);
-      } catch (error) {
-        console.log(`Error updating machine ${machine.id} current load:`, error);
+        console.log(`Machine ${machine.MachineID} already has a load.`);
       }
     });
-
+  
+    setFlouringCapacities(machinesCopy);
+    localStorage.setItem("flouringCapacities", JSON.stringify(machinesCopy)); // Store randomized data in localStorage
+  
+    machinesCopy.forEach(async machine => {
+      try {
+        await updateMachineCurrentLoad(machine.MachineID, machine.currentLoad);
+      } catch (error) {
+        console.log(`Error updating machine ${machine.MachineID} current load:`, error);
+      }
+    });
+  
     if (remainingWeight > 0) {
       console.log(`Remaining dried leaves weight: ${remainingWeight}`);
     }
   };
-
+  
   useEffect(() => {
     if (flouringMachines.length > 0 && totalDriedLeaves > 0) {
-      distributeDriedLeavesToMachines();
+      distributeDriedLeavesToMachines(fouringMachines);
     }
   }, [flouringMachines, totalDriedLeaves]);
+  
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -308,7 +301,7 @@ export default function Processor() {
     if (linkTo !== "#") {
       navigate(linkTo, {
         state: {
-          centralID: machine.CentralID, // Include centralID here
+          // centralID: machine.CentralID, // Include centralID here
           id: machine.MachineID,
           capacity: machine.capacity,
           status: machine.Status,
@@ -465,9 +458,9 @@ export default function Processor() {
 
   const MachineCard = ({ machine, extraMarginClass, onClick, activeTab }) => {
     let chartColor = "#99D0D580";
-    if (machine.currentLoad === machine.capacity) {
+    if (machine.Load === machine.capacity) {
       chartColor = "#0F3F43";
-    } else if (machine.currentLoad > machine.capacity / 2) {
+    } else if (machine.Load > machine.capacity / 2) {
       chartColor = "#5D9EA4";
     }
   
@@ -487,12 +480,6 @@ export default function Processor() {
         }}
         onClick={onClick} // Use the onClick prop here
       >
-        <div
-          className="machine-number bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
-          style={{ position: "absolute", left: "15px", top: "15px" }}
-        >
-          <span className="font-bold text-sm">{machine.number}</span>
-        </div>
         <div className="machine-info flex justify-center items-center w-full mb-2">
           <div
             className="chart-container"
@@ -503,7 +490,7 @@ export default function Processor() {
                 labels: ["Current Load", "Capacity"],
                 datasets: [
                   {
-                    data: [machine.currentLoad, machine.capacity - machine.currentLoad],
+                    data: [machine.Load, machine.capacity - machine.Load],
                     backgroundColor: [chartColor, "#EFEFEF"],
                     borderWidth: 0,
                   },
@@ -516,7 +503,7 @@ export default function Processor() {
               style={{ fontSize: "0" }}
             >
               <span className="font-vietnam font-bold" style={{ fontSize: "24px", lineHeight: "1.2" }}>
-                {machine.currentLoad} kg
+                {machine.Load} kg
               </span>
               <span className="font-vietnam font-bold" style={{ fontSize: "12px", lineHeight: "1.2", marginBottom: "-30px" }}>
                 {`/ ${machine.capacity} kg`}
@@ -526,24 +513,18 @@ export default function Processor() {
         </div>
         <button
           className={`start-btn text-white py-1 px-6 ${
-            machine.currentLoad === 0 ? "opacity-50 cursor-not-allowed" : ""
+            machine.Load === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           style={{ backgroundColor: "#000000", width: "100%", borderRadius: "15px", fontSize: "12px" }}
-          disabled={machine.currentLoad === 0}
+          disabled={machine.Load === 0}
           onClick={onClick} // Use the onClick prop here
         >
           START PROCESS
         </button>
-        <div
-          className="last-updated"
-          style={{ position: "absolute", top: "5px", right: "5px", fontSize: "10px", color: "#666666" }}
-        >
-          <div>Last updated:</div>
-          <div style={{ fontWeight: "bold" }}>{lastUpdatedTime}</div>
-        </div>
       </div>
     );
   };
+  
   
 
   return (

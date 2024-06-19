@@ -3,11 +3,10 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const addDryingActivity = async (centralID, weight, dryingMachineID, duration) => {
+export const addDryingActivity = async (weight, dryingMachineID, duration) => {
     try {
         const currentTime = new Date();
         const dryingActivityDetails = {
-            CentralID: centralID,
             Weight: weight,
             DryingMachineID: dryingMachineID,
             EndTime: new Date(currentTime.getTime() + duration * 1000).toISOString(), // Calculate EndTime using duration

@@ -110,7 +110,7 @@ export default function DryingMachine() {
     } catch (error) {
         console.error("Failed to start drying process:", error.message);
     }
-};
+  };
  
   const startTimer = () => {
     const totalSeconds = parseISODuration(duration);
@@ -247,10 +247,10 @@ export default function DryingMachine() {
             </div>
           </div>
         </div>
-
+{/* 
         <div className="last-updated" style={{ textAlign: 'center', fontSize: '10px', color: '#666666', marginTop: '-18px' }}>
           Last updated: <span style={{ fontWeight: 'bold' }}>{machineData?.lastUpdated}</span>
-        </div>
+        </div> */}
 
         <div style={{ borderTop: '1px solid #ccc', margin: '20px auto', width: '80%' }}></div>
 

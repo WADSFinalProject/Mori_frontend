@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { readDryingMachines } from "../../../service/dryingMachine.js";
 
-const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, totalWeight, lastUpdated, duration }) => {
+const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, totalWeight, lastUpdated, duration, currentStatus }) => {
   const totalTime = duration * 60; // duration in minutes, converted to seconds
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const fillPercentage = filledWeight / totalWeight;
@@ -21,7 +22,7 @@ const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, t
 
   const getColor = (percentage) => {
     const startColor = [23, 110, 118];
-    const endColor = [246, 246, 246]; 
+    const endColor = [246, 246, 246];
 
     const r = Math.floor(startColor[0] + (endColor[0] - startColor[0]) * (1 - percentage));
     const g = Math.floor(startColor[1] + (endColor[1] - startColor[1]) * (1 - percentage));
@@ -53,34 +54,12 @@ const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, t
   };
 
   return (
-    <div className="w-[490px] h-[280px]  bg-white border border-black/opacity-20  rounded-lg p-4">
+    <div className="w-[490px] h-[280px] bg-white border border-black/opacity-20 rounded-lg p-4">
       <div className="flex items-center">
         <div className="relative">
-          <svg width="64" height="64" viewBox="0 0 36 36" className="circular-chart green">
-            <path className="circle-bg"
-              d="M18 2.0845
-                 a 15.9155 15.9155 0 0 1 0 31.831
-                 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#eaeaea"
-              strokeWidth="3.5" />
-            <path className="circle"
-              strokeDasharray={`${(timeLeft / totalTime) * 100}, 100`}
-              d="M18 2.0845
-                 a 15.9155 15.9155 0 0 1 0 31.831
-                 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#4D946D"
-              strokeWidth="3.5" />
-            <text x="18" y="19" className="percentage" fontSize="8" fill="#4D946D" textAnchor="middle" dominantBaseline="middle">
-              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </text>
-          </svg>
         </div>
         <div className="ml-4 text-center">
           <h2 className="text-left text-black text-[22px] font-semibold font-['Be Vietnam Pro']">Machine {machineNumber}</h2>
-          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Dried <strong>{driedDate}</strong></div>
-          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Start <strong>{startTime}</strong></div>
         </div>
       </div>
       <div className="my-4 flex items-center justify-center">
@@ -88,50 +67,71 @@ const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, t
           <Doughnut data={data} options={options} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="mt-[100px] text-black text-[35px] font-bold font-['Be Vietnam Pro']">{filledWeight} kg</div>
-            <div className="mb-10 text-black text-[15.18px] font-normal font-['Be Vietnam Pro']">/ {totalWeight}kg</div>
+            <div className="mb-10 text-black text-[18px] font-normal font-['Be Vietnam Pro']">/ {totalWeight}kg</div>
           </div>
         </div>
       </div>
-      <div className="mt-[-40px] text-center text-black text-[10px] font-normal font-['Be Vietnam Pro']">
-        {isProcessing ? 'Currently Processing...' : `Last Updated: ${lastUpdated}`}
+      <div className="mt-[-40px] text-center text-black text-[18px] font-normal font-['Be Vietnam Pro']">
+        {currentStatus} 
       </div>
     </div>
   );
 };
 
 const DryingMachineBoxDashboard = () => {
-    return (
-      <div className="flex flex-wrap gap-11">
+  const [dryingMachines, setDryingMachines] = useState([]);
+  const [dryingCapacities, setDryingCapacities] = useState([]);
+
+  useEffect(() => {
+    const fetchDryingMachines = async () => {
+      try {
+        const response = await readDryingMachines();
+        console.log("Drying Machines:", response.data);
+
+        const machinesWithProperties = response.data.map(machine => ({
+          ...machine,
+          capacity: machine.capacity || machine.Capacity,
+          machineNumber: machine.machineNumber || machine.MachineID,
+          filledWeight: machine.Load || 0, // Default value for illustration
+          totalWeight: machine.Capacity || 30, // Default value for illustration
+          duration: machine.duration || 20, // Default value for illustration
+          currentStatus: machine.Status || "no"  // Default value for illustration
+        }));
+
+        setDryingMachines(machinesWithProperties);
+
+        // Check if randomized data exists in localStorage
+        const storedDryingCapacities = localStorage.getItem("dryingCapacities");
+        if (storedDryingCapacities) {
+          setDryingCapacities(JSON.parse(storedDryingCapacities));
+        } else {
+          distributeWetLeavesToMachines(machinesWithProperties);
+        }
+      } catch (error) {
+        console.log("Error fetching drying machines: ", error);
+      }
+    };
+
+    fetchDryingMachines();
+  }, []);
+
+  return (
+    <div className="flex flex-wrap gap-11">
+      {dryingMachines.map(machine => (
         <DryingMachineBox
-          machineNumber="1"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={24.1}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} // Duration in minutes
+          key={machine.machineNumber}
+          machineNumber={machine.machineNumber}
+          driedDate={machine.driedDate}
+          startTime={machine.startTime}
+          filledWeight={machine.filledWeight}
+          totalWeight={machine.totalWeight}
+          lastUpdated={machine.lastUpdated}
+          duration={machine.duration}
+          currentStatus={machine.currentStatus} // Corrected here
         />
-        <DryingMachineBox
-          machineNumber="3"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={17.2}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={0} // Duration in minutes
-        />
-        <DryingMachineBox
-          machineNumber="2"
-          driedDate="13 March 2024"
-          startTime="02:45 PM"
-          filledWeight={30}
-          totalWeight={30}
-          lastUpdated="1 Minute Ago"
-          duration={20} // Duration in minutes
-        />
-      </div>
-    );
-  };
-  
-  export default DryingMachineBoxDashboard;
-  
+      ))}
+    </div>
+  );
+};
+
+export default DryingMachineBoxDashboard;
