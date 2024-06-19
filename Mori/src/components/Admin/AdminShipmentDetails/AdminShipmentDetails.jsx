@@ -9,8 +9,6 @@ const AdminShipmentDetails = () => {
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
-  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [shipmentToDelete, setShipmentToDelete] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -108,37 +106,6 @@ const AdminShipmentDetails = () => {
     setSortedData(filteredData);
   };
 
-  // const openDeleteModal = (expeditionID) => {
-  //   setShipmentToDelete(expeditionID);
-  //   setIsDeleteModalOpen(true);
-  // };
-
-  const onDelete = () => {
-    // setShipmentToDelete(null);
-    // setIsDeleteModalOpen(false);
-    fetchData();
-  }
-
-  // const closeDeleteModal = () => {
-  //   setShipmentToDelete(null);
-  //   setIsDeleteModalOpen(false);
-  // };
-
-  // const handleDeleteConfirm = () => {
-  //   if (shipmentToDelete) {
-  //     deleteExpedition(shipmentToDelete)
-  //       .then((res) => {
-  //         const updatedData = originalData.filter((item) => item.expeditionID !== shipmentToDelete);
-  //         setOriginalData(updatedData);
-  //         setSortedData(updatedData);
-  //         setIsDeleteModalOpen(false);
-  //       })
-  //       .catch((err) => {
-  //         console.error("Error deleting expedition: ", err);
-  //       });
-  //   }
-  // };
-
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5 mt-8">
@@ -197,15 +164,9 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={onDelete} />
+          <TableComponent data={sortedData} onDelete={fetchData} />
         </div>
       </div>
-      {/* <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        onConfirm={handleDeleteConfirm}
-        shipmentId={shipmentToDelete}
-      /> */}
     </div>
   );
 };
