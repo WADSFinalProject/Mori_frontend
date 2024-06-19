@@ -3,6 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
+
 export const getNotifications = async () => {
     try {
         return axios.get(host + "/secured/notifications", {
