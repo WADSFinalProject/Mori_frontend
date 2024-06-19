@@ -118,28 +118,32 @@ export default function FlouringMachine() {
     const startTime = new Date().toISOString();
     localStorage.setItem(`flouringStartTime_${id}`, startTime);
     try {
-      const durationParsed = parseISODuration(duration);
-      const endTime = new Date(Date.now() + durationParsed * 1000).toISOString(); // Assuming duration is in seconds
-      const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString(); // Example for driedDate, adjust as needed
-  
-      console.log("Payload:", {
-        centralID: load.centralID,
-        date: startTime,
-        weight: load,
-        flouringMachineID: id,
-        endTime: endTime,
-        driedDate: driedDate,
-        inUse: true
-      });
-  
-      await addFlouringActivity(load.centralID, startTime, load.weight, id, endTime, driedDate, true);
-      await updateFlouringMachineStatus(id, "running");
-      setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
-      startTimer();
+        const durationParsed = parseISODuration(duration);
+        const endTime = new Date(Date.now() + durationParsed * 1000).toISOString();
+        const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString();
+
+        const payload = {
+            centralID: machineData.centraID,
+            date: startTime,
+            weight: machineData.load,
+            flouringMachineID: id,
+            endTime: endTime,
+            driedDate: driedDate,
+            inUse: true
+        };
+
+        console.log("Payload:", payload);
+
+        await addFlouringActivity(payload);
+        await updateFlouringMachineStatus(id, "running");
+        
+        setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
+        startTimer(durationParsed);
     } catch (error) {
-      console.error("Failed to start flouring process:", error.message);
+        console.error("Failed to start flouring process:", error.message);
     }
-  };
+};
+
   
 
   const startTimer = (totalSeconds = parseISODuration(duration)) => {

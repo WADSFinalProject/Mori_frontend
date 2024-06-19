@@ -122,7 +122,7 @@ export const getDryingMachine_byCentra = async (centraId) => {
 
 export const updateDryingMachineStatus = async (MachineID, new_status) => {
     try {
-        return axios.put(`${host}/secured/dryingmachine/${machineId}/status`, {
+        return axios.put(`${host}/secured/dryingmachine/${MachineID}/status`, {
             status: new_status
         }, {
             headers: {
@@ -134,6 +134,7 @@ export const updateDryingMachineStatus = async (MachineID, new_status) => {
         throw new Error(error);
     }
 };
+
 
 
 

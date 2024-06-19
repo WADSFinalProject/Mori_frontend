@@ -6,12 +6,13 @@ axios.defaults.withCredentials = true
 export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, endTime, driedDate, inUse) => {
     try {
         const flouringActivityDetails = {
-            CentralID: centralID,
-            Weight: weight,
-            FlouringMachineID: flouringMachineID,
-            EndTime: endTime,
-            DriedDate: driedDate,
-            InUse: inUse
+            centralID,         // Use camelCase keys
+            date,              // Add the missing 'date' field
+            weight,
+            flouringMachineID,
+            endTime,
+            driedDate,
+            inUse
         };
 
         return await axios.post(`${host}/secured/flouring_activity/create`, flouringActivityDetails, {
