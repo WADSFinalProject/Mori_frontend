@@ -76,9 +76,6 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
 export const getDryingActivity_Bymachine = async (machineID) => {
     try {
         return await axios.get(`${host}/secured/drying-activities/machine/${machineID}`, {
-            params: {
-                machineID
-            },
             headers: {
                 "Content-Type": "application/json",
             },

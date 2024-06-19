@@ -110,9 +110,6 @@ export const deleteDryingMachine = async (machineId) => {
 export const getDryingMachine_byCentra = async (centraId) => {
     try {
         return axios.post(host + `/secured//drying_machines/centra/${centraId}`, {
-            params: {
-                centraId
-            },
             headers: {
                 "Content-Type": "application/json",
             },

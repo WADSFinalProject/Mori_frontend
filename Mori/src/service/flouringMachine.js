@@ -59,9 +59,6 @@ export const readFlouringMachines = async (skip = 0, limit = 100) => {
 export const getFlouringMachines_byCentra = async (centraId) => {
     try {
         return axios.get(host + `/flouring_machines/centra/${centraId}`, {
-            params: {
-                centraId
-            },
             headers: {
                 "Content-Type": "application/json",
             },

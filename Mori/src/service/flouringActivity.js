@@ -84,3 +84,17 @@ export const deleteFlouringActivity = async (flouringID) => {
         throw new Error(error);
     }
 };
+
+
+export const getFlouringActivities_byMachine = async (machine_id) => {
+    try {
+        return await axios.get(`${host}/secured/flouring-activities/machine/${machine_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error fetching flouring activities: ", error);
+        throw new Error(error);
+    }
+};
