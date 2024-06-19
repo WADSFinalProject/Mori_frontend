@@ -42,6 +42,7 @@ import DashboardContent from "./components/Admin/DashboardContent";
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
 import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
 import HarborShipDetails from "./components/HarborGuard/HarborShipDetails";
+import ChooseWarehouse from "./components/XYZ/Mobile/ChooseWarehouse";
 
 function App() {
   return (
@@ -83,7 +84,6 @@ function App() {
         />
 
         <Route path="/acceptedpackages" element={<AcceptedPackages />} />
-        <Route path="/schedulepickup" element={<SchedulePickup />} />
         <Route path="/stockbooking" element={<StockBooking />} />
         <Route
           path="/XYZShippingInformation"
@@ -102,13 +102,17 @@ function App() {
           path="/xyz/m/arrivalconfirmation"
           element={<ArrivalConfirmation />}
         />
+        <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />
         <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />} />
         <Route
           path="/xyz/m/shippinginformation"
           element={<XYZShippingInformationMobile />}
         />
-        {/* hrs ikutin shipment id */}
-        <Route path="/xyz/m/shipmentdetails" element={<XYZShipDetails />} />
+        <Route path="/xyz/m/shipdetails/:awb" element={<XYZShipDetails />} />
+        <Route
+          path="xyz/m/choosewarehouse/:awb"
+          element={<ChooseWarehouse />}
+        />
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/invoice" element={<Invoice />} />

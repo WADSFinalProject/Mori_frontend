@@ -51,11 +51,11 @@ const XYZShippingInformationMobile = () => {
       case "PKG_Delivering":
         return "Shipping";
       case "PKG_Delivered":
-        return "Delivered";
+        return "Need Pickup";
       case "Missing":
         return "Missing";
       case "XYZ_PickingUp":
-        return "Scheduled";
+        return "Picking Up";
       case "XYZ_Completed":
         return "Completed";
       default:

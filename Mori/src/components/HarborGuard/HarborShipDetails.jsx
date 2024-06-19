@@ -439,33 +439,33 @@ const HarborShipDetails = () => {
                 </div>
               </div>
             </div>
-            <div className="mx-5 flex flex-row gap-2 mb-5">
-              <button
-                className={`w-1/2 rounded-lg border px-5 py-2 font-medium text-sm ${
-                  isDeclareMissingDisabled
-                    ? "border-[#D9D9D9] text-[#D9D9D9] cursor-not-allowed"
-                    : "border-[#852222] text-[#852222] hover:bg-[#852222] hover:text-white"
-                }`}
-                onClick={handleDeclareMissing}
-                disabled={isDeclareMissingDisabled}
-              >
-                Declare Missing
-              </button>
-              <button
-                className={`w-1/2 rounded-lg px-5 py-2 font-medium text-sm ${
-                  isConfirmShipmentDisabled
-                    ? "bg-[#D9D9D9] text-[#00000033] cursor-not-allowed"
-                    : "bg-[#5C612C] text-[#F2F9A9] hover:bg-[#434924]"
-                }`}
-                onClick={handleConfirmShipment}
-                disabled={isConfirmShipmentDisabled}
-              >
-                Confirm Shipment
-              </button>
-            </div>
           </>
         )}
       </main>
+      <div className="fixed bottom-0 left-0 right-0 border-t-2 border-gray-200 bg-white px-5 py-3 flex flex-row gap-2">
+        <button
+          className={`w-1/2 rounded-lg border px-5 py-2 font-medium text-sm ${
+            isDeclareMissingDisabled
+              ? "border-[#D9D9D9] text-[#D9D9D9] cursor-not-allowed"
+              : "border-[#852222] text-[#852222] hover:bg-[#852222] hover:text-white"
+          }`}
+          onClick={handleDeclareMissing}
+          disabled={isDeclareMissingDisabled}
+        >
+          Declare Missing
+        </button>
+        <button
+          className={`w-1/2 rounded-lg px-5 py-2 font-medium text-sm ${
+            isConfirmShipmentDisabled
+              ? "bg-[#D9D9D9] text-[#00000033] cursor-not-allowed"
+              : "bg-[#5C612C] text-[#F2F9A9] hover:bg-[#434924]"
+          }`}
+          onClick={handleConfirmShipment}
+          disabled={isConfirmShipmentDisabled}
+        >
+          Confirm Shipment
+        </button>
+      </div>
     </div>
   );
 };

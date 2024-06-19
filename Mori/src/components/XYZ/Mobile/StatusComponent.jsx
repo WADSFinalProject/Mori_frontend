@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const StatusComponent = ({
   id,
@@ -9,16 +9,18 @@ const StatusComponent = ({
   collected,
   time,
 }) => {
+  const navigate = useNavigate();
+
   const getStatusBackgroundColor = (status) => {
     switch (status) {
       case "Shipping":
         return "#9AD1B3"; // Light blue for "Shipping"
-      case "Delivered":
-        return "#838948"; // Green for "Delivered"
+      case "Need Pickup":
+        return "#838948"; // Green for "Need Pickup"
       case "Missing":
         return "#EBB6B6"; // Light red for "Missing"
-      case "Scheduled":
-        return "#4D946D"; // Green for "Scheduled"
+      case "Picking Up":
+        return "#4D946D"; // Green for "Picking Up"
       case "Completed":
         return "#838948"; // Yellow for "Completed"
       default:
@@ -30,12 +32,12 @@ const StatusComponent = ({
     switch (status) {
       case "Shipping":
         return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipping"
-      case "Delivered":
-        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Delivered"
+      case "Need Pickup":
+        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Need Pickup"
       case "Missing":
         return "brightness(0) saturate(100%) invert(69%) sepia(25%) saturate(651%) hue-rotate(311deg) brightness(118%) contrast(85%)"; // Light red for "Missing"
-      case "Scheduled":
-        return "brightness(0) saturate(100%) invert(55%) sepia(17%) saturate(1015%) hue-rotate(94deg) brightness(90%) contrast(84%)"; // Green for "Scheduled"
+      case "Picking Up":
+        return "brightness(0) saturate(100%) invert(55%) sepia(17%) saturate(1015%) hue-rotate(94deg) brightness(90%) contrast(84%)"; // Green for "Picking Up"
       case "Completed":
         return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Yellow for "Completed"
       default:
@@ -45,14 +47,21 @@ const StatusComponent = ({
 
   const statusBackgroundColor = getStatusBackgroundColor(status);
   const statusFilter = getStatusFilter(status);
-  const textColor = ["Delivered", "Scheduled", "Completed"].includes(status)
+  const textColor = ["Need Pickup", "Picking Up", "Completed"].includes(status)
     ? "white"
     : "inherit";
 
+  const handleClick = () => {
+    if (status === "Need Pickup") {
+      navigate(`/xyz/m/choosewarehouse/${id}`, { state: { totalWeight, batches } });
+    } else {
+      navigate(`/xyz/m/shipdetails/${id}`);
+    }
+  };
+
   return (
-    <Link
-      to={`/harbor/shipdetails/${id}`}
-      state={{ awb: id }} // Passing the AWB as state to the route
+    <div
+      onClick={handleClick}
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
@@ -139,7 +148,7 @@ const StatusComponent = ({
           />
         </svg>
       </div>
-    </Link>
+    </div>
   );
 };
 

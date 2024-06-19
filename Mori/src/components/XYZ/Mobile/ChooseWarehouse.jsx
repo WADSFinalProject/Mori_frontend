@@ -1,74 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { createPickupByAWB } from "../../../service/pickup";
-import {
-  createCheckpointStatus,
-  updateExpeditionStatus,
-} from "../../../service/expeditionService";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { getAllWarehouses } from "../../../service/warehousesService";
 
-const SchedulePickup = () => {
+const ChooseWarehouse = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 1024;
   const navigate = useNavigate();
   const { awb } = useParams();
   const location = useLocation();
-  const { warehouseId } = location.state || {};
+  const { totalWeight } = location.state || { totalWeight: "Unknown" };
 
-  const [time, setTime] = useState("--:--");
-  const [copyText, setCopyText] = useState({
-    pickup: "COPY",
-    warehouse: "COPY",
-  });
+  const [warehouses, setWarehouses] = useState([]);
 
-  const handleTimeChange = (event) => {
-    setTime(event.target.value);
-  };
+  useEffect(() => {
+    const fetchWarehouses = async () => {
+      try {
+        const response = await getAllWarehouses();
+        setWarehouses(response.data);
+      } catch (error) {
+        console.error("Error fetching warehouses: ", error);
+      }
+    };
 
-  const handleCopy = (id, type) => {
-    const textToCopy = document.getElementById(id).innerText;
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        setCopyText((prevState) => ({ ...prevState, [type]: "COPIED!" }));
-        setTimeout(() => {
-          setCopyText((prevState) => ({ ...prevState, [type]: "COPY" }));
-        }, 2000); // Change back to "COPY" after 2 seconds
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
-  };
+    fetchWarehouses();
+  }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const pickupData = {
-        warehouseId,
-        pickupTime: time,
-      };
-
-      await createPickupByAWB(awb, pickupData);
-
-      const status = "Pickup Scheduled by XYZ";
-      const statusDate = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Makassar", // WITA time zone
-      });
-
-      await createCheckpointStatus(awb, status, statusDate);
-
-      await updateExpeditionStatus(awb, "XYZ_PickingUp");
-
-      navigate("/xyz/m/success"); // Navigate to a success page or any other page you desire
-    } catch (error) {
-      console.error("Error scheduling pickup: ", error);
-    }
+  const handleChooseWarehouse = (warehouseId) => {
+    navigate(`/xyz/m/schedulepickup/${awb}`, {
+      state: { warehouseId, awb },
+    });
   };
 
   return (
     <div>
       {isMobile ? (
-        <div className="bg-white h-screen flex flex-col overflow-hidden">
+        <div className="bg-white h-screen flex flex-col overflow-auto">
           <header className="flex flex-col mt-6">
             <div className="flex flex-row justify-between mx-6">
               <button onClick={() => navigate(-1)}>
@@ -101,41 +68,40 @@ const SchedulePickup = () => {
                   />
                 </svg>
                 <div className="text-[#828282] items-center font-vietnam text-base font-semibold leading-normal">
-                  Schedule Pickup
+                  Choose Warehouse
                 </div>
               </div>
               <div className="invisible" />
             </div>
             <hr className="w-full h-[2px] bg-[#d9d9d9] border-0 mt-6 visible"></hr>
           </header>
-          <main className="mt-7 mx-6">
-            <form
-              className="flex flex-col gap-5"
-              id="schedule"
-              onSubmit={handleSubmit}
-            >
-              <div className="flex flex-col gap-3">
-                <div className="text-black font-vietnam text-base tracking-tight font-semibold">
-                  Time
+          <main className="mt-7 mx-6 pb-5 flex flex-col gap-4">
+            <div className="font-vietnam text-2xl font-medium text-black/50">
+              To Ship: <b className="text-black">{totalWeight} kg</b>
+            </div>
+            <div className="flex flex-col w-full gap-4">
+              {warehouses.map((warehouse) => (
+                <div
+                  key={warehouse.id}
+                  className="flex flex-col w-full gap-4 bg-[#f0f0f0] rounded-lg p-4"
+                >
+                  <div className="self-start flex flex-row gap-2 px-2.5 py-1.5 bg-black rounded-md">
+                    <div className="font-vietnam text-sm font-medium text-white ">
+                      Kecamatan <b>{warehouse.location}</b>
+                    </div>
+                  </div>
+                  <div className="self-center font-vietnam font-bold text-2xl py-2 tracking-wider">
+                    {warehouse.TotalStock} / {warehouse.Capacity}kg
+                  </div>
+                  <button
+                    className="cursor-pointer self-center font-vietnam bg-[#A7AD6F] text-base font-medium text-white rounded-lg py-1 px-3 w-full text-center"
+                    onClick={() => handleChooseWarehouse(warehouse.id)}
+                  >
+                    Choose
+                  </button>
                 </div>
-                <div className="relative w-full">
-                  <input
-                    type="time"
-                    id="time"
-                    className="bg-[#efefef] text-[#828282] border-none leading-none text-base rounded block w-full p-2.5"
-                    value={time}
-                    onChange={handleTimeChange}
-                    required
-                  />
-                </div>
-              </div>
-              <input
-                type="submit"
-                value="Schedule Pickup"
-                className="w-full rounded-md bg-[#a7ad6f] justify-center items-center text-white py-2 font-vietnam font-medium text-sm disabled:bg-[#d9d9d9] disabled:text-black/25"
-                disabled={time === "--:--"}
-              ></input>
-            </form>
+              ))}
+            </div>
           </main>
         </div>
       ) : (
@@ -147,4 +113,4 @@ const SchedulePickup = () => {
   );
 };
 
-export default SchedulePickup;
+export default ChooseWarehouse;

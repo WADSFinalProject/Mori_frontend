@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
-import { useNavigate } from 'react-router-dom';
-import scale from '../../../assets/scale.png';
+import { useNavigate } from "react-router-dom";
+import scale from "../../../assets/scale.png";
 import { createPackageReceipt } from "../../../service/packageReceiptService";
 import { readExpeditions } from "../../../service/expeditionService";
-
 
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 1024;
   const navigate = useNavigate(); // Use navigate hook
-  
-
 
   const [batches, setBatches] = useState([
     { id: "Batch #1", weight: "" },
     { id: "Batch #2", weight: "" },
-    { id: "Batch #3", weight: "" }
+    { id: "Batch #3", weight: "" },
   ]);
 
   const [guardOnDuty, setGuardOnDuty] = useState("");
@@ -25,9 +22,11 @@ const ArrivalConfirmation = () => {
   const [lastExpeditionId, setLastExpeditionId] = useState(null);
 
   const getTotalWeight = () => {
-    return batches.reduce((total, batch) => {
-      return total + (parseFloat(batch.weight) || 0);
-    }, 0).toFixed(1);
+    return batches
+      .reduce((total, batch) => {
+        return total + (parseFloat(batch.weight) || 0);
+      }, 0)
+      .toFixed(1);
   };
 
   useEffect(() => {
@@ -42,9 +41,9 @@ const ArrivalConfirmation = () => {
           const latestExpedition = expeditions[expeditions.length - 1];
           const expeditionID = latestExpedition.expedition.ExpeditionID;
           setLastExpeditionId(expeditionID);
-          console.log('Fetched Expedition ID:', expeditionID);
+          console.log("Fetched Expedition ID:", expeditionID);
         } else {
-          console.error('No expeditions found or incorrect data format.');
+          console.error("No expeditions found or incorrect data format.");
         }
       })
       .catch((err) => {
@@ -53,7 +52,7 @@ const ArrivalConfirmation = () => {
   };
 
   useEffect(() => {
-    const anyWeightEntered = batches.some(batch => batch.weight !== "");
+    const anyWeightEntered = batches.some((batch) => batch.weight !== "");
     setIsButtonDisabled(!anyWeightEntered);
   }, [batches]);
 
@@ -79,9 +78,15 @@ const ArrivalConfirmation = () => {
     const date = new Date().toISOString();
 
     try {
-      await createPackageReceipt(expeditionID, totalWeight, timeAccepted, note, date);
+      await createPackageReceipt(
+        expeditionID,
+        totalWeight,
+        timeAccepted,
+        note,
+        date
+      );
       alert("Package receipt created successfully!");
-      navigate('/xyz/m/shippinginformation');
+      navigate("/xyz/m/shippinginformation");
       // Clear the form or perform any other necessary actions
     } catch (error) {
       console.error("Error creating package receipt: ", error);
@@ -111,8 +116,17 @@ const ArrivalConfirmation = () => {
                 </svg>
               </button>
               <div className="flex-1 flex flex-row items-center justify-center gap-[8px] text-base">
-                <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8.95312 16.5078C4.48438 16.5078 0.804688 12.8281 0.804688 8.35938C0.804688 3.89844 4.48438 0.210938 8.94531 0.210938C13.4141 0.210938 17.1016 3.89844 17.1016 8.35938C17.1016 12.8281 13.4219 16.5078 8.95312 16.5078ZM8.08594 12.2422C8.39844 12.2422 8.67188 12.0859 8.85938 11.8047L12.5078 6.17188C12.625 5.99219 12.7188 5.78125 12.7188 5.59375C12.7188 5.15625 12.3281 4.85156 11.9062 4.85156C11.6328 4.85156 11.3984 5.00781 11.2109 5.29688L8.0625 10.3281L6.61719 8.51562C6.41406 8.26562 6.21094 8.16406 5.95312 8.16406C5.51562 8.16406 5.17188 8.51562 5.17188 8.95312C5.17188 9.16406 5.24219 9.35156 5.39844 9.54688L7.28125 11.8125C7.51562 12.1016 7.76562 12.2422 8.08594 12.2422Z" fill="#828282"/>
+                <svg
+                  width="18"
+                  height="17"
+                  viewBox="0 0 18 17"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8.95312 16.5078C4.48438 16.5078 0.804688 12.8281 0.804688 8.35938C0.804688 3.89844 4.48438 0.210938 8.94531 0.210938C13.4141 0.210938 17.1016 3.89844 17.1016 8.35938C17.1016 12.8281 13.4219 16.5078 8.95312 16.5078ZM8.08594 12.2422C8.39844 12.2422 8.67188 12.0859 8.85938 11.8047L12.5078 6.17188C12.625 5.99219 12.7188 5.78125 12.7188 5.59375C12.7188 5.15625 12.3281 4.85156 11.9062 4.85156C11.6328 4.85156 11.3984 5.00781 11.2109 5.29688L8.0625 10.3281L6.61719 8.51562C6.41406 8.26562 6.21094 8.16406 5.95312 8.16406C5.51562 8.16406 5.17188 8.51562 5.17188 8.95312C5.17188 9.16406 5.24219 9.35156 5.39844 9.54688L7.28125 11.8125C7.51562 12.1016 7.76562 12.2422 8.08594 12.2422Z"
+                    fill="#828282"
+                  />
                 </svg>
 
                 <div className="relative font-semibold text-lg font-vietnam text-center select-none">
@@ -128,7 +142,9 @@ const ArrivalConfirmation = () => {
 
           <main className="w-full mt-5 flex flex-col items-start justify-start px-5 flex-grow overflow-y-auto">
             <form id="shipment-form" className="w-full" onSubmit={handleSubmit}>
-              <div className="w-full h-[27px] text-black text-lg font-semibold font-['Be Vietnam Pro']">Batch Information</div>
+              <div className="w-full h-[27px] text-black text-lg font-semibold font-['Be Vietnam Pro']">
+                Batch Information
+              </div>
               <hr className="w-full border-gray-300 mt-2" />
 
               <div className="w-full flex flex-col gap-2.5 mt-2">
@@ -142,7 +158,9 @@ const ArrivalConfirmation = () => {
                         placeholder="0.0 kg"
                         className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none pr-16"
                         value={batch.weight}
-                        onChange={(e) => handleWeightChange(index, e.target.value)}
+                        onChange={(e) =>
+                          handleWeightChange(index, e.target.value)
+                        }
                       />
                       <img
                         className="absolute top-[50%] right-2 transform -translate-y-1/2 w-4 h-4 pointer-events-none"
@@ -195,12 +213,16 @@ const ArrivalConfirmation = () => {
 
               <button
                 className={`w-full mt-3 py-2 ${
-                  isButtonDisabled ? "bg-[#CD484866]/50" : "bg-[#CD4848] hover:bg-[#CD4848]/90"
+                  isButtonDisabled
+                    ? "bg-[#CD484866]/50"
+                    : "bg-[#CD4848] hover:bg-[#CD4848]/90"
                 } ${!isButtonDisabled && "text-white"} text-black rounded-md select-none disabled:cursor-not-allowed`}
                 type="submit"
                 disabled={isButtonDisabled}
               >
-                {isButtonDisabled ? "No Rescaling Needed & Confirm" : "Rescale & Confirm"}
+                {isButtonDisabled
+                  ? "No Rescaling Needed & Confirm"
+                  : "Rescale & Confirm"}
               </button>
             </form>
           </main>
