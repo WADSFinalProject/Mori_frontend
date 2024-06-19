@@ -7,25 +7,26 @@ export const TableComponent = ({ data, onDelete }) => {
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
   
   const handleDeleteClick = (index) => {
-    // setUserToDelete(sortedData[index]);
-    setShipmentToDelete(data[index]);
+    setShipmentToDelete(data[index].expeditionID);
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = (expeditionId) => {
-    deleteExpedition(expeditionId)
-      .then((res) => {
-        console.log("Success : ", res);
-        // setData(updatedData);
-        setEditVisible(false);
-        setNewUser(initialNewUserState);
-        // handleSearchAndSort(updatedData, sortKey);
-        setDeleteModalOpen(false);
-        // onDelete();
-      })
-      .catch((err) => {
-        alert("Error : ", err);
-      });
+  const handleConfirmDelete = () => {
+    if (shipmentToDelete) {
+      deleteExpedition(shipmentToDelete)
+        .then((res) => {
+          onDelete(shipmentToDelete);
+          setDeleteModalOpen(false);
+        })
+        .catch((err) => {
+          console.error("Error deleting shipment: ", err);
+        });
+    }
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setShipmentToDelete(null);
   };
 
   const getStatusBackgroundColor = (status) => {
@@ -516,8 +517,9 @@ export const TableComponent = ({ data, onDelete }) => {
       </table>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => handleConfirmDelete(shipmentToDelete?.shipmentId)}
+        onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
+        shipmentId={shipmentToDelete}
       />
     </div>
   );

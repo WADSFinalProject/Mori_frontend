@@ -9,7 +9,7 @@ const AdminShipmentDetails = () => {
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
 
   useEffect(() => {
@@ -108,30 +108,36 @@ const AdminShipmentDetails = () => {
     setSortedData(filteredData);
   };
 
-  const openDeleteModal = (expeditionID) => {
-    setShipmentToDelete(expeditionID);
-    setIsDeleteModalOpen(true);
-  };
+  // const openDeleteModal = (expeditionID) => {
+  //   setShipmentToDelete(expeditionID);
+  //   setIsDeleteModalOpen(true);
+  // };
 
-  const closeDeleteModal = () => {
-    setShipmentToDelete(null);
-    setIsDeleteModalOpen(false);
-  };
+  const onDelete = () => {
+    // setShipmentToDelete(null);
+    // setIsDeleteModalOpen(false);
+    fetchData();
+  }
 
-  const handleDeleteConfirm = () => {
-    if (shipmentToDelete) {
-      deleteExpedition(shipmentToDelete)
-        .then((res) => {
-          setOriginalData((prevData) =>
-            prevData.filter((item) => item.expeditionID !== shipmentToDelete)
-          );
-          setIsDeleteModalOpen(false);
-        })
-        .catch((err) => {
-          console.error("Error deleting expedition: ", err);
-        });
-    }
-  };
+  // const closeDeleteModal = () => {
+  //   setShipmentToDelete(null);
+  //   setIsDeleteModalOpen(false);
+  // };
+
+  // const handleDeleteConfirm = () => {
+  //   if (shipmentToDelete) {
+  //     deleteExpedition(shipmentToDelete)
+  //       .then((res) => {
+  //         const updatedData = originalData.filter((item) => item.expeditionID !== shipmentToDelete);
+  //         setOriginalData(updatedData);
+  //         setSortedData(updatedData);
+  //         setIsDeleteModalOpen(false);
+  //       })
+  //       .catch((err) => {
+  //         console.error("Error deleting expedition: ", err);
+  //       });
+  //   }
+  // };
 
   return (
     <div className="bg-transparent">
@@ -191,15 +197,15 @@ const AdminShipmentDetails = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={openDeleteModal} />
+          <TableComponent data={sortedData} onDelete={onDelete} />
         </div>
       </div>
-      <DeleteConfirmationModal
+      {/* <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         onConfirm={handleDeleteConfirm}
         shipmentId={shipmentToDelete}
-      />
+      /> */}
     </div>
   );
 };
