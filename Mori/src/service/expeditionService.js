@@ -9,6 +9,7 @@ export const createExpedition = async (
   totalPackages,
   TotalWeight,
   expeditionDate,
+  WarehouseID,
   expeditionServiceDetails,
   batches
 ) => {
@@ -18,6 +19,7 @@ export const createExpedition = async (
       EstimatedArrival: estimatedArrival,
       TotalWeight: TotalWeight,
       TotalPackages: totalPackages,
+      WarehouseID: WarehouseID,
       ExpeditionDate: expeditionDate,
       ExpeditionServiceDetails: expeditionServiceDetails,
     };

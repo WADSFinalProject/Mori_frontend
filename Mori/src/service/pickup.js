@@ -97,8 +97,17 @@ export const deletePickup = async (pickupId) => {
   }
 };
 
-export const createPickupByAWB = async (airwaybill, pickupData) => {
+export const createPickupByAWB = async (
+  airwaybill,
+  warehouseid,
+  pickup_time
+) => {
   try {
+    const pickupData = {
+      warehouseid: warehouseid,
+      pickup_time: pickup_time,
+    };
+
     const response = await axios.post(
       `${host}/secured/pickups/${airwaybill}`,
       pickupData,

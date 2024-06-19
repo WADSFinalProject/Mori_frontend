@@ -50,6 +50,8 @@ const ArrangeShipment = () => {
     );
     const totalPackages = batches.length;
 
+    const warehouseId = 0;
+
     // Get the current date in UTC
     const expeditionDate = new Date();
 
@@ -66,6 +68,7 @@ const ArrangeShipment = () => {
         totalPackages,
         totalWeight,
         expeditionDate.toISOString(),
+        warehouseId,
         shippingMethod,
         batches.map((batch) => batch.id)
       );

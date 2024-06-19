@@ -5,6 +5,7 @@ import { createPickupByAWB } from "../../../service/pickup";
 import {
   createCheckpointStatus,
   updateExpeditionStatus,
+  updateWarehouseIDForExpedition,
 } from "../../../service/expeditionService";
 
 const SchedulePickup = () => {
@@ -16,50 +17,36 @@ const SchedulePickup = () => {
   const { warehouseId } = location.state || {};
 
   const [time, setTime] = useState("--:--");
-  const [copyText, setCopyText] = useState({
-    pickup: "COPY",
-    warehouse: "COPY",
-  });
 
   const handleTimeChange = (event) => {
     setTime(event.target.value);
   };
 
-  const handleCopy = (id, type) => {
-    const textToCopy = document.getElementById(id).innerText;
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        setCopyText((prevState) => ({ ...prevState, [type]: "COPIED!" }));
-        setTimeout(() => {
-          setCopyText((prevState) => ({ ...prevState, [type]: "COPY" }));
-        }, 2000); // Change back to "COPY" after 2 seconds
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
+  const getCurrentWITATime = () => {
+    const now = new Date();
+    now.setUTCHours(now.getUTCHours() + 8); // Add 8 hours to the current UTC time
+    return now.toISOString();
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const pickupData = {
-        warehouseId: parseInt(warehouseId),
-        pickupTime: `${time}:00.000Z`, // Append seconds and milliseconds to the time
-      };
+      const pickupTime = `${time}:00.000Z`;
+      const warehouseid = parseInt(warehouseId);
 
-      await createPickupByAWB(awb, pickupData);
+      console.log({ awb, warehouseid, pickupTime });
 
-      const status = "Pickup Scheduled by XYZ";
-      const statusDate = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Makassar", // WITA time zone
-      });
+      await createPickupByAWB(awb, warehouseid, pickupTime);
 
-      await createCheckpointStatus(awb, status, statusDate);
-
+      await createCheckpointStatus(
+        awb,
+        "Pickup Scheduled by XYZ",
+        getCurrentWITATime()
+      );
       await updateExpeditionStatus(awb, "XYZ_PickingUp");
+      await updateWarehouseIDForExpedition(awb, warehouseid);
 
-      navigate("/xyz/m/success"); // Navigate to a success page or any other page you desire
+      navigate("/xyz/m/shippinginformation"); // Navigate to a success page or any other page you desire
     } catch (error) {
       console.error("Error scheduling pickup: ", error);
     }
