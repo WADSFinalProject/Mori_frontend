@@ -123,19 +123,19 @@ export default function FlouringMachine() {
         const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString();
 
         const payload = {
-            centralID: machineData.centraID,
-            date: startTime,
-            weight: machineData.load,
-            flouringMachineID: id,
-            endTime: endTime,
-            driedDate: driedDate,
-            inUse: true
+          CentralID: machineData.centraID,
+          Weight: machineData.load,
+          FlouringMachineID: id,
+          EndTime: endTime,
+          DriedDate: driedDate,
+          InUse: true
         };
 
         console.log("Payload:", payload);
 
         await addFlouringActivity(payload);
-        await updateFlouringMachineStatus(id, "running");
+        const statusUpdateResponse = await updateFlouringMachineStatus(id, "running");
+        console.log("Status Update Response:", statusUpdateResponse);
         
         setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
         startTimer(durationParsed);
