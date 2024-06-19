@@ -3,11 +3,13 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const addFlouringMachine = async (capacity, status) => {
+export const addFlouringMachine = async (centraId, capacity, status, duration) => {
     try {
         const machineDetails = {
+            CentraID: centraId,
             Capacity: capacity,
             Status: status,
+            Duration: duration, // Ensure this matches the expected format
         };
 
         return axios.post(host + "/secured/flouring-machine/create/", machineDetails, {

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { readExpeditions_byAWB } from "../../../service/expeditionService"; // Update the path as necessary
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { readExpeditions_byAWB } from "../../../service/expeditionService";
 
 const ShipDetails = () => {
   const { awb } = useParams();
   const [shipmentDetails, setShipmentDetails] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch shipment details using the AWB
     const fetchShipmentDetails = async () => {
       try {
         const response = await readExpeditions_byAWB(awb);
@@ -19,6 +19,106 @@ const ShipDetails = () => {
 
     fetchShipmentDetails();
   }, [awb]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatCheckpointDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    };
+    return date.toLocaleDateString("en-GB", options);
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "Delivered";
+      case "PKG_Delivering":
+        return "Shipping";
+      case "Missing":
+        return "Missing";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getStatusBgColor = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "#4D946D"; // Green for Delivered
+      case "PKG_Delivering":
+        return "#9AD1B380"; // Light blue for Shipping
+      case "Missing":
+        return "#CD484866"; // Light red for Missing
+      default:
+        return "#FFFFFF"; // Default white
+    }
+  };
+
+  const getEstimatedArrivalTextColor = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "#FFFFFF"; // White for Delivered
+      case "PKG_Delivering":
+        return "#000000"; // Black for Shipping
+      case "Missing":
+        return "#000000"; // Black for Missing
+      default:
+        return "#000000"; // Default black
+    }
+  };
+
+  const getStatusTextColor = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "#B8F3D3"; // Light green for Delivered
+      case "PKG_Delivering":
+        return "#217045"; // Green for Shipping
+      case "Missing":
+        return "#852222"; // Dark red for Missing
+      default:
+        return "#000000"; // Default black
+    }
+  };
+
+  const getSvgColor = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "#B8F3D3"; // Light green for Delivered
+      case "PKG_Delivering":
+        return "#217045"; // Green for Shipping
+      case "Missing":
+        return "#852222"; // Dark red for Missing
+      default:
+        return "#000000"; // Default black
+    }
+  };
+
+  const getExpeditionTextColor = (status) => {
+    switch (status) {
+      case "PKG_Delivered":
+        return "#B8D4C5"; // Light green for Delivered
+      case "PKG_Delivering":
+        return "#00000066"; // Grey for Shipping
+      case "Missing":
+        return "#5E4949"; // Dark grey for Missing
+      default:
+        return "#000000"; // Default black
+    }
+  };
 
   return (
     <div className="max-w-[425px] mx-auto h-screen flex flex-col items-start justify-start bg-white">
@@ -63,93 +163,160 @@ const ShipDetails = () => {
       <main className="flex flex-col w-full">
         {shipmentDetails && (
           <>
-            <div className="flex flex-row p-5 gap-3 bg-[#9AD1B380]">
+            <div
+              className="flex flex-row p-5 gap-3"
+              style={{
+                backgroundColor: getStatusBgColor(
+                  shipmentDetails.expedition.Status
+                ),
+              }}
+            >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="27"
-                viewBox="0 0 24 27"
+                width="25px"
+                height="25px"
+                viewBox="0 0 25 25"
                 fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                stroke={getSvgColor(shipmentDetails.expedition.Status)}
               >
                 <path
-                  d="M1.66419 20.8759C1.12531 20.5669 0.713224 20.2103 0.427935 19.8061C0.142645 19.402 0 18.7759 0 17.928V8.5134C0 7.89527 0.114908 7.38412 0.344725 6.97996C0.582467 6.56788 0.954928 6.21919 1.46211 5.9339L9.86627 1.1553C10.5874 0.743213 11.3006 0.53717 12.0059 0.53717C12.7112 0.53717 13.4205 0.743213 14.1337 1.1553L22.5498 5.9339C23.049 6.21919 23.4136 6.56788 23.6434 6.97996C23.8811 7.38412 24 7.89527 24 8.5134V17.928C24 18.7759 23.8574 19.402 23.5721 19.8061C23.2947 20.2103 22.8826 20.5669 22.3358 20.8759L12.9926 26.1776C12.6518 26.3678 12.319 26.4629 11.9941 26.4629C11.6771 26.4629 11.3522 26.3678 11.0193 26.1776L1.66419 20.8759ZM2.73403 19.3069L11.0669 24.0498V14.1835L1.80684 8.89378V17.8685C1.80684 18.1934 1.8742 18.4668 2.00892 18.6887C2.14364 18.9106 2.38534 19.1167 2.73403 19.3069ZM21.2779 19.3069C21.6186 19.1167 21.8564 18.9106 21.9911 18.6887C22.1258 18.4668 22.1932 18.1934 22.1932 17.8685V8.89378L12.9331 14.1835V24.0498L21.2779 19.3069ZM12.0059 12.5193L15.679 10.4391L6.50223 5.22068L2.82912 7.32469L12.0059 12.5193ZM17.5929 9.35738L21.1828 7.32469L13.3492 2.85515C12.4616 2.34004 11.5661 2.34004 10.6627 2.85515L8.38039 4.15084L17.5929 9.35738Z"
-                  fill="#217045"
+                  d="M12.5 13V22M12.5 13L4.5 8M12.5 13L20.5 8M8.5 5.5L16.5 10.5M4.5 8L12.5 3L20.5 8V17L12.5 22L4.5 17V8Z"
+                  stroke={getSvgColor(shipmentDetails.expedition.Status)}
+                  strokeWidth="1.2"
                 />
               </svg>
               <div className="flex flex-col font-vietnam">
-                <div className="text-lg font-bold tracking-tight text-[#217045]">
-                  Shipped
+                <div
+                  className="text-lg font-bold tracking-tight"
+                  style={{
+                    color: getStatusTextColor(
+                      shipmentDetails.expedition.Status
+                    ),
+                  }}
+                >
+                  {getStatusText(shipmentDetails.expedition.Status)}
                 </div>
-                <div className="text-sm font-normal tracking-tight">
-                  Estimated Arrival{" "}
-                  <b>
-                    {new Date(
-                      shipmentDetails.expedition.EstimatedArrival
-                    ).toLocaleDateString()}
-                  </b>
+                <div
+                  className="text-sm font-normal tracking-tight"
+                  style={{
+                    color: getEstimatedArrivalTextColor(
+                      shipmentDetails.expedition.Status
+                    ),
+                  }}
+                >
+                  {shipmentDetails.expedition.Status === "Missing" ? (
+                    <>
+                      The package is missing. Please{" "}
+                      <b>
+                        contact{" "}
+                        <a
+                          className="underline"
+                          href="https://wa.me/81212333232"
+                        >
+                          Harbour Guard
+                        </a>
+                      </b>{" "}
+                      or{" "}
+                      <b>
+                        <a
+                          className="underline"
+                          href="https://wa.me/6281383438301"
+                        >
+                          Delivery Service
+                        </a>{" "}
+                        for further investigation.
+                      </b>
+                    </>
+                  ) : (
+                    <>
+                      Estimated Arrival{" "}
+                      <b>
+                        {formatDate(
+                          shipmentDetails.expedition.EstimatedArrival
+                        )}
+                      </b>
+                    </>
+                  )}
                 </div>
-                <div className="text-[#00000066] text-xs font-medium tracking-tight mt-1">
+                <div
+                  className="text-xs font-medium tracking-tight mt-1"
+                  style={{
+                    color: getExpeditionTextColor(
+                      shipmentDetails.expedition.Status
+                    ),
+                  }}
+                >
                   Shipped with{" "}
                   {shipmentDetails.expedition.ExpeditionServiceDetails}
                 </div>
               </div>
             </div>
-            <div className="flex flex-row p-5 gap-3">
-              <svg
-                width="25"
-                height="24"
-                viewBox="0 0 9 23"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0.486328 4.81055C0.486328 2.59375 2.27344 0.787109 4.5 0.787109C6.72656 0.787109 8.50391 2.59375 8.50391 4.81055C8.50391 6.63672 7.27344 8.18945 5.59375 8.66797V17.9355C5.59375 20.4355 4.91016 22.1152 4.5 22.1152C4.08008 22.1152 3.38672 20.4258 3.38672 17.9355V8.66797C1.70703 8.17969 0.486328 6.63672 0.486328 4.81055ZM3.35742 5.03516C4.10938 5.03516 4.72461 4.40039 4.72461 3.6582C4.72461 2.91602 4.10938 2.29102 3.35742 2.29102C2.63477 2.29102 1.99023 2.91602 1.99023 3.6582C1.99023 4.40039 2.63477 5.03516 3.35742 5.03516Z"
-                  fill="black"
-                />
-              </svg>
-              <div className="flex flex-col font-vietnam tracking-tight gap-1">
-                <div className="text-lg font-semibold">
-                  Shipping Information
-                </div>
-                <div className="text-sm text-[#828282] font-medium">
-                  {shipmentDetails.expedition.ExpeditionServiceDetails} - {awb}
-                </div>
-                <div className="flex flex-row gap-2">
-                  <svg
-                    width="9"
-                    height="30"
-                    viewBox="0 0 9 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="mt-1"
-                  >
-                    <path
-                      d="M9 4.5C9 6.98528 6.98528 9 4.5 9C2.01472 9 0 6.98528 0 4.5C0 2.01472 2.01472 0 4.5 0C6.98528 0 9 2.01472 9 4.5Z"
-                      fill="#9AD1B3"
-                    />
-                    <line
-                      x1="4.5"
-                      y1="3.5"
-                      x2="4.5"
-                      y2="29.5"
-                      stroke="#9AD1B3"
-                      strokeLinecap="round"
-                      strokeDasharray="2 3"
-                    />
-                  </svg>
-                  <div className="flex flex-col gap-1">
-                    <div className="text-[#9AD1B3] text-sm font-medium">
-                      Pesanan sampai di sorting center JAKARTA
-                    </div>
-                    <div className="text-xs font-medium text-[#828282]">
-                      18-03-2024 08:40 PM
+            <div className="flex flex-row p-5 gap-3 justify-between">
+              <div className="flex flex-row gap-3">
+                <svg
+                  width="25"
+                  height="24"
+                  viewBox="0 0 9 23"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0.486328 4.81055C0.486328 2.59375 2.27344 0.787109 4.5 0.787109C6.72656 0.787109 8.50391 2.59375 8.50391 4.81055C8.50391 6.63672 7.27344 8.18945 5.59375 8.66797V17.9355C5.59375 20.4355 4.91016 22.1152 4.5 22.1152C4.08008 22.1152 3.38672 20.4258 3.38672 17.9355V8.66797C1.70703 8.17969 0.486328 6.63672 0.486328 4.81055ZM3.35742 5.03516C4.10938 5.03516 4.72461 4.40039 4.72461 3.6582C4.72461 2.91602 4.10938 2.29102 3.35742 2.29102C2.63477 2.29102 1.99023 2.91602 1.99023 3.6582C1.99023 4.40039 2.63477 5.03516 3.35742 5.03516Z"
+                    fill="black"
+                  />
+                </svg>
+                <div className="flex flex-col font-vietnam tracking-tight gap-1">
+                  <div className="text-lg font-semibold">
+                    Shipping Information
+                  </div>
+                  <div className="text-sm text-[#828282] font-medium">
+                    {shipmentDetails.expedition.ExpeditionServiceDetails} -{" "}
+                    {awb}
+                  </div>
+                  <div className="flex flex-row gap-2">
+                    <svg
+                      width="9"
+                      height="30"
+                      viewBox="0 0 9 30"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="mt-1"
+                    >
+                      <path
+                        d="M9 4.5C9 6.98528 6.98528 9 4.5 9C2.01472 9 0 6.98528 0 4.5C0 2.01472 2.01472 0 4.5 0C6.98528 0 9 2.01472 9 4.5Z"
+                        fill="#9AD1B3"
+                      />
+                      <line
+                        x1="4.5"
+                        y1="3.5"
+                        x2="4.5"
+                        y2="29.5"
+                        stroke="#9AD1B3"
+                        strokeLinecap="round"
+                        strokeDasharray="2 3"
+                      />
+                    </svg>
+                    <div className="flex flex-col gap-1">
+                      <div className="text-[#9AD1B3] text-sm font-medium">
+                        {shipmentDetails.checkpoint_status}
+                      </div>
+                      <div className="text-xs font-medium text-[#828282]">
+                        {shipmentDetails.checkpoint_statusdate
+                          ? formatCheckpointDate(
+                              shipmentDetails.checkpoint_statusdate
+                            )
+                          : ""}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="text-base text-[#5D9EA4] font-semibold cursor-pointer ml-1 h-fit">
+              <button
+                onClick={() => navigate(`/tracking/${awb}`)}
+                className="text-base text-[#5D9EA4] font-semibold cursor-pointer ml-1 h-fit"
+              >
                 Track
-              </div>
+              </button>
             </div>
 
             <hr className="bg-[#D9D9D9] w-full h-1" />
@@ -159,7 +326,6 @@ const ShipDetails = () => {
                 Batch Information
               </div>
               <hr className="bg-[#d9d9d9] w-full border" />
-              {/* Render batch information dynamically */}
               {shipmentDetails.batches.map((batch) => (
                 <div
                   key={batch.BatchID}

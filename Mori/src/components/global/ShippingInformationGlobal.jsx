@@ -1,34 +1,30 @@
-import React, { useState } from "react";
+// ShippingInformationGlobal.jsx
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import TimelineItem from "./TimelineItem";
 import "./ShippingInformationStyle.css";
 
 const ShippingInformationGlobal = () => {
-  const initialData = [
-    {
-      datetime: "2024-03-19 16:35",
-      location: "Jakarta",
-      description: "Batch #ID has been set for shipping by Nama Orang",
-    },
-    {
-      datetime: "2024-03-19 20:39",
-      location: "Bandung",
-      description: "Batch #ID is picked up by Franz Sinatra",
-    },
-    {
-      datetime: "2024-03-20 20:39",
-      location: "Surabaya",
-      description: "Batch is being processed by shipping service",
-    },
-  ];
+  const { awb } = useParams();
+  const navigate = useNavigate();
 
-  const[timelineData, setTimelineData] = useState(initialData);
+  const [timelineData, setTimelineData] = useState([]);
 
-  // Function to add new timeline item
-  const addTimelineItem = (newItem) => {
-    setTimelineData([newItem, ...timelineData]);
-  };
+  useEffect(() => {
+    // Fetch the timeline data using the awb
+    const fetchTimelineData = async () => {
+      try {
+        // Replace with your service call to fetch timeline data by awb
+        const response = await fetchTimelineByAWB(awb);
+        setTimelineData(response.data);
+      } catch (error) {
+        console.error("Error fetching timeline data: ", error);
+      }
+    };
 
-  // Find the most recent item and sort data with the most recent on top
+    fetchTimelineData();
+  }, [awb]);
+
   const sortedTimelineData = [...timelineData].sort(
     (a, b) => new Date(b.datetime) - new Date(a.datetime)
   );
@@ -36,18 +32,20 @@ const ShippingInformationGlobal = () => {
   return (
     <div className="max-w-[425px] mx-auto h-screen flex flex-col gap-4 items-start justify-start bg-[#F0F0F0]">
       <header className="w-full flex flex-row items-center justify-between gap-12 px-6 bg-white py-4">
-        <svg
-          width="20"
-          height="17"
-          viewBox="0 0 20 17"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M0.818359 8.42969C0.818359 8.09766 0.964844 7.76562 1.19922 7.53125L7.5957 1.14453C7.86914 0.871094 8.17188 0.744141 8.47461 0.744141C9.17773 0.744141 9.66602 1.24219 9.66602 1.90625C9.66602 2.25781 9.51953 2.55078 9.29492 2.77539L7.11719 4.98242L4.53906 7.33594L6.75586 7.20898H18.2695C19.0117 7.20898 19.5098 7.70703 19.5098 8.42969C19.5098 9.15234 19.0117 9.65039 18.2695 9.65039H6.75586L4.53906 9.52344L7.11719 11.877L9.29492 14.084C9.51953 14.2988 9.66602 14.5918 9.66602 14.9531C9.66602 15.6074 9.17773 16.1055 8.47461 16.1055C8.17188 16.1055 7.86914 15.9883 7.61523 15.7344L1.19922 9.32812C0.964844 9.09375 0.818359 8.76172 0.818359 8.42969Z"
-            fill="#828282"
-          />
-        </svg>
+        <button onClick={() => navigate(-1)}>
+          <svg
+            width="20"
+            height="17"
+            viewBox="0 0 20 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.818359 8.42969C0.818359 8.09766 0.964844 7.76562 1.19922 7.53125L7.5957 1.14453C7.86914 0.871094 8.17188 0.744141 8.47461 0.744141C9.17773 0.744141 9.66602 1.24219 9.66602 1.90625C9.66602 2.25781 9.51953 2.55078 9.29492 2.77539L7.11719 4.98242L4.53906 7.33594L6.75586 7.20898H18.2695C19.0117 7.20898 19.5098 7.70703 19.5098 8.42969C19.5098 9.15234 19.0117 9.65039 18.2695 9.65039H6.75586L4.53906 9.52344L7.11719 11.877L9.29492 14.084C9.51953 14.2988 9.66602 14.5918 9.66602 14.9531C9.66602 15.6074 9.17773 16.1055 8.47461 16.1055C8.17188 16.1055 7.86914 15.9883 7.61523 15.7344L1.19922 9.32812C0.964844 9.09375 0.818359 8.76172 0.818359 8.42969Z"
+              fill="#828282"
+            />
+          </svg>
+        </button>
 
         <div className="flex flex-row font-vietnam gap-2">
           <svg
@@ -74,11 +72,10 @@ const ShippingInformationGlobal = () => {
       <main className="flex flex-col gap-3 justify-center items-center px-8 w-full">
         <div className="p-5 w-full h-full bg-white rounded-lg flex flex-col">
           <div className="font-vietnam font-normal text-base tracking-tight">
-            Estimated Arrival{" "}
-            <b>Monday, 18 March 2024{/* tanggal estimated arrival disini 4 hari setelah shipment aja */}</b>
+            Estimated Arrival <b>Monday, 18 March 2024</b>
           </div>
           <div className="font-vietnam text-xs font-medium tracking-tight text-[#828282]">
-            Shipped with JNE Standard{/* nama kurir */}
+            Shipped with JNE Standard
           </div>
         </div>
         <div className="p-5 w-full bg-white rounded-lg flex flex-col gap-1">
@@ -91,7 +88,7 @@ const ShippingInformationGlobal = () => {
             </div>
             <div className="flex flex-row gap-1">
               <div className="font-vietnam text-xs font-medium tracking-tight">
-                SPXID046105037563{/* AWB */}
+                {awb}
               </div>
               <div className="text-[#A7AD6F] font-vietnam text-xs font-medium cursor-pointer">
                 COPY
@@ -107,7 +104,7 @@ const ShippingInformationGlobal = () => {
                 datetime={item.datetime}
                 location={item.location}
                 description={item.description}
-                isCurrent={index === 0} // The most recent item is the current one
+                isCurrent={index === 0}
               />
             ))}
           </ul>

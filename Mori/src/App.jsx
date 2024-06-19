@@ -97,7 +97,7 @@ function App() {
         <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
 
-        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+        <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />
 
 
       </Routes>
