@@ -1,40 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { getUserCentra } from "../../../..//service/userCentra";
+import { getUserCentra } from "../../../../service/userCentra";
 
-const PersonInChargeBox = ({email, name }) => {
-
+const PersonInChargeBox = ({ centraId }) => {
   const [personInCharge, setPersonInCharge] = useState({ name: '', email: '' });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await getUserCentra(); // Assuming getUserCentra fetches user centra data
-                const data = response.data;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getUserCentra();
+        const data = response.data;
 
-                console.log('Fetched Data:', data); // Log the fetched data to debug
+        console.log('Fetched Data:', data);
 
-                // Assuming you want the first active person in charge
-                const activePerson = data.find(userCentra => userCentra.usercentra.Active);
+        // Find the user centra with the matching centraId and active status
+        const activePerson = data.find(userCentra => userCentra.usercentra.CentraID === centraId && userCentra.usercentra.Active);
 
-                if (activePerson) {
-                    console.log('Active Person:', activePerson); // Log the active person data to debug
+        if (activePerson) {
+          console.log('Active Person:', activePerson);
 
-                    setPersonInCharge({
-                        name: `${activePerson.user.FirstName} ${activePerson.user.LastName}`,
-                        email: activePerson.user.Email,
-                    });
-                } else {
-                    console.warn('No active person found'); // Log if no active person is found
-                }
-            } catch (error) {
-                console.error("Error fetching user centra: ", error);
-            }
-        };
+          setPersonInCharge({
+            name: `${activePerson.user.FirstName} ${activePerson.user.LastName}`,
+            email: activePerson.user.Email,
+          });
+        } else {
+          setPersonInCharge({ name: '', email: '' }); // Reset to blank if no active person found
+          console.warn('No active person found for this Centra ID');
+        }
+      } catch (error) {
+        console.error("Error fetching user centra: ", error);
+        setPersonInCharge({ name: '', email: '' }); // Reset to blank in case of error
+      }
+    };
 
-        fetchData(); // Call fetchData directly without conditional if statement
-    }, []);
+    if (centraId) {
+      fetchData();
+    } else {
+      setPersonInCharge({ name: '', email: '' }); // Reset to blank if no centraId is provided
+    }
+  }, [centraId]);
 
-  
   return (
     <div className="w-full max-w-screen-md p-6 rounded-xl border border-black/opacity-20 flex justify-start items-center gap-4">
       <div className="w-16 h-16 bg-zinc-500 rounded-full"></div>
