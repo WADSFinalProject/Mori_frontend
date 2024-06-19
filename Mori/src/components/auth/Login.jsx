@@ -155,11 +155,11 @@ const handleLoginVerificationSubmit = () => {
             // Role-based redirection logic
             if (role === "Centra") {
                 navigate("/centra/home");
-            } else if (role === "Guard") {
+            } else if (role === "Harbour Guard") {
                 navigate("/harbor/home");
-            } else if (role === "xyz" && isMobile) {
+            } else if (role === "XYZ" && isMobile) {
                 navigate("/xyz/m/home");
-            } else if (role === "xyz" && !isMobile) {
+            } else if (role === "XYZ" && !isMobile) {
                 navigate("/xyz/d/xyz-dashboard");
             } else if (role === "Admin") {
                 navigate("/admin/admin-dashboard");
