@@ -7,13 +7,7 @@ import DryingMachineBoxDashboard from "./DryingMachineBox";
 import FlouringMachineBoxDashboard from "./FlouringMachineBox";
 import { getAllCentras, getLeavesData } from "../../../../service/centras";
 
-const LeavesStatusCard = ({
-  title,
-  totalWeight,
-  proportions,
-  colors,
-  labels,
-}) => {
+const LeavesStatusCard = ({ title, totalWeight, proportions, colors, labels }) => {
   const calculateWeights = (total) => {
     return proportions.map((proportion) => (total * proportion).toFixed(1));
   };
@@ -233,10 +227,7 @@ const LeavesStatusDashboard = () => {
 
       <div className="mt-6 flex gap-3 w-full">
         {selectedData.personInCharge && (
-          <PersonInChargeBox
-            name={selectedData.personInCharge.name}
-            email={selectedData.personInCharge.email}
-          />
+          <PersonInChargeBox centraId={selectedData.centraId} />
         )}
         {selectedData.flouringSchedule && (
           <FlouringScheduleBox

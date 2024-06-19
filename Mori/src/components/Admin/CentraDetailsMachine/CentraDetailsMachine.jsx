@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LeavesStatusDashboard from './LeavesStatusCard';
 import PersonInChargeBox from './PersonInChargeBox';
-import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
 import { getLeavesData } from '../../../service/centras';
@@ -12,8 +11,6 @@ const CentraDetailsMachine = ({ centraId, location }) => {
   const [leavesStatus, setLeavesStatus] = useState(null);
   const [dryingMachines, setDryingMachines] = useState([]);
   const [flouringMachines, setFlouringMachines] = useState([]);
-  const [personInCharge, setPersonInCharge] = useState({ name: '', email: '' });
-  const [flouringSchedule, setFlouringSchedule] = useState({ every: 0, nearest: '' });
 
   useEffect(() => {
     if (centraId) {
@@ -31,11 +28,6 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
       const flouringResponse = await getFlouringMachines_byCentra(centraId);
       setFlouringMachines(flouringResponse.data);
-
-      // Mock data for person in charge and flouring schedule
-      setPersonInCharge({ name: 'John Doe', email: 'john.doe@example.com' });
-      setFlouringSchedule({ every: 3, nearest: '2' });
-
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -58,11 +50,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       <div className="mt-6 flex gap-6">
         <div className="flex-grow flex flex-col gap-6">
           <div className="flex gap-6">
-            <PersonInChargeBox
-              name={personInCharge.name}
-              email={personInCharge.email}
-            />
-            <FlouringScheduleBox every={flouringSchedule.every} nearest={flouringSchedule.nearest} />
+            <PersonInChargeBox centraId={centraId} />
           </div>
         </div>
       </div>
@@ -72,7 +60,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <DryingMachineBoxDashboard centraId={centraId} /> {/* Pass centraId as prop */}
+        <DryingMachineBoxDashboard centraId={centraId} />
       </div>
 
       <div className="mt-4 text-black text-[28px] font-semibold font-['Be Vietnam Pro'] mb-4">
@@ -80,7 +68,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <FlouringMachineBoxDashboard centraId={centraId} /> {/* Pass centraId as prop */}
+        <FlouringMachineBoxDashboard centraId={centraId} />
       </div>
     </div>
   );
