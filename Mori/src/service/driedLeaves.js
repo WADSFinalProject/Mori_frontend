@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+import { api } from '../contexts/api';
+
+
+
 
 export const createDriedLeaf = async (centralId, weight, driedDate, floured) => {
     try {
@@ -12,7 +13,7 @@ export const createDriedLeaf = async (centralId, weight, driedDate, floured) => 
             Floured: floured,
         };
 
-        return axios.post(host + "/secured/dried_leaves/", leafDetails, {
+        return api.post( "/secured/dried_leaves/", leafDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +26,7 @@ export const createDriedLeaf = async (centralId, weight, driedDate, floured) => 
 
 export const readDriedLeaves = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/dried_leaves/", {
+        return api.get( "/secured/dried_leaves/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -42,7 +43,7 @@ export const readDriedLeaves = async (skip = 0, limit = 100) => {
 
 export const readDriedLeaf = async (leafId) => {
     try {
-        return axios.get(host + `/secured/dried_leaves/${leafId}`, {
+        return api.get( `/secured/dried_leaves/${leafId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -62,7 +63,7 @@ export const updateDriedLeaf = async (leafId, centralId, weight, driedDate, flou
             Floured: floured,
         };
 
-        return axios.put(host + `/secured/dried_leaves/${leafId}`, leafDetails, {
+        return api.put( `/secured/dried_leaves/${leafId}`, leafDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -75,7 +76,7 @@ export const updateDriedLeaf = async (leafId, centralId, weight, driedDate, flou
 
 export const deleteDriedLeaf = async (leafId) => {
     try {
-        return axios.delete(host + `/secured/dried_leaves/${leafId}`, {
+        return api.delete( `/secured/dried_leaves/${leafId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -88,7 +89,7 @@ export const deleteDriedLeaf = async (leafId) => {
 
 export const getdryingConversion = async (centraId) =>  {
     try {
-        return axios.get(host + `/secured/dried_leaves/conversion`, {
+        return api.get( `/secured/dried_leaves/conversion`, {
             headers: {
                 "Content-Type": "application/json",
             },

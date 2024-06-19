@@ -151,7 +151,7 @@ export const verifyUser = async (email, code) => {
 // };
 
 export const logout = async () => {
-    await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
+    await axios.post(`${axios_URL}/users/logout`, {}, { withCredentials: true });
     accessToken = null;
 };
 

@@ -1,5 +1,4 @@
 
-import { host } from "./config";
 import { api } from '../contexts/api';
 
 
@@ -7,7 +6,7 @@ import { api } from '../contexts/api';
 
 export const getAllHarborGuards = async () => {
     try {
-        return await axios.get(host + "/secured/harborguard", {
+        return await api.get( "/secured/harborguard", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -28,7 +27,7 @@ export const addHarborGuard = async (harbourName, location, phone, openingHour, 
             ClosingHour: closingHour
         };
 
-        return await axios.post(host + "/secured/harborguard", guardDetails, {
+        return await api.post( "/secured/harborguard", guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -41,7 +40,7 @@ export const addHarborGuard = async (harbourName, location, phone, openingHour, 
 
 export const showHarborGuard = async (guard_id) => {
     try {
-        return await api.get(host + `/secured/harborguards/${guard_id}`, );
+        return await api.get( `/secured/harborguards/${guard_id}`, );
     } catch (error) {
         console.error(`Error fetching harbor guard ${guard_id}: `, error);
         throw new Error(error);
@@ -59,7 +58,7 @@ export const modifyHarborGuard = async (id, harbourName, location, phone, openin
             ClosingHour: closingHour
         };
 
-        return await axios.put(host + `/secured/harborguard/${id}`, guardDetails, {
+        return await api.put( `/secured/harborguard/${id}`, guardDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -72,7 +71,7 @@ export const modifyHarborGuard = async (id, harbourName, location, phone, openin
 
 export const removeHarborGuard = async (guard_id) => {
     try {
-        return await axios.delete(host + `/secured/harborguard/${guard_id}`, {
+        return await api.delete( `/secured/harborguard/${guard_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -81,4 +80,4 @@ export const removeHarborGuard = async (guard_id) => {
         console.error(`Error removing harbor guard ${guard_id}: `, error);
         throw new Error(error);
     }
-};
+};``

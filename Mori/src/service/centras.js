@@ -1,12 +1,11 @@
 
-import { host } from "./config";
 import { api } from '../contexts/api';
 
 
 
 export const getAllCentras = async () => {
     try {
-        return api.get(host + "/secured/centras", );
+        return api.get( "/secured/centras", );
     } catch (error) {
         console.log("Error getting centras: ", error);
         throw new Error(error);
@@ -19,7 +18,7 @@ export const createCentra = async (address) => {
             Address: address,
         };
 
-        return api.post(host + "/secured/centras", centraDetails, );
+        return api.post( "/secured/centras", centraDetails, );
     } catch (error) {
         console.log("Error creating centra: ", error);
         throw new Error(error);
@@ -28,7 +27,7 @@ export const createCentra = async (address) => {
 
 export const getCentraDetails = async (centra_id) => {
     try {
-        return await api.get(host + `/secured/centras/${centra_id}`, );
+        return await api.get( `/secured/centras/${centra_id}`, );
     } catch (error) {
         console.error("Error getting centra details: ", error);
         throw new Error(error);
@@ -41,7 +40,7 @@ export const updateCentraDetails = async (centra_id, address) => {
             Address: address,
         };
 
-        return await api.put(host + `/secured/centras/${centra_id}`, centraDetails, );
+        return await api.put( `/secured/centras/${centra_id}`, centraDetails, );
     } catch (error) {
         console.error("Error updating centra details: ", error);
         throw new Error(error);
@@ -50,7 +49,7 @@ export const updateCentraDetails = async (centra_id, address) => {
 
 export const deleteCentra = async (centra_id) => {
     try {
-        return await api.delete(host + `/secured/centras/${centra_id}`, );
+        return await api.delete( `/secured/centras/${centra_id}`, );
     } catch (error) {
         console.error("Error deleting centra: ", error);
         throw new Error(error);
@@ -59,7 +58,7 @@ export const deleteCentra = async (centra_id) => {
 
 export const getLeavesData = async (centralId) => {
     try {
-        return axios.get(`${host}/secured/leaves`, {
+        return api.get(`/secured/leaves`, {
             params: {
                 centra_id: centralId,
             },

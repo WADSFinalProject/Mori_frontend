@@ -1,12 +1,11 @@
 
-import { host } from "./config";
 import { api } from '../contexts/api';
 
 
 
 export const getAllUsers = async (skip = 0, limit = 100, sortBy = 'Name', sortOrder = 'asc', role = '') => {
     try {
-        return axios.get(`${host}/secured/users`, {
+        return api.get(`/secured/users`, {
             params: {
                 skip,
                 limit,
@@ -36,7 +35,7 @@ export const addNewUser = async (newUser) => {
             Address: newUser.address
         };
 
-        return axios.post(host + "/secured/users", newUserEntry, {
+        return api.post( "/secured/users", newUserEntry, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -59,7 +58,7 @@ export const updateExistingUser = async (user) => {
             Address: user.address
         }
 
-        return axios.put(host + `/secured/users/${user.id}`, userEntry, {
+        return api.put( `/secured/users/${user.id}`, userEntry, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -72,7 +71,7 @@ export const updateExistingUser = async (user) => {
 
 export const deleteUser = async (userId) => {
     try {
-        return axios.delete(`${host}/secured/users/${userId}`, {
+        return api.delete(`/secured/users/${userId}`, {
             headers: {
                 "Content-Type": "application/json"
             }
