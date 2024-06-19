@@ -110,7 +110,7 @@ const LeavesStatusCard = ({
 
 const LeavesStatusDashboard = () => {
   const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
-  const [selectedWarehouse, setSelectedWarehouse] = useState("Jakarta");
+  const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [warehouseData, setWarehouseData] = useState({});
   const [leavesStatus, setLeavesStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -134,10 +134,10 @@ const LeavesStatusDashboard = () => {
         }, {});
         setWarehouseData(centraData);
 
-        // Fetch leaves data for the default selected warehouse
-        if (centraData[selectedWarehouse]) {
-          fetchLeavesData(centraData[selectedWarehouse].centraId);
-        }
+        const initialWarehouse = centraResponse.data[0].Address;
+        setSelectedWarehouse(initialWarehouse);
+        fetchLeavesData(centraData[initialWarehouse].centraId);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching warehouse data: ", error);
@@ -164,7 +164,7 @@ const LeavesStatusDashboard = () => {
   const selectWarehouse = (warehouse) => {
     setSelectedWarehouse(warehouse);
     setWarehouseDropdownVisible(false);
-    fetchLeavesData(warehouseData[warehouse].centraId); 
+    fetchLeavesData(warehouseData[warehouse].centraId);
   };
 
   if (loading) {
