@@ -5,81 +5,78 @@ import { getPackageReceiptDetails } from "../../../../service/packageReceiptServ
 import { readPickups } from "../../../../service/pickup";
 
 const XYZShippingInformation = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]); // Data to display
 
   useEffect(() => {
-    fetchExpeditions();
+    fetchData();
   }, []);
 
   useEffect(() => {
     handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
+  }, [filterKey, searchQuery, originalData]);
 
-  const fetchExpeditions = async () => {
-    try {
-      const res = await readExpeditions();
-      console.log("Fetched Expeditions: ", res.data);
-      const expeditions = res.data;
+  const fetchData = () => {
+    readExpeditions()
+      .then((res) => {
+        const expeditions = res.data;
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const expeditionDetails = expedition?.expedition;
+          if (!expeditionDetails || !expedition.batches) {
+            return acc;
+          }
 
-      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-        const expeditionDetails = expedition?.expedition;
+          const airwayBill = expeditionDetails.AirwayBill;
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
+              expeditionID: expeditionDetails.ExpeditionID,
+              batchIds: [],
+              flouredDates: [],
+              driedDates: [],
+              weights: [],
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
+            };
+          }
 
-        if (!expeditionDetails || !expedition.batches) {
-          console.log("Skipping expedition due to missing details or batches: ", expedition);
-          return acc; // Skip if essential data is missing
-        }
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+            acc[airwayBill].weights.push(batch.Weight);
+          });
 
-        const airwayBill = expeditionDetails.AirwayBill;
+          return acc;
+        }, {});
 
-        if (!acc[airwayBill]) {
-          acc[airwayBill] = {
-            id: airwayBill,
-            batchIds: [],
-            flouredDates: [],
-            driedDates: [],
-            weights: [],
-            status: expeditionDetails.Status || "Unknown",
-            checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
-              expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
-            }`,
-            receptionNotes: "Null", // Initialize with "Null"
-          };
-        }
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+          id: index + 1,
+          shipmentId: expedition.id,
+          expeditionID: expedition.expeditionID,
+          batchId: expedition.batchIds,
+          driedDate: expedition.driedDates,
+          flouredDate: expedition.flouredDates,
+          weight: expedition.weights,
+          status: expedition.status,
+          checkpoint: expedition.checkpoint,
+          receptionNotes: "Null",
+        }));
 
-        expedition.batches.forEach((batch) => {
-          acc[airwayBill].batchIds.push(batch.BatchID);
-          acc[airwayBill].flouredDates.push(batch.FlouredDate);
-          acc[airwayBill].driedDates.push(batch.DriedDate);
-          acc[airwayBill].weights.push(batch.Weight);
-        });
+        console.log("Resulting Array: ", resArr);
 
-        return acc;
-      }, {});
-
-      console.log("Grouped Expeditions: ", groupedExpeditions);
-
-      const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
-        id: index + 1,
-        shipmentId: expedition.id,
-        batchId: expedition.batchIds,
-        driedDate: expedition.driedDates,
-        flouredDate: expedition.flouredDates,
-        weight: expedition.weights,
-        status: expedition.status,
-        checkpoint: expedition.checkpoint,
-        receptionNotes: expedition.receptionNotes,
-      }));
-
-      console.log("Resulting Array: ", resArr);
-
-      await fetchAndSetReceptionNotes(resArr);
-
-    } catch (err) {
-      console.log("Error: ", err);
-    }
+        // Set original data and sorted data state
+        setOriginalData(resArr);
+        setSortedData(resArr);
+      })
+      .catch((err) => {
+        console.error("Error: ", err);
+      });
   };
 
   const fetchAndSetReceptionNotes = async (expeditions) => {

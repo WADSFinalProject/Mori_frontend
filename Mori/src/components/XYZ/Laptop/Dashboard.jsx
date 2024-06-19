@@ -420,7 +420,7 @@ const MainXYZ = () => {
                     
                     <div className="mb-4 border border-gray-300 rounded-lg p-6">
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">Shipped</span>
+                        <span className="font-bold text-xl">XYZ_PickingUp</span>
                         <div className="bg-[#9AD1B3] text-black rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
                             {shippedCount}
@@ -428,7 +428,7 @@ const MainXYZ = () => {
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">To Deliver</span>
+                        <span className="font-bold text-xl">XYZ_Completed</span>
                         <div className="bg-[#4D946D] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
                             {toDeliverCount}
@@ -436,7 +436,7 @@ const MainXYZ = () => {
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">Completed</span>
+                        <span className="font-bold text-xl">PKG_Delivered</span>
                         <div className="bg-[#A7AD6F] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
                             {completedCount}
@@ -444,7 +444,7 @@ const MainXYZ = () => {
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 pb-3">
-                        <span className="font-bold text-xl">Missing</span>
+                        <span className="font-bold text-xl">PKG_Delivering</span>
                         <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
                             {missingCount}
