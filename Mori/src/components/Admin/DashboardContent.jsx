@@ -8,21 +8,26 @@ import { getAllUsers } from "../../service/users";
 import { getAllHarborGuards } from "../../service/harborGuardService";
 import { getAllWarehouses } from "../../service/warehousesService";
 
-
-const conversionRates = [
-  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
-  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
-  // Add more conversion rate data here...
-];
-
 const DashboardContent = () => {
-  const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
+  const initialConvertionRate = {
+    id: 0,
+    conversionRate: 0,
+    wetToDry: 0,
+    dryToFloured: 0
+  };
+  const initialCentra = {
+    CentralID: 0, 
+    Address: ""
+  };
+  const [selectedConversionRate, setSelectedConversionRate] = useState(initialConvertionRate);
+  const [selectedCentra, setSelectedCentra] = useState(initialCentra);
   const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
   const [totalShipments, setTotalShipments] = useState(0);
   const [centraCount, setCentraCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [harborCount, setHarborCount] = useState(0);
   const [xyzCount, setXyzCount] = useState(0);
+  const [centras, setCentras] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,15 +38,17 @@ const DashboardContent = () => {
         const harborGuards = await getAllHarborGuards();
         const warehouses = await getAllWarehouses();
 
-        console.log("Expeditions Data: ", expeditions.data); // Debugging line
+        // console.log("Expeditions Data: ", expeditions.data); // Debugging line
         const expeditionIDs = expeditions.data.map(item => item.expedition.ExpeditionID);
-        console.log("Expedition IDs: ", expeditionIDs); // Debugging line
+        // console.log("Expedition IDs: ", expeditionIDs); // Debugging line
         setTotalShipments(new Set(expeditionIDs).size);
 
         setCentraCount(centras.data.length);
         setUserCount(users.data.length);
         setHarborCount(harborGuards.data.length);
         setXyzCount(warehouses.data.length);
+        setCentras(centras.data); // Assuming getAllCentras returns the conversion rates
+        setSelectedCentra(centras.data[0]);
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -50,19 +57,34 @@ const DashboardContent = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedCentra) {
+      const fetchConversionRate = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8000/secured/conversion_rates/${selectedCentra.CentralID}`);
+          setSelectedConversionRate(response.data);
+        } catch (error) {
+          console.error("Error fetching conversion rate data: ", error);
+        }
+      };
+
+      fetchConversionRate();
+    }
+  }, [selectedCentra]);
+
   const toggleConversionRateDropdown = () => {
     setConversionRateDropdownVisible(!conversionRateDropdownVisible);
   };
 
-  const selectConversionRate = (conversionRate) => {
-    setSelectedConversionRate(conversionRate);
+  const selectConversionRate = (centra) => {
+    setSelectedCentra(centra);
     setConversionRateDropdownVisible(false);
   };
 
   const chartData = {
     datasets: [
       {
-        data: [selectedConversionRate.conversionRate, 100 - selectedConversionRate.conversionRate],
+        data: [selectedConversionRate?.conversionRate || 0, 100 - (selectedConversionRate?.conversionRate || 0)],
         backgroundColor: ['#176E76', '#E0E0E0'],
       },
     ],
@@ -215,18 +237,18 @@ const DashboardContent = () => {
               className="flex items-center text-[#A7AD6F] font-semibold"
               onClick={toggleConversionRateDropdown}
             >
-              {selectedConversionRate.id}
+              {selectedCentra.Address}
               <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
             </button>
             {conversionRateDropdownVisible && (
               <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
-                {conversionRates.map((conversionRate) => (
+                {centras.map((centra) => (
                   <button
-                    key={conversionRate.id}
+                    key={centra.CentralID}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                    onClick={() => selectConversionRate(conversionRate)}
+                    onClick={() => selectConversionRate(centra)}
                   >
-                    {conversionRate.id} - Conversion Rate
+                    {centra.Address}
                   </button>
                 ))}
               </div>
@@ -238,7 +260,7 @@ const DashboardContent = () => {
                   <Doughnut data={chartData} options={gaugeOptions} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
                     <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
-                    <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
+                    {/* <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span> */}
                   </div>
                 </div>
               </div>
