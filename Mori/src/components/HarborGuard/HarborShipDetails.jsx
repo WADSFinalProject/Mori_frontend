@@ -158,7 +158,7 @@ const HarborShipDetails = () => {
 
   const getCurrentWITATime = () => {
     const now = new Date();
-    now.setUTCHours(now.getUTCHours() + 15); // Add 8 hours to the current UTC time
+    now.setUTCHours(now.getUTCHours() + 8); // Add 8 hours to the current UTC time
     return now.toISOString();
   };
 
