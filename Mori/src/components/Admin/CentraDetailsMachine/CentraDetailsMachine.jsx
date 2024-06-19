@@ -5,66 +5,8 @@ import FlouringScheduleBox from './FlouringScheduleBox';
 import DryingMachineBoxDashboard from './DryingMachineBox';
 import FlouringMachineBoxDashboard from './FlouringMachineBox';
 import { getLeavesData } from '../../../service/centras';
-
-const dummyDryingMachines = [
-  {
-    machineNumber: 1,
-    driedDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 24.1,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 0, // Duration in minutes
-  },
-  {
-    machineNumber: 2,
-    driedDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 30,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 20, // Duration in minutes
-  },
-  {
-    machineNumber: 3,
-    driedDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 17.2,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 0, // Duration in minutes
-  },
-];
-
-const dummyFlouringMachines = [
-  {
-    machineNumber: 1,
-    flouredDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 24.1,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 0,
-  },
-  {
-    machineNumber: 2,
-    flouredDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 30,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 25,
-  },
-  {
-    machineNumber: 3,
-    flouredDate: '13 March 2024',
-    startTime: '02:45 PM',
-    filledWeight: 17.2,
-    totalWeight: 30,
-    lastUpdated: '1 Minute Ago',
-    duration: 0,
-  },
-];
+import { getFlouringMachines_byCentra } from '../../../service/flouringMachine';
+import { getDryingMachine_byCentra } from '../../../service/dryingMachine';
 
 const CentraDetailsMachine = ({ centraId, location }) => {
   const [leavesStatus, setLeavesStatus] = useState(null);
@@ -81,17 +23,14 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
   const fetchData = async () => {
     try {
-      getLeavesData(centraId)
-        .then(res => {
-          setLeavesStatus(res.data)
-        })
-        .catch(err => {
-          console.error(err)
-        });
+      const leavesResponse = await getLeavesData(centraId);
+      setLeavesStatus(leavesResponse.data);
 
-      // Process the drying and flouring machines data if needed
-      setDryingMachines(dummyDryingMachines); // Replace with actual data processing if needed
-      setFlouringMachines(dummyFlouringMachines); // Replace with actual data processing if needed
+      const dryingResponse = await getDryingMachine_byCentra(centraId);
+      setDryingMachines(dryingResponse.data);
+
+      const flouringResponse = await getFlouringMachines_byCentra(centraId);
+      setFlouringMachines(flouringResponse.data);
 
       // Mock data for person in charge and flouring schedule
       setPersonInCharge({ name: 'John Doe', email: 'john.doe@example.com' });
@@ -133,7 +72,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <DryingMachineBoxDashboard data={dryingMachines} />
+        <DryingMachineBoxDashboard centraId={centraId} /> {/* Pass centraId as prop */}
       </div>
 
       <div className="mt-4 text-black text-[28px] font-semibold font-['Be Vietnam Pro'] mb-4">
@@ -141,7 +80,7 @@ const CentraDetailsMachine = ({ centraId, location }) => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <FlouringMachineBoxDashboard data={flouringMachines} />
+        <FlouringMachineBoxDashboard centraId={centraId} /> {/* Pass centraId as prop */}
       </div>
     </div>
   );
