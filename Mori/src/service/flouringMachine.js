@@ -108,15 +108,20 @@ export const deleteFlouringMachine = async (machineId) => {
     }
 };
 
-export const updateFlouringMachineStatus = async (MachineID, new_status) => {
+export const updateFlouringMachineStatus = async (machine_id, status) => {
     try {
-        return axios.put(`${host}/secured/flouringmachine/${MachineID}/status`, {
-            status: new_status
-        }, {
-            headers: {
-                "Content-Type": "application/json",
+        return await axios.put(
+            `${host}/secured/flouringmachine/status`, 
+            {
+                machine_id: machine_id,
+                status: status
             },
-        });
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
     } catch (error) {
         console.log("Error updating flouring machine status: ", error);
         throw new Error(error);
