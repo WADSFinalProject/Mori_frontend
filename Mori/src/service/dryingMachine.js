@@ -108,7 +108,7 @@ export const deleteDryingMachine = async (machineId) => {
 
 export const getDryingMachine_byCentra = async (centraId) => {
     try {
-        return api.post( `/secured//drying_machines/centra/${centraId}`, {
+        return axios.get(host + `/secured/drying_machines/centra/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -122,17 +122,25 @@ export const getDryingMachine_byCentra = async (centraId) => {
 
 export const updateDryingMachineStatus = async (MachineID, new_status) => {
     try {
-        return api.get( `/secured/dryingmachine/${MachineID}/status`, {
-            params: {
+        return axios.put(`${host}/secured/dryingmachine/status`, 
+            {
+                machine_id: MachineID,
                 status: new_status
             },
+         
+        {
             headers: {
                 "Content-Type": "application/json",
             },
         });
     } catch (error) {
-        console.log("Error reading drying machines: ", error);
+        console.log("Error updating drying machine status: ", error.response?.data || error.message);
         throw new Error(error);
     }
 };
+
+
+
+
+
 

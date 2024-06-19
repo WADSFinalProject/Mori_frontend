@@ -42,7 +42,7 @@ import DashboardContent from "./components/Admin/DashboardContent";
 
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
 import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
-
+import HarborShipDetails from "./components/HarborGuard/HarborShipDetails";
 
 
 import { AuthProvider, useAuth } from './contexts/authContext';
@@ -182,7 +182,10 @@ function App() {
         
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
-        <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+        <Route
+          path="/centradetailsmachine"
+          element={<CentraDetailsMachine />}
+        />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
 
         <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />

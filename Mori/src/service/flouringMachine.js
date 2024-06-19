@@ -56,7 +56,7 @@ export const readFlouringMachines = async (skip = 0, limit = 100) => {
 
 export const getFlouringMachines_byCentra = async (centraId) => {
     try {
-        return api.get( `/flouring_machines/centra/${centraId}`, {
+        return axios.get(host + `/secured/flouring_machines/centra/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -108,33 +108,23 @@ export const deleteFlouringMachine = async (machineId) => {
     }
 };
 
-// export const updateFlouringMachine = async (machineId, updateData) => {
-//     try {
-//         return api.put( `/secured/flouring_machines/${machineId}`, updateData, {
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-//     } catch (error) {
-//         console.log("Error updating flouring machine: ", error);
-//         throw new Error(error);
-//     }
-// };
-
-export const updateFlouringMachineStatus = async (MachineID, new_status) => {
+export const updateFlouringMachineStatus = async (machine_id, status) => {
     try {
-        return api.get( `/secured/dryingmachine/${MachineID}/status`, {
-            params: {
-                status: new_status
+        return await axios.put(
+            `${host}/secured/flouringmachine/status`, 
+            {
+                machine_id: machine_id,
+                status: status
             },
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
     } catch (error) {
-        console.log("Error reading drying machines: ", error);
+        console.log("Error updating flouring machine status: ", error);
         throw new Error(error);
     }
 };
 
-"/flouringmachine/{machine_id}/status"

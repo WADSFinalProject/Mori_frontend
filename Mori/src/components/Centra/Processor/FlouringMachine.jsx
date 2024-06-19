@@ -6,9 +6,9 @@ import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
 import { useWindowSize } from 'react-use';
-import axios from 'axios';
-import { host } from "../../../service/config.js";
-import { addFlouringActivity } from "../../../service/flouringActivity";
+import { addFlouringActivity, getFlouringActivities_byMachine } from "../../../service/flouringActivity.js";
+import { updateFlouringMachineStatus } from "../../../service/flouringMachine.js";
+import { createBatch } from "../../../service/batches.js";
 
 const gaugeOptions = {
   responsive: true,
@@ -37,7 +37,7 @@ function parseISODuration(duration) {
 function formatTime(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
+  const remainingSeconds = Math.floor(seconds % 60);
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
@@ -49,9 +49,9 @@ const formatDate = (dateString) => {
 
 export default function FlouringMachine() {
   const location = useLocation();
-  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {}; // Updated to include centralID
+  const { centraID, capacity, currentLoad, status, duration, load, id } = location.state || {};
 
-  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration, load });
+  const [machineData, setMachineData] = useState({ centraID, id, capacity, currentLoad, status, duration, load });
   const [timer, setTimer] = useState(parseISODuration(duration));
   const [timerInterval, setTimerInterval] = useState(null);
   const [inProgress, setInProgress] = useState(false);
@@ -69,12 +69,39 @@ export default function FlouringMachine() {
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    // Log the received data to the console
-    console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration, load });
+    receiveData();
+  }, [centraID, id, capacity, currentLoad, status, duration, load]);
 
-    // Fetch or set machine data here
-    setMachineData({ centralID, id, capacity, currentLoad, status, duration, load });
-  }, [centralID, id, capacity, currentLoad, status, duration, load]);
+  const receiveData = async () => {
+    console.log("Received data:", { centraID, id, capacity, currentLoad, status, duration, load });
+    setMachineData({ centraID, id, capacity, currentLoad, status, duration, load });
+
+    if (status === "running") {
+      try {
+        const response = await getFlouringActivities_byMachine(id);
+        const runningActivity = response.data.find(activity => activity.InUse);
+        if (runningActivity) {
+          const endTime = new Date(runningActivity.EndTime).getTime();
+          const currentTime = new Date().getTime();
+          const remainingSeconds = Math.max((endTime - currentTime) / 1000, 0);
+          setTimer(remainingSeconds);
+          setIsRunning(true);
+          startTimer(remainingSeconds);
+        }
+      } catch (error) {
+        console.error("Failed to fetch running activity:", error.message);
+      }
+    } else if (status === "finished") {
+      // Set the timer to 0 and set batch details if the status is finished
+      setTimer(0);
+      setBatchDetails({
+        number: Math.floor(Math.random() * 10000),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        weight: load
+      });
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -85,24 +112,41 @@ export default function FlouringMachine() {
 
     return () => clearInterval(interval);
   }, [isRunning, timer]);
+  
 
   const startProcess = async () => {
     const startTime = new Date().toISOString();
-    const date = new Date().toLocaleDateString('en-GB'); // Get the current date in 'dd/mm/yyyy' format
-    const time = new Date().toLocaleTimeString('en-GB'); // Get the current time in 'hh:mm:ss' format
-
     localStorage.setItem(`flouringStartTime_${id}`, startTime);
     try {
-      await addFlouringActivity(centralID, date, load, id, time); // Use centralID here
-      startTimer();
+        const durationParsed = parseISODuration(duration);
+        const endTime = new Date(Date.now() + durationParsed * 1000).toISOString();
+        const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString();
+
+        const payload = {
+            centralID: machineData.centraID,
+            date: startTime,
+            weight: machineData.load,
+            flouringMachineID: id,
+            endTime: endTime,
+            driedDate: driedDate,
+            inUse: true
+        };
+
+        console.log("Payload:", payload);
+
+        await addFlouringActivity(payload);
+        await updateFlouringMachineStatus(id, "running");
+        
+        setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
+        startTimer(durationParsed);
     } catch (error) {
-      console.error("Failed to start flouring process:", error.message);
+        console.error("Failed to start flouring process:", error.message);
     }
-  };
+};
 
+  
 
-  const startTimer = () => {
-    const totalSeconds = parseISODuration(duration);
+  const startTimer = (totalSeconds = parseISODuration(duration)) => {
     setTimer(totalSeconds);
 
     if (!timerInterval) {
@@ -130,9 +174,44 @@ export default function FlouringMachine() {
     }
   };
 
-  const handleFastForward = () => {
-    // Fast forward the timer by 1 hour (3600 seconds)
-    setTimer(prevTimer => Math.max(prevTimer - 3600, 0));
+  const handleFastForward = async () => {
+    setTimer(0);
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      setTimerInterval(null);
+    }
+    setInProgress(false);
+    setButtonText("Done Processing");
+
+    // Update the machine status to 'finished'
+    try {
+      await updateFlouringMachineStatus(machineData.id, 'finished');
+      setBatchDetails({
+        number: Math.floor(Math.random() * 10000),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        weight: load
+      });
+    } catch (error) {
+      console.log("Error updating flouring machine status: ", error.response?.data || error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Cleanup timer on component unmount
+    return () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    };
+  }, [timerInterval]);
+
+  const formatTimeWithoutSeconds = (timeString) => {
+    if (!timeString) return '';
+    const [time, modifier] = timeString.split(' ');
+    if (!time || !modifier) return '';
+    const [hours, minutes] = time.split(':');
+    return `${hours}:${minutes} ${modifier}`;
   };
 
   const handleRescale = () => {
@@ -166,13 +245,45 @@ export default function FlouringMachine() {
     }
   };
 
-  const formatTimeWithoutSeconds = (timeString) => {
-    if (!timeString) return '';
-    const [time, modifier] = timeString.split(' ');
-    if (!time || !modifier) return '';
-    const [hours, minutes] = time.split(':');
-    return `${hours}:${minutes} ${modifier}`;
-  };
+  const handleConfirm = async () => {
+    try {
+        // Extract necessary details
+        const description = "Flouring process completed";
+        const dryingID = null; // Assuming this value is not needed for now
+        const flouringID = id;
+        const driedDate = new Date(batchDetails.date).toISOString().split('T')[0]; // Ensure this is in YYYY-MM-DD format
+        const flouredDate = new Date().toISOString().split('T')[0]; // Set to current date
+
+        // Log the data to verify
+        console.log("Data being sent to the API:", {
+            description,
+            dryingID,
+            flouringID,
+            driedDate,
+            flouredDate
+        });
+
+        // Call the API function to save data to the database
+        await createBatch(description, dryingID, flouringID, driedDate, flouredDate);
+        console.log("Batch created successfully!");
+
+        // Update the machine status to 'idle'
+        await updateFlouringMachineStatus(machineData.id, 'idle');
+        console.log("Machine status updated to idle!");
+
+        // Optionally, update the local state to reflect the new status
+        setMachineData(prevData => ({ ...prevData, status: 'idle' }));
+
+        // Refresh the page after successful operations
+        // window.location.reload();
+    } catch (error) {
+        console.error("Error creating batch or updating machine status:", error);
+        if (error.response) {
+            console.error("Response data:", error.response.data);
+        }
+    }
+};
+
 
   const handleCancelEdit = () => {
     setEditDate(batchDetails?.date || "");
@@ -181,14 +292,39 @@ export default function FlouringMachine() {
     setEditMode(false);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     setBatchDetails({
-      ...batchDetails,
-      date: editDate,
-      time: editTime,
-      weight: editWeight
+        ...batchDetails,
+        centraID: centraID,
+        date: editDate,
+        time: editTime,
+        weight: editWeight
     });
     setEditMode(false);
+
+    try {
+        // Extract necessary details
+        const description = "Flouring process completed";
+        const dryingID = null; // Assuming this value is not needed for now
+        const flouringID = id;
+        const driedDate = editDate; // Ensure this is in YYYY-MM-DD format
+        const flouredDate = new Date().toISOString().split('T')[0]; // Set to current date
+
+        // Log the data to verify
+        console.log("Data being sent to the API:", {
+            description,
+            dryingID,
+            flouringID,
+            driedDate,
+            flouredDate
+        });
+
+        // Call the API function to save data to the database
+        await createBatch(description, dryingID, flouringID, driedDate, flouredDate);
+        console.log("Batch created successfully!");
+    } catch (error) {
+        console.error("Error creating batch:", error);
+    }
   };
 
   let chartColor = '#99D0D580';
@@ -236,35 +372,44 @@ export default function FlouringMachine() {
           </div>
         </div>
 
+        <div className="last-updated" style={{ textAlign: 'center', fontSize: '10px', color: '#666666', marginTop: '-18px' }}>
+          {/* Last updated: <span style={{ fontWeight: 'bold' }}>{machineData?.lastUpdated}</span> */}
+        </div>
+
         <div style={{ borderTop: '1px solid #ccc', margin: '20px auto', width: '80%' }}></div>
 
         <div style={{ textAlign: 'center', margin: '20px 0' }}>
-          <button
-            className="start-btn text-white py-1 px-4"
-            style={{
-              backgroundColor: buttonText === "Start Process" ? "#000000" : inProgress ? "#FFFFFF" : "#FFFFFF",
-              color: buttonText === "Start Process" ? "#FFFFFF" : inProgress ? "#000000" : "#217045",
-              border: buttonText === "Start Process" ? "none" : inProgress ? "1px solid #000000" : "1px solid #217045",
-              borderRadius: "10px",
-              fontSize: "14px",
-            }}
-            onClick={startProcess}
-            disabled={inProgress}
-          >
-            {buttonText}
-          </button>
-          {inProgress && (
+          {status === 'idle' ? (
             <button
-              className="fast-forward-btn text-white py-1 px-4 ml-4"
+              className="start-btn text-white py-1 px-4"
               style={{
-                backgroundColor: "#FF4500",
+                backgroundColor: buttonText === "Start Process" ? "#000000" : inProgress ? "#FFFFFF" : "#FFFFFF",
+                color: buttonText === "Start Process" ? "#FFFFFF" : inProgress ? "#000000" : "#217045",
+                border: buttonText === "Start Process" ? "none" : inProgress ? "1px solid #000000" : "1px solid #217045",
                 borderRadius: "10px",
                 fontSize: "14px",
               }}
-              onClick={handleFastForward}
+              onClick={startProcess}
+              disabled={inProgress}
             >
-              Fast Forward 1 Hour
+              {buttonText}
             </button>
+          ) : status === 'running' ? (
+            <>
+              <button
+                className="fast-forward-btn text-white py-1 px-4 ml-4"
+                style={{
+                  backgroundColor: "#FF4500",
+                  borderRadius: "10px",
+                  fontSize: "14px",
+                }}
+                onClick={handleFastForward}
+              >
+                Jump to finish
+              </button>
+            </>
+          ) : (
+            <></>
           )}
         </div>
 
@@ -290,27 +435,21 @@ export default function FlouringMachine() {
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
               <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{formatTime(timer)}</span>
-              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {new Date(Date.now() + timer * 1000).toLocaleTimeString()}</span>
+              {/* <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {new Date(Date.now() + timer * 1000).toLocaleTimeString()}</span> */}
             </div>
           </div>
         </div>
 
-        {timer === 0 && (
+        {timer === 0 && batchDetails && (
           <div className="bg-white p-4 mt-2" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-            <h3 className="text-md" style={{ textAlign: 'center', width: '100%', marginBottom: '' }}>BATCH #{batchDetails?.number} COMPLETED</h3>
             <div style={{ textAlign: 'left', width: '100%' }}>
-              {/* Editable date field */}
               <p className="text-xs mb-1">Date</p>
               {editMode ? (
                 <DatePicker
                   useRange={false}
                   asSingle={true}
                   value={{ startDate: editDate, endDate: editDate }}
-                  onChange={(date) => {
-                    if (date) {
-                      setEditDate(date.startDate);
-                    }
-                  }}
+                  onChange={handleDateChange}
                   inputClassName="w-full h-10 rounded-md focus:ring-0 bg-[#EFEFEF] dark:bg-gray-900 dark:placeholder:text-gray-100 border-gray-300 text-sm text-gray-500"
                   placeholderText="Select date"
                   dateFormat="yyyy-MM-dd"
@@ -319,7 +458,6 @@ export default function FlouringMachine() {
                 <p className="font-bold text-sm mb-2">{formatDate(batchDetails?.date)}</p>
               )}
 
-              {/* Editable time field */}
               <p className="text-xs mb-1">Time</p>
               {editMode ? (
                 <div className="relative max-w-sm flex items-center">
@@ -360,21 +498,20 @@ export default function FlouringMachine() {
                 <p className="font-bold text-sm mb-2">{formatTimeWithoutSeconds(batchDetails?.time)}</p>
               )}
 
-              {/* Editable weight field */}
               <p className="text-xs mb-1">Weight</p>
               {editMode ? (
                 <div className="relative max-w-sm flex items-center">
                   <input
-                    type="number" // Adjust type to number for better input control
+                    type="number"
                     value={editWeight}
                     onChange={(e) => setEditWeight(e.target.value)}
-                    className="w-full py-1 px-2 rounded-full bg-[#EFEFEF] text-gray-500 focus:outline-none border border-gray-300" // Updated class names for better styling
-                    placeholder="Enter weight (kg)" // Providing a placeholder for clarity
-                    min="0" // Ensures no negative numbers
-                    step="0.01" // Allows decimal values to be entered
+                    className="w-full py-1 px-2 rounded-full bg-[#EFEFEF] text-gray-500 focus:outline-none border border-gray-300"
+                    placeholder="Enter weight (kg)"
+                    min="0"
+                    step="0.01"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
-                    <span>kg</span> {/* Optional: Remove if you prefer not to have the unit inside the input field */}
+                    <span>kg</span>
                   </div>
                 </div>
               ) : (
@@ -382,25 +519,24 @@ export default function FlouringMachine() {
               )}
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', paddingTop: '10px' }}>
-              {/* Edit or Confirm button */}
               <button
-                onClick={editMode ? handleCancelEdit : handleEditClick}
-                className="bg-black text-white py-1 px-3 rounded-md mr-2"
-                style={{ width: '150px', borderBottom: 'none' }}
+                  onClick={editMode ? handleCancelEdit : handleEditClick}
+                  className="bg-black text-white py-1 px-3 rounded-md mr-2"
+                  style={{ width: '150px', borderBottom: 'none' }}
               >
-                {editMode ? 'Cancel' : 'Edit'}
+                  {editMode ? 'Cancel' : 'Edit'}
               </button>
 
               <button
-                onClick={editMode ? handleSaveEdit : handleRescale}
-                className={`bg-green-600 text-white py-1 px-3 rounded-md ml-2 ${
-                  editMode ? 'mr-2' : ''
-                }`}
-                style={{ width: '150px', borderBottom: 'none' }}
+                  onClick={editMode ? handleSaveEdit : handleConfirm}
+                  className={`bg-green-600 text-white py-1 px-3 rounded-md ml-2 ${
+                    editMode ? 'mr-2' : ''
+                  }`}
+                  style={{ width: '150px', borderBottom: 'none' }}
               >
-                {editMode ? 'Rescale' : 'Confirm'}
+                  {editMode ? 'Save' : 'Confirm'}
               </button>
-            </div>
+          </div>
           </div>
         )}
 

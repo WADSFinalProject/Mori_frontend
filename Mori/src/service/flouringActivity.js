@@ -3,17 +3,9 @@ import { api } from '../contexts/api';
 
 
 
-export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
+export const addFlouringActivity = async (payload) => {
     try {
-        const flouringActivityDetails = {
-            CentralID: centralID,
-            Date: date,
-            Weight: weight,
-            FlouringMachineID: flouringMachineID,
-            Time: time,
-        };
-
-        return await api.post(`/secured/flouring_activity/create`, flouringActivityDetails, {
+        return await axios.post(`${host}/secured/flouring_activity/create`, payload, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -23,6 +15,7 @@ export const addFlouringActivity = async (centralID, date, weight, flouringMachi
         throw new Error(error);
     }
 };
+
 
 export const getAllFlouringActivities = async (skip = 0, limit = 100) => {
     try {
