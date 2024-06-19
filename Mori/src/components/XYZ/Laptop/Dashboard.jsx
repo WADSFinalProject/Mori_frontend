@@ -14,15 +14,24 @@ import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 import { readExpeditions } from "../../../service/expeditionService";
+import { getAllCentras } from "../../../service/centras";
+import { getConvertionRate } from "../../../service/dashboard";
 
-const conversionRates = [
-  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
-  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
-  // Add more conversion rate data here...
-];
 
 const MainXYZ = () => {
-
+  const initialConvertionRate = {
+    id: 0,
+    conversionRate: 0,
+    wetToDry: 0,
+    dryToFloured: 0
+  };
+  const initialCentra = {
+    CentralID: 0, 
+    Address: ""
+  };
+  const [selectedConversionRate, setSelectedConversionRate] = useState(initialConvertionRate);
+  const [centras, setCentras] = useState([]);
+  const [selectedCentra, setSelectedCentra] = useState(initialCentra);
   const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
@@ -44,8 +53,6 @@ const MainXYZ = () => {
     Missing: 0,
   });
 
-
-  const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
   const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
   
 
@@ -132,22 +139,44 @@ const MainXYZ = () => {
 
   useEffect(() => {
     fetchExpeditionsData();
+    fetchCentras();
+    fetchAllWarehouses();
   }, []);
 
+  const fetchCentras = async () => {
+    try {
+      const centras = await getAllCentras();
+
+      setCentras(centras.data); // Assuming getAllCentras returns the conversion rates
+      setSelectedCentra(centras.data[0]);
+    } catch (error) {
+      console.error("Error fetching centras data: ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedCentra) {
+      const fetchConversionRate = async () => {
+        try {
+          const response = await getConvertionRate(selectedCentra.CentralID);
+          setSelectedConversionRate(response.data);
+        } catch (error) {
+          console.error("Error fetching conversion rate data: ", error);
+        }
+      };
+
+      fetchConversionRate();
+    }
+  }, [selectedCentra]);
   
   const toggleConversionRateDropdown = () => {
     setConversionRateDropdownVisible(!conversionRateDropdownVisible);
   };
 
-  const selectConversionRate = (conversionRate) => {
-    setSelectedConversionRate(conversionRate);
+  const selectConversionRate = (centra) => {
+    setSelectedCentra(centra);
     setConversionRateDropdownVisible(false);
   };
-
-
-  useEffect(() => {
-    fetchAllWarehouses(); // Fetch all warehouse details on component mount
-  }, []);
 
   useEffect(() => {
     if (warehouseId !== null) {
@@ -197,7 +226,6 @@ const MainXYZ = () => {
       },
     ],
   };
-
 
   const gaugeOptions = {
     cutout: '70%',
@@ -569,8 +597,8 @@ const MainXYZ = () => {
 
 
                 <div className="w-full lg:w-2/3 mt-6">
-                <div className="relative z-30">
-                  <button
+                <div className="relative">
+                  {/* <button
                     className="flex items-center text-[#A7AD6F] font-semibold"
                     onClick={toggleConversionRateDropdown}
                   >
@@ -589,32 +617,54 @@ const MainXYZ = () => {
                         </button>
                       ))}
                     </div>
-                  )}
+                  )} */}
+                  <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+                    <div style={{ position: 'absolute', top: '2rem', right: '2rem' }}>
+                      <button
+                        className="flex items-center text-[#A7AD6F] font-semibold"
+                        onClick={toggleConversionRateDropdown}
+                      >
+                        {selectedCentra.Address}
+                        <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                      </button>
+                      {conversionRateDropdownVisible && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                          {centras.map((centra) => (
+                            <button
+                              key={centra.CentralID}
+                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                              onClick={() => selectConversionRate(centra)}
+                            >
+                              {centra.Address}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
+                    <div className="flex items-center justify-center h-full">
+                      <div className="relative w-48 h-48">
+                        <Doughnut data={chartData} options={gaugeOptions} />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
+                          <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
+                          {/* <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span> */}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex mt-3 flex-wrap">
+                      <div className="flex items-center mr-4">
+                        <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+                        <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
+                      </div>
+                      <div className="flex items-center mr-4">
+                        <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+                        <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-      <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-        <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
-        <div className="flex items-center justify-center h-full">
-          <div className="relative w-48 h-48">
-            <Doughnut data={chartData} options={gaugeOptions} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
-              <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
-              <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex mt-3 flex-wrap">
-          <div className="flex items-center mr-4">
-            <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
-            <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
-          </div>
-          <div className="flex items-center mr-4">
-            <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
-            <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                
+                </div>
               </div>
             </div>
           )}
