@@ -31,7 +31,7 @@ export const TableComponent = ({ data, onEditClick, onDeleteClick }) => {
             <th className="text-base font-medium text-center border-b-2 py-3">Phone</th>
             <th className="text-base font-medium text-center border-b-2 py-3">Role</th>
             <th className="text-base font-medium text-center border-b-2 py-3">Location</th>
-            <th className="text-base font-medium text-center border-b-2 py-3">Created Date</th>
+            {/* <th className="text-base font-medium text-center border-b-2 py-3">Created Date</th> */}
             <th className="text-base font-medium text-center border-b-2 py-3">Action</th>
           </tr>
         </thead>
@@ -45,7 +45,7 @@ export const TableComponent = ({ data, onEditClick, onDeleteClick }) => {
                 <div className={`${getRoleStyles(row.role)} py-1.5 rounded-md inline-block px-3.5`}>{row.role}</div>
               </td>
               <td className={`font-normal text-black text-base text-center py-4 ${index === data.length - 1 ? "border-b-0" : "border-b-2"}`}>Kecamatan <b>{row.location}</b></td>
-              <td className={`font-medium text-[#828282] text-sm text-center py-4 ${index === data.length - 1 ? "border-b-0" : "border-b-2"}`}>{formatDate(row.createdDate)}</td>
+              {/* <td className={`font-medium text-[#828282] text-sm text-center py-4 ${index === data.length - 1 ? "border-b-0" : "border-b-2"}`}>{formatDate(row.createdDate)}</td> */}
               <td className={`py-4 ${index === data.length - 1 ? "border-b-0" : "border-b-2"}`}>
                 <div className="flex items-center justify-center gap-2">
                   <button className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8" onClick={() => onEditClick(index)}>
