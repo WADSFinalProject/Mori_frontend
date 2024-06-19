@@ -1,32 +1,93 @@
-// ShippingInformationGlobal.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import TimelineItem from "./TimelineItem";
 import "./ShippingInformationStyle.css";
+import {
+  readExpeditions_byAWB,
+  getStatus_byAwb,
+} from "../../service/expeditionService";
 
 const ShippingInformationGlobal = () => {
   const { awb } = useParams();
   const navigate = useNavigate();
 
   const [timelineData, setTimelineData] = useState([]);
+  const [shipmentDetails, setShipmentDetails] = useState(null);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatCheckpointDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    };
+
+    const timePart = date.toLocaleTimeString("en-GB", options);
+
+    if (isToday) {
+      return `Today ${timePart}`;
+    } else {
+      const datePart = date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+      });
+      return `${datePart} ${timePart}`;
+    }
+  };
+
+  const getDescription = (status) => {
+    switch (status) {
+      case "In Transit to Harbour Guard":
+        return "Package is on the way to the Harbour Guard";
+      case "Arrived at Harbour Guard":
+        return "Package has arrived at Harbour Guard, waiting for XYZ to pick up";
+      case "Pickup Scheduled by XYZ":
+        return "XYZ has scheduled a pickup";
+      case "Received by XYZ":
+        return "Package has been received by XYZ";
+      case "Missing":
+        return "Package is missing. Please contact Harbour Guard or Delivery Service for further investigation";
+      default:
+        return "";
+    }
+  };
 
   useEffect(() => {
-    // Fetch the timeline data using the awb
-    const fetchTimelineData = async () => {
+    // Fetch the shipment details and timeline data using the awb
+    const fetchShipmentData = async () => {
       try {
-        // Replace with your service call to fetch timeline data by awb
-        const response = await fetchTimelineByAWB(awb);
-        setTimelineData(response.data);
+        // Fetch expedition data
+        const expeditionResponse = await readExpeditions_byAWB(awb);
+        console.log("Expedition Response:", expeditionResponse.data);
+        setShipmentDetails(expeditionResponse.data);
+
+        // Fetch checkpoint status data
+        const checkpointResponse = await getStatus_byAwb(awb);
+        console.log("Checkpoint Status Response:", checkpointResponse.data);
+        setTimelineData(checkpointResponse.data);
       } catch (error) {
-        console.error("Error fetching timeline data: ", error);
+        console.error("Error fetching shipment data: ", error);
       }
     };
 
-    fetchTimelineData();
+    fetchShipmentData();
   }, [awb]);
 
   const sortedTimelineData = [...timelineData].sort(
-    (a, b) => new Date(b.datetime) - new Date(a.datetime)
+    (a, b) => new Date(b.statusdate) - new Date(a.statusdate)
   );
 
   return (
@@ -71,12 +132,18 @@ const ShippingInformationGlobal = () => {
 
       <main className="flex flex-col gap-3 justify-center items-center px-8 w-full">
         <div className="p-5 w-full h-full bg-white rounded-lg flex flex-col">
-          <div className="font-vietnam font-normal text-base tracking-tight">
-            Estimated Arrival <b>Monday, 18 March 2024</b>
-          </div>
-          <div className="font-vietnam text-xs font-medium tracking-tight text-[#828282]">
-            Shipped with JNE Standard
-          </div>
+          {shipmentDetails && (
+            <>
+              <div className="font-vietnam font-normal text-base tracking-tight">
+                Estimated Arrival{" "}
+                <b>{formatDate(shipmentDetails.expedition.EstimatedArrival)}</b>
+              </div>
+              <div className="font-vietnam text-xs font-medium tracking-tight text-[#828282]">
+                Shipped with{" "}
+                {shipmentDetails.expedition.ExpeditionServiceDetails}
+              </div>
+            </>
+          )}
         </div>
         <div className="p-5 w-full bg-white rounded-lg flex flex-col gap-1">
           <div className="font-vietnam text-sm font-bold tracking-tight">
@@ -101,9 +168,9 @@ const ShippingInformationGlobal = () => {
             {sortedTimelineData.map((item, index) => (
               <TimelineItem
                 key={index}
-                datetime={item.datetime}
-                location={item.location}
-                description={item.description}
+                datetime={formatCheckpointDate(item.statusdate)}
+                location={item.status}
+                description={getDescription(item.status)}
                 isCurrent={index === 0}
               />
             ))}
