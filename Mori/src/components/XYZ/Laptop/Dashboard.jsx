@@ -15,7 +15,6 @@ import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 import { readExpeditions } from "../../../service/expeditionService";
 
-
 const conversionRates = [
   { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
   { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
@@ -42,6 +41,7 @@ const MainXYZ = () => {
     XYZ_Completed: 0,
     PKG_Delivered: 0,
     PKG_Delivering: 0,
+    Missing: 0,
   });
 
 
@@ -112,6 +112,8 @@ const MainXYZ = () => {
           acc.PKG_Delivered += 1;
         } else if (expedition.status === "PKG_Delivering") {
           acc.PKG_Delivering += 1;
+        } else if (expedition.status === "Missing") {
+          acc.Missing += 1;
         }
         return acc;
       }, {
@@ -119,6 +121,7 @@ const MainXYZ = () => {
         XYZ_Completed: 0,
         PKG_Delivered: 0,
         PKG_Delivering: 0,
+        Missing: 0,
       });
   
       setStatusCounts(counts);
@@ -540,9 +543,17 @@ const MainXYZ = () => {
                       </div>
                       <div className="flex justify-between items-center mb-4 pb-3">
                         <span className="font-semibold text-xl">PKG_Delivering</span>
-                        <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
+                        <div className="bg-[#5C612C] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
                             {statusCounts.PKG_Delivering}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center mb-4 pb-3">
+                        <span className="font-semibold text-xl">Missing</span>
+                        <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
+                          <span className="font-bold text-xl">
+                            {statusCounts.Missing}
                           </span>
                         </div>
                       </div>

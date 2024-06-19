@@ -120,7 +120,7 @@ export const getDryingMachine_byCentra = async (centraId) => {
 };
 
 
-export const updateDryingMachineStatus = async (machineId, new_status) => {
+export const updateDryingMachineStatus = async (MachineID, new_status) => {
     try {
         return axios.put(`${host}/secured/dryingmachine/${machineId}/status`, {
             status: new_status

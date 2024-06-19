@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import { readExpeditions } from "../../../../service/expeditionService";
-import { getPackageReceiptDetails } from "../../../../service/packageReceiptService";
-import { readPickups } from "../../../../service/pickup";
+import { readPackageReceipts } from "../../../../service/packageReceiptService";
 
 const XYZShippingInformation = () => {
   const [originalData, setOriginalData] = useState([]);
@@ -19,87 +18,67 @@ const XYZShippingInformation = () => {
     handleSearchAndFilter(searchQuery, filterKey);
   }, [filterKey, searchQuery, originalData]);
 
-  const fetchData = () => {
-    readExpeditions()
-      .then((res) => {
-        const expeditions = res.data;
-        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-          const expeditionDetails = expedition?.expedition;
-          if (!expeditionDetails || !expedition.batches) {
-            return acc;
-          }
-
-          const airwayBill = expeditionDetails.AirwayBill;
-          if (!acc[airwayBill]) {
-            acc[airwayBill] = {
-              id: airwayBill,
-              expeditionID: expeditionDetails.ExpeditionID,
-              batchIds: [],
-              flouredDates: [],
-              driedDates: [],
-              weights: [],
-              status: expeditionDetails.Status || "Unknown",
-              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
-                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
-              }`,
-            };
-          }
-
-          expedition.batches.forEach((batch) => {
-            acc[airwayBill].batchIds.push(batch.BatchID);
-            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
-            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
-            acc[airwayBill].weights.push(batch.Weight);
-          });
-
-          return acc;
-        }, {});
-
-        const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
-          id: index + 1,
-          shipmentId: expedition.id,
-          expeditionID: expedition.expeditionID,
-          batchId: expedition.batchIds,
-          driedDate: expedition.driedDates,
-          flouredDate: expedition.flouredDates,
-          weight: expedition.weights,
-          status: expedition.status,
-          checkpoint: expedition.checkpoint,
-          receptionNotes: "Null",
-        }));
-
-        console.log("Resulting Array: ", resArr);
-
-        // Set original data and sorted data state
-        setOriginalData(resArr);
-        setSortedData(resArr);
-      })
-      .catch((err) => {
-        console.error("Error: ", err);
-      });
-  };
-
-  const fetchAndSetReceptionNotes = async (expeditions) => {
+  const fetchData = async () => {
     try {
-      const pickups = await readPickups();
-      console.log("Fetched Pickups: ", pickups.data);
+      const expeditionRes = await readExpeditions();
+      const receiptRes = await readPackageReceipts();
 
-      const updatedExpeditions = await Promise.all(expeditions.map(async (expedition) => {
-        const pickup = pickups.data.find(p => p.expeditionID === expedition.shipmentId);
+      const expeditions = expeditionRes.data;
+      const receipts = receiptRes.data;
 
-        if (pickup) {
-          const receiptDetails = await getPackageReceiptDetails(pickup.id);
-          expedition.receptionNotes = receiptDetails.notes || "No notes available";
+      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+        const expeditionDetails = expedition?.expedition;
+        if (!expeditionDetails || !expedition.batches) {
+          return acc;
         }
 
-        return expedition;
+        const airwayBill = expeditionDetails.AirwayBill;
+        if (!acc[airwayBill]) {
+          acc[airwayBill] = {
+            id: airwayBill,
+            expeditionID: expeditionDetails.ExpeditionID,
+            batchIds: [],
+            flouredDates: [],
+            driedDates: [],
+            weights: [],
+            status: expeditionDetails.Status || "Unknown",
+            checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+              expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+            }`,
+            receptionNotes: null,
+          };
+        }
+
+        expedition.batches.forEach((batch) => {
+          acc[airwayBill].batchIds.push(batch.BatchID);
+          acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+          acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+          acc[airwayBill].weights.push(batch.Weight);
+        });
+
+        return acc;
+      }, {});
+
+      const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+        id: index + 1,
+        shipmentId: expedition.id,
+        expeditionID: expedition.expeditionID,
+        batchId: expedition.batchIds,
+        driedDate: expedition.driedDates,
+        flouredDate: expedition.flouredDates,
+        weight: expedition.weights,
+        status: expedition.status,
+        checkpoint: expedition.checkpoint,
+        receptionNotes: receipts.find(receipt => receipt.ExpeditionID === expedition.expeditionID) || null,
       }));
 
-      console.log("Updated Expeditions with Reception Notes: ", updatedExpeditions);
+      console.log("Resulting Array: ", resArr);
 
-      setSortedData(updatedExpeditions);
+      // Set original data and sorted data state
+      setOriginalData(resArr);
+      setSortedData(resArr);
     } catch (err) {
-      console.error("Error fetching reception notes: ", err);
+      console.error("Error fetching data: ", err);
     }
   };
 
@@ -175,7 +154,7 @@ const XYZShippingInformation = () => {
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={filteredData} />
+          <TableComponent data={filteredData} onDelete={fetchData} />
         </div>
       </div>
     </div>

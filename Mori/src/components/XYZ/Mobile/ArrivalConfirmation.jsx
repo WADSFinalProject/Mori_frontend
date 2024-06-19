@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
 import scale from '../../../assets/scale.png';
+import { createPackageReceipt } from "../../../service/packageReceiptService";
+import { readExpeditions } from "../../../service/expeditionService";
+
 
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
@@ -14,13 +17,35 @@ const ArrivalConfirmation = () => {
 
   const [guardOnDuty, setGuardOnDuty] = useState("");
   const [notes, setNotes] = useState("");
-
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [lastExpeditionId, setLastExpeditionId] = useState(null);
 
   const getTotalWeight = () => {
     return batches.reduce((total, batch) => {
       return total + (parseFloat(batch.weight) || 0);
     }, 0).toFixed(1);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    readExpeditions(0, 100)
+      .then((res) => {
+        const expeditions = res.data;
+        if (expeditions.length > 0) {
+          const latestExpedition = expeditions[expeditions.length - 1];
+          const expeditionID = latestExpedition.expedition.ExpeditionID;
+          setLastExpeditionId(expeditionID);
+          console.log('Fetched Expedition ID:', expeditionID);
+        } else {
+          console.error('No expeditions found or incorrect data format.');
+        }
+      })
+      .catch((err) => {
+        console.error("Error: ", err);
+      });
   };
 
   useEffect(() => {
@@ -33,6 +58,30 @@ const ArrivalConfirmation = () => {
       i === index ? { ...batch, weight: newWeight } : batch
     );
     setBatches(updatedBatches);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!lastExpeditionId) {
+      console.error("No last expedition ID found.");
+      return;
+    }
+
+    const expeditionID = lastExpeditionId;
+    const totalWeight = getTotalWeight();
+    const timeAccepted = new Date().toISOString();
+    const note = notes;
+    const date = new Date().toISOString();
+
+    try {
+      await createPackageReceipt(expeditionID, totalWeight, timeAccepted, note, date);
+      alert("Package receipt created successfully!");
+      // Clear the form or perform any other necessary actions
+    } catch (error) {
+      console.error("Error creating package receipt: ", error);
+      alert("Failed to create package receipt.");
+    }
   };
 
   return (
@@ -73,7 +122,7 @@ const ArrivalConfirmation = () => {
           </header>
 
           <main className="w-full mt-5 flex flex-col items-start justify-start px-5 flex-grow overflow-y-auto">
-            <form id="shipment-form" className="w-full">
+            <form id="shipment-form" className="w-full" onSubmit={handleSubmit}>
               <div className="w-full h-[27px] text-black text-lg font-semibold font-['Be Vietnam Pro']">Batch Information</div>
               <hr className="w-full border-gray-300 mt-2" />
 
