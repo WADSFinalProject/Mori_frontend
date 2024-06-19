@@ -3,101 +3,100 @@ import { useWindowSize } from "react-use";
 import StatusComponent from "./StatusComponent";
 import back from "../../../assets/back.png";
 import { useNavigate } from "react-router-dom";
+import { readExpeditions } from "../../../service/expeditionService";
 
 const XYZShippingInformationMobile = () => {
   const navigate = useNavigate();
-  const shipmentData = [
-    {
-      id: "98478",
-      status: "Missing",
-      batches: [10201, 10273, 10279, 10330, 10345],
-      totalWeight: 72.3,
-      collected: "15 March 2024",
-      time: "07:00 PM",
-    },
-    {
-      id: "98478",
-      status: "Missing",
-      batches: [10201, 10273, 10279, 10330, 10345],
-      totalWeight: 72.3,
-      collected: "15 March 2024",
-      time: "07:00 PM",
-    },
-    {
-      id: "34523",
-      status: "Shipped",
-      batches: [10205, 10284],
-      totalWeight: 85.5,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "23498",
-      status: "To Deliver",
-      batches: [10199, 10288, 10305, 10348],
-      totalWeight: 60.2,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "89572",
-      status: "Completed",
-      batches: [10211],
-      totalWeight: 90.1,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "56839",
-      status: "Missing",
-      batches: [10215, 10297, 10315, 10350, 10360, 10370],
-      totalWeight: 75.0,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-  ];
+  const { width, height } = useWindowSize();
+  const isMobile = width <= 1024;
+
+  const [sort, setSort] = useState("new-old");
+  const [filter, setFilter] = useState("all");
+  const [shipmentData, setShipmentData] = useState([]);
+  const [maxScrollHeight, setMaxScrollHeight] = useState(0);
 
   const headerHeight = 20;
   const footerHeight = 40;
 
-  const { width } = useWindowSize();
-  const { height } = useWindowSize();
-  const isMobile = width <= 1024;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await readExpeditions();
+        const expeditions = response.data.map((expedition) => ({
+          id: expedition.expedition.AirwayBill,
+          status: mapStatus(expedition.expedition.Status),
+          batches: expedition.batches.map((batch) => batch.BatchID),
+          totalWeight: expedition.expedition.TotalWeight,
+          collected: expedition.expedition.ExpeditionDate.split("T")[0],
+          time: expedition.expedition.ExpeditionDate.split("T")[1].split(
+            "."
+          )[0],
+        }));
+        setShipmentData(expeditions);
+      } catch (error) {
+        console.error("Error fetching shipments: ", error);
+      }
+    };
 
-  const [filter, setFilter] = useState("all");
-  const [sort, setSort] = useState("new-old");
-
-  const [maxScrollHeight, setMaxScrollHeight] = useState(0);
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const availableHeight = height - (headerHeight + footerHeight);
     setMaxScrollHeight(availableHeight);
-  }, [height, headerHeight, footerHeight]);
+  }, [height]);
 
-  const filteredData = shipmentData.filter((shipment) => {
-    if (filter === "all") return true;
-    return shipment.status.toLowerCase() === filter.replace("-", " ");
-  });
+  const mapStatus = (status) => {
+    switch (status) {
+      case "PKG_Delivering":
+        return "Shipping";
+      case "PKG_Delivered":
+        return "Delivered";
+      case "Missing":
+        return "Missing";
+      case "XYZ_PickingUp":
+        return "Scheduled";
+      case "XYZ_Completed":
+        return "Completed";
+      default:
+        return status;
+    }
+  };
 
-  // Sort the filtered data
-  const sortedData = filteredData.sort((a, b) => {
+  const filterData = (data, filter) => {
+    if (filter === "all") return data;
+    return data.filter(
+      (shipment) => shipment.status.toLowerCase() === filter.replace("-", " ")
+    );
+  };
+
+  const sortData = (data, sort) => {
     switch (sort) {
       case "new-old":
-        return new Date(b.collected) - new Date(a.collected);
+        return data.sort(
+          (a, b) => new Date(b.collected) - new Date(a.collected)
+        );
       case "old-new":
-        return new Date(a.collected) - new Date(b.collected);
+        return data.sort(
+          (a, b) => new Date(a.collected) - new Date(b.collected)
+        );
       case "heavy-light":
-        return b.totalWeight - a.totalWeight;
+        return data.sort((a, b) => b.totalWeight - a.totalWeight);
       case "light-heavy":
-        return a.totalWeight - b.totalWeight;
+        return data.sort((a, b) => a.totalWeight - b.totalWeight);
       default:
-        return 0;
+        return data;
     }
-  });
+  };
+
+  const sortedAndFilteredData = sortData(
+    filterData([...shipmentData], filter),
+    sort
+  );
+
   return (
     <div>
       {isMobile ? (
-        // Header
         <div className="bg-[#F0F0F0] h-screen flex flex-col justify-between overflow-hidden">
           <header
             className="w-full mt-5"
@@ -168,7 +167,7 @@ const XYZShippingInformationMobile = () => {
               className="overflow-y-auto pb-[121px]"
               style={{ maxHeight: `${maxScrollHeight}px` }}
             >
-              {sortedData.map((shipment) => (
+              {sortedAndFilteredData.map((shipment) => (
                 <StatusComponent
                   key={shipment.id}
                   id={shipment.id}
@@ -189,7 +188,6 @@ const XYZShippingInformationMobile = () => {
           </footer>
         </div>
       ) : (
-        // Display "Not available for this device" text for larger devices
         <div className="flex justify-center items-center h-screen mt-4 text-gray-600">
           Not available for this device.
         </div>
