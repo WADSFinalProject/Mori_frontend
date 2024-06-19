@@ -94,7 +94,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
 
 export const deletePackageReceipt = async (receipt_id) => {
     try {
-        return await axios.delete(host + `/secured/package_receipts/${receipt_id}`, {
+        return await axios.delete(`${host}/secured/package_receipts/${receipt_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -104,3 +104,4 @@ export const deletePackageReceipt = async (receipt_id) => {
         throw new Error(error);
     }
 };
+
