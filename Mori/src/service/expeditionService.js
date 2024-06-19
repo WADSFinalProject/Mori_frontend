@@ -151,5 +151,15 @@ export const deleteExpedition = async (expedition_id) => {
 
 
 
-
-
+export const getStatus_byAwb = async (awb) => {
+    try {
+        return await axios.get(host + `/secured/checkpointstatus/airwaybill/${awb}"`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.error(`Error getting checkpoint: `, error);
+        throw new Error(error);
+    }
+};
