@@ -165,7 +165,7 @@ const LeavesStatusDashboard = () => {
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-black text-[28px] font-bold font-['Be Vietnam Pro'] mb-[-5px]">
-          Centra Semang, {selectedWarehouse}
+          Centra {selectedWarehouse}
         </h1>
         <div className="relative">
           <button
