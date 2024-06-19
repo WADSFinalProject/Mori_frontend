@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getExpeditionDetails } from "../../../service/expeditionService"; // Adjust the path as necessary
+import { readExpeditions_byAWB } from "../../../service/expeditionService"; // Update the path as necessary
 
 const ShipDetails = () => {
   const { awb } = useParams();
   const [shipmentDetails, setShipmentDetails] = useState(null);
 
   useEffect(() => {
+    // Fetch shipment details using the AWB
     const fetchShipmentDetails = async () => {
       try {
-        const response = await getExpeditionDetails(awb);
-        setShipmentDetails(response);
+        const response = await readExpeditions_byAWB(awb);
+        setShipmentDetails(response.data);
       } catch (error) {
         console.error("Error fetching shipment details: ", error);
       }
@@ -84,12 +85,7 @@ const ShipDetails = () => {
                   <b>
                     {new Date(
                       shipmentDetails.expedition.EstimatedArrival
-                    ).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    ).toLocaleDateString()}
                   </b>
                 </div>
                 <div className="text-[#00000066] text-xs font-medium tracking-tight mt-1">
@@ -118,7 +114,6 @@ const ShipDetails = () => {
                 <div className="text-sm text-[#828282] font-medium">
                   {shipmentDetails.expedition.ExpeditionServiceDetails} - {awb}
                 </div>
-                {/* Add the dynamic tracking information here */}
                 <div className="flex flex-row gap-2">
                   <svg
                     width="9"
