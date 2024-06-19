@@ -5,8 +5,7 @@ import PersonInChargeBox from "./PersonInChargeBox";
 import FlouringScheduleBox from "./FlouringScheduleBox";
 import DryingMachineBox from "./DryingMachineBox";
 import FlouringMachineBox from "./FlouringMachineBox";
-
-import { getAllCentras } from "../../../../service/centras";
+import { getAllCentras, getLeavesData } from "../../../../service/centras";
 
 const LeavesStatusCard = ({
   title,
@@ -114,6 +113,7 @@ const LeavesStatusDashboard = () => {
     useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
   const [warehouseData, setWarehouseData] = useState({});
+  const [leavesStatus, setLeavesStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -129,20 +129,28 @@ const LeavesStatusDashboard = () => {
             name: centra.PersonInChargeName,
             email: centra.PersonInChargeEmail,
           },
-          wetLeaves: centra.WetLeaves,
-          driedLeaves: centra.DriedLeaves,
-          flouredLeaves: centra.FlouredLeaves,
           flouringSchedule: centra.FlouringSchedule,
           dryingMachines: centra.DryingMachines,
           flouringMachines: centra.FlouringMachines,
+          centraId: centra.CentralID, // Store the centraId for fetching leaves data
         };
         return acc;
       }, {});
       setWarehouseData(centraData);
       setLoading(false);
+      fetchLeavesData(centraData[selectedWarehouse].centraId); // Fetch leaves data for the default selected warehouse
     } catch (error) {
       console.error("Error fetching warehouse data: ", error);
       setLoading(false);
+    }
+  };
+
+  const fetchLeavesData = async (centraId) => {
+    try {
+      const leavesResponse = await getLeavesData(centraId);
+      setLeavesStatus(leavesResponse.data);
+    } catch (error) {
+      console.error("Error fetching leaves data: ", error);
     }
   };
 
@@ -153,6 +161,7 @@ const LeavesStatusDashboard = () => {
   const selectWarehouse = (warehouse) => {
     setSelectedWarehouse(warehouse);
     setWarehouseDropdownVisible(false);
+    fetchLeavesData(warehouseData[warehouse].centraId); // Fetch leaves data for the selected warehouse
   };
 
   if (loading) {
@@ -192,35 +201,31 @@ const LeavesStatusDashboard = () => {
       </div>
 
       <div className="flex flex-wrap gap-6">
-        <div className="flex flex-wrap gap-6">
-          {selectedData.wetLeaves && (
+        {leavesStatus && (
+          <>
             <LeavesStatusCard
               title="Wet Leaves"
-              totalWeight={selectedData.wetLeaves.totalWeight}
-              proportions={selectedData.wetLeaves.proportions}
-              colors={selectedData.wetLeaves.colors}
-              labels={selectedData.wetLeaves.labels}
+              totalWeight={leavesStatus.wetLeaves.totalWeight}
+              proportions={leavesStatus.wetLeaves.proportions}
+              colors={["#CCE8EA", "#4D946D", "#CD4848"]}
+              labels={["Wet Leaves", "Drying", "Near Expiry"]}
             />
-          )}
-          {selectedData.driedLeaves && (
             <LeavesStatusCard
               title="Dried Leaves"
-              totalWeight={selectedData.driedLeaves.totalWeight}
-              proportions={selectedData.driedLeaves.proportions}
-              colors={selectedData.driedLeaves.colors}
-              labels={selectedData.driedLeaves.labels}
+              totalWeight={leavesStatus.driedLeaves.totalWeight}
+              proportions={leavesStatus.driedLeaves.proportions}
+              colors={["#9AD1B3", "#A7AD6F"]}
+              labels={["Dried Leaves", "Flouring"]}
             />
-          )}
-          {selectedData.flouredLeaves && (
             <LeavesStatusCard
               title="Floured Leaves"
-              totalWeight={selectedData.flouredLeaves.totalWeight}
-              proportions={selectedData.flouredLeaves.proportions}
-              colors={selectedData.flouredLeaves.colors}
-              labels={selectedData.flouredLeaves.labels}
+              totalWeight={leavesStatus.flouredLeaves.totalWeight}
+              proportions={leavesStatus.flouredLeaves.proportions}
+              colors={["#666666", "#E0EA74"]}
+              labels={["To Ship", "Floured Leaves"]}
             />
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       <div className="mt-6 flex gap-3 w-full">
