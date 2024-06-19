@@ -7,6 +7,7 @@ import { readExpeditions } from "../../service/expeditionService";
 import { getAllUsers } from "../../service/users";
 import { getAllHarborGuards } from "../../service/harborGuardService";
 import { getAllWarehouses } from "../../service/warehousesService";
+import { getConvertionRate } from '../../service/dashboard';
 
 const DashboardContent = () => {
   const initialConvertionRate = {
@@ -61,7 +62,7 @@ const DashboardContent = () => {
     if (selectedCentra) {
       const fetchConversionRate = async () => {
         try {
-          const response = await axios.get(`http://localhost:8000/secured/conversion_rates/${selectedCentra.CentralID}`);
+          const response = await getConvertionRate(selectedCentra.CentralID);
           setSelectedConversionRate(response.data);
         } catch (error) {
           console.error("Error fetching conversion rate data: ", error);
@@ -232,28 +233,30 @@ const DashboardContent = () => {
         </div>
 
         <div className="w-full lg:w-2/3 mt-6">
-          <div className="relative z-30">
-            <button
-              className="flex items-center text-[#A7AD6F] font-semibold"
-              onClick={toggleConversionRateDropdown}
-            >
-              {selectedCentra.Address}
-              <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
-            </button>
-            {conversionRateDropdownVisible && (
-              <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
-                {centras.map((centra) => (
-                  <button
-                    key={centra.CentralID}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                    onClick={() => selectConversionRate(centra)}
-                  >
-                    {centra.Address}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="relative">
             <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+              <div style={{ position: 'absolute', top: '2rem', right: '2rem' }}>
+                <button
+                  className="flex items-center text-[#A7AD6F] font-semibold"
+                  onClick={toggleConversionRateDropdown}
+                >
+                  {selectedCentra.Address}
+                  <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                </button>
+                {conversionRateDropdownVisible && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                    {centras.map((centra) => (
+                      <button
+                        key={centra.CentralID}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                        onClick={() => selectConversionRate(centra)}
+                      >
+                        {centra.Address}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
               <div className="flex items-center justify-center h-full">
                 <div className="relative w-48 h-48">
