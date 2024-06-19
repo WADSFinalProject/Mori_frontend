@@ -4,17 +4,24 @@ import { api } from '../contexts/api';
 
 
 
-export const createWetLeavesCollection = async (centralId, date, weight, expired, expirationTime) => {
+export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, dried) => {
     try {
         const collectionDetails = {
             CentralID: centralId,
             Date: date,
+            Time: time,
             Weight: weight,
+            Status: status,
             Expired: expired,
-            ExpirationTime: expirationTime,
+            Dried: dried,
+            // Duration: duration,
         };
 
-        return api.post(host + "/secured/wet-leaves-collections", collectionDetails, );
+        return axios.post(host + "/secured/wet-leaves-collections/create", collectionDetails, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
     } catch (error) {
         console.log("Error creating wet leaves collection: ", error);
         throw new Error(error);
@@ -23,7 +30,7 @@ export const createWetLeavesCollection = async (centralId, date, weight, expired
 
 export const readWetLeavesCollections = async (skip = 0, limit = 100) => {
     try {
-        return api.get(host + "/secured/wet-leaves-collections", {
+        return axios.get(host + "/secured/wet-leaves-collections/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -47,13 +54,15 @@ export const readWetLeavesCollection = async (wetLeavesBatchId) => {
     }
 };
 
-export const updateWetLeavesCollection = async (wetLeavesBatchId, date, weight, expired, expirationTime) => {
+export const updateWetLeavesCollection = async (wetLeavesBatchId, date, time, weight, status, expired, dried) => {
     try {
         const collectionDetails = {
             Date: date,
+            Time: time,
             Weight: weight,
+            Status: status,
             Expired: expired,
-            ExpirationTime: expirationTime,
+            Dried: dried,
         };
 
         return api.put(host + `/secured/wet-leaves-collections/${wetLeavesBatchId}`, collectionDetails, );
@@ -71,3 +80,29 @@ export const deleteWetLeavesCollection = async (wetLeavesBatchId) => {
         throw new Error(error);
     }
 };
+
+export const getWetLeavesConversion  = async (centraId) => {
+    try {
+        return axios.get(host + `/secured/wet-leaves-collections/conversion`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error getting wet leaves conversion rate: ", error);
+        throw new Error(error);
+    }
+};
+export const getWetLeavesWeight = async(centraId) => {
+    try{
+        return axios.get(host +"/wet-leaves-totalWeight/"), {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    }catch (error) {
+        console.log("Error retrieving weights: ", error);
+        throw new Error(error);
+    }
+};
+

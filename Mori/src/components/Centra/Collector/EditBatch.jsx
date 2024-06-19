@@ -3,6 +3,8 @@ import { useWindowSize } from 'react-use';
 import { Link } from "react-router-dom";
 import DatePicker from "react-tailwindcss-datepicker";
 import CollectorMain from "./CollectorMain";
+import { readWetLeavesCollections } from '../../../service/wetLeaves';
+import { updateWetLeavesCollection } from '../../../service/wetLeaves'; 
 
 export default function EditBatch({ onClose, batchData }) {
     const { width } = useWindowSize();
@@ -18,6 +20,7 @@ export default function EditBatch({ onClose, batchData }) {
     const [hours, setHours] = useState(1);
     const [minutes, setMinutes] = useState(0);
     const [ampm, setAmPm] = useState("AM");
+    const [expired, setExpired] = useState(false); // Define expired state
 
     const handleHourChange = (event) => {
         setHours(parseInt(event.target.value));
@@ -46,90 +49,159 @@ export default function EditBatch({ onClose, batchData }) {
     const handleCloseModal = () => {
         setShowConfirmationModal(false);
     };
-
-
-const handleSave = () => {
-    // Prepare updated data object
-    const updatedData = {
-        batchId: batchData.batchId,
-        date: editDate, // Assuming editDate is already in YYYY-MM-DD format
-        weight: parseFloat(weight), // Convert weight to a number if needed
-        time: `${hours}:${minutes}${ampm}`,
-        // Add other fields as needed
+    
+    const handleSave = () => {
+        // Format time
+        let formattedHours = hours;
+        if (ampm === "PM" && hours !== 12) {
+            formattedHours += 12;
+        } else if (ampm === "AM" && hours === 12) {
+            formattedHours = 0;
+        }
+        const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00.000000`;
+    
+        // Prepare updated data object
+        const updatedData = {
+            batchId: batchData.batchId,
+            date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+            weight: parseFloat(weight), // Convert weight to a number if needed
+            time: formattedTime,
+            dried: batchData.dried
+        };
+        
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, status, expired, batchData.dried)
+            .then(response => {
+                console.log('Data updated successfully.');
+                onClose(); // Close the modal 
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Failed to update data:', error);
+            });
     };
 
-    fetch('/data.json', {
-        method: 'PUT', // Assuming your backend supports PUT for updates
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Data updated successfully.');
-            // Optionally, you can show a success message or perform other actions upon successful save
-        } else {
-            console.error('Failed to update data.');
+    const handleExpired = () => {
+        // Format time
+        let formattedHours = hours;
+        if (ampm === "PM" && hours !== 12) {
+            formattedHours += 12;
+        } else if (ampm === "AM" && hours === 12) {
+            formattedHours = 0;
         }
-    })
-    .catch(error => {
-        console.error('Error updating data:', error);
-    });
-
-    onClose(); // Close the modal or perform any necessary cleanup
-};
-
-    useEffect(() => {
-        // Fetch data from data.json
-        fetch('/data.json')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Fetched data:', data); // Log fetched data for debugging
+        const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00.000000`;
     
-                // Find the batch data matching the batchId
-                const batch = data.find(item => item.batchId === batchData.batchId);
-                if (batch) {
-                    console.log('Batch found:', batch); // Log batch data for debugging
+        // Prepare updated data object
+        const updatedData = {
+            batchId: batchData.batchId,
+            date: editDate, // Assuming editDate is already in YYYY-MM-DD format
+            weight: parseFloat(weight), // Convert weight to a number if needed
+            time: formattedTime,
+            status: "Expired", // Always set status to "Expired" in this context
+            expired: true,
+            dried: false,
+        };
     
-                    const dateParts = batch.date.split(' '); // Split by space to separate day and month
-                    const day = parseInt(dateParts[0]);
-                    const month = dateParts[1]; // Month name like "March"
-                    const year = parseInt(dateParts[2]);
-    
-                    // Map month name to month number (assuming full month names)
-                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                    const monthNumber = monthNames.findIndex(m => m === month) + 1; // Months are 1-indexed in JavaScript Date object
-    
-                    // Create startDate as a Date object
-                    const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                    // Create startDate as a Date object
-                    const startDateObj = new Date(`${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
-
-                    // Set startDate in state
-                    setEditDate(startDate);
-
-                    console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
-                    console.log('startDate:', startDate);
-
-                    setWeight(batch.weight);
-    
-                    // Parse time into hours, minutes, and ampm
-                    const timeParts = batch.time.split(':');
-                    const hours = parseInt(timeParts[0]);
-                    const minutes = parseInt(timeParts[1].substring(0, 2)); // Extract minutes
-                    const ampm = timeParts[1].slice(-2); // Extract AM/PM part
-    
-                    // Update state variables accordingly
-                    setHours(hours);
-                    setMinutes(minutes);
-                    setAmPm(ampm);
-                } else {
-                    console.log('Batch not found for batchId:', batchData.batchId); // Log if batch not found for debugging
-                }
+        updateWetLeavesCollection(batchData.batchId, updatedData.date, updatedData.time, updatedData.weight, updatedData.status, updatedData.expired)
+            .then(response => {
+                console.log('Data updated successfully.');
+                onClose(); // Close the modal 
+                window.location.reload();
             })
-            .catch(error => console.error('Error fetching data:', error));
-    }, [batchData]); // Depend on batchData to rerun effect when it changes
+            .catch(error => {
+                console.error('Failed to update data:', error);
+            });
+    };
+    
+    
+useEffect(() => {
+    readWetLeavesCollections()
+        .then(response => {
+            const data = response.data;
+            console.log('Fetched data:', data);
+            const batch = data.find(item => item.WetLeavesBatchID === batchData.batchId);
+            if (batch) {
+                console.log('Batch found:', batch);
+                const formattedDate = batch.Date.split('T')[0];
+                setEditDate(formattedDate);
+                setWeight(batch.Weight);
+                
+                // Extract hours, minutes, and am/pm from batch.Time
+                const timeParts = batch.Time.split(':');
+                let hours = parseInt(timeParts[0]);
+                const minutes = parseInt(timeParts[1].substring(0, 2));
+                const ampm = timeParts[1].includes('AM') ? 'AM' : 'PM';
+                
+                // Adjust hours for AM/PM format
+                if (hours === 0) {
+                    hours = 12; // Midnight (0) should display as 12 AM
+                } else if (hours > 12) {
+                    hours -= 12; // Convert PM hours to 12-hour format
+                }
+                
+                setHours(hours);
+                setMinutes(minutes);
+                setAmPm(ampm);
+            } else {
+                console.log('Batch not found for batchId:', batchData.batchId);
+            }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}, [batchData]);
+
+
+    // useEffect(() => {
+    //     // Fetch data from data.json
+    //     fetch('/data.json')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log('Fetched data:', data); // Log fetched data for debugging
+    
+    //             // Find the batch data matching the batchId
+    //             const batch = data.find(item => item.batchId === batchData.batchId);
+    //             if (batch) {
+    //                 console.log('Batch found:', batch); // Log batch data for debugging
+    
+    //                 const dateParts = batch.date.split(' '); // Split by space to separate day and month
+    //                 const day = parseInt(dateParts[0]);
+    //                 const month = dateParts[1]; // Month name like "March"
+    //                 const year = parseInt(dateParts[2]);
+    
+    //                 // Map month name to month number (assuming full month names)
+    //                 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    //                 const monthNumber = monthNames.findIndex(m => m === month) + 1; // Months are 1-indexed in JavaScript Date object
+    
+    //                 // Create startDate as a Date object
+    //                 const startDate = `${year}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+    //                 // Set startDate in state
+    //                 setEditDate(startDate);
+
+    //                 console.log('Formatted startDate:', startDate); // Log formatted startDate for debugging
+    //                 console.log('startDate:', startDate);
+
+    //                 // Extract numeric part of weight
+    //                 const weightString = batch.weight; // Assuming batch.weight is "12.9 kg"
+    //                 const numericWeight = parseFloat(weightString); // Extracts 12.9 as a float
+
+    //                 // Set weight in state
+    //                 setWeight(numericWeight);
+
+    //                 // Parse time into hours, minutes, and ampm
+    //                 const timeParts = batch.time.split(':');
+    //                 const hours = parseInt(timeParts[0]);
+    //                 const minutes = parseInt(timeParts[1].substring(0, 2)); // Extract minutes
+    //                 const ampm = timeParts[1].slice(-2); // Extract AM/PM part
+    
+    //                 // Update state variables accordingly
+    //                 setHours(hours);
+    //                 setMinutes(minutes);
+    //                 setAmPm(ampm);
+    //             } else {
+    //                 console.log('Batch not found for batchId:', batchData.batchId); // Log if batch not found for debugging
+    //             }
+    //         })
+    //         .catch(error => console.error('Error fetching data:', error));
+    // }, [batchData]); // Depend on batchData to rerun effect when it changes
     
 
     return (
@@ -152,7 +224,8 @@ const handleSave = () => {
                 </div>
 
                 {/* Expiration Warning */}
-                {/* <div className="flex bg-[#F2BBBB] p-4 mb-4 text-sm text-black" role="alert">
+                {status === "Exceeded" && (
+                <div className="flex bg-[#F2BBBB] p-4  text-sm text-black" role="alert">
                     <svg width="60" height="50" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '1rem' }}>
                         <path d="M12.6797 25.2617C5.97656 25.2617 0.457031 19.7422 0.457031 13.0391C0.457031 6.34766 5.96484 0.816406 12.668 0.816406C18.8789 0.816406 24.082 5.57422 24.8086 11.5977C23.9531 11.375 22.8984 11.3398 22.0664 11.4922C21.3398 6.95703 17.4141 3.5 12.668 3.5C7.38281 3.5 3.15234 7.75391 3.15234 13.0391C3.15234 18.3242 7.39453 22.5781 12.6797 22.5781C13.793 22.5781 14.8711 22.3789 15.8555 22.0156C16.1719 22.8828 16.6523 23.6797 17.2734 24.3477C15.8438 24.9453 14.2852 25.2617 12.6797 25.2617ZM6.90234 14.6445C6.32812 14.6445 5.89453 14.1875 5.89453 13.625C5.89453 13.0508 6.32812 12.6055 6.90234 12.6055H11.6484V6.11328C11.6484 5.53906 12.1055 5.09375 12.668 5.09375C13.2422 5.09375 13.6875 5.53906 13.6875 6.11328V13.625C13.6875 14.1875 13.2422 14.6445 12.668 14.6445H6.90234ZM23.0508 25.2734C19.7227 25.2734 16.9688 22.5195 16.9688 19.168C16.9688 15.8398 19.7227 13.0859 23.0508 13.0859C26.3906 13.0859 29.1445 15.8398 29.1445 19.168C29.1445 22.4961 26.3672 25.2734 23.0508 25.2734ZM23.0508 20.1992C23.5547 20.1992 23.918 19.8477 23.9414 19.3672L24.0469 16.0859C24.0586 15.5117 23.6484 15.1133 23.0508 15.1133C22.4648 15.1133 22.0547 15.5117 22.0781 16.0859L22.1719 19.3672C22.1953 19.8477 22.5586 20.1992 23.0508 20.1992ZM23.0508 23.1992C23.707 23.1992 24.1992 22.7188 24.2109 22.0859C24.2109 21.4648 23.707 20.9727 23.0508 20.9727C22.4062 20.9727 21.9023 21.4531 21.9023 22.0859C21.9023 22.7188 22.4062 23.1992 23.0508 23.1992Z" fill="#A84E4E"/>
                     </svg>
@@ -160,10 +233,12 @@ const handleSave = () => {
                         <span className="font-medium font-extrabold">Batch #{batchId}</span> has exceeded the expiration date. Confirm Expiry to change the batch status.
                         <span className="text-sm font-bold text-[#A74D4D] mt-4 font-vietnam cursor-pointer" onClick={handleConfirmExpiry}> Confirm Expiry Now.</span> 
                     </div>
-                </div> */}
+                </div>
+                 )}
 
                 <div className="px-4 py-4">
-                    <h1 className="text-black text-base font-bold">Collection Details</h1>
+                    
+                <h1 className="text-black text-base font-bold">Collection Details</h1>
 
             {/* Calendar Date Picker */}
             <h2 className="text-black text-sm font-medium font-['Be Vietnam Pro'] pt-3">Date</h2>
@@ -215,26 +290,31 @@ const handleSave = () => {
             </div>
 
 
-                        {/* Weight */}
-                        <h2 className="text-black text-sm font-medium font-['Be Vietnam Pro'] pt-3">Weight</h2>
-                        <div className="relative max-w-full w-full flex items-center pt-3">
-                            <input 
-                                id="weight" 
-                                value={weight} 
-                                onChange={(e) => setWeight(e.target.value)} 
-                                className="h-10 bg-[#EFEFEF] border border-gray-300 leading-none text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500" 
-                                placeholder="0.0 kg" 
-                                min="0" 
-                                step="0.01" 
-                                required 
-                            />
-                            <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                <svg className="w-4 h-4 text-[#6C7CD1] dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fillRule="evenodd" d="M8.34232922,9 L15.6576708,9 C17.0342737,9 18.234223,9.93689212 18.5680983,11.2723931 L21,21 L3,21 L5.43190172,11.2723931 C5.76577697,9.93689212 6.96572629,9 8.34232922,9 Z M11.264,18 L12.608,18 L12.608,12.336 L11.376,12.336 L9.512,13.704 L10.208,14.656 L11.264,13.84 L11.264,18 Z" clipRule="evenodd"/>
-                                    <circle fill="#6C7CD1" opacity="1" cx="12" cy="5.5" r="2.5"/>
-                                </svg>
-                            </div>
+                    {/* Weight */}
+                    <h2 className="text-black text-sm font-medium font-['Be Vietnam Pro'] pt-3">Weight</h2>
+                    <div className="relative max-w-full w-full flex items-center pt-3">
+                        <input 
+                            id="weight" 
+                            value={weight} 
+                            onChange={(e) => setWeight(e.target.value)} 
+                            className="h-10 bg-[#EFEFEF] border border-gray-300 leading-none text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500" 
+                            placeholder="0.0 kg" 
+                            min="0" 
+                            step="0.01" 
+                            required 
+                        />
+                        
+                        <div className="pt-3 absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                        <span className="font-vietnam font" style={{ color: '#808080', fontSize: '15px', lineHeight: '1.2', marginLeft: '-1px' }}>
+                        {} kg
+                        </span>
+
+                            <svg className="ml-3 w-4 h-4 text-[#6C7CD1] dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <path fillRule="evenodd" d="M8.34232922,9 L15.6576708,9 C17.0342737,9 18.234223,9.93689212 18.5680983,11.2723931 L21,21 L3,21 L5.43190172,11.2723931 C5.76577697,9.93689212 6.96572629,9 8.34232922,9 Z M11.264,18 L12.608,18 L12.608,12.336 L11.376,12.336 L9.512,13.704 L10.208,14.656 L11.264,13.84 L11.264,18 Z" clipRule="evenodd"/>
+                                <circle fill="#6C7CD1" opacity="1" cx="12" cy="5.5" r="2.5"/>
+                            </svg>
                         </div>
+                    </div>
 
                     {/* Empty space */}
                     <div style={{ height: "340px" }}></div>
@@ -251,15 +331,13 @@ const handleSave = () => {
                                     <button className="px-[21px] py-1.5 bg-black opacity-40 rounded justify-center items-center gap-2.5 flex" onClick={handleCloseModal}>
                                         <div className="text-white text-xs font-medium font-['Be Vietnam Pro']">Cancel</div>
                                     </button>
-                                    <button className="px-[21px] py-1.5 bg-black rounded justify-center items-center gap-2.5 flex" onClick={handleCloseModal}>
+                                    <button className="px-[21px] py-1.5 bg-black rounded justify-center items-center gap-2.5 flex" onClick={handleExpired}>
                                         <div className="text-white text-xs font-medium font-['Be Vietnam Pro']">Expired</div>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     )}
-
-
                 </div>
             </div>
         </div>

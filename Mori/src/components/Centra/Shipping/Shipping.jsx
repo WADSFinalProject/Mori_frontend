@@ -3,40 +3,79 @@ import { useWindowSize } from "react-use";
 import ShippingBox from "./ShippingBox";
 import StatusComponent from "./StatusComponent";
 import "./Shipping.css";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { readExpeditions } from "../../../service/expeditionService";
+import { readBatches } from "../../../service/batches";
 
 const Shipping = () => {
   const { width } = useWindowSize(); // Get the window width using the useWindowSize hook
   const { height } = useWindowSize(); // Get the window height using the useWindowSize hook
-  // Check if the window width is greater than a mobile device width (e.g., 640px)
+  const navigate = useNavigate(); // useNavigate hook to programmatically navigate
 
   const headerHeight = 90;
   const footerHeight = 40;
 
   const [maxScrollHeight, setMaxScrollHeight] = useState(0);
   const [activeTab, setActiveTab] = useState("toShip");
-
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("new-old");
+  const [batchToShip, setBatchToShip] = useState([]);
+  const [checkedState, setCheckedState] = useState([]);
+  const [shipmentData, setShipmentData] = useState([]);
 
   useEffect(() => {
     const availableHeight = height - (headerHeight + footerHeight);
     setMaxScrollHeight(availableHeight);
   }, [height, headerHeight, footerHeight]);
 
-  // Dummy data for To Ship tab
-  const batchToShip = [
-    { id: "1", weight: "10kg", date: "11/11/25" },
-    { id: "2", weight: "29kg", date: "11/11/25" },
-    { id: "3", weight: "30kg", date: "11/11/25" },
-    { id: "4", weight: "30kg", date: "11/11/25" },
-    { id: "5", weight: "30kg", date: "11/11/25" },
-  ];
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await readBatches();
+        const batches = response.data
+          .filter((batch) => !batch.Shipped) // Filter out shipped batches
+          .map((batch) => ({
+            id: batch.ProductID,
+            weight: batch.Weight + "kg",
+            driedDate: batch.DriedDate,
+            flouredDate: batch.FlouredDate,
+          }));
+        setBatchToShip(batches);
+        setCheckedState(new Array(batches.length).fill(false));
+      } catch (error) {
+        console.error("Error fetching batches: ", error);
+      }
+    };
 
-  // State to track checked boxes
-  const [checkedState, setCheckedState] = useState(
-    new Array(batchToShip.length).fill(false)
-  );
+    const fetchExpeditions = async () => {
+      try {
+        const response = await readExpeditions();
+        const expeditions = response.data
+          .filter((expedition) =>
+            ["PKG_Delivering", "PKG_Delivered", "Missing"].includes(
+              expedition.expedition.Status
+            )
+          )
+          .map((expedition) => ({
+            id: expedition.expedition.AirwayBill,
+            status: expedition.expedition.Status,
+            batches: expedition.batches.map((batch) => batch.BatchID),
+            totalWeight: expedition.expedition.TotalWeight,
+            collected: expedition.expedition.ExpeditionDate.split("T")[0],
+            time: expedition.expedition.ExpeditionDate.split("T")[1].split(
+              "."
+            )[0],
+            expeditionDate: expedition.expedition.ExpeditionDate,
+          }));
+        setShipmentData(expeditions);
+      } catch (error) {
+        console.error("Error fetching shipments: ", error);
+      }
+    };
+
+    fetchBatches();
+    fetchExpeditions();
+  }, []);
 
   const handleCheckboxChange = (index) => {
     const updatedCheckedState = checkedState.map((item, position) =>
@@ -58,63 +97,34 @@ const Shipping = () => {
   const checkedCount = checkedState.filter(Boolean).length;
   const batchText = checkedCount === 1 ? "Batch" : "Batches";
 
-  // Dummy data for Shipped tab
-  const shipmentData = [
-    {
-      id: "98478",
-      status: "Missing",
-      batches: [10201, 10273, 10279, 10330, 10345],
-      totalWeight: 72.3,
-      collected: "15 March 2024",
-      time: "07:00 PM",
-    },
-    {
-      id: "34523",
-      status: "Shipped",
-      batches: [10205, 10284],
-      totalWeight: 85.5,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "23498",
-      status: "To Deliver",
-      batches: [10199, 10288, 10305, 10348],
-      totalWeight: 60.2,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "89572",
-      status: "Completed",
-      batches: [10211],
-      totalWeight: 90.1,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-    {
-      id: "56839",
-      status: "Missing",
-      batches: [10215, 10297, 10315, 10350, 10360, 10370],
-      totalWeight: 75.0,
-      collected: "13 March 2024",
-      time: "02:45 PM",
-    },
-  ];
+  const selectedBatches = batchToShip.filter(
+    (batch, index) => checkedState[index]
+  );
+
+  const handleShipClick = () => {
+    navigate("/centra/arrangeshipment", {
+      state: { batches: selectedBatches },
+    });
+  };
 
   // Filter the data based on the selected filter
   const filteredData = shipmentData.filter((shipment) => {
     if (filter === "all") return true;
-    return shipment.status.toLowerCase() === filter.replace("-", " ");
+    const statusMap = {
+      PKG_Delivering: "Shipping",
+      PKG_Delivered: "Delivered",
+      Missing: "Missing",
+    };
+    return statusMap[shipment.status] === filter;
   });
 
   // Sort the filtered data
   const sortedData = filteredData.sort((a, b) => {
     switch (sort) {
       case "new-old":
-        return new Date(b.collected) - new Date(a.collected);
+        return new Date(b.expeditionDate) - new Date(a.expeditionDate);
       case "old-new":
-        return new Date(a.collected) - new Date(b.collected);
+        return new Date(a.expeditionDate) - new Date(b.expeditionDate);
       case "heavy-light":
         return b.totalWeight - a.totalWeight;
       case "light-heavy":
@@ -218,16 +228,16 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center text-base">
               {checkedCount} {batchText}
             </p>
-            <Link
-              to="/centra/arrangeshipment"
+            <button
+              onClick={handleShipClick}
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </Link>
+            </button>
           </div>
         )}
-        {allChecked && (
+        {allChecked && batchToShip.length !== 0 && (
           // All checkboxes selected
           <div className="relative grid grid-cols-3 w-full items-center justify-center text-[#828282] mb-[0.465rem]">
             <button
@@ -240,13 +250,13 @@ const Shipping = () => {
             <p className="m-0 font-semibold text-center">
               {checkedCount} {batchText}
             </p>
-            <Link
-              to="/centra/arrangeshipment"
+            <button
+              onClick={handleShipClick}
               className="cursor-pointer [border:none] px-7 py-0.5 bg-[transparent] w-max font-semibold font-vietnam text-[#4e5995] justify-self-end"
               style={{ fontSize: "1.25rem" }}
             >
               Ship
-            </Link>
+            </button>
           </div>
         )}
 
@@ -284,7 +294,8 @@ const Shipping = () => {
                 key={batch.id}
                 batchId={batch.id}
                 weight={batch.weight}
-                date={batch.date}
+                driedDate={batch.driedDate}
+                flouredDate={batch.flouredDate}
                 checked={checkedState[index]}
                 onChange={() => handleCheckboxChange(index)}
               />
@@ -324,10 +335,9 @@ const Shipping = () => {
               onChange={(e) => setFilter(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="to-deliver">To Deliver</option>
-              <option value="shipped">Shipped</option>
-              <option value="completed">Completed</option>
-              <option value="missing">Missing</option>
+              <option value="Shipping">Shipping</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Missing">Missing</option>
             </select>
           </div>
 

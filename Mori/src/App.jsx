@@ -31,6 +31,9 @@ import XYZHome from "./components/XYZ/Mobile/XYZHome";
 import XYZNotif from "./components/XYZ/XYZNotif";
 import XYZNavigation from "./components/XYZ/Mobile/XYZNavigation";
 import SchedulePickup from "./components/XYZ/Mobile/SchedulePickup";
+import ArrivalConfirmation from "./components/XYZ/Mobile/ArrivalConfirmation";
+import ReceptionNotes from "./components/XYZ/Mobile/ReceptionNotes";
+import XYZShipDetails from "./components/XYZ/Mobile/XYZShipDetails";
 import AcceptedPackages from "./components/XYZ/Laptop/AcceptedPackages/AcceptedPackages";
 import Invoice from "./components/XYZ/Laptop/Invoice";
 import XYZShippingInformation from "./components/XYZ/Laptop/XYZShippingInformation/XYZShippingInformation";
@@ -179,13 +182,10 @@ function App() {
         
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/dashboardContent" element={<DashboardContent />} />
-        <Route
-          path="/centradetailsmachine"
-          element={<CentraDetailsMachine />}
-        />
+        <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
 
-        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+        <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />
 
 
           

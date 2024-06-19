@@ -21,9 +21,9 @@ export const addShipment = async (batch_id, description, status, weight, issue_d
     }
 };
 
-export const readShipments = async (skip = 0, limit = 100) => {
+export const readExpeditions = async (skip = 0, limit = 100) => {
     try {
-        return api.get(host + "/secured/shipments", {
+        return axios.get(host + "/secured/all_expeditions", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -33,6 +33,29 @@ export const readShipments = async (skip = 0, limit = 100) => {
         throw new Error(error);
     }
 };
+
+export const readExpeditionsByCentra = async (centraId, skip = 0, limit = 100) => {
+    try {
+        return axios.get(host + `/all_expeditions/${centraId}`, {
+            params: {
+                centraId: centraId,
+                skip: skip,
+                limit: limit,
+            },
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error reading shipments: ", error);
+        throw new Error(error);
+    }
+};
+
+
+
+
+
 
 export const updateShipment = async (shipment_id, batch_id, description, status, weight, issue_description) => {
     try {
@@ -61,9 +84,13 @@ export const getShipmentDetails = async (shipment_id) => {
     }
 };
 
-export const deleteShipment = async (shipment_id) => {
+export const deleteExpedition = async (expedition_id) => {
     try {
-        return api.delete(host + `/secured/shipments/${shipment_id}`);
+        return axios.delete(host + `/secured/expeditions/${expedition_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
     } catch (error) {
         console.log("Error deleting shipment: ", error);
         throw new Error(error);

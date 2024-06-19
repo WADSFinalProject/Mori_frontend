@@ -4,6 +4,7 @@ import { api } from '../contexts/api';
 
 
 
+
 export const getNotifications = async () => {
     try {
         return api.get(host + "/secured/notifications", );

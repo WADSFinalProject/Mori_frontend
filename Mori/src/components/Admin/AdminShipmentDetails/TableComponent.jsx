@@ -1,39 +1,44 @@
 import React, { useState } from "react";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { deleteShipment } from "../../../service/shipments";
+import { deleteExpedition } from "../../../service/shipments";
 
 export const TableComponent = ({ data, onDelete }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
+  
   const handleDeleteClick = (index) => {
-    setUserToDelete(sortedData[index]);
+    setShipmentToDelete(data[index].expeditionID);
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = (shipmentId) => {
-    deleteShipment(shipmentId)
-      .then((res) => {
-        console.log("Success : ", res);
-        setData(updatedData);
-        setEditVisible(false);
-        setNewUser(initialNewUserState);
-        handleSearchAndSort(updatedData, sortKey);
-        setDeleteModalOpen(false);
-      })
-      .catch((err) => {
-        alert("Error : ", err);
-      });
+  const handleConfirmDelete = () => {
+    if (shipmentToDelete) {
+      deleteExpedition(shipmentToDelete)
+        .then((res) => {
+          onDelete(shipmentToDelete);
+          setDeleteModalOpen(false);
+        })
+        .catch((err) => {
+          console.error("Error deleting shipment: ", err);
+        });
+    }
   };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setShipmentToDelete(null);
+  };
+
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
+      case "XYZ_PickingUp":
         return "#4D946D";
-      case "Completed":
+      case "XYZ_Completed":
         return "#838948";
-      case "Shipped":
+      case "PKG_Delivered":
         return "#9AD1B3";
-      case "Missing":
+      case "PKG_Delivering":
         return "#EBB6B6";
       default:
         return "#bec8fa";
@@ -170,8 +175,8 @@ export const TableComponent = ({ data, onDelete }) => {
         x2="5"
         y2="31"
         stroke="#A7AD6F"
-        stroke-linecap="round"
-        stroke-dasharray="2 3"
+        strokeLinecap="round"
+        strokeDasharray="2 3"
       />
     </svg>
   );
@@ -242,7 +247,7 @@ export const TableComponent = ({ data, onDelete }) => {
                     fill="black"
                   />
                 </svg>
-                Shipment ID
+                Airway Bill
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">
@@ -483,7 +488,7 @@ export const TableComponent = ({ data, onDelete }) => {
                 <div className="flex items-center justify-center gap-2">
                   <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => setDeleteModalOpen(true)}
+                    onClick={() => handleDeleteClick(index)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -513,8 +518,9 @@ export const TableComponent = ({ data, onDelete }) => {
       </table>
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => handleConfirmDelete(shipmentToDelete?.shipmentId)}
+        onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
+        shipmentId={shipmentToDelete}
       />
     </div>
   );

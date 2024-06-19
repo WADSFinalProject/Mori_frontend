@@ -23,12 +23,17 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
     }
 };
 
-export const createWarehouse = async (PIC_name, email, phone) => {
+export const createWarehouse = async (email, phone, stock, location) => {
     try {
+        // const now = new Date();
+        // const isoString = now.toISOString();
+
         const warehouseDetails = {
-            PIC_name: PIC_name,
             email: email,
             phone: phone,
+            TotalStock: stock,
+            location: location,
+            // created_at: isoString
         };
 
         return await api.post(host + "/secured/warehouses", warehouseDetails, );
@@ -47,12 +52,13 @@ export const getWarehouseDetails = async (warehouse_id) => {
     }
 };
 
-export const updateWarehouse = async (warehouse_id, PIC_name, email, phone) => {
+export const editWarehouse = async (warehouse_id, email, phone, stock, location) => {
     try {
         const warehouseDetails = {
-            PIC_name: PIC_name,
             email: email,
             phone: phone,
+            TotalStock: stock,
+            location: location,
         };
 
         return await api.put(host + `/secured/warehouses/${warehouse_id}`, warehouseDetails, );

@@ -4,6 +4,7 @@ import { api } from '../contexts/api';
 
 
 
+
 export const getLocationDetails = async (location_id) => {
     try {
         return api.get(host + `/secured/location/${location_id}`, );
