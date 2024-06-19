@@ -49,9 +49,9 @@ const formatDate = (dateString) => {
 
 export default function DryingMachine() {
   const location = useLocation();
-  const { centralID, capacity, currentLoad, status, duration, id } = location.state || {}; // Updated to include centralID
+  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {}; // Updated to include centralID
 
-  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration });
+  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration, load });
   const [timer, setTimer] = useState(parseISODuration(duration));
   const [timerInterval, setTimerInterval] = useState(null);
   const [inProgress, setInProgress] = useState(false);
@@ -69,29 +69,15 @@ export default function DryingMachine() {
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    // Log the received data to the console
-    console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration });
+    receiveData();
+  }, [centralID, id, capacity, currentLoad, status, duration, load]);
 
-    // Fetch or set machine data here
-    setMachineData({centralID, id, capacity, currentLoad, status, duration });
+  const receiveData = () => {
+    console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration, load });
+    setMachineData({ centralID, id, capacity, currentLoad, status, duration, load });
+  };
 
-    const fetchActivity = async () => {
-      try {
-        const response = await axios.get(`${host}/secured/drying_activity/${id}`);
-        const { startTime } = response.data;
-        if (startTime) {
-          const timeElapsed = (new Date().getTime() - new Date(startTime).getTime()) / 1000;
-          const totalDuration = parseISODuration(duration);
-          setTimer(Math.max(totalDuration - timeElapsed, 0));
-          setIsRunning(true);
-        }
-      } catch (error) {
-        console.log("Error fetching drying activity: ", error);
-      }
-    };
-
-    fetchActivity();
-
+  useEffect(() => {
     const interval = setInterval(() => {
       if (isRunning && timer > 0) {
         setTimer(prevTimer => prevTimer - 1);
@@ -99,18 +85,20 @@ export default function DryingMachine() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [centralID, id, capacity, currentLoad, status, duration, isRunning, timer]);
+  }, [isRunning, timer]);
 
   const startProcess = async () => {
     const startTime = new Date().toISOString();
     localStorage.setItem(`dryingStartTime_${id}`, startTime);
     try {
-        await addDryingActivity(centralID, currentLoad, id, parseISODuration(duration)); // Use centralID here
-        startTimer();
+      // Correctly use the addDryingActivity function with the load variable
+      await addDryingActivity(load, id, parseISODuration(duration));
+      startTimer();
     } catch (error) {
-        console.error("Failed to start drying process:", error.message);
+      console.error("Failed to start drying process:", error.message);
     }
   };
+
  
   const startTimer = () => {
     const totalSeconds = parseISODuration(duration);
@@ -129,7 +117,7 @@ export default function DryingMachine() {
               number: Math.floor(Math.random() * 10000),
               date: new Date().toLocaleDateString(),
               time: new Date().toLocaleTimeString(),
-              weight: currentLoad
+              weight: load
             });
             return 0;
           }
@@ -203,9 +191,9 @@ export default function DryingMachine() {
   };
 
   let chartColor = '#99D0D580';
-  if (currentLoad === capacity) {
+  if (load === capacity) {
     chartColor = '#0F3F43';
-  } else if (currentLoad > capacity / 2) {
+  } else if (load > capacity / 2) {
     chartColor = '#5D9EA4';
   }
 
@@ -234,7 +222,7 @@ export default function DryingMachine() {
               data={{
                 labels: ['Current Load', 'Capacity'],
                 datasets: [{
-                  data: [currentLoad || 0, capacity - (currentLoad || 0)],
+                  data: [load || 0, capacity - (load || 0)],
                   backgroundColor: [chartColor, '#EFEFEF'],
                   borderWidth: 0
                 }]
@@ -242,15 +230,15 @@ export default function DryingMachine() {
               options={gaugeOptions}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
-              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{currentLoad} kg</span>
+              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{load} kg</span>
               <span className="font-vietnam font-bold" style={{ fontSize: '12px', lineHeight: '1.2', marginBottom: '-30px' }}>{`/ ${capacity} kg`}</span>
             </div>
           </div>
         </div>
-{/* 
+
         <div className="last-updated" style={{ textAlign: 'center', fontSize: '10px', color: '#666666', marginTop: '-18px' }}>
           Last updated: <span style={{ fontWeight: 'bold' }}>{machineData?.lastUpdated}</span>
-        </div> */}
+        </div>
 
         <div style={{ borderTop: '1px solid #ccc', margin: '20px auto', width: '80%' }}></div>
 

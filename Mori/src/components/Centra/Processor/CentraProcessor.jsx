@@ -9,7 +9,7 @@ import { readWetLeavesCollections } from "../../../service/wetLeaves.js";
 import { readDriedLeaves } from "../../../service/driedLeaves.js";
 import { readBatches } from "../../../service/batches.js";
 import { readDryingMachines } from "../../../service/dryingMachine.js";
-import { readFlouringMachines } from "../../../service/flouringMachine";
+import { readFlouringMachines } from "../../../service/flouringMachine.js";
 
 const gaugeOptions = {
   responsive: true,
@@ -130,7 +130,9 @@ export default function Processor() {
   
         let totalWetLeaves = 0;
         collections.forEach((collection) => {
-          totalWetLeaves += collection.Weight;
+          if (!collection.Expired) {
+            totalWetLeaves += collection.Weight;
+          }
         });
   
         console.log("Total Weight of Wet Leaves:", totalWetLeaves);
@@ -280,7 +282,7 @@ export default function Processor() {
   
   useEffect(() => {
     if (flouringMachines.length > 0 && totalDriedLeaves > 0) {
-      distributeDriedLeavesToMachines(fouringMachines);
+      distributeDriedLeavesToMachines(flouringMachines);
     }
   }, [flouringMachines, totalDriedLeaves]);
   
@@ -307,6 +309,7 @@ export default function Processor() {
           status: machine.Status,
           currentLoad: machine.currentLoad,
           duration: machine.Duration,
+          load: machine.Load,
         },
       });
     }
@@ -365,16 +368,17 @@ export default function Processor() {
         const response = await readDriedLeaves();
         console.log("Dried Leaves:", response.data);
         const collections = response.data;
-
+  
         if (Array.isArray(collections)) {
+          const filteredCollections = collections.filter(collection => !collection.Floured);
           let totalDriedLeaves = 0;
-          collections.forEach((collection) => {
+          filteredCollections.forEach((collection) => {
             totalDriedLeaves += collection.Weight;
           });
-
-          console.log("Total Weight of Dried Leaves:", totalDriedLeaves);
+  
+          console.log("Total Weight of Dried Leaves (Filtered):", totalDriedLeaves);
           setTotalDriedLeaves(totalDriedLeaves);
-
+  
           setDriedLeavesData({
             ...driedLeavesData,
             datasets: [
@@ -391,9 +395,10 @@ export default function Processor() {
         console.log("Error fetching dried leaves data: ", error);
       }
     };
-
+  
     fetchDriedLeavesData();
   }, []);
+  
 
   useEffect(() => {
     const fetchFlouredLeavesData = async () => {
@@ -402,8 +407,11 @@ export default function Processor() {
         console.log("Floured:", response.data);
         const batches = response.data;
 
+        // Filter out batches where Shipped is true
+        const filteredBatches = batches.filter(batch => !batch.Shipped);
+
         let totalFlouredLeaves = 0;
-        batches.forEach((batch) => {
+        filteredBatches.forEach((batch) => {
           if (batch.FlouredDate) {
             totalFlouredLeaves += batch.Weight;
           }
@@ -428,6 +436,7 @@ export default function Processor() {
 
     fetchFlouredLeavesData();
   }, []);
+
 
   console.log("Outside useEffect - Total Weight of Wet Leaves:", totalWetLeaves);
   console.log("Outside useEffect - Total Weight of Dried Leaves:", totalDriedLeaves);
