@@ -3,8 +3,8 @@ import { Doughnut } from "react-chartjs-2";
 import ArrowDown from "../../../../assets/XYZ/arrowdown.png";
 import PersonInChargeBox from "./PersonInChargeBox";
 import FlouringScheduleBox from "./FlouringScheduleBox";
-import DryingMachineBox from "./DryingMachineBox";
-import FlouringMachineBox from "./FlouringMachineBox";
+import DryingMachineBoxDashboard from "./DryingMachineBox";
+import FlouringMachineBoxDashboard from "./FlouringMachineBox";
 import { getAllCentras, getLeavesData } from "../../../../service/centras";
 
 const LeavesStatusCard = ({
@@ -109,41 +109,44 @@ const LeavesStatusCard = ({
 };
 
 const LeavesStatusDashboard = () => {
-  const [warehouseDropdownVisible, setWarehouseDropdownVisible] =
-    useState(false);
-  const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
+  const [warehouseDropdownVisible, setWarehouseDropdownVisible] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState("Jakarta");
   const [warehouseData, setWarehouseData] = useState({});
   const [leavesStatus, setLeavesStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchWarehouseData();
-  }, []);
+    const fetchInitialData = async () => {
+      try {
+        const centraResponse = await getAllCentras();
+        const centraData = centraResponse.data.reduce((acc, centra) => {
+          acc[centra.Address] = {
+            personInCharge: {
+              name: centra.PersonInChargeName,
+              email: centra.PersonInChargeEmail,
+            },
+            flouringSchedule: centra.FlouringSchedule,
+            dryingMachines: centra.DryingMachines,
+            flouringMachines: centra.FlouringMachines,
+            centraId: centra.CentralID, // Store the centraId for fetching leaves data
+          };
+          return acc;
+        }, {});
+        setWarehouseData(centraData);
 
-  const fetchWarehouseData = async () => {
-    try {
-      const centraResponse = await getAllCentras();
-      const centraData = centraResponse.data.reduce((acc, centra) => {
-        acc[centra.Address] = {
-          personInCharge: {
-            name: centra.PersonInChargeName,
-            email: centra.PersonInChargeEmail,
-          },
-          flouringSchedule: centra.FlouringSchedule,
-          dryingMachines: centra.DryingMachines,
-          flouringMachines: centra.FlouringMachines,
-          centraId: centra.CentralID, // Store the centraId for fetching leaves data
-        };
-        return acc;
-      }, {});
-      setWarehouseData(centraData);
-      setLoading(false);
-      fetchLeavesData(centraData[selectedWarehouse].centraId); // Fetch leaves data for the default selected warehouse
-    } catch (error) {
-      console.error("Error fetching warehouse data: ", error);
-      setLoading(false);
-    }
-  };
+        // Fetch leaves data for the default selected warehouse
+        if (centraData[selectedWarehouse]) {
+          fetchLeavesData(centraData[selectedWarehouse].centraId);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching warehouse data: ", error);
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
 
   const fetchLeavesData = async (centraId) => {
     try {
@@ -161,7 +164,7 @@ const LeavesStatusDashboard = () => {
   const selectWarehouse = (warehouse) => {
     setSelectedWarehouse(warehouse);
     setWarehouseDropdownVisible(false);
-    fetchLeavesData(warehouseData[warehouse].centraId); // Fetch leaves data for the selected warehouse
+    fetchLeavesData(warehouseData[warehouse].centraId); 
   };
 
   if (loading) {
@@ -248,20 +251,7 @@ const LeavesStatusDashboard = () => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <div className="flex flex-wrap gap-6">
-          {selectedData.dryingMachines?.map((machine, index) => (
-            <DryingMachineBox
-              key={index}
-              machineNumber={machine.machineNumber}
-              driedDate={machine.driedDate}
-              startTime={machine.startTime}
-              filledWeight={machine.filledWeight}
-              totalWeight={machine.totalWeight}
-              lastUpdated={machine.lastUpdated}
-              duration={machine.duration}
-            />
-          ))}
-        </div>
+        <DryingMachineBoxDashboard centraId={selectedData.centraId} /> {/* Pass centraId as prop */}
       </div>
 
       <div className="mt-4 mb-[-5px] text-black text-[28px] font-semibold font-['Be Vietnam Pro']">
@@ -269,20 +259,7 @@ const LeavesStatusDashboard = () => {
       </div>
 
       <div className="mt-6 flex gap-6">
-        <div className="flex flex-wrap gap-6">
-          {selectedData.flouringMachines?.map((machine, index) => (
-            <FlouringMachineBox
-              key={index}
-              machineNumber={machine.machineNumber}
-              flouredDate={machine.flouredDate}
-              startTime={machine.startTime}
-              filledWeight={machine.filledWeight}
-              totalWeight={machine.totalWeight}
-              lastUpdated={machine.lastUpdated}
-              duration={machine.duration}
-            />
-          ))}
-        </div>
+        <FlouringMachineBoxDashboard centraId={selectedData.centraId} /> {/* Pass centraId as prop */}
       </div>
     </div>
   );
