@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { readExpeditions } from "../../../service/shipments";
+import { readExpeditions, deleteExpedition } from "../../../service/expeditionService";
 
 const AdminShipmentDetails = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -13,67 +14,79 @@ const AdminShipmentDetails = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Calculate total shipments count
+    const uniqueShipmentIds = new Set(originalData.map((item) => item.shipmentId));
+    setTotalShipments(uniqueShipmentIds.size);
+  }, [originalData]);
+
+  useEffect(() => {
+    handleSearchAndFilter(searchQuery, filterKey);
+  }, [filterKey, searchQuery, originalData]);
+
   const fetchData = () => {
     readExpeditions()
-    .then((res) => {
-      console.log("Success : ", res);
-      const expeditions = res.data;
+      .then((res) => {
+        const expeditions = res.data;
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const expeditionDetails = expedition?.expedition;
+          if (!expeditionDetails || !expedition.batches) {
+            return acc;
+          }
 
-      // Group batches by expedition ID
-      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-        const id = expedition.Expedition.CentralID.toString();
-        if (!acc[id]) {
-          acc[id] = {
-            id: id,
-            batchIds: [],
-            flouredDates: [],
-            driedDates: [],
-            weights: [],
-            status: expedition.status,
-            checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
-          };
-        }
-        acc[id].batchIds.push(expedition.BatchID);
-        acc[id].flouredDates.push(expedition.FlouredDate);
-        acc[id].driedDates.push(expedition.DriedDate);
-        acc[id].weights.push(expedition.Weight);
-        return acc;
-      }, {});
+          const airwayBill = expeditionDetails.AirwayBill;
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
+              expeditionID: expeditionDetails.ExpeditionID,
+              batchIds: [],
+              flouredDates: [],
+              driedDates: [],
+              weights: [],
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
+            };
+          }
 
-      // Convert grouped data object to array
-      const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
-        return {
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+            acc[airwayBill].weights.push(batch.Weight);
+          });
+
+          return acc;
+        }, {});
+
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
           id: index + 1,
-          shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
+          shipmentId: expedition.id,
+          expeditionID: expedition.expeditionID,
           batchId: expedition.batchIds,
           driedDate: expedition.driedDates,
           flouredDate: expedition.flouredDates,
           weight: expedition.weights,
           status: expedition.status,
           checkpoint: expedition.checkpoint,
-        };
+          receptionNotes: "Null",
+        }));
+
+        console.log("Resulting Array: ", resArr);
+
+        // Set original data and sorted data state
+        setOriginalData(resArr);
+        setSortedData(resArr);
+      })
+      .catch((err) => {
+        console.error("Error: ", err);
       });
-
-      // Set your state with resArr
-      setSortedData(resArr);
-    })
-    .catch((err) => {
-      console.log("Error : ", err);
-    });
-  }
-
-  useEffect(() => {
-    // Calculate total shipments count
-    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
-    setTotalShipments(uniqueShipmentIds.size);
-  }, [sortedData]);
-
-  useEffect(() => {
-    handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
+  };
 
   const handleFilterChange = (filterValue) => {
     setFilterKey(filterValue);
+    handleSearchAndFilter(searchQuery, filterValue);
   };
 
   const handleSearchChange = (e) => {
@@ -82,7 +95,7 @@ const AdminShipmentDetails = () => {
   };
 
   const handleSearchAndFilter = (searchValue, filterValue) => {
-    let filteredData = sortedData.filter((row) =>
+    let filteredData = originalData.filter((row) =>
       row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -105,7 +118,7 @@ const AdminShipmentDetails = () => {
             Total Shipments
           </div>
           <div className="text-black font-vietnam text-3xl font-semibold">
-            {sortedData.length} Shipments
+            {totalShipments} Shipments
           </div>
         </div>
 
@@ -135,23 +148,23 @@ const AdminShipmentDetails = () => {
             <div className="font-vietnam font-semibold text-md items-center">
               Filter By:
             </div>
-            {/* Filter */}
             <select
               className="bg-transparent font-vietnam font-base text-sm border-black focus:border-black/50 focus:ring-transparent py-2.5"
               value={filterKey}
               onChange={(e) => handleFilterChange(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="To Deliver">To Deliver</option>
-              <option value="Completed">Completed</option>
-              <option value="Shipped">Shipped</option>
+              <option value="PKG_Delivered">PKG_Delivered</option>
+              <option value="PKG_Delivering">PKG_Delivering</option>
+              <option value="XYZ_PickingUp">XYZ_PickingUp</option>
+              <option value="XYZ_Completed">XYZ_Completed</option>
               <option value="Missing">Missing</option>
             </select>
           </div>
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={fetchData}/>
+          <TableComponent data={sortedData} onDelete={fetchData} />
         </div>
       </div>
     </div>

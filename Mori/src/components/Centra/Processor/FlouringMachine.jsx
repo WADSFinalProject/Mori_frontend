@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { useWindowSize } from 'react-use';
+import { useParams, Link, useLocation } from "react-router-dom";
 import bell from '../../../assets/bell.png';
 import hamburg from '../../../assets/hamburg.png';
 import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
+import { useWindowSize } from 'react-use';
 import axios from 'axios';
 import { host } from "../../../service/config.js";
 import { addFlouringActivity } from "../../../service/flouringActivity";
-
-axios.defaults.withCredentials = true;
 
 const gaugeOptions = {
   responsive: true,
@@ -29,12 +27,19 @@ const gaugeOptions = {
   events: [],
 };
 
-const formatTime = (time) => {
-  const hours = Math.floor(time / 3600);
-  const minutes = Math.floor((time % 3600) / 60);
-  const seconds = time % 60;
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
+function parseISODuration(duration) {
+  const matches = duration.match(/P(?:(\d+)D)?/);
+  const days = matches[1] ? parseInt(matches[1], 10) : 0;
+  const totalSeconds = days * 24 * 60 * 60;
+  return totalSeconds;
+}
+
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -43,53 +48,35 @@ const formatDate = (dateString) => {
 };
 
 export default function FlouringMachine() {
-  const { machineNumber } = useParams(); // Extract machine number from URL
-  const [machineData, setMachineData] = useState(null);
-  const [timer, setTimer] = useState(86400); // 24 hours in seconds
+  const location = useLocation();
+  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {}; // Updated to include centralID
+
+  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration, load });
+  const [timer, setTimer] = useState(parseISODuration(duration));
   const [timerInterval, setTimerInterval] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [buttonText, setButtonText] = useState("Start Process");
   const [batchDetails, setBatchDetails] = useState(null);
-  const { width } = useWindowSize();
-  const isMobile = width <= 640;
 
-  // Edit mode states for batch details
   const [editMode, setEditMode] = useState(false);
   const [editDate, setEditDate] = useState("");
   const [editTime, setEditTime] = useState("");
   const [editWeight, setEditWeight] = useState("");
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { width } = useWindowSize();
+  const isMobile = width <= 640;
 
   const [remainingTime, setRemainingTime] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    const flouringMachines = [
-      { number: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '45 minutes ago' },
-      { number: 2, status: 'FULL', currentLoad: 10, capacity: 30, lastUpdated: '3 hours ago' },
-      { number: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '1 hour ago' }
-    ];
+    // Log the received data to the console
+    console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration, load });
 
-    const machine = flouringMachines.find(machine => machine.number === parseInt(machineNumber));
-    setMachineData(machine);
+    // Fetch or set machine data here
+    setMachineData({ centralID, id, capacity, currentLoad, status, duration, load });
+  }, [centralID, id, capacity, currentLoad, status, duration, load]);
 
-    const fetchActivity = async () => {
-      try {
-        const response = await axios.get(`${host}/secured/flouring_activity/${machineNumber}`);
-        const { startTime } = response.data;
-        if (startTime) {
-          const timeElapsed = (new Date().getTime() - new Date(startTime).getTime()) / 1000;
-          const totalDuration = 86400; // 24 hours in seconds
-          setTimer(Math.max(totalDuration - timeElapsed, 0));
-          setIsRunning(true);
-        }
-      } catch (error) {
-        console.log("Error fetching flouring activity: ", error);
-      }
-    };
-
-    fetchActivity();
-
+  useEffect(() => {
     const interval = setInterval(() => {
       if (isRunning && timer > 0) {
         setTimer(prevTimer => prevTimer - 1);
@@ -97,21 +84,25 @@ export default function FlouringMachine() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [machineNumber, isRunning, timer]);
+  }, [isRunning, timer]);
 
   const startProcess = async () => {
-    if (machineData.currentLoad < machineData.capacity) {
-      setShowConfirmation(true);
-      return;
-    }
     const startTime = new Date().toISOString();
-    localStorage.setItem(`flouringStartTime_${machineNumber}`, startTime);
-    await addFlouringActivity(machineNumber, new Date().toISOString(), machineData.currentLoad, machineNumber, new Date().toLocaleTimeString());
-    startTimer();
+    const date = new Date().toLocaleDateString('en-GB'); // Get the current date in 'dd/mm/yyyy' format
+    const time = new Date().toLocaleTimeString('en-GB'); // Get the current time in 'hh:mm:ss' format
+
+    localStorage.setItem(`flouringStartTime_${id}`, startTime);
+    try {
+      await addFlouringActivity(centralID, date, load, id, time); // Use centralID here
+      startTimer();
+    } catch (error) {
+      console.error("Failed to start flouring process:", error.message);
+    }
   };
 
+
   const startTimer = () => {
-    const totalSeconds = 86400; // 24 hours in seconds
+    const totalSeconds = parseISODuration(duration);
     setTimer(totalSeconds);
 
     if (!timerInterval) {
@@ -127,7 +118,7 @@ export default function FlouringMachine() {
               number: Math.floor(Math.random() * 10000),
               date: new Date().toLocaleDateString(),
               time: new Date().toLocaleTimeString(),
-              weight: machineData.currentLoad
+              weight: load
             });
             return 0;
           }
@@ -139,33 +130,32 @@ export default function FlouringMachine() {
     }
   };
 
-  const handleContinueProcess = () => {
-    setShowConfirmation(false);
-    startTimer();
-  };
-
-  const handleCancelProcess = () => {
-    setShowConfirmation(false);
+  const handleFastForward = () => {
+    // Fast forward the timer by 1 hour (3600 seconds)
+    setTimer(prevTimer => Math.max(prevTimer - 3600, 0));
   };
 
   const handleRescale = () => {
     // Logic for rescaling goes here
   };
 
+  const handleDateChange = (date) => {
+    if (date) {
+      setEditDate(date.startDate);
+    }
+  };
+
   const handleEditClick = () => {
     setEditMode(!editMode);
 
     if (!editMode) {
-      // Entering edit mode, populate edit states with current batch details
       setEditDate(batchDetails?.date || "");
       setEditTime(batchDetails?.time || "");
-      setEditWeight(batchDetails?.weight.toString() || ""); // Ensure it's a string for the input
+      setEditWeight(batchDetails?.weight.toString() || "");
 
-      // Format the time to include AM/PM if not already included
       const currentTime = batchDetails?.time || new Date().toLocaleTimeString();
       const [time, modifier] = currentTime.split(' ');
       if (!modifier) {
-        // Assume AM/PM from the system's locale or default to AM if unavailable
         const systemAmPm = new Date().toLocaleTimeString().split(' ')[1] || 'AM';
         setEditTime(`${time} ${systemAmPm}`);
       } else {
@@ -185,55 +175,39 @@ export default function FlouringMachine() {
   };
 
   const handleCancelEdit = () => {
-    // Reset edit fields
     setEditDate(batchDetails?.date || "");
     setEditTime(batchDetails?.time || "");
     setEditWeight(batchDetails?.weight || "");
-
-    // Exit edit mode
     setEditMode(false);
   };
 
   const handleSaveEdit = () => {
-    // Update batch details with edited values
     setBatchDetails({
       ...batchDetails,
       date: editDate,
       time: editTime,
       weight: editWeight
     });
-
-    // Exit edit mode
     setEditMode(false);
   };
 
-  const { currentLoad, capacity } = machineData || {};
-
   let chartColor = '#99D0D580';
-  if (currentLoad === capacity) {
+  if (load === capacity) {
     chartColor = '#0F3F43';
-  } else if (currentLoad > capacity / 2) {
+  } else if (load > capacity / 2) {
     chartColor = '#5D9EA4';
   }
 
   return (
     isMobile ? (
-
       <div className="bg-000000" style={{ paddingBottom: '40px' }}>
         <div className="w-full">
           <div className="p-4 shadow-md flex justify-between items-center bg-white">
-            <Link
-              to={{
-                pathname: "/centra/processor",
-                state: { activeTab: "flouring" } // Set the active tab to "flouring"
-              }}
-              className="flex items-center"
-            >
+            <Link to="/centra/processor" className="flex items-center">
               <img src={back} alt="back" className="w-5 mr-2" />
             </Link>
-
             <span className="font-bold text-2xl lg:text-3xl xl:text-4xl mr-18 font-vietnam">
-              Flouring Machine {machineNumber}
+              Flouring Machine {id}
             </span>
             <div className="flex">
               <img src={bell} alt="notifications" className="w-5 mr-2" />
@@ -248,7 +222,7 @@ export default function FlouringMachine() {
               data={{
                 labels: ['Current Load', 'Capacity'],
                 datasets: [{
-                  data: [currentLoad || 0, capacity - (currentLoad || 0)],
+                  data: [load || 0, capacity - (load || 0)],
                   backgroundColor: [chartColor, '#EFEFEF'],
                   borderWidth: 0
                 }]
@@ -256,14 +230,10 @@ export default function FlouringMachine() {
               options={gaugeOptions}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
-              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{currentLoad} kg</span>
+              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{load} kg</span>
               <span className="font-vietnam font-bold" style={{ fontSize: '12px', lineHeight: '1.2', marginBottom: '-30px' }}>{`/ ${capacity} kg`}</span>
             </div>
           </div>
-        </div>
-
-        <div className="last-updated" style={{ textAlign: 'center', fontSize: '10px', color: '#666666', marginTop: '-18px' }}>
-          Last updated: <span style={{ fontWeight: 'bold' }}>{machineData?.lastUpdated}</span>
         </div>
 
         <div style={{ borderTop: '1px solid #ccc', margin: '20px auto', width: '80%' }}></div>
@@ -283,22 +253,35 @@ export default function FlouringMachine() {
           >
             {buttonText}
           </button>
+          {inProgress && (
+            <button
+              className="fast-forward-btn text-white py-1 px-4 ml-4"
+              style={{
+                backgroundColor: "#FF4500",
+                borderRadius: "10px",
+                fontSize: "14px",
+              }}
+              onClick={handleFastForward}
+            >
+              Fast Forward 1 Hour
+            </button>
+          )}
         </div>
 
-        <div className="flex justify-center items-center ">
+        <div className="flex justify-center items-center">
           <div className="chart-container" style={{ width: '200px', height: '200px', position: 'relative' }}>
             <Doughnut
               data={{
                 labels: ['Time Left', ''],
                 datasets: [{
-                  data: [timer, 86400 - timer],
-                  backgroundColor: ['#B2B472', '#EFEFEF'],
+                  data: [timer, parseISODuration(duration) - timer],
+                  backgroundColor: ['#4D946D', '#EFEFEF'],
                   borderWidth: 0
                 }]
               }}
               options={{
                 ...gaugeOptions,
-                cutout: '88%', // Adjust the cutout percentage here
+                cutout: '88%',
                 circumference: 360,
                 rotation: 0,
                 animation: { animateRotate: false },
@@ -307,7 +290,7 @@ export default function FlouringMachine() {
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
               <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{formatTime(timer)}</span>
-              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {batchDetails?.time}</span>
+              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {new Date(Date.now() + timer * 1000).toLocaleTimeString()}</span>
             </div>
           </div>
         </div>
@@ -417,31 +400,6 @@ export default function FlouringMachine() {
               >
                 {editMode ? 'Rescale' : 'Confirm'}
               </button>
-            </div>
-          </div>
-        )}
-
-        {showConfirmation && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg shadow-lg text-center w-72 mx-auto">
-              <h2 className="text-lg font-bold mb-2">Notice!</h2>
-              <p className="mb-4 text-sm">
-                Flouring Machine {machineNumber} has <span className="underline">NOT reached the maximum weight</span>. Processing now may not be as efficient for the production process.
-              </p>
-              <div className="flex justify-center ">
-                <button
-                  onClick={handleCancelProcess}
-                  className="bg-gray-400 text-white py-1 px-3 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleContinueProcess}
-                  className="bg-black text-white py-1 px-3 rounded-lg ml-1"
-                >
-                  Continue
-                </button>
-              </div>
             </div>
           </div>
         )}

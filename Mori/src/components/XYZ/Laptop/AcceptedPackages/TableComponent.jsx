@@ -39,7 +39,7 @@ export const TableComponent = ({ data }) => {
                     fill="black"
                   />
                 </svg>
-                Shipment ID
+                Airway Bill
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">

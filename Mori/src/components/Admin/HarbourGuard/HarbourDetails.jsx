@@ -58,26 +58,31 @@ const HarbourDetails = () => {
 
   const fetchData = () => {
     getAllHarborGuards()
-    .then((res) => {
-      let resArr = [];
-      res.data.forEach((dt) => {
-        resArr.push({
-          id: dt.HarbourID,
-          harbourName: dt.HarbourName,
-          location: dt.Location,
-          phone: dt.phone,
-          openingHour: dt.OpeningHour,
-          closingHour: dt.ClosingHour,
+      .then((res) => {
+        let resArr = [];
+        res.data.forEach((dt) => {
+          // Format the opening and closing hours
+          const openingHour = new Date(`1970-01-01T${dt.OpeningHour}Z`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const closingHour = new Date(`1970-01-01T${dt.ClosingHour}Z`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+          resArr.push({
+            id: dt.HarbourID,
+            harbourName: dt.HarbourName,
+            location: dt.Location,
+            phone: dt.phone,
+            openingHour: openingHour,
+            closingHour: closingHour,
+          });
         });
+  
+        setData(resArr);
+        handleSearchAndSort(resArr, sortKey); // Initial sort with fetched data
+      })
+      .catch((err) => {
+        console.log("Error : ", err);
       });
-
-      setData(resArr);
-      handleSearchAndSort(resArr, sortKey); // Initial sort with fetched data
-    })
-    .catch((err) => {
-      console.log("Error : ", err);
-    });
-  }
+  };
+  
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key

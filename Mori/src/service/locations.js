@@ -3,6 +3,7 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
+
 export const getLocationDetails = async (location_id) => {
     try {
         return axios.get(host + `/secured/location/${location_id}`, {

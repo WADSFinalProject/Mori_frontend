@@ -44,12 +44,28 @@ export const createExpedition = async (AirwayBill, estimatedArrival, totalPackag
 
 export const readExpeditions = async (skip = 0, limit = 100) => {
     try {
+      return await axios.get(host + "/secured/all_expeditions", {
+        params: {
+          skip: skip,
+          limit: limit,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error reading expeditions: ", error);
+      throw new Error(error);
+    }
+  };
+
+export const readExpeditions_byAWB = async (awb) => {
+    try {
         const params = {
-            skip: skip,
-            limit: limit
+           awb
         };
 
-        return await axios.get(host + "/secured/expeditions", {
+        return await axios.get(host + `/secured/expedition/airwaybill/${awb}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -60,6 +76,11 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
         throw new Error(error);
     }
 };
+
+
+
+
+
 
 export const getExpeditionDetails = async (expedition_id) => {
     try {
@@ -74,24 +95,43 @@ export const getExpeditionDetails = async (expedition_id) => {
     }
 };
 
-export const updateExpedition = async (expedition_id, estimatedArrival, totalPackages, expeditionDate, expeditionServiceDetails, destination, centralID) => {
+// export const updateExpedition = async (expedition_id, estimatedArrival, totalPackages, expeditionDate, expeditionServiceDetails, destination, centralID) => {
+//     try {
+//         const expeditionDetails = {
+//             EstimatedArrival: estimatedArrival,
+//             TotalPackages: totalPackages,
+//             ExpeditionDate: expeditionDate,
+//             ExpeditionServiceDetails: expeditionServiceDetails,
+//             Destination: destination,
+//             CentralID: centralID
+//         };
+
+//         return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//         });
+//     } catch (error) {
+//         console.error(`Error updating expedition ${expedition_id}: `, error);
+//         throw new Error(error);
+//     }
+// };
+
+
+export const updateExpeditionStatus = async (awb, new_status) => {
     try {
         const expeditionDetails = {
-            EstimatedArrival: estimatedArrival,
-            TotalPackages: totalPackages,
-            ExpeditionDate: expeditionDate,
-            ExpeditionServiceDetails: expeditionServiceDetails,
-            Destination: destination,
-            CentralID: centralID
+            awb: awb,
+            status: new_status
         };
 
-        return await axios.put(host + `/secured/expeditions/${expedition_id}`, expeditionDetails, {
+        return await axios.put(host + `/secured/expedition/${awb}/status`, expeditionDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
     } catch (error) {
-        console.error(`Error updating expedition ${expedition_id}: `, error);
+        console.error(`Error updating expedition status: `, error);
         throw new Error(error);
     }
 };
@@ -105,6 +145,21 @@ export const deleteExpedition = async (expedition_id) => {
         });
     } catch (error) {
         console.error(`Error deleting expedition ${expedition_id}: `, error);
+        throw new Error(error);
+    }
+};
+
+
+
+export const getStatus_byAwb = async (awb) => {
+    try {
+        return await axios.get(host + `/secured/checkpointstatus/airwaybill/${awb}"`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.error(`Error getting checkpoint: `, error);
         throw new Error(error);
     }
 };

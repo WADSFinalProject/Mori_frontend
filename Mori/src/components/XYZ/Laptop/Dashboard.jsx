@@ -13,6 +13,14 @@ import StockBooking from "./StockBooking/StockBooking";
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
+import { readExpeditions } from "../../../service/expeditionService";
+
+
+const conversionRates = [
+  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
+  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
+  // Add more conversion rate data here...
+];
 
 const MainXYZ = () => {
 
@@ -23,6 +31,116 @@ const MainXYZ = () => {
   const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
   const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
+  const shippedCount = 2;
+  const toDeliverCount = 2;
+  const completedCount = 2;
+  const missingCount = 2;
+
+  const [expeditionsData, setExpeditionsData] = useState([]);
+  const [statusCounts, setStatusCounts] = useState({
+    XYZ_PickingUp: 0,
+    XYZ_Completed: 0,
+    PKG_Delivered: 0,
+    PKG_Delivering: 0,
+  });
+
+
+  const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
+  const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
+  
+
+  const fetchExpeditionsData = async () => {
+    try {
+      const res = await readExpeditions();
+      const expeditions = res.data;
+  
+      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+        const expeditionDetails = expedition?.expedition;
+        if (!expeditionDetails || !expedition.batches) {
+          return acc;
+        }
+  
+        const airwayBill = expeditionDetails.AirwayBill;
+        if (!acc[airwayBill]) {
+          acc[airwayBill] = {
+            id: airwayBill,
+            expeditionID: expeditionDetails.ExpeditionID,
+            batchIds: [],
+            flouredDates: [],
+            driedDates: [],
+            weights: [],
+            status: expeditionDetails.Status || "Unknown",
+            checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+              expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+            }`,
+          };
+        }
+  
+        expedition.batches.forEach((batch) => {
+          acc[airwayBill].batchIds.push(batch.BatchID);
+          acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+          acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+          acc[airwayBill].weights.push(batch.Weight);
+        });
+  
+        return acc;
+      }, {});
+  
+      const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+        id: index + 1,
+        shipmentId: expedition.id,
+        expeditionID: expedition.expeditionID,
+        batchId: expedition.batchIds,
+        driedDate: expedition.driedDates,
+        flouredDate: expedition.flouredDates,
+        weight: expedition.weights,
+        status: expedition.status,
+        checkpoint: expedition.checkpoint,
+        receptionNotes: "Null",
+      }));
+  
+      console.log("Resulting Array: ", resArr);
+      setExpeditionsData(resArr);
+  
+      // Calculate status counts
+      const counts = resArr.reduce((acc, expedition) => {
+        if (expedition.status === "XYZ_PickingUp") {
+          acc.XYZ_PickingUp += 1;
+        } else if (expedition.status === "XYZ_Completed") {
+          acc.XYZ_Completed += 1;
+        } else if (expedition.status === "PKG_Delivered") {
+          acc.PKG_Delivered += 1;
+        } else if (expedition.status === "PKG_Delivering") {
+          acc.PKG_Delivering += 1;
+        }
+        return acc;
+      }, {
+        XYZ_PickingUp: 0,
+        XYZ_Completed: 0,
+        PKG_Delivered: 0,
+        PKG_Delivering: 0,
+      });
+  
+      setStatusCounts(counts);
+    } catch (err) {
+      console.error("Error: ", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpeditionsData();
+  }, []);
+
+  
+  const toggleConversionRateDropdown = () => {
+    setConversionRateDropdownVisible(!conversionRateDropdownVisible);
+  };
+
+  const selectConversionRate = (conversionRate) => {
+    setSelectedConversionRate(conversionRate);
+    setConversionRateDropdownVisible(false);
+  };
+
 
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
@@ -56,7 +174,7 @@ const MainXYZ = () => {
         location: item.location,
         currentLoad: item.TotalStock,
         capacity: item.Capacity, // Assuming capacity is provided by the backend
-        lastUpdated: item.lastUpdated || null, // Customize as needed
+        // lastUpdated: item.lastUpdated || null, // Customize as needed
       }));
       console.log('Transformed data:', transformedData);
 
@@ -69,15 +187,14 @@ const MainXYZ = () => {
   };
   
   const chartData = {
-    labels: ['Wet to Dry Leaves', 'Dry to Floured Leaves'],
     datasets: [
       {
-        data: [47.1, 40],
-        backgroundColor: ['#176E76', '#4D946D'],
-        borderWidth: 0,
+        data: [selectedConversionRate.conversionRate, 100 - selectedConversionRate.conversionRate],
+        backgroundColor: ['#176E76', '#E0E0E0'],
       },
     ],
   };
+
 
   const gaugeOptions = {
     cutout: '70%',
@@ -395,36 +512,37 @@ const MainXYZ = () => {
                       </svg>
                       Shipping Information
                     </h3>
+                    
                     <div className="mb-4 border border-gray-300 rounded-lg p-6">
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">Shipped</span>
+                        <span className="font-semibold text-xl">XYZ_PickingUp</span>
                         <div className="bg-[#9AD1B3] text-black rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {shippedCount}
+                          {statusCounts.XYZ_PickingUp}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">To Deliver</span>
+                        <span className="font-semibold text-xl">XYZ_Completed</span>
                         <div className="bg-[#4D946D] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {toDeliverCount}
+                          {statusCounts.XYZ_Completed}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">Completed</span>
+                        <span className="font-semibold text-xl">PKG_Delivered</span>
                         <div className="bg-[#A7AD6F] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {completedCount}
+                            {statusCounts.PKG_Delivered}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 pb-3">
-                        <span className="font-bold text-xl">Missing</span>
+                        <span className="font-semibold text-xl">PKG_Delivering</span>
                         <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {missingCount}
+                            {statusCounts.PKG_Delivering}
                           </span>
                         </div>
                       </div>
@@ -438,32 +556,54 @@ const MainXYZ = () => {
                   </div>
                 </div>
 
+
                 <div className="w-full lg:w-2/3 mt-6">
-                    <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-                            <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
-                            <div className="flex items-center justify-center h-full">
-                            <div className="relative w-48 h-48">
-                                <Doughnut data={chartData} options={gaugeOptions} />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
-                                <span className="text-4xl font-bold">87.1%</span>
-                                <span className="text-[#A7AD6F] text-lg">^12.1%</span>
-                                </div>
-                            </div>
-                            </div>
-                            <div className="flex mt-3 flex-wrap">
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">47.1% Wet to Dry Leaves</span>
-                                </div>
-                                <div className="flex items-center mr-4">
-                                    <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
-                                    <span className="text-gray-700">40% Dry to Floured Leaves</span>
-                                </div>
-                            </div>
-
-                        </div>
+                <div className="relative z-30">
+                  <button
+                    className="flex items-center text-[#A7AD6F] font-semibold"
+                    onClick={toggleConversionRateDropdown}
+                  >
+                    {selectedConversionRate.id}
+                    <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                  </button>
+                  {conversionRateDropdownVisible && (
+                    <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                      {conversionRates.map((conversionRate) => (
+                        <button
+                          key={conversionRate.id}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                          onClick={() => selectConversionRate(conversionRate)}
+                        >
+                          {conversionRate.id} - Conversion Rate
+                        </button>
+                      ))}
                     </div>
+                  )}
+                </div>
 
+      <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+        <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
+        <div className="flex items-center justify-center h-full">
+          <div className="relative w-48 h-48">
+            <Doughnut data={chartData} options={gaugeOptions} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
+              <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
+              <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex mt-3 flex-wrap">
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
+          </div>
+          <div className="flex items-center mr-4">
+            <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+            <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
+          </div>
+        </div>
+      </div>
+    </div>
               </div>
             </div>
           )}

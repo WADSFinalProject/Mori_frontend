@@ -74,3 +74,19 @@ export const deleteCentra = async (centra_id) => {
         throw new Error(error);
     }
 };
+
+export const getLeavesData = async (centralId) => {
+    try {
+        return axios.get(`${host}/secured/leaves`, {
+            params: {
+                centra_id: centralId,
+            },
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error retrieving leaves data: ", error);
+        throw new Error(error);
+    }
+};

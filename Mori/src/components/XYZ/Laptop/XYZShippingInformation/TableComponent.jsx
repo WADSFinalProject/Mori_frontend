@@ -7,7 +7,21 @@ export const TableComponent = ({ data, onDelete}) => {
   const [isNoteModalOpen, setNoteModalOpen] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
   const [editShipmentIndex, setShipmentIndex] = useState(null);
-
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedNotes, setSelectedNotes] = useState("");
+  
+  const handleOpenModal = (notes) => {
+    setSelectedNotes(notes);
+    setModalOpen(true);
+  };
+  
+  // Inside your component render:
+  <NoteModal 
+    isOpen={isModalOpen} 
+    onClose={() => setModalOpen(false)} 
+    receptionNotes={selectedNotes} 
+  />
+  
   const handleConfirmDelete = () => {
     const updatedData = data.filter((_, index) => index !== editShipmentIndex);
     setData(updatedData);
@@ -234,7 +248,7 @@ export const TableComponent = ({ data, onDelete}) => {
                     fill="black"
                   />
                 </svg>
-                Shipment ID
+                Airway Bill
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">

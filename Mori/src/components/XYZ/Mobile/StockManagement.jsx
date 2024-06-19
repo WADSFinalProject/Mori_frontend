@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import bell from "../../../assets/bell.png";
 import hamburg from "../../../assets/hamburg.png";
 import back from "../../../assets/back.png";
@@ -12,6 +12,7 @@ const StockManagement = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
   const navigate = useNavigate();
+  const location2 = useLocation();
 
   const [sort, setSort] = useState("heavy-light");
   const [location, setLocation] = useState("All");
@@ -19,6 +20,17 @@ const StockManagement = () => {
   const [machines, setMachines] = useState([]);
   const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
+  const handleBackNavigation = () => {
+    const currentPath = location2.pathname;
+
+    if (currentPath === '/xyz/m/stockmanagement') {
+      navigate('/xyz/m/home');
+    } else if (currentPath.startsWith('/xyz/m/stockdetail/')) {
+      navigate(-1);
+    }
+  };
+
+  
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
   }, []);
@@ -39,37 +51,46 @@ const StockManagement = () => {
       console.error("Error fetching all warehouses: ", error);
     }
   };
-
-const fetchWarehouseDetails = async (warehouse_id) => {
-  try {
-    const response = await getWarehouseDetails(warehouse_id);
-    const data = response.data;
-    console.log('Raw data from backend:', data);
-
-    // Check if data is an array
-    if (Array.isArray(data)) {
-      // Transform the data if needed
-      const transformedData = data.map(item => ({
-        location: item.location,
-        currentLoad: item.TotalStock,
-        capacity: item.Capacity, // Assuming capacity is provided by the backend
-        lastUpdated: item.lastUpdated || null, // Customize as needed
-      }));
-      console.log('Transformed data:', transformedData);
-
-      setMachines(transformedData); // Update machines with transformed data
-      console.log('Machines state:', machines); // Log machines state to debug
-    } else {
-      console.error('Data is not an array:', data);
-      // Handle case where data is not an array if needed
+  const fetchWarehouseDetails = async (warehouse_id) => {
+    try {
+      const response = await getWarehouseDetails(warehouse_id);
+      const data = response.data;
+      console.log('Raw data from backend:', data);
+  
+      // Function to format the date
+      const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        return new Date(dateString).toLocaleString('en-GB', options); // Adjust locale and options as needed
+      };
+  
+      // Check if data is an array
+      if (Array.isArray(data)) {
+        // Transform the data if needed
+        const transformedData = data.map(item => ({
+          location: item.location,
+          currentLoad: item.TotalStock,
+          capacity: item.Capacity, // Assuming capacity is provided by the backend
+          // lastUpdated: item.lastUpdated ? formatDate(item.lastUpdated) : null, // Customize as needed
+          stock_history: item.stock_history.map(history => ({
+            change: history.change_amount,
+            date: formatDate(history.change_date),
+            type: history.change_amount.startsWith('+') ? 'Income' : 'Usage'
+          }))
+        }));
+        console.log('Transformed data:', transformedData);
+  
+        setMachines(transformedData); // Update machines with transformed data
+        console.log('Machines state:', machines); // Log machines state to debug
+      } else {
+        console.error('Data is not an array:', data);
+        // Handle case where data is not an array if needed
+      }
+    } catch (error) {
+      console.error('Error fetching warehouse details:', error);
+      // Handle error state if needed
     }
-  } catch (error) {
-    console.error('Error fetching warehouse details:', error);
-    // Handle error state if needed
-  }
-};
-
-
+  };
+  
   // const [machines, setMachines] = useState([
   //   {
   //     number: 1,
@@ -264,7 +285,7 @@ const fetchWarehouseDetails = async (warehouse_id) => {
         <div>
           <header className="w-full pt-4 h-16 fixed top-0 left-0 z-50 bg-white">
             <div className="flex flex-row justify-between mx-6 items-center">
-              <button onClick={() => navigate(-1)}>
+            <button onClick={handleBackNavigation}>
                 <img src={back} alt="back" className="w-5 mr-2" />
               </button>
               <div className="font-vietnam text-xl font-bold select-none">

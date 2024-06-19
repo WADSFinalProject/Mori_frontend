@@ -3,14 +3,16 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const addDryingActivity = async (centralID, weight, dryingMachineID) => {
+export const addDryingActivity = async (weight, dryingMachineID, duration) => {
     try {
+        const currentTime = new Date();
         const dryingActivityDetails = {
-            CentralID: centralID,
             Weight: weight,
             DryingMachineID: dryingMachineID,
-            Time: new Date().toISOString(), // Store the current time
+            EndTime: new Date(currentTime.getTime() + duration * 1000).toISOString(), // Calculate EndTime using duration
         };
+
+        console.log("Sending drying activity details:", dryingActivityDetails);
 
         return await axios.post(`${host}/secured/drying_activity/create`, dryingActivityDetails, {
             headers: {
@@ -18,7 +20,7 @@ export const addDryingActivity = async (centralID, weight, dryingMachineID) => {
             },
         });
     } catch (error) {
-        console.log("Error adding drying activity: ", error);
+        console.log("Error adding drying activity: ", error.response?.data || error.message);
         throw new Error(error);
     }
 };
@@ -69,6 +71,21 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
         throw new Error(error);
     }
 };
+
+
+export const getDryingActivity_Bymachine = async (machineID) => {
+    try {
+        return await axios.get(`${host}/secured/drying-activities/machine/${machineID}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log(`Error: `, error);
+        throw new Error(error);
+    }
+};
+
 
 export const deleteDryingActivity = async (dryingID) => {
     try {

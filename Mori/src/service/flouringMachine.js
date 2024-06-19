@@ -1,7 +1,9 @@
 import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
+
+
 
 export const addFlouringMachine = async (centraId, capacity, status, duration) => {
     try {
@@ -53,6 +55,20 @@ export const readFlouringMachines = async (skip = 0, limit = 100) => {
     }
 };
 
+
+export const getFlouringMachines_byCentra = async (centraId) => {
+    try {
+        return axios.get(host + `/flouring_machines/centra/${centraId}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error reading flouring machines: ", error);
+        throw new Error(error);
+    }
+};
+
 export const startFlouringMachine = async (machineId) => {
     try {
         return axios.post(host + `/secured/flouring_machines/${machineId}/start`, {}, {
@@ -65,6 +81,8 @@ export const startFlouringMachine = async (machineId) => {
         throw new Error(error);
     }
 };
+
+
 
 export const stopFlouringMachine = async (machineId) => {
     try {
