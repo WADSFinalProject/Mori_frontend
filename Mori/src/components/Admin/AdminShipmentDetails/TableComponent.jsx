@@ -29,15 +29,16 @@ export const TableComponent = ({ data, onDelete }) => {
     setShipmentToDelete(null);
   };
 
+
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
+      case "XYZ_PickingUp":
         return "#4D946D";
-      case "Completed":
+      case "XYZ_Completed":
         return "#838948";
-      case "Shipped":
+      case "PKG_Delivered":
         return "#9AD1B3";
-      case "Missing":
+      case "PKG_Delivering":
         return "#EBB6B6";
       default:
         return "#bec8fa";
