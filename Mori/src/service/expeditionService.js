@@ -80,11 +80,6 @@ export const readExpeditions_byAWB = async (awb) => {
   }
 };
 
-
-
-
-
-
 export const getExpeditionDetails = async (expedition_id) => {
   try {
     return await axios.get(`${host}/secured/expeditions/${expedition_id}`, {
@@ -177,5 +172,28 @@ export const createCheckpointStatus = async (
   } catch (error) {
     console.error("Error creating checkpoint status: ", error);
     throw new Error(error);
+  }
+};
+
+export const updateWarehouseIDForExpedition = async (
+  airwayBill,
+  warehouseID
+) => {
+  try {
+    const response = await axios.put(
+      `${host}/secured/expedition/warehouse/${airwayBill}`,
+      {
+        warehouse_id: warehouseID,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        `HTTP error! Status: ${error.response.status}, Detail: ${error.response.data.detail}`
+      );
+    } else {
+      throw new Error("Network error! Could not connect to the server.");
+    }
   }
 };

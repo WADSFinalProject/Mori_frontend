@@ -44,8 +44,8 @@ const SchedulePickup = () => {
     event.preventDefault();
     try {
       const pickupData = {
-        warehouseId,
-        pickupTime: time,
+        warehouseId: parseInt(warehouseId),
+        pickupTime: `${time}:00.000Z`, // Append seconds and milliseconds to the time
       };
 
       await createPickupByAWB(awb, pickupData);
