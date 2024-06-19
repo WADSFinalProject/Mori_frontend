@@ -6,6 +6,9 @@ import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
 import { useWindowSize } from 'react-use';
+import axios from 'axios';
+import { host } from "../../../service/config.js";
+import { addDryingActivity } from "../../../service/dryingActivity";
 
 const gaugeOptions = {
   responsive: true,
@@ -24,12 +27,19 @@ const gaugeOptions = {
   events: [],
 };
 
-const formatTime = (time) => {
-  const hours = Math.floor(time / 3600);
-  const minutes = Math.floor((time % 3600) / 60);
-  const seconds = time % 60;
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
+function parseISODuration(duration) {
+  const matches = duration.match(/P(?:(\d+)D)?/);
+  const days = matches[1] ? parseInt(matches[1], 10) : 0;
+  const totalSeconds = days * 24 * 60 * 60;
+  return totalSeconds;
+}
+
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -38,12 +48,11 @@ const formatDate = (dateString) => {
 };
 
 export default function DryingMachine() {
-  const { id } = useParams(); // Extract machine ID from URL
   const location = useLocation();
-  const { capacity, currentLoad } = location.state || {}; // Extract the data passed via Link
+  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {}; // Updated to include centralID
 
-  const [machineData, setMachineData] = useState(null);
-  const [timer, setTimer] = useState(1); // 24 hours in seconds
+  const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration, load });
+  const [timer, setTimer] = useState(parseISODuration(duration));
   const [timerInterval, setTimerInterval] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [buttonText, setButtonText] = useState("Start Process");
@@ -55,29 +64,46 @@ export default function DryingMachine() {
   const [editWeight, setEditWeight] = useState("");
   const { width } = useWindowSize();
   const isMobile = width <= 640;
-  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    // Simulate fetching machine data using the extracted ID
-    const dryingMachines = [
-      { id: 1, status: 'FULL', currentLoad: 24, capacity: 30, lastUpdated: '1 hour ago' },
-      { id: 2, status: 'FULL', currentLoad: 30, capacity: 30, lastUpdated: '2 hours ago' },
-      { id: 3, status: 'EMPTY', currentLoad: 10, capacity: 30, lastUpdated: '30 minutes ago' }
-    ];
+    receiveData();
+  }, [centralID, id, capacity, currentLoad, status, duration, load]);
 
-    const machine = dryingMachines.find(machine => machine.id === parseInt(id));
-    setMachineData(machine);
-  }, [id]);
-
-  const startProcess = () => {
-    if (currentLoad < capacity) {
-      setShowConfirmation(true);
-      return;
-    }
-    startTimer();
+  const receiveData = () => {
+    console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration, load });
+    setMachineData({ centralID, id, capacity, currentLoad, status, duration, load });
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isRunning && timer > 0) {
+        setTimer(prevTimer => prevTimer - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRunning, timer]);
+
+  const startProcess = async () => {
+    const startTime = new Date().toISOString();
+    localStorage.setItem(`dryingStartTime_${id}`, startTime);
+    try {
+      // Correctly use the addDryingActivity function with the load variable
+      await addDryingActivity(load, id, parseISODuration(duration));
+      startTimer();
+    } catch (error) {
+      console.error("Failed to start drying process:", error.message);
+    }
+  };
+
+ 
   const startTimer = () => {
+    const totalSeconds = parseISODuration(duration);
+    setTimer(totalSeconds);
+
     if (!timerInterval) {
       const interval = setInterval(() => {
         setTimer(prevTimer => {
@@ -91,7 +117,7 @@ export default function DryingMachine() {
               number: Math.floor(Math.random() * 10000),
               date: new Date().toLocaleDateString(),
               time: new Date().toLocaleTimeString(),
-              weight: currentLoad
+              weight: load
             });
             return 0;
           }
@@ -103,37 +129,32 @@ export default function DryingMachine() {
     }
   };
 
-  const handleContinueProcess = () => {
-    setShowConfirmation(false);
-    startTimer();
-  };
-
-  const handleCancelProcess = () => {
-    setShowConfirmation(false);
+  const handleFastForward = () => {
+    // Fast forward the timer by 1 hour (3600 seconds)
+    setTimer(prevTimer => Math.max(prevTimer - 3600, 0));
   };
 
   const handleRescale = () => {
     // Logic for rescaling goes here
   };
+
   const handleDateChange = (date) => {
     if (date) {
       setEditDate(date.startDate);
     }
   };
+
   const handleEditClick = () => {
     setEditMode(!editMode);
 
     if (!editMode) {
-      // Entering edit mode, populate edit states with current batch details
       setEditDate(batchDetails?.date || "");
       setEditTime(batchDetails?.time || "");
-      setEditWeight(batchDetails?.weight.toString() || ""); // Ensure it's a string for the input
+      setEditWeight(batchDetails?.weight.toString() || "");
 
-      // Format the time to include AM/PM if not already included
       const currentTime = batchDetails?.time || new Date().toLocaleTimeString();
       const [time, modifier] = currentTime.split(' ');
       if (!modifier) {
-        // Assume AM/PM from the system's locale or default to AM if unavailable
         const systemAmPm = new Date().toLocaleTimeString().split(' ')[1] || 'AM';
         setEditTime(`${time} ${systemAmPm}`);
       } else {
@@ -153,34 +174,29 @@ export default function DryingMachine() {
   };
 
   const handleCancelEdit = () => {
-    // Reset edit fields
     setEditDate(batchDetails?.date || "");
     setEditTime(batchDetails?.time || "");
     setEditWeight(batchDetails?.weight || "");
-
-    // Exit edit mode
     setEditMode(false);
   };
 
   const handleSaveEdit = () => {
-    // Update batch details with edited values
     setBatchDetails({
       ...batchDetails,
       date: editDate,
       time: editTime,
       weight: editWeight
     });
-
-    // Exit edit mode
     setEditMode(false);
   };
 
   let chartColor = '#99D0D580';
-  if (currentLoad === capacity) {
+  if (load === capacity) {
     chartColor = '#0F3F43';
-  } else if (currentLoad > capacity / 2) {
+  } else if (load > capacity / 2) {
     chartColor = '#5D9EA4';
   }
+
 
   return (
     isMobile ? (
@@ -206,7 +222,7 @@ export default function DryingMachine() {
               data={{
                 labels: ['Current Load', 'Capacity'],
                 datasets: [{
-                  data: [currentLoad || 0, capacity - (currentLoad || 0)],
+                  data: [load || 0, capacity - (load || 0)],
                   backgroundColor: [chartColor, '#EFEFEF'],
                   borderWidth: 0
                 }]
@@ -214,7 +230,7 @@ export default function DryingMachine() {
               options={gaugeOptions}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
-              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{currentLoad} kg</span>
+              <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{load} kg</span>
               <span className="font-vietnam font-bold" style={{ fontSize: '12px', lineHeight: '1.2', marginBottom: '-30px' }}>{`/ ${capacity} kg`}</span>
             </div>
           </div>
@@ -241,6 +257,19 @@ export default function DryingMachine() {
           >
             {buttonText}
           </button>
+          {inProgress && (
+            <button
+              className="fast-forward-btn text-white py-1 px-4 ml-4"
+              style={{
+                backgroundColor: "#FF4500",
+                borderRadius: "10px",
+                fontSize: "14px",
+              }}
+              onClick={handleFastForward}
+            >
+              Fast Forward 1 Hour
+            </button>
+          )}
         </div>
 
         <div className="flex justify-center items-center">
@@ -249,7 +278,7 @@ export default function DryingMachine() {
               data={{
                 labels: ['Time Left', ''],
                 datasets: [{
-                  data: [timer, 60 - timer],
+                  data: [timer, parseISODuration(duration) - timer],
                   backgroundColor: ['#4D946D', '#EFEFEF'],
                   borderWidth: 0
                 }]
@@ -265,7 +294,7 @@ export default function DryingMachine() {
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ fontSize: '0' }}>
               <span className="font-vietnam font-bold" style={{ fontSize: '24px', lineHeight: '1.2' }}>{formatTime(timer)}</span>
-              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {batchDetails?.time}</span>
+              <span className="text-sm mt-2" style={{ fontSize: '10px', lineHeight: '1.2' }}>Finished at {new Date(Date.now() + timer * 1000).toLocaleTimeString()}</span>
             </div>
           </div>
         </div>
@@ -378,7 +407,7 @@ export default function DryingMachine() {
             </div>
           </div>
         )}
-
+{/* 
         {showConfirmation && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-4 rounded-lg shadow-lg text-center w-72 mx-auto">
@@ -402,7 +431,7 @@ export default function DryingMachine() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         <footer className="bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
           <p className="font-semibold">@2024 AMIN</p>

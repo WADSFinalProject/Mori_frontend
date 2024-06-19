@@ -80,6 +80,11 @@ export const readExpeditions_byAWB = async (awb) => {
   }
 };
 
+
+
+
+
+
 export const getExpeditionDetails = async (expedition_id) => {
   try {
     return await axios.get(`${host}/secured/expeditions/${expedition_id}`, {

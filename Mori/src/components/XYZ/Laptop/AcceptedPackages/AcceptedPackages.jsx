@@ -1,97 +1,71 @@
 import React, { useState, useEffect } from "react";
-import { TableComponent } from "./TableComponent";
+import { TableComponent } from "./TableComponent"
+import { readExpeditions } from "../../../../service/expeditionService";
 
 const AcceptedPackages = () => {
-  const data = [
-    {
-      id: 1,
-      batchId: "#10201",
-      shipmentId: "100029837238",
-      driedDate: "11/11/24",
-      flouredDate: "11/11/24",
-      weight: "23kg",
-    },
-    {
-      id: 2,
-      batchId: "#10202",
-      shipmentId: "100029837239",
-      driedDate: "11/12/24",
-      flouredDate: "11/12/24",
-      weight: "24kg",
-    },
-    {
-      id: 3,
-      batchId: "#10203",
-      shipmentId: "100029837240",
-      driedDate: "11/13/24",
-      flouredDate: "11/13/24",
-      weight: "25kg",
-    },
-    {
-      id: 4,
-      batchId: "#10204",
-      shipmentId: "100029837241",
-      driedDate: "11/14/24",
-      flouredDate: "11/14/24",
-      weight: "26kg",
-    },
-    {
-      id: 5,
-      batchId: "#10205",
-      shipmentId: "100029837242",
-      driedDate: "11/15/24",
-      flouredDate: "11/15/24",
-      weight: "27kg",
-    },
-    {
-      id: 6,
-      batchId: "#10206",
-      shipmentId: "100029837243",
-      driedDate: "11/16/24",
-      flouredDate: "11/16/24",
-      weight: "28kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-    {
-      id: 7,
-      batchId: "#10207",
-      shipmentId: "100029837244",
-      driedDate: "11/17/24",
-      flouredDate: "11/17/24",
-      weight: "29kg",
-    },
-  ];
+
+
+  useEffect(() => {
+    readExpeditions()
+      .then((res) => {
+        console.log("Fetched Expeditions:", res.data);
+        const expeditions = res.data;
+
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const expeditionDetails = expedition?.expedition;
+
+          if (!expeditionDetails || !expedition.batches) {
+            console.log("Skipping expedition due to missing details or batches:", expedition);
+            return acc; // Skip if essential data is missing
+          }
+
+          const airwayBill = expeditionDetails.AirwayBill;
+
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
+              batchIds: [],
+              flouredDates: [],
+              driedDates: [],
+              weights: [],
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
+            };
+          }
+
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+            acc[airwayBill].weights.push(batch.Weight);
+          });
+
+          return acc;
+        }, {});
+
+        console.log("Grouped Expeditions:", groupedExpeditions);
+
+        const resArr = Object.values(groupedExpeditions)
+          .filter((expedition) => expedition.status === "XYZ_Completed")
+          .flatMap((expedition) => {
+            return expedition.batchIds.map((batchId, index) => ({
+              batchId: batchId,
+              shipmentId: expedition.id,
+              driedDate: expedition.driedDates[index],
+              flouredDate: expedition.flouredDates[index],
+              weight: expedition.weights[index],
+            }));
+          });
+
+        console.log("Resulting Array:", resArr);
+        setSortedData(resArr);
+      })
+      .catch((err) => {
+        console.log("Error:", err);
+      });
+  }, []);
 
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState("new-old");
@@ -116,9 +90,9 @@ const AcceptedPackages = () => {
   };
 
   const handleSearchAndSort = (sortValue = sortKey) => {
-    let filteredData = data.filter(
+    let filteredData = sortedData.filter(
       (row) =>
-        row.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        // row.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         row.shipmentId.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 export const addDryingMachine = async (centraId, capacity, status, duration) => {
     try {
@@ -101,6 +101,20 @@ export const deleteDryingMachine = async (machineId) => {
         });
     } catch (error) {
         console.log("Error deleting drying machine: ", error);
+        throw new Error(error);
+    }
+};
+
+
+export const getDryingMachine_byCentra = async (centraId) => {
+    try {
+        return axios.post(host + `/secured//drying_machines/centra/${centraId}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error getting drying amchine by centra: ", error);
         throw new Error(error);
     }
 };

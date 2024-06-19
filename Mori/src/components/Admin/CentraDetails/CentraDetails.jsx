@@ -2,26 +2,27 @@ import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import {
+  createCentra,
   deleteCentra,
   getAllCentras,
   updateCentraDetails,
 } from "../../../service/centras";
+import { addDryingMachine } from "../../../service/dryingMachine";
+import { addFlouringMachine } from "../../../service/flouringMachine";
 
 const CentraDetails = () => {
   const initialNewLocationState = {
-    location: "",
-    picName: "",
-    email: "",
-    phone: "",
-    dryingMachines: "",
-    flouringMachines: "",
+    id: 0,
+    location: ""
   };
 
   const initialNewMachineState = {
+    centraId: "",
     type: "",
     capacity: "",
     status: "",
     duration: "",
+    machineType: "",
   };
 
   const [data, setData] = useState([]);
@@ -55,7 +56,7 @@ const CentraDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (isAddNewVisible) {
+    if (isAddNewVisible || isEditVisible) {
       setNewLocation((prevState) => ({
         ...prevState,
         [name]: value,
@@ -69,20 +70,17 @@ const CentraDetails = () => {
   };
 
   const addLocation = () => {
-    if (
-      newLocation.location &&
-      newLocation.picName &&
-      newLocation.email &&
-      newLocation.phone &&
-      newLocation.dryingMachines &&
-      newLocation.flouringMachines
-    ) {
-      const newLocationEntry = { ...newLocation };
-
-      setData((prevState) => [...prevState, newLocationEntry]);
-      setAddNewVisible(false);
-      setNewLocation(initialNewLocationState);
-      handleSearchAndSort([...data, newLocationEntry], sortKey);
+    if (newLocation.location) {
+      createCentra(newLocation.location)
+        .then((res) => {
+          console.log("Success create");
+          setAddNewVisible(false);
+          setNewLocation(initialNewLocationState);
+          fetchData();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
       alert("Please fill in all fields");
     }
@@ -90,35 +88,57 @@ const CentraDetails = () => {
 
   const addMachine = () => {
     if (
+      newMachine.centraId &&
       newMachine.type &&
       newMachine.capacity &&
       newMachine.status &&
-      newMachine.duration
+      newMachine.duration &&
+      newMachine.machineType
     ) {
-      setMachines((prevState) => [...prevState, newMachine]);
-      setAddMachineVisible(false);
-      setNewMachine(initialNewMachineState);
+      const { centraId, capacity, status, machineType, duration } = newMachine;
+      if (machineType === "Drying") {
+        addDryingMachine(centraId, capacity, status, duration)
+          .then((res) => {
+            console.log("Success add drying machine");
+            setAddMachineVisible(false);
+            setNewMachine(initialNewMachineState);
+            fetchData();
+          })
+          .catch((err) => {
+            console.error("Error adding drying machine: ", err);
+          });
+      } else if (machineType === "Flouring") {
+        addFlouringMachine(centraId, capacity, status, duration)
+          .then((res) => {
+            console.log("Success add flouring machine");
+            setAddMachineVisible(false);
+            setNewMachine(initialNewMachineState);
+            fetchData();
+          })
+          .catch((err) => {
+            console.error("Error adding flouring machine: ", err);
+          });
+      }
     } else {
       alert("Please fill in all fields");
     }
   };
+  
 
   const handleDeleteClick = (index) => {
     setLocationToDelete(sortedData[index]);
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = (centraId) => {
-    // const updatedData = data.filter((_, index) => index !== editLocationIndex);
-    deleteCentra(centraId)
+  const handleConfirmDelete = () => {
+    deleteCentra(locationToDelete.id)
       .then((res) => {
         console.log("Success : ", res);
-        setData(updatedData);
         setEditVisible(false);
         setNewLocation(initialNewLocationState);
         setEditLocationIndex(null);
-        handleSearchAndSort(updatedData, sortKey);
         setDeleteModalOpen(false);
+        fetchData();
       })
       .catch((err) => {
         alert("Error : ", err);
@@ -126,17 +146,16 @@ const CentraDetails = () => {
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     getAllCentras()
       .then((res) => {
         console.log("Success : ", res);
         const resArr = res.data.map((dt) => ({
           id: dt.CentralID,
-          location: dt.Address,
-          picName: "Nama orang",
-          email: "Nama@gmail.com",
-          phone: "081816032859",
-          dryingMachines: 3,
-          flouringMachines: 1,
+          location: dt.Address
         }));
         setData(resArr);
         handleSearchAndSort(resArr, sortKey); // Update sortedData
@@ -144,7 +163,7 @@ const CentraDetails = () => {
       .catch((err) => {
         console.log("Error : ", err);
       });
-  }, []);
+  };
 
   useEffect(() => {
     handleSearchAndSort(data, sortKey); // Call with current data and sort key
@@ -162,22 +181,14 @@ const CentraDetails = () => {
   };
 
   const handleSearchAndSort = (data, sortValue) => {
-    let filteredData = data.filter(
-      (row) =>
-        row.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.picName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        row.phone.toLowerCase().includes(searchQuery.toLowerCase())
+    let filteredData = data.filter((row) =>
+      row.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortValue === "location-a-z") {
       filteredData.sort((a, b) => a.location.localeCompare(b.location));
     } else if (sortValue === "location-z-a") {
       filteredData.sort((a, b) => b.location.localeCompare(a.location));
-    } else if (sortValue === "picname-a-z") {
-      filteredData.sort((a, b) => a.picName.localeCompare(b.picName));
-    } else if (sortValue === "picname-z-a") {
-      filteredData.sort((a, b) => b.picName.localeCompare(a.picName));
     }
 
     setSortedData(filteredData);
@@ -187,11 +198,7 @@ const CentraDetails = () => {
     const locationToEdit = sortedData[index];
     setCentraToEdit(locationToEdit);
     const originalIndex = data.findIndex(
-      (item) =>
-        item.location === locationToEdit.location &&
-        item.picName === locationToEdit.picName &&
-        item.email === locationToEdit.email &&
-        item.phone === locationToEdit.phone
+      (item) => item.id === locationToEdit.id && item.location === locationToEdit.location
     );
 
     setEditLocationIndex(originalIndex);
@@ -199,13 +206,28 @@ const CentraDetails = () => {
     setAddNewVisible(false);
     setAddMachineVisible(false);
     setNewLocation({
-      location: locationToEdit.location,
-      picName: locationToEdit.picName,
-      email: locationToEdit.email,
-      phone: locationToEdit.phone,
-      dryingMachines: locationToEdit.dryingMachines,
-      flouringMachines: locationToEdit.flouringMachines,
+      id: locationToEdit.id,
+      location: locationToEdit.location
     });
+  };
+
+  const editLocation = () => {
+    if (newLocation.location) {
+      // call update API
+      updateCentraDetails(newLocation.id, newLocation.location)
+        .then((res) => {
+          console.log("Success edit centra");
+          setEditVisible(false);
+          setNewLocation(initialNewLocationState);
+          setEditLocationIndex(null);
+          fetchData();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      alert("Please fill in all fields");
+    }
   };
 
   const handleBackToList = () => {
@@ -264,8 +286,6 @@ const CentraDetails = () => {
               >
                 <option value="location-a-z">Location (A to Z)</option>
                 <option value="location-z-a">Location (Z to A)</option>
-                <option value="picname-a-z">PIC Name (A to Z)</option>
-                <option value="picname-z-a">PIC Name (Z to A)</option>
               </select>
             </div>
             <div className="flex flex-row gap-2">
@@ -318,10 +338,10 @@ const CentraDetails = () => {
         </div>
       ) : (
         <div className="flex flex-col w-full gap-7">
-          {isAddNewVisible && (
+          {(isAddNewVisible || isEditVisible) && (
             <>
               <div className="text-black font-vietnam text-3xl font-extrabold tracking-tight">
-                Add Centra
+                {isEditVisible ? "Edit Centra" : "Add Centra"}
               </div>
               <div className="flex flex-col gap-3">
                 <div className="font-vietnam text-lg font-medium">Location</div>
@@ -334,14 +354,38 @@ const CentraDetails = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <button
-                className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                onClick={addLocation}
-              >
-                <div className="text-white font-vietnam text-base font-medium">
-                  ADD CENTRA
+              <div className="col-span-2 flex justify-between">
+                {isEditVisible && (
+                  <button
+                    type="button"
+                    className="text-white bg-[#852222] rounded py-3 px-6 items-center justify-center w-fit"
+                    onClick={() => handleDeleteClick(editLocationIndex)}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      DELETE
+                    </div>
+                  </button>
+                )}
+                <div>
+                  <button
+                    type="button"
+                    className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
+                    onClick={handleBackToList}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      CANCEL
+                    </div>
+                  </button>
+                  <button
+                    className="bg-[#CD4848] rounded py-3 px-6 items-center justify-center w-fit hover:bg-[#CD4848]/80"
+                    onClick={isEditVisible ? editLocation : addLocation}
+                  >
+                    <div className="text-white font-vietnam text-base font-medium">
+                      {isEditVisible ? 'EDIT CENTRA' : 'ADD CENTRA'}
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
             </>
           )}
           {isAddMachineVisible && (
@@ -351,6 +395,22 @@ const CentraDetails = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between gap-16">
+                  <div className="flex flex-col gap-3 w-full">
+                    <div className="font-vietnam text-lg font-medium">Centra</div>
+                    <select
+                      name="centraId"
+                      value={newMachine.centraId}
+                      onChange={handleInputChange}
+                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                    >
+                      <option value="">Choose Centra</option>
+                      {data.map((centra) => (
+                        <option key={centra.id} value={centra.id}>
+                          {centra.location}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="flex flex-col gap-3 w-full">
                     <div className="font-vietnam text-lg font-medium">Type</div>
                     <input
@@ -362,10 +422,10 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
+                </div>
+                <div className="flex flex-row justify-between gap-16">
                   <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Capacity
-                    </div>
+                    <div className="font-vietnam text-lg font-medium">Capacity</div>
                     <input
                       className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                       id="capacity"
@@ -375,44 +435,67 @@ const CentraDetails = () => {
                       onChange={handleInputChange}
                     />
                   </div>
-                </div>
-                <div className="flex flex-row justify-between gap-16">
                   <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Status
-                    </div>
-                    <input
-                      className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                      id="status"
-                      type="text"
+                    <div className="font-vietnam text-lg font-medium">Status</div>
+                    <select
                       name="status"
                       value={newMachine.status}
                       onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3 w-full">
-                    <div className="font-vietnam text-lg font-medium">
-                      Duration
-                    </div>
-                    <input
                       className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                      id="duration"
-                      type="text"
-                      name="duration"
-                      value={newMachine.duration}
-                      onChange={handleInputChange}
-                    />
+                    >
+                      <option value="">Choose Status</option>
+                      <option value="idle">Idle</option>
+                      <option value="running">Running</option>
+                    </select>
                   </div>
+                </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <div className="font-vietnam text-lg font-medium">Duration</div>
+                  <input
+                    className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                    id="duration"
+                    type="text"
+                    name="duration"
+                    placeholder="HH:MM:SS"
+                    value={newMachine.duration}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <div className="font-vietnam text-lg font-medium">
+                    Machine Type
+                  </div>
+                  <select
+                    name="machineType"
+                    value={newMachine.machineType}
+                    onChange={handleInputChange}
+                    className="bg-transparent text-gray-700 border border-[#00000033] rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                  >
+                    <option value="">Choose Machine Type</option>
+                    <option value="Drying">Drying</option>
+                    <option value="Flouring">Flouring</option>
+                  </select>
                 </div>
               </div>
-              <button
-                className="bg-[#CD4848] rounded py-3 px-6 mt-3 items-center justify-center w-fit hover:bg-[#CD4848]/80"
-                onClick={null}
-              >
-                <div className="text-white font-vietnam text-base font-medium">
-                  ADD MACHINE
-                </div>
-              </button>
+              <div>
+                <button
+                  type="button"
+                  className="text-white bg-gray-500 rounded py-3 px-6 items-center justify-center w-fit mr-2"
+                  onClick={handleBackToList}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    CANCEL
+                  </div>
+                </button>
+                <button
+                  className="bg-[#CD4848] rounded py-3 px-6 mt-3 items-center justify-center w-fit hover:bg-[#CD4848]/80"
+                  onClick={addMachine}
+                >
+                  <div className="text-white font-vietnam text-base font-medium">
+                    ADD MACHINE
+                  </div>
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -420,7 +503,7 @@ const CentraDetails = () => {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => handleConfirmDelete(locationToDelete?.id)}
+        onConfirm={handleConfirmDelete}
         locationName={locationToDelete?.location}
       />
     </div>

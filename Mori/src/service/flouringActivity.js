@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
     try {
@@ -81,6 +81,19 @@ export const deleteFlouringActivity = async (flouringID) => {
         });
     } catch (error) {
         console.log(`Error deleting flouring activity with ID ${flouringID}: `, error);
+        throw new Error(error);
+    }
+};
+
+export const getFlouringActivities_byMachine = async (machine_id) => {
+    try {
+        return await axios.get(`${host}/secured/flouring-activities/machine/${machine_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error fetching flouring activities: ", error);
         throw new Error(error);
     }
 };

@@ -7,7 +7,21 @@ export const TableComponent = ({ data, onDelete}) => {
   const [isNoteModalOpen, setNoteModalOpen] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
   const [editShipmentIndex, setShipmentIndex] = useState(null);
-
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedNotes, setSelectedNotes] = useState("");
+  
+  const handleOpenModal = (notes) => {
+    setSelectedNotes(notes);
+    setModalOpen(true);
+  };
+  
+  // Inside your component render:
+  <NoteModal 
+    isOpen={isModalOpen} 
+    onClose={() => setModalOpen(false)} 
+    receptionNotes={selectedNotes} 
+  />
+  
   const handleConfirmDelete = () => {
     const updatedData = data.filter((_, index) => index !== editShipmentIndex);
     setData(updatedData);
@@ -21,13 +35,13 @@ export const TableComponent = ({ data, onDelete}) => {
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
+      case "XYZ_PickingUp":
         return "#4D946D";
-      case "Completed":
+      case "XYZ_Completed":
         return "#838948";
-      case "Shipped":
+      case "PKG_Delivered":
         return "#9AD1B3";
-      case "Missing":
+      case "PKG_Delivering":
         return "#EBB6B6";
       default:
         return "#bec8fa";
@@ -164,8 +178,8 @@ export const TableComponent = ({ data, onDelete}) => {
         x2="5"
         y2="31"
         stroke="#CD4848"
-        stroke-linecap="round"
-        stroke-dasharray="2 3"
+        strokeLinecap="round"
+        strokeDasharray="2 3"
       />
     </svg>
   );
@@ -234,7 +248,7 @@ export const TableComponent = ({ data, onDelete}) => {
                     fill="black"
                   />
                 </svg>
-                Shipment ID
+                Airway Bill
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">

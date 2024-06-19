@@ -3,7 +3,6 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import back from "../../../assets/back.png";
 import MachineCard from "../MachineCard";
-import point from "../../../assets/point.png";
 
 const StockDetail = () => {
   const { location } = useParams();
@@ -35,66 +34,32 @@ const StockDetail = () => {
             <Link to="/xyz/m/stockmanagement" className="flex items-center">
               <img src={back} alt="back" className="w-5 mr-2" />
             </Link>
-            <span className="font-bold text-xs text-gray-500 mx-auto font-vietnam">
+            <span className="font-bold text-s text-gray-500 mx-auto font-vietnam">
               {location}
             </span>
           </div>
 
           <div className="machine-status my-4 px-4 mt-16">
             {filteredMachines.map((machine, index) => (
-              <div key={machine.number} className="mb-2">
+              <div key={machine.location + index} className="mb-2">
                 <MachineCard machine={machine} extraMarginClass="mb-2" />
               </div>
             ))}
           </div>
 
-          <div className="bg-white py-2 px-4 border-t border-gray-400">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center">
-                <img src={point} alt="Point" className="h-6 mr-3" />
-                <h2 className="font-bold text-lg mr-2">Location</h2>
-              </div>
-              <button
-                className="font-bold"
-                onClick={() =>
-                  copyToClipboard(`
-                  ${filteredMachines[0].details.name}
-                  ${filteredMachines[0].details.phone}
-                  ${filteredMachines[0].details.email}
-                  ${filteredMachines[0].details.address}
-                `)
-                }
-                style={{ color: "#9CA25F" }}
-              >
-                COPY
-              </button>
-            </div>
-            <div className="ml-7 text-gray-500 text-sm">
-              <p>
-                <strong>{filteredMachines[0].details.name}</strong>
-              </p>
-              <p>{filteredMachines[0].details.phone}</p>
-              <p>{filteredMachines[0].details.email}</p>
-              <p>{filteredMachines[0].details.address}</p>
-            </div>
-          </div>
-
           <div className="bg-white py-2 px-4 border-t border-gray-400 mt-2">
             <h2 className="font-bold text-lg mb-2">History</h2>
-            {filteredMachines[0].history
-              .slice(0, showAllHistory ? filteredMachines[0].history.length : 3)
+            {filteredMachines.length > 0 && filteredMachines[0].stock_history
+              .slice(0, showAllHistory ? filteredMachines[0].stock_history.length : 3)
               .map((entry, index) => (
                 <div
                   key={index}
                   className="flex justify-between items-center text-sm text-gray-600 mb-4"
                 >
-                  {" "}
-                  {/* Increased margin bottom to increase gap */}
                   <div>
                     <p className="font-bold">
-                      {entry.type} #{entry.id}
-                    </p>{" "}
-                    {/* Bolded text */}
+                      {entry.type}
+                    </p>
                     <p>{entry.date}</p>
                   </div>
                   <p
@@ -104,7 +69,7 @@ const StockDetail = () => {
                   </p>
                 </div>
               ))}
-            {filteredMachines[0].history.length > 3 && (
+            {filteredMachines.length > 0 && filteredMachines[0].stock_history.length > 3 && (
               <div className="text-center border-t border-gray-400 py-2">
                 <button
                   className="text-xs font-bold text-gray-500"
@@ -114,12 +79,6 @@ const StockDetail = () => {
                 </button>
               </div>
             )}
-            <div className="text-center border-t border-gray-400 py-2">
-              <h2 className="font-bold text-lg">Current Stock</h2>
-              <p className="font-bold text-2xl" style={{ color: "#9CA25F" }}>
-                {filteredMachines[0].currentLoad} kg
-              </p>
-            </div>
           </div>
         </div>
       ) : (

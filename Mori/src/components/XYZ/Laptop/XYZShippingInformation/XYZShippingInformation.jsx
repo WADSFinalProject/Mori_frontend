@@ -1,180 +1,111 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
-import { readExpeditions } from "../../../../service/shipments";
+import { readExpeditions } from "../../../../service/expeditionService";
+import { getPackageReceiptDetails } from "../../../../service/packageReceiptService";
+import { readPickups } from "../../../../service/pickup";
 
 const XYZShippingInformation = () => {
+  const [originalData, setOriginalData] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+  const [filterKey, setFilterKey] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]); // Data to display
+
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    handleSearchAndFilter(searchQuery, filterKey);
+  }, [filterKey, searchQuery, originalData]);
+
+  const fetchData = () => {
     readExpeditions()
       .then((res) => {
-        console.log("Success : ", res);
         const expeditions = res.data;
-
-        // Group batches by expedition ID
         const groupedExpeditions = expeditions.reduce((acc, expedition) => {
-          const id = expedition.Expedition.CentralID.toString();
-          if (!acc[id]) {
-            acc[id] = {
-              id: id,
+          const expeditionDetails = expedition?.expedition;
+          if (!expeditionDetails || !expedition.batches) {
+            return acc;
+          }
+
+          const airwayBill = expeditionDetails.AirwayBill;
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
+              expeditionID: expeditionDetails.ExpeditionID,
               batchIds: [],
               flouredDates: [],
               driedDates: [],
               weights: [],
-              status: expedition.status,
-              checkpoint: `${expedition.Expedition.Status} | ${new Date(expedition.statusdate).toLocaleString()}`,
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
             };
           }
-          acc[id].batchIds.push(expedition.BatchID);
-          acc[id].flouredDates.push(expedition.FlouredDate);
-          acc[id].driedDates.push(expedition.DriedDate);
-          acc[id].weights.push(expedition.Weight);
+
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+            acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+            acc[airwayBill].weights.push(batch.Weight);
+          });
+
           return acc;
         }, {});
 
-        // Convert grouped data object to array
-        const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
-          return {
-            id: index + 1,
-            shipmentId: expedition.id, // Assuming AirwayBill is stored in expedition.id
-            batchId: expedition.batchIds,
-            driedDate: expedition.driedDates,
-            flouredDate: expedition.flouredDates,
-            weight: expedition.weights,
-            status: expedition.status,
-            checkpoint: expedition.checkpoint,
-          };
-        });
+        const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+          id: index + 1,
+          shipmentId: expedition.id,
+          expeditionID: expedition.expeditionID,
+          batchId: expedition.batchIds,
+          driedDate: expedition.driedDates,
+          flouredDate: expedition.flouredDates,
+          weight: expedition.weights,
+          status: expedition.status,
+          checkpoint: expedition.checkpoint,
+          receptionNotes: "Null",
+        }));
 
-        // Set your state with resArr
+        console.log("Resulting Array: ", resArr);
+
+        // Set original data and sorted data state
+        setOriginalData(resArr);
         setSortedData(resArr);
       })
       .catch((err) => {
-        console.log("Error : ", err);
+        console.error("Error: ", err);
       });
-  }, []);
+  };
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     batchId: ["#10202", "#10200"],
-  //     shipmentId: "100029837238",
-  //     driedDate: ["11/11/24", "12/12/24"],
-  //     flouredDate: ["11/11/24", "12/12/24"],
-  //     weight: ["23kg", "24kg"],
-  //     status: "To Deliver",
-  //     checkpoint: "Preparing to Ship | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 2,
-  //     batchId: ["#10202", "#10200"],
-  //     shipmentId: "100029837239",
-  //     driedDate: ["11/11/24", "12/12/24"],
-  //     flouredDate: ["11/11/24", "12/12/24"],
-  //     weight: ["23kg", "24kg"],
-  //     status: "Completed",
-  //     checkpoint: "Arrived at Warehouse | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 3,
-  //     batchId: ["#10202", "#10200"],
-  //     shipmentId: "100029837240",
-  //     driedDate: ["11/11/24", "12/12/24"],
-  //     flouredDate: ["11/11/24", "12/12/24"],
-  //     weight: ["23kg", "24kg"],
-  //     status: "Shipped",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 4,
-  //     batchId: "#10204",
-  //     shipmentId: "100029837241",
-  //     driedDate: "11/14/24",
-  //     flouredDate: "11/14/24",
-  //     weight: "26kg",
-  //     status: "Missing",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 5,
-  //     batchId: "#10205",
-  //     shipmentId: "100029837242",
-  //     driedDate: "11/15/24",
-  //     flouredDate: "11/15/24",
-  //     weight: "27kg",
-  //     status: "To Deliver",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 6,
-  //     batchId: ["#10202", "#10200"],
-  //     shipmentId: "100029837243",
-  //     driedDate: ["11/11/24", "12/12/24"],
-  //     flouredDate: ["11/11/24", "12/12/24"],
-  //     weight: ["23kg", "24kg"],
-  //     status: "Shipped",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 7,
-  //     batchId: "#10207",
-  //     shipmentId: "100029837244",
-  //     driedDate: "11/17/24",
-  //     flouredDate: "11/17/24",
-  //     weight: "29kg",
-  //     status: "Completed",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 8,
-  //     batchId: ["#10202", "#10200", "#10203"],
-  //     shipmentId: "100029837246",
-  //     driedDate: ["11/11/24", "12/12/24", "10/10/24"],
-  //     flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
-  //     weight: ["23kg", "24kg", "30kg"],
-  //     status: "Completed",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 9,
-  //     batchId: "#10207",
-  //     shipmentId: "100029837245",
-  //     driedDate: "11/17/24",
-  //     flouredDate: "11/17/24",
-  //     weight: "29kg",
-  //     status: "Completed",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 10,
-  //     batchId: ["#10202", "#10200", "#10203"],
-  //     shipmentId: "100029837290",
-  //     driedDate: ["11/11/24", "12/12/24", "10/10/24"],
-  //     flouredDate: ["11/11/24", "12/12/24", "10/10/24"],
-  //     weight: ["23kg", "24kg", "30kg"],
-  //     status: "Completed",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  //   {
-  //     id: 11,
-  //     batchId: ["#10202", "#10200"],
-  //     shipmentId: "100029837249",
-  //     driedDate: ["11/11/24", "12/12/24"],
-  //     flouredDate: ["11/11/24", "12/12/24"],
-  //     weight: ["23kg", "24kg"],
-  //     status: "Completed",
-  //     checkpoint: "Arrived to DC | 18-03-2024 08:00 PM",
-  //   },
-  // ];
+  const fetchAndSetReceptionNotes = async (expeditions) => {
+    try {
+      const pickups = await readPickups();
+      console.log("Fetched Pickups: ", pickups.data);
 
-  const [sortedData, setSortedData] = useState([]);
-  const [filterKey, setFilterKey] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+      const updatedExpeditions = await Promise.all(expeditions.map(async (expedition) => {
+        const pickup = pickups.data.find(p => p.expeditionID === expedition.shipmentId);
 
-  useEffect(() => {
-    handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
+        if (pickup) {
+          const receiptDetails = await getPackageReceiptDetails(pickup.id);
+          expedition.receptionNotes = receiptDetails.notes || "No notes available";
+        }
 
-  const handleFilterChange = (filterValue) => {
-    setFilterKey(filterValue);
+        return expedition;
+      }));
+
+      console.log("Updated Expeditions with Reception Notes: ", updatedExpeditions);
+
+      setSortedData(updatedExpeditions);
+    } catch (err) {
+      console.error("Error fetching reception notes: ", err);
+    }
+  };
+
+  const handleFilterChange = (selectedValue) => {
+    setFilterKey(selectedValue);
+    handleSearchAndFilter(searchQuery, selectedValue);
   };
 
   const handleSearchChange = (e) => {
@@ -191,9 +122,9 @@ const XYZShippingInformation = () => {
       filteredData = filteredData.filter((row) => row.status === filterValue);
     }
 
-    setSortedData(filteredData);
+    setFilteredData(filteredData);
   };
-  
+
   return (
     <div className="bg-transparent">
       <div className="flex flex-col w-full gap-5 ">
@@ -234,16 +165,17 @@ const XYZShippingInformation = () => {
               onChange={(e) => handleFilterChange(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="To Deliver">To Deliver</option>
-              <option value="Completed">Completed</option>
-              <option value="Shipped">Shipped</option>
+              <option value="PKG_Delivered">PKG_Delivered</option>
+              <option value="PKG_Delivering">PKG_Delivering</option>
+              <option value="XYZ_PickingUp">XYZ_PickingUp</option>
+              <option value="XYZ_Completed">XYZ_Completed</option>
               <option value="Missing">Missing</option>
             </select>
           </div>
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} />
+          <TableComponent data={filteredData} />
         </div>
       </div>
     </div>

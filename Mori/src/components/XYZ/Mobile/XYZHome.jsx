@@ -2,7 +2,8 @@ import React from "react";
 import { useWindowSize } from "react-use";
 import { Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 
 import moriLogo from "../../../assets/moriWhite.png";
 import bell from "../../../assets/bell.png";
@@ -44,24 +45,70 @@ export default function XYZHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
 
-  const [machinesData, setMachines] = useState([
-    {
-      location: "Kecamatan Semau",
-      status: "FULL",
-      currentLoad: 31.1,
-      capacity: 50,
-      lastUpdated: "1 hour ago",
-    },
-  ]);
+  const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
+  const [machines, setMachines] = useState([]);
+  const [warehouses, setWarehouses] = useState([]); // State to store all warehouse details
 
-  const renderMachines = () => {
-    return machinesData.map((machine, index) => (
+  useEffect(() => {
+    fetchAllWarehouses(); // Fetch all warehouse details on component mount
+  }, []);
+
+  useEffect(() => {
+    if (warehouseId !== null) {
+      fetchWarehouseDetails(warehouseId);
+    }
+  }, [warehouseId]); // Fetch data when warehouseId changes
+
+  const fetchAllWarehouses = async () => {
+    try {
+      const response = await getAllWarehouses();
+      const data = response.data;
+      setWarehouses(data);
+      console.log("All warehouse details:", data); // Log all warehouse details
+    } catch (error) {
+      console.error("Error fetching all warehouses: ", error);
+    }
+  };
+
+  const fetchWarehouseDetails = async (warehouse_id) => {
+    try {
+      const response = await getWarehouseDetails(warehouse_id);
+      const data = response.data;
+      console.log('Raw data from backend:', data);
+
+      // Check if data is an array
+      if (Array.isArray(data)) {
+        // Transform the data if needed
+        const transformedData = data.map(item => ({
+          location: item.location,
+          currentLoad: item.TotalStock,
+          capacity: item.Capacity, // Assuming capacity is provided by the backend
+          lastUpdated: item.lastUpdated || null, // Customize as needed
+        }));
+        console.log('Transformed data:', transformedData);
+
+        setMachines(transformedData); // Update machines with transformed data
+        console.log('Machines state:', machines); // Log machines state to debug
+      } else {
+        console.error('Data is not an array:', data);
+        // Handle case where data is not an array if needed
+      }
+    } catch (error) {
+      console.error('Error fetching warehouse details:', error);
+      // Handle error state if needed
+    }
+  };
+
+  const renderMachine = () => {
+    if (machines.length === 0) return null;
+    const machine = machines[0];
+    return (
       <MachineCard
         key={machine.location}
         machine={machine}
-        extraMarginClass={index === machinesData.length - 1 ? "mb-10" : "mb-4"}
+        extraMarginClass="mb-10"
       />
-    ));
+    );
   };
 
   const MachineCard = ({ machine, extraMarginClass }) => {
@@ -77,7 +124,7 @@ export default function XYZHome() {
 
     return (
       <div
-        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status.toLowerCase()}`}
+        className={`machine-card bg-white p-4 rounded-lg shadow ${extraMarginClass} flex flex-col items-center font-vietnam ${machine.status}`}
         style={{
           width: "auto",
           flexGrow: 1,
@@ -88,7 +135,7 @@ export default function XYZHome() {
       >
         {/* Machine Location Button */}
         <div
-          className="machine-location w-[170px] h-[26px] px-2.5 py-1 bg-black rounded justify-start items-center gap-2 inline-flex text-white text-sm font-medium font-['Be Vietnam Pro']"
+          className="machine-location w-auto h-[26px] px-2.5 py-1 bg-black rounded justify-start items-center gap-2 inline-flex text-white text-sm font-medium font-['Be Vietnam Pro']"
           style={{ position: "absolute", left: "15px", top: "9px" }}
         >
           <span className="text-sm">{region} </span>
@@ -163,7 +210,7 @@ export default function XYZHome() {
             color: "#666666",
           }}
         >
-          <div>Last updated:</div>
+          {/* <div>Last updated:</div> */}
           <div style={{ fontWeight: "bold" }}>{machine.lastUpdated}</div>
         </div>
       </div>
@@ -224,7 +271,7 @@ export default function XYZHome() {
                 <p className="text-3xl text-white font-semibold">John Doe</p>
               </div>
             </div>
-            <div className="mt-auto flex items-center justify-between px-10">
+            {/* <div className="mt-auto flex items-center justify-between px-10">
               <div>
                 <span className="text-white text-sm font-medium font-['Be Vietnam Pro']">
                   Warehouse{" "}
@@ -241,7 +288,7 @@ export default function XYZHome() {
                 </span>
               </div>
               <img src={arrowDown} alt="right arrow" />
-            </div>
+            </div> */}
           </header>
           {/* Current Stock Management */}
           <div className="p-5">
@@ -250,11 +297,12 @@ export default function XYZHome() {
                 Current Stock Management
               </h2>
             </div>
-            <div className="machine-status my-4">{renderMachines()}</div>
+            <div className="machine-status my-4">{renderMachine()}</div>
 
             {/* View all locations */}
             <div className="mt-[-20px]">
-              <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex">
+            <Link to="/xyz/m/stockmanagement">
+              <div className="mb-[10px] w-full h-[38px] px-4 py-2.5 bg-white rounded justify-center items-center gap-2 inline-flex cursor-pointer">
                 <div className="text-black text-sm font-medium font-['Be Vietnam Pro']">
                   View All
                 </div>
@@ -264,7 +312,8 @@ export default function XYZHome() {
                   className="w-[6.69px] h-[11.87px] relative"
                 />
               </div>
-            </div>
+            </Link>
+          </div>
           </div>
           {/* Quick Access */}
           <div className="p-5">
