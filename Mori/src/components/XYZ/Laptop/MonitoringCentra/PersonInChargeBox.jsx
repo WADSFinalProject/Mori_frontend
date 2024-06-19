@@ -51,9 +51,6 @@ const PersonInChargeBox = ({ centraId }) => {
         <div className="text-black text-xs font-normal font-vietnam-pro underline">{personInCharge.email}</div>
       </div>
       <div className="flex-shrink-0 text-right text-black/25 text-sm font-sf-pro">
-        <button className="text-black/25 text-l font-sf-pro focus:outline-none">
-          &gt;
-        </button>
       </div>
     </div>
   );
