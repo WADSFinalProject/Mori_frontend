@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
     try {
