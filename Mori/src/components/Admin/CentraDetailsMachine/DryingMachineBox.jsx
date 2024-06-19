@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { readDryingMachines } from "../../../service/dryingMachine.js";
+import { getDryingMachine_byCentra } from "../../../service/dryingMachine.js";
 
 const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, totalWeight, lastUpdated, duration, currentStatus }) => {
   const totalTime = duration * 60; // duration in minutes, converted to seconds
@@ -78,14 +78,14 @@ const DryingMachineBox = ({ machineNumber, driedDate, startTime, filledWeight, t
   );
 };
 
-const DryingMachineBoxDashboard = () => {
+const DryingMachineBoxDashboard = ({ centraId }) => {
   const [dryingMachines, setDryingMachines] = useState([]);
   const [dryingCapacities, setDryingCapacities] = useState([]);
 
   useEffect(() => {
     const fetchDryingMachines = async () => {
       try {
-        const response = await readDryingMachines();
+        const response = await getDryingMachine_byCentra(centraId); // Use the new function
         console.log("Drying Machines:", response.data);
 
         const machinesWithProperties = response.data.map(machine => ({
@@ -112,8 +112,10 @@ const DryingMachineBoxDashboard = () => {
       }
     };
 
-    fetchDryingMachines();
-  }, []);
+    if (centraId) {
+      fetchDryingMachines();
+    }
+  }, [centraId]); // Depend on centraId to re-fetch when it changes
 
   return (
     <div className="flex flex-wrap gap-11">
