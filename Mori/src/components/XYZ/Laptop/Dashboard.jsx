@@ -13,6 +13,8 @@ import StockBooking from "./StockBooking/StockBooking";
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
+import { readExpeditions } from "../../../service/expeditionService";
+
 
 const conversionRates = [
   { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
@@ -33,10 +35,103 @@ const MainXYZ = () => {
   const toDeliverCount = 2;
   const completedCount = 2;
   const missingCount = 2;
+
+  const [expeditionsData, setExpeditionsData] = useState([]);
+  const [statusCounts, setStatusCounts] = useState({
+    XYZ_PickingUp: 0,
+    XYZ_Completed: 0,
+    PKG_Delivered: 0,
+    PKG_Delivering: 0,
+  });
+
+
   const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
   const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
   
 
+  const fetchExpeditionsData = async () => {
+    try {
+      const res = await readExpeditions();
+      const expeditions = res.data;
+  
+      const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+        const expeditionDetails = expedition?.expedition;
+        if (!expeditionDetails || !expedition.batches) {
+          return acc;
+        }
+  
+        const airwayBill = expeditionDetails.AirwayBill;
+        if (!acc[airwayBill]) {
+          acc[airwayBill] = {
+            id: airwayBill,
+            expeditionID: expeditionDetails.ExpeditionID,
+            batchIds: [],
+            flouredDates: [],
+            driedDates: [],
+            weights: [],
+            status: expeditionDetails.Status || "Unknown",
+            checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+              expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+            }`,
+          };
+        }
+  
+        expedition.batches.forEach((batch) => {
+          acc[airwayBill].batchIds.push(batch.BatchID);
+          acc[airwayBill].flouredDates.push(new Date(batch.FlouredDate).toLocaleDateString());
+          acc[airwayBill].driedDates.push(new Date(batch.DriedDate).toLocaleDateString());
+          acc[airwayBill].weights.push(batch.Weight);
+        });
+  
+        return acc;
+      }, {});
+  
+      const resArr = Object.values(groupedExpeditions).map((expedition, index) => ({
+        id: index + 1,
+        shipmentId: expedition.id,
+        expeditionID: expedition.expeditionID,
+        batchId: expedition.batchIds,
+        driedDate: expedition.driedDates,
+        flouredDate: expedition.flouredDates,
+        weight: expedition.weights,
+        status: expedition.status,
+        checkpoint: expedition.checkpoint,
+        receptionNotes: "Null",
+      }));
+  
+      console.log("Resulting Array: ", resArr);
+      setExpeditionsData(resArr);
+  
+      // Calculate status counts
+      const counts = resArr.reduce((acc, expedition) => {
+        if (expedition.status === "XYZ_PickingUp") {
+          acc.XYZ_PickingUp += 1;
+        } else if (expedition.status === "XYZ_Completed") {
+          acc.XYZ_Completed += 1;
+        } else if (expedition.status === "PKG_Delivered") {
+          acc.PKG_Delivered += 1;
+        } else if (expedition.status === "PKG_Delivering") {
+          acc.PKG_Delivering += 1;
+        }
+        return acc;
+      }, {
+        XYZ_PickingUp: 0,
+        XYZ_Completed: 0,
+        PKG_Delivered: 0,
+        PKG_Delivering: 0,
+      });
+  
+      setStatusCounts(counts);
+    } catch (err) {
+      console.error("Error: ", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpeditionsData();
+  }, []);
+
+  
   const toggleConversionRateDropdown = () => {
     setConversionRateDropdownVisible(!conversionRateDropdownVisible);
   };
@@ -420,34 +515,34 @@ const MainXYZ = () => {
                     
                     <div className="mb-4 border border-gray-300 rounded-lg p-6">
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">XYZ_PickingUp</span>
+                        <span className="font-semibold text-xl">XYZ_PickingUp</span>
                         <div className="bg-[#9AD1B3] text-black rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {shippedCount}
+                          {statusCounts.XYZ_PickingUp}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">XYZ_Completed</span>
+                        <span className="font-semibold text-xl">XYZ_Completed</span>
                         <div className="bg-[#4D946D] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {toDeliverCount}
+                          {statusCounts.XYZ_Completed}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-3">
-                        <span className="font-bold text-xl">PKG_Delivered</span>
+                        <span className="font-semibold text-xl">PKG_Delivered</span>
                         <div className="bg-[#A7AD6F] text-white rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {completedCount}
+                            {statusCounts.PKG_Delivered}
                           </span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center mb-4 pb-3">
-                        <span className="font-bold text-xl">PKG_Delivering</span>
+                        <span className="font-semibold text-xl">PKG_Delivering</span>
                         <div className="bg-[#FDECEC] text-[#D9534F] rounded-lg px-8 py-2">
                           <span className="font-bold text-xl">
-                            {missingCount}
+                            {statusCounts.PKG_Delivering}
                           </span>
                         </div>
                       </div>
