@@ -14,15 +14,13 @@ export const createExpedition = async (
 ) => {
   try {
     const expeditionDetails = {
-      AirwayBill,
+      AirwayBill: AirwayBill,
       EstimatedArrival: estimatedArrival,
-      TotalWeight,
+      TotalWeight: TotalWeight,
       TotalPackages: totalPackages,
       ExpeditionDate: expeditionDate,
       ExpeditionServiceDetails: expeditionServiceDetails,
     };
-
-    console.log("Creating expedition with details: ", expeditionDetails);
 
     const response = await axios.post(
       `${host}/secured/expeditions`,
@@ -34,8 +32,6 @@ export const createExpedition = async (
       }
     );
 
-    console.log("Expedition created, response: ", response.data);
-
     const expeditionId = response.data.expeditionId;
 
     const contentDetails = {
@@ -43,9 +39,7 @@ export const createExpedition = async (
       BatchIDs: batches,
     };
 
-    console.log("Creating expedition content with details: ", contentDetails);
-
-    return axios.post(`${host}/secured/expedition_contents`, contentDetails, {
+    return axios.post(`${host}/secured/expedition_contents/`, contentDetails, {
       headers: {
         "Content-Type": "application/json",
       },
