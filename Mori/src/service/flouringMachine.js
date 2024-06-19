@@ -120,3 +120,21 @@ export const deleteFlouringMachine = async (machineId) => {
 //         throw new Error(error);
 //     }
 // };
+
+export const updateFlouringMachineStatus = async (MachineID, new_status) => {
+    try {
+        return axios.get(host + `/secured/dryingmachine/${MachineID}/status`, {
+            params: {
+                status: new_status
+            },
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error reading drying machines: ", error);
+        throw new Error(error);
+    }
+};
+
+"/flouringmachine/{machine_id}/status"
