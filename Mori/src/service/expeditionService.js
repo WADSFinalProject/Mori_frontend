@@ -44,12 +44,28 @@ export const createExpedition = async (AirwayBill, estimatedArrival, totalPackag
 
 export const readExpeditions = async (skip = 0, limit = 100) => {
     try {
+      return await axios.get(host + "/secured/all_expeditions", {
+        params: {
+          skip: skip,
+          limit: limit,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error reading expeditions: ", error);
+      throw new Error(error);
+    }
+  };
+
+export const readExpeditions_byAWB = async (awb) => {
+    try {
         const params = {
-            skip: skip,
-            limit: limit
+           awb
         };
 
-        return await axios.get(host + "/secured/expeditions", {
+        return await axios.get(host + `/secured/expedition/airwaybill/${awb}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -60,6 +76,11 @@ export const readExpeditions = async (skip = 0, limit = 100) => {
         throw new Error(error);
     }
 };
+
+
+
+
+
 
 export const getExpeditionDetails = async (expedition_id) => {
     try {
@@ -127,4 +148,8 @@ export const deleteExpedition = async (expedition_id) => {
         throw new Error(error);
     }
 };
+
+
+
+
 

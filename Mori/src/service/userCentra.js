@@ -17,6 +17,23 @@ export const getUserCentra = async (skip = 0, limit = 100) => {
     }
 };
 
+// export const getUserCentraEmail = async (skip = 0, limit = 100) => {
+//     try {
+//         const response = await axios.get(`${host}/secured/usercentra/`, {
+//             params: { skip, limit },
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 // Add any additional headers if required (e.g., authorization token)
+//             },
+//         });
+//         return response.data;  // Assuming the response.data is an array of UserCentraWithUser objects
+//     } catch (error) {
+//         console.log("Error getting user centra: ", error);
+//         throw new Error(error);
+//     }
+// };
+
+
 export const getUserCentraById = async (userCentraId) => {
     try {
         return axios.get(`${host}/secured/usercentra/${userCentraId}`, {
@@ -32,11 +49,15 @@ export const getUserCentraById = async (userCentraId) => {
 
 export const getUserCentraByUser = async (userId) => {
     try {
-        return axios.get(`${host}/secured/usercentra/by-user/${userId}`, {
+        const response = await axios.get(`${host}/secured/usercentra/by-user/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
+
+        console.log('API Response:', response.data); // Log the API response to debug
+
+        return response;
     } catch (error) {
         console.log("Error getting user centra by ID: ", error);
         throw new Error(error);

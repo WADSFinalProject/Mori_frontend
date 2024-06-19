@@ -1,84 +1,105 @@
 import React, { useState, useEffect } from "react";
 import { TableComponent } from "./TableComponent";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { readExpeditions } from "../../../service/shipments";
+import { readExpeditions, deleteExpedition } from "../../../service/expeditionService";
 
 const AdminShipmentDetails = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [filterKey, setFilterKey] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [totalShipments, setTotalShipments] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState(null);
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Calculate total shipments count
+    const uniqueShipmentIds = new Set(originalData.map((item) => item.shipmentId));
+    setTotalShipments(uniqueShipmentIds.size);
+  }, [originalData]);
+
+  useEffect(() => {
+    handleSearchAndFilter(searchQuery, filterKey);
+  }, [filterKey, searchQuery]);
+
   const fetchData = () => {
     readExpeditions()
       .then((res) => {
-        // console.log("Success: ", res);
+        console.log("Fetched Expeditions: ", res.data);
         const expeditions = res.data;
-  
-        // Group batches by expedition ID
-        const groupedExpeditions = expeditions.reduce((acc, item) => {
-          const { expedition, batches, checkpoint_status, checkpoint_statusdate } = item;
-          const { ExpeditionID, ExpeditionDate, EstimatedArrival, Status } = expedition;
-          const id = ExpeditionID.toString();
-          if (!acc[id]) {
-            acc[id] = {
-              id: id,
+
+        // Group batches by expedition AirwayBill and fetch additional data
+        const groupedExpeditions = expeditions.reduce((acc, expedition) => {
+          const expeditionDetails = expedition?.expedition;
+
+          if (!expeditionDetails || !expedition.batches) {
+            console.log("Skipping expedition due to missing details or batches: ", expedition);
+            return acc; // Skip if essential data is missing
+          }
+
+          const airwayBill = expeditionDetails.AirwayBill;
+
+          if (!acc[airwayBill]) {
+            acc[airwayBill] = {
+              id: airwayBill,
+              expeditionID: expeditionDetails.ExpeditionID, // Store ExpeditionID for deletion
               batchIds: [],
-              driedDates: [],
               flouredDates: [],
+              driedDates: [],
               weights: [],
-              status: Status,
-              checkpoint: `${checkpoint_status} | ${new Date(checkpoint_statusdate).toLocaleString()}`,
+              status: expeditionDetails.Status || "Unknown",
+              checkpoint: `${expedition.checkpoint_status || "Unknown"} | ${
+                expedition.checkpoint_statusdate ? new Date(expedition.checkpoint_statusdate).toLocaleString() : "Unknown"
+              }`,
             };
           }
-          acc[id].batchIds.push(...batches.map(batch => `#${batch.BatchID}`));
-          acc[id].weights.push(...batches.map(batch => `${batch.Weight}kg`));
-          // Assuming driedDate and flouredDate are part of the expedition object, which are not provided in the example
-          // Replace with actual date fields if available
-          acc[id].driedDates.push(new Date(ExpeditionDate).toLocaleDateString());
-          acc[id].flouredDates.push(new Date(EstimatedArrival).toLocaleDateString());
+
+          expedition.batches.forEach((batch) => {
+            acc[airwayBill].batchIds.push(batch.BatchID);
+            acc[airwayBill].flouredDates.push(batch.FlouredDate);
+            acc[airwayBill].driedDates.push(batch.DriedDate);
+            acc[airwayBill].weights.push(batch.Weight);
+          });
+
           return acc;
         }, {});
-  
+
+        console.log("Grouped Expeditions: ", groupedExpeditions);
+
         // Convert grouped data object to array
         const resArr = Object.values(groupedExpeditions).map((expedition, index) => {
           return {
             id: index + 1,
             shipmentId: expedition.id,
+            expeditionID: expedition.expeditionID, // Include ExpeditionID
             batchId: expedition.batchIds,
             driedDate: expedition.driedDates,
             flouredDate: expedition.flouredDates,
             weight: expedition.weights,
             status: expedition.status,
             checkpoint: expedition.checkpoint,
+            receptionNotes: "Null",
           };
         });
-  
-        // Set your state with resArr
+
+        console.log("Resulting Array: ", resArr);
+
+        // Set original data and sorted data state
+        setOriginalData(resArr);
         setSortedData(resArr);
       })
       .catch((err) => {
         console.log("Error: ", err);
       });
   };
-  
-
-  useEffect(() => {
-    // Calculate total shipments count
-    const uniqueShipmentIds = new Set(sortedData.map((item) => item.shipmentId));
-    setTotalShipments(uniqueShipmentIds.size);
-  }, [sortedData]);
-
-  useEffect(() => {
-    handleSearchAndFilter(searchQuery, filterKey);
-  }, [filterKey, searchQuery]);
 
   const handleFilterChange = (filterValue) => {
     setFilterKey(filterValue);
+    handleSearchAndFilter(searchQuery, filterValue);
   };
 
   const handleSearchChange = (e) => {
@@ -87,7 +108,7 @@ const AdminShipmentDetails = () => {
   };
 
   const handleSearchAndFilter = (searchValue, filterValue) => {
-    let filteredData = sortedData.filter((row) =>
+    let filteredData = originalData.filter((row) =>
       row.shipmentId.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -96,6 +117,30 @@ const AdminShipmentDetails = () => {
     }
 
     setSortedData(filteredData);
+  };
+
+  const openDeleteModal = (expeditionID) => {
+    setShipmentToDelete(expeditionID);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShipmentToDelete(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (shipmentToDelete) {
+      deleteExpedition(shipmentToDelete)
+        .then((res) => {
+          console.log("Deleted expedition: ", res);
+          setIsDeleteModalOpen(false);
+          fetchData(); // Refresh the data after deletion
+        })
+        .catch((err) => {
+          console.error("Error deleting expedition: ", err);
+        });
+    }
   };
 
   return (
@@ -147,18 +192,28 @@ const AdminShipmentDetails = () => {
               onChange={(e) => handleFilterChange(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="To Deliver">To Deliver</option>
-              <option value="Completed">Completed</option>
-              <option value="Shipped">Shipped</option>
+              <option value="PKG_Delivered">PKG_Delivered</option>
+              <option value="PKG_Delivering">PKG_Delivering</option>
+              <option value="XYZ_PickingUp">XYZ_PickingUp</option>
+              <option value="XYZ_Completed">XYZ_Completed</option>
               <option value="Missing">Missing</option>
             </select>
           </div>
         </div>
 
         <div className="overflow-hidden">
-          <TableComponent data={sortedData} onDelete={fetchData}/>
+          <TableComponent
+            data={sortedData}
+            onDelete={openDeleteModal}
+          />
         </div>
       </div>
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        shipmentId={shipmentToDelete}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NoteModal = ({ isOpen, onClose, onConfirm, shipmentId }) => {
+const NoteModal = ({ isOpen, onClose, receptionNotes }) => {
   if (!isOpen) return null;
 
   return (
@@ -8,6 +8,9 @@ const NoteModal = ({ isOpen, onClose, onConfirm, shipmentId }) => {
       <div className="fixed inset-0 bg-black opacity-40"></div>
       <div className="bg-white p-6 rounded-lg z-50">
         <h2 className="text-lg font-bold">Reception Notes</h2>
+        <div className="mt-4">
+          <p>{receptionNotes}</p>
+        </div>
         <div className="mt-4 flex justify-end">
           <button
             className="px-4 py-2 bg-gray-500 text-white rounded-lg mr-2"

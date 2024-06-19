@@ -171,8 +171,8 @@ export const TableComponent = ({ data, onDelete }) => {
         x2="5"
         y2="31"
         stroke="#A7AD6F"
-        stroke-linecap="round"
-        stroke-dasharray="2 3"
+        strokeLinecap="round"
+        strokeDasharray="2 3"
       />
     </svg>
   );
@@ -243,7 +243,7 @@ export const TableComponent = ({ data, onDelete }) => {
                     fill="black"
                   />
                 </svg>
-                Shipment ID
+                Airway Bill
               </div>
             </th>
             <th className="text-base font-medium text-left border-b-2 py-3">

@@ -12,6 +12,9 @@ const ArrivalConfirmation = () => {
     { id: "Batch #3", weight: "" }
   ]);
 
+  const [guardOnDuty, setGuardOnDuty] = useState("");
+  const [notes, setNotes] = useState("");
+
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const getTotalWeight = () => {
@@ -95,6 +98,34 @@ const ArrivalConfirmation = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="w-full flex flex-col mt-4">
+                <div className="text-black text-sm font-bold font-['Be Vietnam Pro']">
+                  Guard On Duty
+                </div>
+                <div className="w-full relative flex">
+                  <input
+                    placeholder="Enter guard's name..."
+                    className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none pr-16"
+                    value={guardOnDuty}
+                    onChange={(e) => setGuardOnDuty(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col mt-4">
+                <div className="text-black text-sm font-bold font-['Be Vietnam Pro']">
+                  Notes
+                </div>
+                <div className="w-full relative flex">
+                  <textarea
+                    placeholder="Enter notes here..."
+                    className="w-full py-3 px-4 bg-[#efefef] border-none rounded ring-0 ring-inset focus:ring-1 focus:ring-inset focus:ring-gray-400 focus:border-none pr-16"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
               </div>
 
               <hr className="w-full border-gray-300 mt-5" />
