@@ -4,31 +4,34 @@ import { api } from '../contexts/api';
 
 
 export const createBatch = async (
-  description,
-  dryingID,
-  flouringID,
-  driedDate,
-  flouredDate
+  centraID,
+  driedID,
+  weight,
+  flouredDate,
+  shipped
 ) => {
   try {
     const batchDetails = {
-      Description: description,
-      DryingID: dryingID,
-      FlouringID: flouringID,
-      DriedDate: driedDate,
+      CentraID: centraID,
+      DriedID: driedID,
+      Weight: weight,
       FlouredDate: flouredDate,
+      Shipped: shipped,
     };
 
-    return api.post( "/secured/batches", batchDetails, {
+    const response = await axios.post(host + "/secured/batches", batchDetails, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    return response.data;
   } catch (error) {
     console.log("Error creating batch: ", error);
     throw new Error(error);
   }
 };
+
 
 export const readBatches = async (skip = 0, limit = 100) => {
   try {
