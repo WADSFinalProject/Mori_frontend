@@ -72,6 +72,21 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
     }
 };
 
+
+export const getDryingActivity_Bymachine = async (machineID) => {
+    try {
+        return await api.delete(`${host}/secured/drying-activities/machine/${machineID}`, machineID, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log(`Error: `, error);
+        throw new Error(error);
+    }
+};
+
+
 export const deleteDryingActivity = async (dryingID) => {
     try {
         return await axios.delete(`${host}/secured/drying-activities/${dryingID}`, {
