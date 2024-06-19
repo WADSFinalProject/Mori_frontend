@@ -3,18 +3,9 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, endTime, driedDate, inUse) => {
+export const addFlouringActivity = async (payload) => {
     try {
-        const flouringActivityDetails = {
-            CentralID: centralID,
-            Weight: weight,
-            FlouringMachineID: flouringMachineID,
-            EndTime: endTime,
-            DriedDate: driedDate,
-            InUse: inUse
-        };
-
-        return await axios.post(`${host}/secured/flouring_activity/create`, flouringActivityDetails, {
+        return await axios.post(`${host}/secured/flouring_activity/create`, payload, {
             headers: {
                 "Content-Type": "application/json",
             },

@@ -424,8 +424,8 @@ export default function DryingMachine() {
         {timer === 0 && batchDetails && (
           <div className="bg-white p-4 mt-2" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             <div style={{ textAlign: 'left', width: '100%' }}>
-              <p className="text-xs mb-1">Date</p>
-              {editMode ? (
+              {/* <p className="text-xs mb-1">Date</p> */}
+              {/* {editMode ? (
                 <DatePicker
                   useRange={false}
                   asSingle={true}
@@ -437,10 +437,10 @@ export default function DryingMachine() {
                 />
               ) : (
                 <p className="font-bold text-sm mb-2">{formatDate(batchDetails?.date)}</p>
-              )}
+              )} */}
 
-              <p className="text-xs mb-1">Time</p>
-              {editMode ? (
+              {/* <p className="text-xs mb-1">Time</p> */}
+              {/* {editMode ? (
                 <div className="relative max-w-sm flex items-center">
                   <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
                     <select
@@ -477,7 +477,7 @@ export default function DryingMachine() {
                 </div>
               ) : (
                 <p className="font-bold text-sm mb-2">{formatTimeWithoutSeconds(batchDetails?.time)}</p>
-              )}
+              )} */}
 
               <p className="text-xs mb-1">Weight</p>
               {editMode ? (
