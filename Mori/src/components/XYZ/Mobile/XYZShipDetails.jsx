@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  readExpeditions_byAWB,
-  updateExpeditionStatus,
-  createCheckpointStatus,
-} from "../../../service/expeditionService";
+import { readExpeditions_byAWB } from "../../../service/expeditionService";
 
 const XYZShipDetails = () => {
   const { awb } = useParams();
@@ -151,30 +147,8 @@ const XYZShipDetails = () => {
   const isConfirmArrivalDisabled =
     shipmentDetails?.expedition.Status !== "XYZ_PickingUp";
 
-  const getCurrentWITATime = () => {
-    const now = new Date();
-    now.setUTCHours(now.getUTCHours() + 8); // Add 8 hours to the current UTC time
-    return now.toISOString();
-  };
-
-  const handleConfirmArrival = async () => {
-    try {
-      await updateExpeditionStatus(awb, "XYZ_Completed");
-      await createCheckpointStatus(
-        awb,
-        "Received by XYZ",
-        getCurrentWITATime()
-      );
-      setShipmentDetails({
-        ...shipmentDetails,
-        expedition: {
-          ...shipmentDetails.expedition,
-          Status: "XYZ_Completed",
-        },
-      });
-    } catch (error) {
-      console.error("Error confirming arrival: ", error);
-    }
+  const handleConfirmArrival = () => {
+    navigate(`/xyz/m/arrivalconfirmation/${awb}`);
   };
 
   return (

@@ -99,7 +99,7 @@ function App() {
         <Route path="/xyz/m/notification" element={<XYZNotif />} />
         <Route path="/xyz/m/navigation" element={<XYZNavigation />} />
         <Route
-          path="/xyz/m/arrivalconfirmation"
+          path="/xyz/m/arrivalconfirmation/:awb"
           element={<ArrivalConfirmation />}
         />
         <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />

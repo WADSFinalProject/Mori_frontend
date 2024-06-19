@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import scale from "../../../assets/scale.png";
 import { createPackageReceipt } from "../../../service/packageReceiptService";
 import { readExpeditions } from "../../../service/expeditionService";
@@ -8,7 +8,8 @@ import { readExpeditions } from "../../../service/expeditionService";
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 1024;
-  const navigate = useNavigate(); // Use navigate hook
+  const navigate = useNavigate();
+  const { awb } = useParams(); // Extract awb from the URL
 
   const [batches, setBatches] = useState([
     { id: "Batch #1", weight: "" },
@@ -100,7 +101,10 @@ const ArrivalConfirmation = () => {
         <div className="max-w-[640px] relative bg-slate-50 h-screen overflow-hidden text-left text-base text-zinc-500 font-vietnam ml-auto mr-auto flex flex-col">
           <header className="w-full mt-6 flex flex-col items-center justify-between text-right text-xl flex-grow-0">
             <div className="w-full flex flex-row">
-              <button className="hover:cursor-pointer" onClick={null}>
+              <button
+                className="hover:cursor-pointer"
+                onClick={() => navigate(-1)}
+              >
                 <svg
                   className="ml-5"
                   width="24"
