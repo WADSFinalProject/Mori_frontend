@@ -6,7 +6,7 @@ let isInitialized = false;
 
 export const setupInterceptors = (accessToken, setToken) => {
   api = axios.create({
-    baseURL: 'your-api-base-url', // Replace with your API base URL
+    baseURL: "http://127.0.0.1:8000", // Replace with your API base URL
     withCredentials: true,
   });
 
