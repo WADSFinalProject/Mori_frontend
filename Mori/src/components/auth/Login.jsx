@@ -6,7 +6,13 @@ import ArrowRight from '../../assets/LOGIN/ArrowRight.png';
 import showpass from '../../assets/LOGIN/showpass.png';
 import hidepass from '../../assets/LOGIN/hidepass.png';
 import { ResetPassword, loginUser, resendCode, resetPasswordOTP, resetPasswordVerification, verifyUser } from '../../service/auth';
-import Cookies from 'universal-cookie';
+
+import { jwtDecode } from 'jwt-decode'; 
+
+import { useAuth } from '../../contexts/authContext';
+import { useNavigate } from 'react-router-dom';
+
+import { useCheckMobileScreen } from '../../contexts/utils';
 
 const Login = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -35,7 +41,8 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
   const [showLoading, setShowLoading] = useState(false); // New state for loading screen
 
-  const cookies = new Cookies();
+  const { accessToken, saveAccessToken } = useAuth();
+  const navigate = useNavigate()
 
   const LoadingScreen = () => (
     <div className="text-center">
@@ -132,30 +139,48 @@ const Login = () => {
         setShowLoading(false);
       })
   };
-  
-  const handleLoginVerificationSubmit = () => {
+
+const isMobile = useCheckMobileScreen()
+const handleLoginVerificationSubmit = () => {
     verifyUser(loginCredentials.email, verificationCode.join(''))
-      .then(res => {
-        console.log("Login Verification Code Submitted:", verificationCode.join(""));
-        alert('Login verified successfully!');
+        .then(res => {
+            console.log("Login Verification Code Submitted:", verificationCode.join(""));
+            alert('Login verified successfully!');
+            
+            const accessToken = res.data.access_token; // Ensure you're correctly accessing the token
+            saveAccessToken(accessToken); // Save the token using the context function
+            const role = jwtDecode(accessToken).role; // Decode the token to get the role
+            console.log(role);
 
-        cookies.set('access_token', res.data.access_token, { path: '/' })
+            // Role-based redirection logic
+            if (role === "Centra") {
+                navigate("/centra/home");
+            } else if (role === "Guard") {
+                navigate("/harbor/home");
+            } else if (role === "xyz" && isMobile) {
+                navigate("/xyz/m/home");
+            } else if (role === "xyz" && !isMobile) {
+                navigate("/xyz/d/xyz-dashboard");
+            } else if (role === "Admin") {
+                navigate("/admin/admin-dashboard");
+            }
 
-        setShowCodeEntry(false);
-        setIsLoggedIn(false);
-      }).catch(err => {
-        console.log("Incorrect Login Verification Code");
-        setInvalidCode(true); // Set invalid code message to be visible
-        for (let i = 0; i < verificationCode.length; i++) {
-          const inputBox = document.getElementById(`code-${i}`);
-          if (inputBox) {
-            inputBox.style.borderColor = '#902E2E';
-            inputBox.style.color = '#902E2E';
-          }
-        }
-      })
-  };
-  
+            setShowCodeEntry(false);
+            setIsLoggedIn(false);
+        })
+        .catch(err => {
+            console.log("Incorrect Login Verification Code");
+            setInvalidCode(true); // Set invalid code message to be visible
+            verificationCode.forEach((_, index) => {
+                const inputBox = document.getElementById(`code-${index}`);
+                if (inputBox) {
+                    inputBox.style.borderColor = '#902E2E';
+                    inputBox.style.color = '#902E2E';
+                }
+            });
+        });
+};
+
   const handleForgotPassword = () => {
     setShowVerificationForm(true);
     setInvalidCode(false); // Reset the invalid code state
@@ -329,6 +354,7 @@ const Login = () => {
                           placeholder="Enter Email"
                           type="email"
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="email"
                         />
                       </div>
                       <button
@@ -355,6 +381,7 @@ const Login = () => {
                           onKeyDown={(e) => handleKeyDown(e, index)}
                           className="w-10 h-10 text-lg text-center border-2 border-gray-300"
                           autoFocus={index === 0}
+                          autoComplete="one-time-code"
                         />
                       ))}
                     </div>
@@ -397,6 +424,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
@@ -424,6 +452,7 @@ const Login = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
@@ -460,6 +489,7 @@ const Login = () => {
                           placeholder="Enter Email"
                           type="email"
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="email"
                         />
                       </div>
                       <div>
@@ -472,6 +502,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-base py-1 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                            autoComplete="current-password"
                           />
                           <button 
                             type="button"
@@ -547,6 +578,7 @@ const Login = () => {
                         placeholder="Enter Email"
                         type="email"
                         className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full lg:w-96 font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                        autoComplete="email"
                       />
                     </div>
                     <button
@@ -577,6 +609,7 @@ const Login = () => {
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         className="w-12 h-12 text-xl text-center border-2 border-gray-300"
                         autoFocus={index === 0}
+                        autoComplete="one-time-code"
                       />
                     ))}
                   </div>
@@ -624,6 +657,7 @@ const Login = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
@@ -651,6 +685,7 @@ const Login = () => {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
@@ -691,6 +726,7 @@ const Login = () => {
                         placeholder="Enter Email"
                         type="email"
                         className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full lg:w-96 font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                        autoComplete="email"
                       />
                     </div>
                     <div>
@@ -703,6 +739,7 @@ const Login = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="bg-transparent border-0 border-b-2 border-zinc-300 outline-none w-full font-vietnam font-medium text-lg py-2 pl-0 text-gray-800 placeholder-zinc-300 focus:ring-transparent focus:border-zinc-500"
+                          autoComplete="current-password"
                         />
                         <button 
                           type="button"

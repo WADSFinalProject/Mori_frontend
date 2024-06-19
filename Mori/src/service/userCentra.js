@@ -1,11 +1,12 @@
-import axios from 'axios';
-import { host } from './config';
 
-axios.defaults.withCredentials = true;
+import { api } from '../contexts/api';
+
+
+
 
 export const getUserCentra = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(`${host}/secured/usercentra/`, {
+        return api.get(`/secured/usercentra/`, {
             params: { skip, limit },
             headers: {
                 "Content-Type": "application/json",
@@ -19,7 +20,7 @@ export const getUserCentra = async (skip = 0, limit = 100) => {
 
 // export const getUserCentraEmail = async (skip = 0, limit = 100) => {
 //     try {
-//         const response = await axios.get(`${host}/secured/usercentra/`, {
+//         const response = await api.get(`/secured/usercentra/`, {
 //             params: { skip, limit },
 //             headers: {
 //                 "Content-Type": "application/json",
@@ -36,7 +37,7 @@ export const getUserCentra = async (skip = 0, limit = 100) => {
 
 export const getUserCentraById = async (userCentraId) => {
     try {
-        return axios.get(`${host}/secured/usercentra/${userCentraId}`, {
+        return api.get(`/secured/usercentra/${userCentraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -49,7 +50,7 @@ export const getUserCentraById = async (userCentraId) => {
 
 export const getUserCentraByUser = async (userId) => {
     try {
-        const response = await axios.get(`${host}/secured/usercentra/by-user/${userId}`, {
+        const response = await api.get(`/secured/usercentra/by-user/${userId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -72,7 +73,7 @@ export const addUserCentra = async (centraID, userID, active) => {
             Active: active,
         };
 
-        return axios.post(`${host}/secured/usercentra/`, userCentraDetails, {
+        return api.post(`/secured/usercentra/`, userCentraDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -91,7 +92,7 @@ export const updateUserCentra = async (userCentraId, centraID, userID, active) =
             Active: active,
         };
 
-        return axios.patch(`${host}/secured/usercentra/${userCentraId}`, userCentraDetails, {
+        return api.patch(`/secured/usercentra/${userCentraId}`, userCentraDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -104,7 +105,7 @@ export const updateUserCentra = async (userCentraId, centraID, userID, active) =
 
 export const deleteUserCentra = async (userCentraId) => {
     try {
-        return axios.delete(`${host}/secured/usercentra/${userCentraId}`, {
+        return api.delete(`/secured/usercentra/${userCentraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },

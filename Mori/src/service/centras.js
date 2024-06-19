@@ -1,15 +1,11 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { api } from '../contexts/api';
+
+
 
 export const getAllCentras = async () => {
     try {
-        return axios.get(host + "/secured/centras", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.get( "/secured/centras", );
     } catch (error) {
         console.log("Error getting centras: ", error);
         throw new Error(error);
@@ -22,11 +18,7 @@ export const createCentra = async (address) => {
             Address: address,
         };
 
-        return axios.post(host + "/secured/centras", centraDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return api.post( "/secured/centras", centraDetails, );
     } catch (error) {
         console.log("Error creating centra: ", error);
         throw new Error(error);
@@ -35,11 +27,7 @@ export const createCentra = async (address) => {
 
 export const getCentraDetails = async (centra_id) => {
     try {
-        return await axios.get(host + `/secured/centras/${centra_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.get( `/secured/centras/${centra_id}`, );
     } catch (error) {
         console.error("Error getting centra details: ", error);
         throw new Error(error);
@@ -52,11 +40,7 @@ export const updateCentraDetails = async (centra_id, address) => {
             Address: address,
         };
 
-        return await axios.put(host + `/secured/centras/${centra_id}`, centraDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.put( `/secured/centras/${centra_id}`, centraDetails, );
     } catch (error) {
         console.error("Error updating centra details: ", error);
         throw new Error(error);
@@ -65,11 +49,7 @@ export const updateCentraDetails = async (centra_id, address) => {
 
 export const deleteCentra = async (centra_id) => {
     try {
-        return await axios.delete(host + `/secured/centras/${centra_id}`, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.delete( `/secured/centras/${centra_id}`, );
     } catch (error) {
         console.error("Error deleting centra: ", error);
         throw new Error(error);
@@ -78,7 +58,7 @@ export const deleteCentra = async (centra_id) => {
 
 export const getLeavesData = async (centralId) => {
     try {
-        return axios.get(`${host}/secured/leaves`, {
+        return api.get(`/secured/leaves`, {
             params: {
                 centra_id: centralId,
             },

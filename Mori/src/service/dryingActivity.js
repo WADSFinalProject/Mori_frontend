@@ -1,7 +1,9 @@
-import axios from 'axios';
-import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+import { api } from '../contexts/api';
+
+
+
+
 
 export const addDryingActivity = async (weight, dryingMachineID, duration) => {
     try {
@@ -15,7 +17,7 @@ export const addDryingActivity = async (weight, dryingMachineID, duration) => {
 
         console.log("Sending drying activity details:", dryingActivityDetails);
 
-        return await axios.post(`${host}/secured/drying_activity/create`, dryingActivityDetails, {
+        return await api.post(`/secured/drying_activity/create`, dryingActivityDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -29,7 +31,7 @@ export const addDryingActivity = async (weight, dryingMachineID, duration) => {
 
 export const getAllDryingActivities = async (skip = 0, limit = 100) => {
     try {
-        return await axios.get(`${host}/secured/drying_activity/`, {
+        return await api.get(`/secured/drying_activity/`, {
             params: { skip, limit },
             headers: {
                 "Content-Type": "application/json",
@@ -43,7 +45,7 @@ export const getAllDryingActivities = async (skip = 0, limit = 100) => {
 
 export const getDryingActivityById = async (dryingID) => {
     try {
-        return await axios.get(`${host}/secured/drying-activities/${dryingID}`, {
+        return await api.get(`/secured/drying-activities/${dryingID}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -63,7 +65,7 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
             Time: time,
         };
 
-        return await axios.put(`${host}/secured/drying-activities/${dryingID}`, dryingActivityDetails, {
+        return await api.put(`/secured/drying-activities/${dryingID}`, dryingActivityDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -76,7 +78,7 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
 
 export const getDryingActivity_Bymachine = async (machineID) => {
     try {
-        return await axios.get(`${host}/secured/drying-activities/machine/${machineID}`, {
+        return await api.get(`/secured/drying-activities/machine/${machineID}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -89,7 +91,7 @@ export const getDryingActivity_Bymachine = async (machineID) => {
 
 export const deleteDryingActivity = async (dryingID) => {
     try {
-        return await axios.delete(`${host}/secured/drying-activities/${dryingID}`, {
+        return await api.delete(`/secured/drying-activities/${dryingID}`, {
             headers: {
                 "Content-Type": "application/json",
             },

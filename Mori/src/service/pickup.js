@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+import { api } from '../contexts/api';
+
+
+
 
 export const createPickup = async (xyzID, expeditionID, warehouseID, pickupTime) => {
     try {
@@ -12,7 +13,7 @@ export const createPickup = async (xyzID, expeditionID, warehouseID, pickupTime)
             pickup_time: pickupTime, // Ensure this matches the expected format
         };
 
-        return axios.post(host + "/secured/pickup/", pickupDetails, {
+        return api.post( "/secured/pickup/", pickupDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +26,7 @@ export const createPickup = async (xyzID, expeditionID, warehouseID, pickupTime)
 
 export const readPickup = async (pickupId) => {
     try {
-        return axios.get(host + `/secured/pickup/${pickupId}`, {
+        return api.get( `/secured/pickup/${pickupId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -38,7 +39,7 @@ export const readPickup = async (pickupId) => {
 
 export const readPickups = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/pickup/", {
+        return api.get( "/secured/pickup/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -62,7 +63,7 @@ export const updatePickup = async (pickupId, xyzID, expeditionID, warehouseID, p
             pickup_time: pickupTime, // Ensure this matches the expected format
         };
 
-        return axios.put(host + `/secured/pickup/${pickupId}`, pickupDetails, {
+        return api.put( `/secured/pickup/${pickupId}`, pickupDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -75,7 +76,7 @@ export const updatePickup = async (pickupId, xyzID, expeditionID, warehouseID, p
 
 export const deletePickup = async (pickupId) => {
     try {
-        return axios.delete(host + `/secured/pickup/${pickupId}`, {
+        return api.delete( `/secured/pickup/${pickupId}`, {
             headers: {
                 "Content-Type": "application/json",
             },

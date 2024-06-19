@@ -1,7 +1,7 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { api } from '../contexts/api';
+
+
 
 export const addFlouringMachine = async (centraId, capacity, status, duration) => {
     try {
@@ -12,7 +12,7 @@ export const addFlouringMachine = async (centraId, capacity, status, duration) =
             Duration: duration, // Ensure this matches the expected format
         };
 
-        return axios.post(host + "/secured/flouring-machine/create/", machineDetails, {
+        return api.post( "/secured/flouring-machine/create/", machineDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +25,7 @@ export const addFlouringMachine = async (centraId, capacity, status, duration) =
 
 export const readFlouringMachineStatus = async (machineId) => {
     try {
-        return axios.get(host + `/secured/flouring_machines/${machineId}/status`, {
+        return api.get( `/secured/flouring_machines/${machineId}/status`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -38,7 +38,7 @@ export const readFlouringMachineStatus = async (machineId) => {
 
 export const readFlouringMachines = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/flouring_machines/", {
+        return api.get( "/secured/flouring_machines/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -69,7 +69,7 @@ export const getFlouringMachines_byCentra = async (centraId) => {
 
 export const startFlouringMachine = async (machineId) => {
     try {
-        return axios.post(host + `/secured/flouring_machines/${machineId}/start`, {}, {
+        return api.post( `/secured/flouring_machines/${machineId}/start`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -84,7 +84,7 @@ export const startFlouringMachine = async (machineId) => {
 
 export const stopFlouringMachine = async (machineId) => {
     try {
-        return axios.post(host + `/secured/flouring_machines/${machineId}/stop`, {}, {
+        return api.post( `/secured/flouring_machines/${machineId}/stop`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -97,7 +97,7 @@ export const stopFlouringMachine = async (machineId) => {
 
 export const deleteFlouringMachine = async (machineId) => {
     try {
-        return axios.delete(host + `/secured/flouring-machine/${machineId}`, {
+        return api.delete( `/secured/flouring-machine/${machineId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
