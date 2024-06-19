@@ -3,14 +3,15 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
+export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, endTime, driedDate, inUse) => {
     try {
         const flouringActivityDetails = {
             CentralID: centralID,
-            Date: date,
             Weight: weight,
             FlouringMachineID: flouringMachineID,
-            Time: time,
+            EndTime: endTime,
+            DriedDate: driedDate,
+            InUse: inUse
         };
 
         return await axios.post(`${host}/secured/flouring_activity/create`, flouringActivityDetails, {
@@ -23,6 +24,7 @@ export const addFlouringActivity = async (centralID, date, weight, flouringMachi
         throw new Error(error);
     }
 };
+
 
 export const getAllFlouringActivities = async (skip = 0, limit = 100) => {
     try {

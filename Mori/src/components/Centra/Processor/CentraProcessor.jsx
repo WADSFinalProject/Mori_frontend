@@ -102,7 +102,7 @@ export default function Processor() {
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
-        }));
+        })).sort((a, b) => a.MachineID - b.MachineID); // Sort by MachineID
   
         setDryingMachines(machinesWithProperties);
   
@@ -216,7 +216,7 @@ export default function Processor() {
           ...machine,
           capacity: machine.capacity || machine.Capacity,
           currentLoad: 0,
-        }));
+        })).sort((a, b) => a.MachineID - b.MachineID); // Sort by MachineID
   
         setFlouringMachines(machinesWithProperties);
   
@@ -303,7 +303,7 @@ export default function Processor() {
     if (linkTo !== "#") {
       navigate(linkTo, {
         state: {
-          // centralID: machine.CentralID, // Include centralID here
+          centraID: machine.CentraID, // Include centralID here
           id: machine.MachineID,
           capacity: machine.capacity,
           status: machine.Status,
