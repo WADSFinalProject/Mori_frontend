@@ -81,28 +81,6 @@ const CentraDetailsMachine = ({ centraId, location }) => {
 
   const fetchData = async () => {
     try {
-      // const response = await getLeavesData(centraId);
-
-      // Process the response to fit the expected structure
-      // const { wetLeaves, driedLeaves, flouredLeaves } = response.data;
-
-      // const processedLeavesStatus = {
-      //   wetLeaves: {
-      //     totalWeight: wetLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
-      //     proportions: wetLeaves.map(leaf => leaf.Weight / wetLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
-      //   },
-      //   driedLeaves: {
-      //     totalWeight: driedLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
-      //     proportions: driedLeaves.map(leaf => leaf.Weight / driedLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
-      //   },
-      //   flouredLeaves: {
-      //     totalWeight: flouredLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0),
-      //     proportions: flouredLeaves.map(leaf => leaf.Weight / flouredLeaves.reduce((sum, leaf) => sum + leaf.Weight, 0)),
-      //   },
-      // };
-
-      // setLeavesStatus(processedLeavesStatus);
-
       getLeavesData(centraId)
         .then(res => {
           setLeavesStatus(res.data)
