@@ -1,6 +1,8 @@
-import { getApi } from '../contexts/api';
+import { getApi, setupInterceptors } from '../contexts/api';
 import { host } from "./config";
 
+
+setupInterceptors();
 const api = getApi()
 
 export const createWetLeavesCollection = async (centralId, date, time, weight, status, expired, dried) => {

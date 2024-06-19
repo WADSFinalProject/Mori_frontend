@@ -45,6 +45,13 @@ export const setupInterceptors = (accessToken, setToken) => {
   return api;
 };
 
+export const initializeApi = (accessToken, setToken) => {
+  if (!isInitialized) {
+    setupInterceptors(accessToken, setToken);
+  }
+  return api;
+};
+
 export const getApi = () => {
   if (!api || !isInitialized) {
     throw new Error("API instance not initialized. Call setupInterceptors first.");
