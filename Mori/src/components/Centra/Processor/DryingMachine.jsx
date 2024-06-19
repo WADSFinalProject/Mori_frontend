@@ -8,7 +8,7 @@ import DatePicker from "react-tailwindcss-datepicker";
 import { useWindowSize } from 'react-use';
 import axios from 'axios';
 import { host } from "../../../service/config.js";
-import { addDryingActivity } from "../../../service/dryingActivity";
+import { addDryingActivity, getDryingActivity_Bymachine } from "../../../service/dryingActivity";
 
 const gaugeOptions = {
   responsive: true,
@@ -49,7 +49,7 @@ const formatDate = (dateString) => {
 
 export default function DryingMachine() {
   const location = useLocation();
-  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {}; // Updated to include centralID
+  const { centralID, capacity, currentLoad, status, duration, load, id } = location.state || {};
 
   const [machineData, setMachineData] = useState({ id, capacity, currentLoad, status, duration, load });
   const [timer, setTimer] = useState(parseISODuration(duration));
@@ -72,10 +72,37 @@ export default function DryingMachine() {
     receiveData();
   }, [centralID, id, capacity, currentLoad, status, duration, load]);
 
-  const receiveData = () => {
+  const receiveData = async () => {
     console.log("Received data:", { centralID, id, capacity, currentLoad, status, duration, load });
     setMachineData({ centralID, id, capacity, currentLoad, status, duration, load });
+
+    if (status === "running") {
+      try {
+        const response = await getDryingActivity_Bymachine(id);
+        const runningActivity = response.data.find(activity => activity.InUse);
+        if (runningActivity) {
+          const endTime = new Date(runningActivity.EndTime).getTime();
+          const currentTime = new Date().getTime();
+          const remainingSeconds = Math.max((endTime - currentTime) / 1000, 0);
+          setTimer(remainingSeconds);
+          setIsRunning(true);
+          startTimer(remainingSeconds);
+        }
+      } catch (error) {
+        console.error("Failed to fetch running activity:", error.message);
+      }
+    } else if (status === "finished") {
+      // Set the timer to 0 and set batch details if the status is finished
+      setTimer(0);
+      setBatchDetails({
+        number: Math.floor(Math.random() * 10000),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        weight: load
+      });
+    }
   };
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,7 +118,6 @@ export default function DryingMachine() {
     const startTime = new Date().toISOString();
     localStorage.setItem(`dryingStartTime_${id}`, startTime);
     try {
-      // Correctly use the addDryingActivity function with the load variable
       await addDryingActivity(load, id, parseISODuration(duration));
       startTimer();
     } catch (error) {
@@ -99,9 +125,7 @@ export default function DryingMachine() {
     }
   };
 
- 
-  const startTimer = () => {
-    const totalSeconds = parseISODuration(duration);
+  const startTimer = (totalSeconds = parseISODuration(duration)) => {
     setTimer(totalSeconds);
 
     if (!timerInterval) {
@@ -130,7 +154,6 @@ export default function DryingMachine() {
   };
 
   const handleFastForward = () => {
-    // Fast forward the timer by 1 hour (3600 seconds)
     setTimer(prevTimer => Math.max(prevTimer - 3600, 0));
   };
 
@@ -197,7 +220,6 @@ export default function DryingMachine() {
     chartColor = '#5D9EA4';
   }
 
-
   return (
     isMobile ? (
       <div className="bg-000000" style={{ paddingBottom: '40px' }}>
@@ -243,32 +265,37 @@ export default function DryingMachine() {
         <div style={{ borderTop: '1px solid #ccc', margin: '20px auto', width: '80%' }}></div>
 
         <div style={{ textAlign: 'center', margin: '20px 0' }}>
-          <button
-            className="start-btn text-white py-1 px-4"
-            style={{
-              backgroundColor: buttonText === "Start Process" ? "#000000" : inProgress ? "#FFFFFF" : "#FFFFFF",
-              color: buttonText === "Start Process" ? "#FFFFFF" : inProgress ? "#000000" : "#217045",
-              border: buttonText === "Start Process" ? "none" : inProgress ? "1px solid #000000" : "1px solid #217045",
-              borderRadius: "10px",
-              fontSize: "14px",
-            }}
-            onClick={startProcess}
-            disabled={inProgress}
-          >
-            {buttonText}
-          </button>
-          {inProgress && (
+          {status === 'idle' ? (
             <button
-              className="fast-forward-btn text-white py-1 px-4 ml-4"
+              className="start-btn text-white py-1 px-4"
               style={{
-                backgroundColor: "#FF4500",
+                backgroundColor: buttonText === "Start Process" ? "#000000" : inProgress ? "#FFFFFF" : "#FFFFFF",
+                color: buttonText === "Start Process" ? "#FFFFFF" : inProgress ? "#000000" : "#217045",
+                border: buttonText === "Start Process" ? "none" : inProgress ? "1px solid #000000" : "1px solid #217045",
                 borderRadius: "10px",
                 fontSize: "14px",
               }}
-              onClick={handleFastForward}
+              onClick={startProcess}
+              disabled={inProgress}
             >
-              Fast Forward 1 Hour
+              {buttonText}
             </button>
+          ) : status === 'running' ? (
+            <>
+              <button
+                className="fast-forward-btn text-white py-1 px-4 ml-4"
+                style={{
+                  backgroundColor: "#FF4500",
+                  borderRadius: "10px",
+                  fontSize: "14px",
+                }}
+                onClick={handleFastForward}
+              >
+                Fast Forward 1 Hour
+              </button>
+            </>
+          ) : (
+            <></>
           )}
         </div>
 
@@ -303,7 +330,6 @@ export default function DryingMachine() {
           <div className="bg-white p-4 mt-2" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             <h3 className="text-md" style={{ textAlign: 'center', width: '100%', marginBottom: '' }}>BATCH #{batchDetails?.number} COMPLETED</h3>
             <div style={{ textAlign: 'left', width: '100%' }}>
-              {/* Editable date field */}
               <p className="text-xs mb-1">Date</p>
               {editMode ? (
                 <DatePicker
@@ -323,7 +349,6 @@ export default function DryingMachine() {
                 <p className="font-bold text-sm mb-2">{formatDate(batchDetails?.date)}</p>
               )}
 
-              {/* Editable time field */}
               <p className="text-xs mb-1">Time</p>
               {editMode ? (
                 <div className="relative max-w-sm flex items-center">
@@ -364,21 +389,20 @@ export default function DryingMachine() {
                 <p className="font-bold text-sm mb-2">{formatTimeWithoutSeconds(batchDetails?.time)}</p>
               )}
 
-              {/* Editable weight field */}
               <p className="text-xs mb-1">Weight</p>
               {editMode ? (
                 <div className="relative max-w-sm flex items-center">
                   <input
-                    type="number" // Adjust type to number for better input control
+                    type="number"
                     value={editWeight}
                     onChange={(e) => setEditWeight(e.target.value)}
-                    className="w-full py-1 px-2 rounded-full bg-[#EFEFEF] text-gray-500 focus:outline-none border border-gray-300" // Updated class names for better styling
-                    placeholder="Enter weight (kg)" // Providing a placeholder for clarity
-                    min="0" // Ensures no negative numbers
-                    step="0.01" // Allows decimal values to be entered
+                    className="w-full py-1 px-2 rounded-full bg-[#EFEFEF] text-gray-500 focus:outline-none border border-gray-300"
+                    placeholder="Enter weight (kg)"
+                    min="0"
+                    step="0.01"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
-                    <span>kg</span> {/* Optional: Remove if you prefer not to have the unit inside the input field */}
+                    <span>kg</span>
                   </div>
                 </div>
               ) : (
@@ -386,7 +410,6 @@ export default function DryingMachine() {
               )}
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', paddingTop: '10px' }}>
-              {/* Edit or Confirm button */}
               <button
                 onClick={editMode ? handleCancelEdit : handleEditClick}
                 className="bg-black text-white py-1 px-3 rounded-md mr-2"
@@ -407,31 +430,6 @@ export default function DryingMachine() {
             </div>
           </div>
         )}
-{/* 
-        {showConfirmation && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg shadow-lg text-center w-72 mx-auto">
-              <h2 className="text-lg font-bold mb-2">Notice!</h2>
-              <p className="mb-4 text-sm">
-                Drying Machine {id} has <span className="underline">NOT reached the maximum weight</span>. Processing now may not be as efficient for the production process.
-              </p>
-              <div className="flex justify-center ">
-                <button
-                  onClick={handleCancelProcess}
-                  className="bg-gray-400 text-white py-1 px-3 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleContinueProcess}
-                  className="bg-black text-white py-1 px-3 rounded-lg ml-1"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
 
         <footer className="bg-gray-200 text-black flex justify-between items-center h-10 px-3 fixed bottom-0 left-0 right-0">
           <p className="font-semibold">@2024 AMIN</p>
