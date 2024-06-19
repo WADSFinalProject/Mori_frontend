@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { readFlouringMachines } from "../../../service/flouringMachine";
+import { getFlouringMachines_byCentra } from "../../../service/flouringMachine";
 
 const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeight, totalWeight, lastUpdated, duration, currentStatus }) => {
   const totalTime = duration * 60; // duration in minutes, converted to seconds
@@ -57,31 +57,11 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
     <div className="w-[490px] h-[280px] bg-white border border-black/opacity-20 rounded-lg p-4">
       <div className="flex items-center">
         <div className="relative">
-          {/* <svg width="64" height="64" viewBox="0 0 36 36" className="circular-chart green">
-            <path className="circle-bg"
-              d="M18 2.0845
-                 a 15.9155 15.9155 0 0 1 0 31.831
-                 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#eaeaea"
-              strokeWidth="3.5" />
-            <path className="circle"
-              strokeDasharray={`${(timeLeft / totalTime) * 100}, 100`}
-              d="M18 2.0845
-                 a 15.9155 15.9155 0 0 1 0 31.831
-                 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#A7AD6F" // Duration circle color
-              strokeWidth="3.5" />
-            <text x="18" y="19" className="percentage" fontSize="8" fill="#A7AD6F" textAnchor="middle" dominantBaseline="middle">
-              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </text>
-          </svg> */}
+          {/* SVG element */}
         </div>
         <div className="ml-4 text-center">
           <h2 className="text-left text-black text-[22px] font-semibold font-['Be Vietnam Pro']">Machine {machineNumber}</h2>
-          {/* <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Floured <strong>{flouredDate}</strong></div>
-          <div className="text-left text-zinc-500 text-sm font-medium font-['Be Vietnam Pro']">Start <strong>{startTime}</strong></div> */}
+          {/* Date and start time elements */}
         </div>
       </div>
       <div className="my-4 flex items-center justify-center">
@@ -100,25 +80,21 @@ const FlouringMachineBox = ({ machineNumber, flouredDate, startTime, filledWeigh
   );
 };
 
-const FlouringMachineBoxDashboard = () => {
+const FlouringMachineBoxDashboard = ({ centraId }) => {
   const [flouringMachines, setFlouringMachines] = useState([]);
 
   useEffect(() => {
     const fetchFlouringMachines = async () => {
       try {
-        const response = await readFlouringMachines();
+        const response = await getFlouringMachines_byCentra(centraId);
         console.log("Flouring Machines:", response.data);
 
         const machinesWithProperties = response.data.map(machine => ({
           ...machine,
           capacity: machine.capacity || machine.Capacity,
-          // currentLoad: machine.Load,
           machineNumber: machine.machineNumber || machine.MachineID,
-          // flouredDate: "13 March 2024", // Default value for illustration
-          // startTime: "02:45 PM", // Default value for illustration
           filledWeight: machine.Load || 24.1, // Default value for illustration
           totalWeight: machine.Capacity || 30, // Default value for illustration
-          // lastUpdated: "1 Minute Ago", // Default value for illustration
           duration: machine.duration || 20, // Default value for illustration
           currentStatus: machine.Status || "no"  // Default value for illustration
         }));
@@ -129,8 +105,10 @@ const FlouringMachineBoxDashboard = () => {
       }
     };
 
-    fetchFlouringMachines();
-  }, []);
+    if (centraId) {
+      fetchFlouringMachines();
+    }
+  }, [centraId]);
 
   return (
     <div className="flex flex-wrap gap-11">
@@ -144,8 +122,7 @@ const FlouringMachineBoxDashboard = () => {
           totalWeight={machine.totalWeight}
           lastUpdated={machine.lastUpdated}
           duration={machine.duration}
-          capacity={machine.capacity}
-          currentStatus={machine.currentStatus} // Corrected here
+          currentStatus={machine.currentStatus}
         />
       ))}
     </div>

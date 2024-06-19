@@ -130,7 +130,7 @@ const XYZShippingInformationMobile = () => {
           <hr className="mt-4 mb-[-0.5px] w-full bg-zinc-300 h-0.5 border-none" />
 
           <main className="w-full mb-auto mt-4">
-            <div className="grid grid-cols-2 gap-3 select-none">
+            <div className="grid grid-cols-2 gap-3 select-none pb-2">
               <div className="font-vietnam items-center justify-center font-bold text-md text-center mb-[-3px]">
                 Sort By
               </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWindowSize } from "react-use";
 import moriLogo from "../../../assets/moriWhite.png";
 import bell from "../../../assets/bell.png";
@@ -6,56 +6,57 @@ import hamburg from "../../../assets/hamburg.png";
 import bg from "../../../assets/usercardBG.png";
 import { Link } from "react-router-dom";
 import StatusComponent from "./StatusComponent";
-
-const shipmentData = [
-  {
-    id: "98478",
-    status: "Missing",
-    batches: [10201, 10273, 10279, 10330, 10345],
-    totalWeight: 72.3,
-    collected: "15 March 2024",
-    time: "07:00 PM",
-  },
-  {
-    id: "34523",
-    status: "Shipped",
-    batches: [10205, 10284],
-    totalWeight: 85.5,
-    collected: "13 March 2024",
-    time: "02:45 PM",
-  },
-  {
-    id: "23498",
-    status: "To Deliver",
-    batches: [10199, 10288, 10305, 10348],
-    totalWeight: 60.2,
-    collected: "13 March 2024",
-    time: "02:45 PM",
-  },
-  {
-    id: "89572",
-    status: "Completed",
-    batches: [10211],
-    totalWeight: 90.1,
-    collected: "13 March 2024",
-    time: "02:45 PM",
-  },
-  {
-    id: "56839",
-    status: "Missing",
-    batches: [10215, 10297, 10315, 10350, 10360, 10370],
-    totalWeight: 75.0,
-    collected: "13 March 2024",
-    time: "02:45 PM",
-  },
-];
+import { readExpeditions } from "../../../service/expeditionService";
 
 export default function HarborHome() {
   const { width } = useWindowSize();
-  const isMobile = width <= 1024;
+  const isMobile = width <= 1025;
 
   const [sortOption, setSortOption] = useState("new-old");
   const [filterOption, setFilterOption] = useState("all");
+  const [shipmentData, setShipmentData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await readExpeditions();
+        console.log("Fetched Expeditions Data:", response.data);
+        const expeditions = response.data.map((expedition) => ({
+          id: expedition.expedition.AirwayBill,
+          status: mapStatus(expedition.expedition.Status),
+          batches: expedition.batches.map((batch) => batch.BatchID),
+          totalWeight: expedition.expedition.TotalWeight,
+          collected: expedition.expedition.ExpeditionDate.split("T")[0],
+          time: expedition.expedition.ExpeditionDate.split("T")[1].split(
+            "."
+          )[0],
+        }));
+        console.log("Mapped Expeditions Data:", expeditions);
+        setShipmentData(expeditions);
+      } catch (error) {
+        console.error("Error fetching shipments: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const mapStatus = (status) => {
+    switch (status) {
+      case "PKG_Delivering":
+        return "Shipping";
+      case "PKG_Delivered":
+        return "Delivered";
+      case "Missing":
+        return "Missing";
+      case "XYZ_PickingUp":
+        return "Scheduled";
+      case "XYZ_Completed":
+        return "Completed";
+      default:
+        return status;
+    }
+  };
 
   const sortData = (data, sortOption) => {
     switch (sortOption) {
@@ -138,7 +139,7 @@ export default function HarborHome() {
             </div>
           </header>
 
-          <main>
+          <main className="bg-[#F0F0F0]">
             {/* FILTERS */}
             <div className="grid grid-cols-2 gap-3 mt-7">
               <div className="font-vietnam items-center justify-center font-bold text-md text-center">
@@ -167,14 +168,15 @@ export default function HarborHome() {
                 onChange={(e) => setFilterOption(e.target.value)}
               >
                 <option value="all">All</option>
-                <option value="to deliver">To Deliver</option>
-                <option value="shipped">Shipped</option>
-                <option value="completed">Completed</option>
+                <option value="shipping">Shipping</option>
+                <option value="delivered">Delivered</option>
                 <option value="missing">Missing</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
               </select>
             </div>
 
-            <div className="overflow-y-auto">
+            <div className="overflow-y-auto mb-10">
               {sortedAndFilteredData.map((shipment) => (
                 <StatusComponent
                   key={shipment.id}
