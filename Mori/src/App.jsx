@@ -48,6 +48,7 @@ import HarborShipDetails from "./components/HarborGuard/HarborShipDetails";
 import { AuthProvider, useAuth } from './contexts/authContext';
 import { setupInterceptors } from './contexts/api';
 
+import { isMobileDevice } from './contexts/utils';
 
 
 
@@ -61,7 +62,7 @@ function App() {
         setupInterceptors(accessToken, saveAccessToken);
     }, [accessToken, saveAccessToken]);
 
-    const RoleBasedRoute = ({ allowedRoles, children }) => {
+    const RoleBasedRoute = ({ allowedRoles, children, requireMobile }) => {
       const { userRole } = useAuth();
       if (!accessToken) {
         return <Navigate to="/" />;
@@ -71,11 +72,15 @@ function App() {
       if (allowedRoles && !allowedRoles.includes(userRole)) {
         return <Navigate to="/" />;
       }
+
+  
+
     
       // Return children if authenticated and authorized
       return children;
       // return allowedRoles.includes(userRole) ? children : <Navigate to="/" />;
   };
+
 
   return (
     <Routes>
@@ -143,6 +148,7 @@ function App() {
 
 
 
+     
         {/* ADMIN */}
 
         <Route path="/admin/*"  element= {
