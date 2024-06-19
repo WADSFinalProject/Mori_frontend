@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
+import { useNavigate } from 'react-router-dom';
 import scale from '../../../assets/scale.png';
 import { createPackageReceipt } from "../../../service/packageReceiptService";
 import { readExpeditions } from "../../../service/expeditionService";
@@ -8,6 +9,9 @@ import { readExpeditions } from "../../../service/expeditionService";
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
   const isMobile = width <= 1024;
+  const navigate = useNavigate(); // Use navigate hook
+  
+
 
   const [batches, setBatches] = useState([
     { id: "Batch #1", weight: "" },
@@ -77,6 +81,7 @@ const ArrivalConfirmation = () => {
     try {
       await createPackageReceipt(expeditionID, totalWeight, timeAccepted, note, date);
       alert("Package receipt created successfully!");
+      navigate('/xyz/m/shippinginformation');
       // Clear the form or perform any other necessary actions
     } catch (error) {
       console.error("Error creating package receipt: ", error);
