@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import NoteModal from "./NoteModal";
+import { deleteExpedition } from "../../../../service/expeditionService";
+import { deletePackageReceipt } from "../../../../service/packageReceiptService";
 
 export const TableComponent = ({ data, onDelete}) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -9,38 +11,59 @@ export const TableComponent = ({ data, onDelete}) => {
   const [editShipmentIndex, setShipmentIndex] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedNotes, setSelectedNotes] = useState("");
+  const [receptionNotes, setReceptionNotes] = useState(null);
+  const [receiptIdToDelete, setReceiptIdToDelete] = useState(null); // State to store the receipt ID
+
+  const handleDeleteClick = (index) => {
+    setShipmentToDelete(data[index].expeditionID);
+    setReceiptIdToDelete(data[index].receptionNotes?.ReceiptID); 
+    setDeleteModalOpen(true);
+  };
+
   
   const handleOpenModal = (notes) => {
-    setSelectedNotes(notes);
-    setModalOpen(true);
+    setSelectedNotes(notes || {});
+    setNoteModalOpen(true);
   };
   
-  // Inside your component render:
-  <NoteModal 
-    isOpen={isModalOpen} 
-    onClose={() => setModalOpen(false)} 
-    receptionNotes={selectedNotes} 
-  />
+//   <NoteModal
+//   isOpen={isModalOpen}
+//   onClose={() => setModalOpen(false)}
+//   receptionNotes={receptionNotes}
+// />
   
-  const handleConfirmDelete = () => {
-    const updatedData = data.filter((_, index) => index !== editShipmentIndex);
-    setData(updatedData);
-    setEditVisible(false);
-    setNewUser(initialNewUserState);
-    setShipmentIndex(null);
-    handleSearchAndSort(updatedData, sortKey);
+  const handleConfirmDelete = async () => {
+    if (shipmentToDelete) {
+      try {
+        await deleteExpedition(shipmentToDelete);
+        if (receiptIdToDelete) {
+          await deletePackageReceipt(receiptIdToDelete);
+        }
+        onDelete(shipmentToDelete);
+        setDeleteModalOpen(false);
+      } catch (err) {
+        console.error("Error deleting shipment or receipt: ", err);
+      }
+    }
+  };
+
+  const closeDeleteModal = () => {
     setDeleteModalOpen(false);
-    setNoteModalOpen(false);
+    setShipmentToDelete(null);
+    setReceiptIdToDelete(null);
   };
+
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
+      case "XYZ_PickingUp":
         return "#4D946D";
-      case "Completed":
+      case "XYZ_Completed":
         return "#838948";
-      case "Shipped":
+      case "PKG_Delivered":
         return "#9AD1B3";
+      case "PKG_Delivering":
+        return "#5C612C";
       case "Missing":
         return "#EBB6B6";
       default:
@@ -469,10 +492,10 @@ export const TableComponent = ({ data, onDelete}) => {
               >
                 <div className="flex items-center justify-center gap-2">
                   <button
-                    className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => setNoteModalOpen(true)}
+                    className="text-blue-500 underline"
+                    onClick={() => handleOpenModal(row.receptionNotes)}
                   >
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 24 24">
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 24 24">
                   <path d="M 6 2 C 4.9057453 2 4 2.9057453 4 4 L 4 20 C 4 21.094255 4.9057453 22 6 22 L 18 22 C 19.094255 22 20 21.094255 20 20 L 20 8 L 14 2 L 6 2 z M 6 4 L 13 4 L 13 9 L 18 9 L 18 20 L 6 20 L 6 4 z"></path>
                   </svg>
                   </button>
@@ -488,7 +511,7 @@ export const TableComponent = ({ data, onDelete}) => {
                 <div className="flex items-center justify-center gap-2">
                   <button
                     className="flex items-center justify-center hover:border-gray-200 hover:transition-colors hover:duration-300 transition-colors duration-300 border-2 rounded-full border-transparent w-8 h-8"
-                    onClick={() => setDeleteModalOpen(true)}
+                    onClick={() => handleDeleteClick(index)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-trash">
                       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -511,12 +534,15 @@ export const TableComponent = ({ data, onDelete}) => {
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        shipmentId={shipmentToDelete?.shipmentId}
+        shipmentId={shipmentToDelete}
+        receiptId={receiptIdToDelete}
       />
         <NoteModal
-        isOpen={isNoteModalOpen}
-        onClose={() => setNoteModalOpen(false)}
-      />
+          isOpen={isNoteModalOpen}
+          onClose={() => setNoteModalOpen(false)}
+          notes={selectedNotes}
+        />
     </div>
+    
   );
 };

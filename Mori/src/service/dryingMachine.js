@@ -3,7 +3,6 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-
 export const addDryingMachine = async (centraId, capacity, status, duration) => {
     try {
         const machineDetails = {
@@ -110,9 +109,6 @@ export const deleteDryingMachine = async (machineId) => {
 export const getDryingMachine_byCentra = async (centraId) => {
     try {
         return axios.post(host + `/secured//drying_machines/centra/${centraId}`, {
-            params: {
-                centraId
-            },
             headers: {
                 "Content-Type": "application/json",
             },
@@ -122,3 +118,24 @@ export const getDryingMachine_byCentra = async (centraId) => {
         throw new Error(error);
     }
 };
+
+
+export const updateDryingMachineStatus = async (MachineID, new_status) => {
+    try {
+        return axios.put(`${host}/secured/dryingmachine/${machineId}/status`, {
+            status: new_status
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error updating drying machine status: ", error.response?.data || error.message);
+        throw new Error(error);
+    }
+};
+
+
+
+
+

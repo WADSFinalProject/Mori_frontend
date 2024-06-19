@@ -11,12 +11,10 @@ const StatusComponent = ({
 }) => {
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
-        return "#4D946D"; // Light yellow for "To Receive"
-      case "Completed":
-        return "#838948"; // Green for "Completed"
-      case "Shipped":
-        return "#9AD1B3"; // Light blue for "Shipped"
+      case "Shipping":
+        return "#9AD1B3"; // Light blue for "Shipping"
+      case "Delivered":
+        return "#838948"; // Green for "Delivered"
       case "Missing":
         return "#EBB6B6"; // Light red for "Missing"
       default:
@@ -26,12 +24,10 @@ const StatusComponent = ({
 
   const getStatusFilter = (status) => {
     switch (status) {
-      case "To Deliver":
-        return "brightness(0) saturate(100%) invert(55%) sepia(17%) saturate(1015%) hue-rotate(94deg) brightness(90%) contrast(84%)"; // Light yellow for "To Receive"
-      case "Completed":
-        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Completed"
-      case "Shipped":
-        return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipped"
+      case "Shipping":
+        return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipping"
+      case "Delivered":
+        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Delivered"
       case "Missing":
         return "brightness(0) saturate(100%) invert(69%) sepia(25%) saturate(651%) hue-rotate(311deg) brightness(118%) contrast(85%)"; // Light red for "Missing"
       default:
@@ -39,14 +35,21 @@ const StatusComponent = ({
     }
   };
 
-  const statusBackgroundColor = getStatusBackgroundColor(status);
-  const statusFilter = getStatusFilter(status);
+  const statusMap = {
+    PKG_Delivering: "Shipping",
+    PKG_Delivered: "Delivered",
+    Missing: "Missing",
+  };
+
+  const displayStatus = statusMap[status];
+  const statusBackgroundColor = getStatusBackgroundColor(displayStatus);
+  const statusFilter = getStatusFilter(displayStatus);
 
   return (
     <Link
-      to="/shipdetails"
+      to={`/centra/shipdetails/${id}`}
+      state={{ awb: id }} // Passing the AWB as state to the route
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
-      // onclick go to shipment details page
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
         <div>
@@ -56,12 +59,16 @@ const StatusComponent = ({
           </div>
         </div>
 
-        {/* status when "To Receive" the bg is #F1E1A7 when "Completed" the bg is #A1C598 when "Shipped" the bg is #BEC8FA */}
         <div
           className="rounded-md flex flex-row items-center justify-center py-2 px-3 text-xs"
-          style={{ backgroundColor: statusBackgroundColor }}
+          style={{
+            backgroundColor: statusBackgroundColor,
+            color: displayStatus === "Delivered" ? "white" : "inherit",
+          }}
         >
-          <div className="relative font-medium font-vietnam">{status}</div>
+          <div className="relative font-medium font-vietnam">
+            {displayStatus}
+          </div>
         </div>
       </div>
 
@@ -113,7 +120,7 @@ const StatusComponent = ({
             className="relative font-medium font-vietnam"
             style={{ color: statusBackgroundColor }}
           >
-            Preparing to ship
+            Shipment Details
           </b>
         </div>
         <svg

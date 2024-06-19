@@ -3,25 +3,31 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true;
 
-export const createDriedLeaf = async (centralId, weight, driedDate, floured) => {
+export const createDriedLeaf = async (centralId, weight, driedDate, floured, inMachine) => {
     try {
         const leafDetails = {
-            CentralID: centralId,
+            CentraID: centralId,
             Weight: weight,
             DriedDate: driedDate,
             Floured: floured,
+            InMachine: inMachine,
         };
 
-        return axios.post(host + "/secured/dried_leaves/", leafDetails, {
+        return await axios.post(host + "/secured/dried_leaves/", leafDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
     } catch (error) {
-        console.log("Error creating dried leaf: ", error);
+        console.log("Error creating dried leaf:", error);
+        if (error.response) {
+            console.log("Response data:", error.response.data);
+        }
         throw new Error(error);
     }
 };
+
+
 
 export const readDriedLeaves = async (skip = 0, limit = 100) => {
     try {

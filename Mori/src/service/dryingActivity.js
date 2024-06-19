@@ -10,6 +10,7 @@ export const addDryingActivity = async (weight, dryingMachineID, duration) => {
             Weight: weight,
             DryingMachineID: dryingMachineID,
             EndTime: new Date(currentTime.getTime() + duration * 1000).toISOString(), // Calculate EndTime using duration
+            InUse: true, // Set InUse to true
         };
 
         console.log("Sending drying activity details:", dryingActivityDetails);
@@ -24,6 +25,7 @@ export const addDryingActivity = async (weight, dryingMachineID, duration) => {
         throw new Error(error);
     }
 };
+
 
 export const getAllDryingActivities = async (skip = 0, limit = 100) => {
     try {
@@ -72,13 +74,9 @@ export const updateDryingActivity = async (dryingID, centralID, weight, dryingMa
     }
 };
 
-
 export const getDryingActivity_Bymachine = async (machineID) => {
     try {
         return await axios.get(`${host}/secured/drying-activities/machine/${machineID}`, {
-            params: {
-                machineID
-            },
             headers: {
                 "Content-Type": "application/json",
             },
@@ -88,7 +86,6 @@ export const getDryingActivity_Bymachine = async (machineID) => {
         throw new Error(error);
     }
 };
-
 
 export const deleteDryingActivity = async (dryingID) => {
     try {

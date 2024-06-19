@@ -64,7 +64,7 @@ function App() {
         <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route path="/flouringmachine/:machineNumber" element={<FlouringMachine />} />
         {/* ini harus ngikutin shipment idnya */}
-        <Route path="/shipdetails" element={<ShipDetails />} />
+        <Route path="/centra/shipdetails/:awb" element={<ShipDetails />} />
 
         {/* HARBOUR GUARD */}
         <Route path="/harbor/home" element={<HarborHome />} />
@@ -97,7 +97,7 @@ function App() {
         <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
         <Route path="/stockdetail/:location" element={<StockDetail />} />
 
-        <Route path="/shippinginformationglobal" element={<ShippingInformationGlobal />} />
+        <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />
 
 
       </Routes>

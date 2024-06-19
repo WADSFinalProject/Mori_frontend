@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useWindowSize } from "react-use";
+import { useNavigate } from 'react-router-dom';
+import { createPackageReceipt } from "../../../service/packageReceiptService";
 
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
@@ -8,6 +10,12 @@ const ArrivalConfirmation = () => {
   const [totalWeight, setTotalWeight] = useState("");
   const [arrivalDate, setArrivalDate] = useState("");
   const [notes, setNotes] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/xyz/m/arrivalconfirmation');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,7 +31,7 @@ const ArrivalConfirmation = () => {
         <div className="max-w-[640px] relative bg-slate-50 h-screen overflow-hidden text-left text-base text-zinc-500 font-vietnam ml-auto mr-auto flex flex-col">
           <header className="w-full mt-6 flex flex-col items-center justify-between text-right text-xl flex-grow-0">
             <div className="w-full flex flex-row">
-              <button className="hover:cursor-pointer" onClick={null}>
+              <button className="hover:cursor-pointer" onClick={handleClick}>
                 <svg
                   className="ml-5"
                   width="24"

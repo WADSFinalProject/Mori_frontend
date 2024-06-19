@@ -3,14 +3,15 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, time) => {
+export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, endTime, driedDate, inUse) => {
     try {
         const flouringActivityDetails = {
             CentralID: centralID,
-            Date: date,
             Weight: weight,
             FlouringMachineID: flouringMachineID,
-            Time: time,
+            EndTime: endTime,
+            DriedDate: driedDate,
+            InUse: inUse
         };
 
         return await axios.post(`${host}/secured/flouring_activity/create`, flouringActivityDetails, {
@@ -23,6 +24,7 @@ export const addFlouringActivity = async (centralID, date, weight, flouringMachi
         throw new Error(error);
     }
 };
+
 
 export const getAllFlouringActivities = async (skip = 0, limit = 100) => {
     try {
@@ -81,6 +83,19 @@ export const deleteFlouringActivity = async (flouringID) => {
         });
     } catch (error) {
         console.log(`Error deleting flouring activity with ID ${flouringID}: `, error);
+        throw new Error(error);
+    }
+};
+
+export const getFlouringActivities_byMachine = async (machine_id) => {
+    try {
+        return await axios.get(`${host}/secured/flouring-activities/machine/${machine_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error fetching flouring activities: ", error);
         throw new Error(error);
     }
 };

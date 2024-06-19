@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { deleteExpedition } from "../../../service/shipments";
+import { deleteExpedition } from "../../../service/expeditionService";
 
 export const TableComponent = ({ data, onDelete }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -29,21 +29,23 @@ export const TableComponent = ({ data, onDelete }) => {
     setShipmentToDelete(null);
   };
 
+
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
+      case "XYZ_PickingUp":
         return "#4D946D";
-      case "Completed":
+      case "XYZ_Completed":
         return "#838948";
-      case "Shipped":
+      case "PKG_Delivered":
         return "#9AD1B3";
+      case "PKG_Delivering":
+        return "#5C612C";
       case "Missing":
         return "#EBB6B6";
       default:
         return "#bec8fa";
     }
   };
-
   const getStatusTextColor = (status) => {
     switch (status) {
       case "Shipped":

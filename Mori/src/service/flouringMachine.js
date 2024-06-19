@@ -3,8 +3,6 @@ import { host } from "./config";
 
 axios.defaults.withCredentials = true
 
-
-
 export const addFlouringMachine = async (centraId, capacity, status, duration) => {
     try {
         const machineDetails = {
@@ -59,9 +57,6 @@ export const readFlouringMachines = async (skip = 0, limit = 100) => {
 export const getFlouringMachines_byCentra = async (centraId) => {
     try {
         return axios.get(host + `/flouring_machines/centra/${centraId}`, {
-            params: {
-                centraId
-            },
             headers: {
                 "Content-Type": "application/json",
             },
@@ -113,15 +108,18 @@ export const deleteFlouringMachine = async (machineId) => {
     }
 };
 
-// export const updateFlouringMachine = async (machineId, updateData) => {
-//     try {
-//         return axios.put(host + `/secured/flouring_machines/${machineId}`, updateData, {
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-//     } catch (error) {
-//         console.log("Error updating flouring machine: ", error);
-//         throw new Error(error);
-//     }
-// };
+export const updateFlouringMachineStatus = async (MachineID, new_status) => {
+    try {
+        return axios.put(`${host}/secured/flouringmachine/${MachineID}/status`, {
+            status: new_status
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    } catch (error) {
+        console.log("Error updating flouring machine status: ", error);
+        throw new Error(error);
+    }
+};
+
