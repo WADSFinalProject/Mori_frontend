@@ -106,7 +106,7 @@ function App() {
 
         {/* HARBOUR GUARD */}
         <Route path="/harbor/*" element= {
-           <RoleBasedRoute allowedRoles={['Guard']}>
+           <RoleBasedRoute allowedRoles={['HarbourGuard']}>
            <Routes>
              <Route path="home" element={<HarborHome />} />
              <Route path="confirmshipment" element={<ConfirmShipment />} />
@@ -120,7 +120,7 @@ function App() {
 
         {/* XYZ MOBILE */}
         <Route path="/xyz/*"  element= {
-          <RoleBasedRoute allowedRoles={['xyz']}>
+          <RoleBasedRoute allowedRoles={['XYZ']}>
             <Routes>
               <Route path="/m/stockmanagement" element={<StockManagement />} />
               <Route path="/m/home" element={<XYZHome />} />
@@ -146,7 +146,7 @@ function App() {
         {/* ADMIN */}
 
         <Route path="/admin/*"  element= {
-          <RoleBasedRoute allowedRoles={['xyzDesktop']}>
+          <RoleBasedRoute allowedRoles={['Admin']}>
             <Routes>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
             </Routes>

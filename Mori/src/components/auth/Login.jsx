@@ -162,7 +162,7 @@ const handleLoginVerificationSubmit = () => {
             } else if (role === "xyz" && !isMobile) {
                 navigate("/xyz/d/xyz-dashboard");
             } else if (role === "Admin") {
-                navigate("/admin-dashboard");
+                navigate("/admin/admin-dashboard");
             }
 
             setShowCodeEntry(false);
