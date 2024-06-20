@@ -1,20 +1,11 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { api } from '../contexts/api';
 
-export const addFlouringActivity = async (centralID, date, weight, flouringMachineID, endTime, driedDate, inUse) => {
+
+
+export const addFlouringActivity = async (payload) => {
     try {
-        const flouringActivityDetails = {
-            CentralID: centralID,
-            Weight: weight,
-            FlouringMachineID: flouringMachineID,
-            EndTime: endTime,
-            DriedDate: driedDate,
-            InUse: inUse
-        };
-
-        return await axios.post(`${host}/secured/flouring_activity/create`, flouringActivityDetails, {
+        return await axios.post(`${host}/secured/flouring_activity/create`, payload, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -28,7 +19,7 @@ export const addFlouringActivity = async (centralID, date, weight, flouringMachi
 
 export const getAllFlouringActivities = async (skip = 0, limit = 100) => {
     try {
-        return await axios.get(`${host}/secured/flouring_activity/`, {
+        return await api.get(`/secured/flouring_activity/`, {
             params: { skip, limit },
             headers: {
                 "Content-Type": "application/json",
@@ -42,7 +33,7 @@ export const getAllFlouringActivities = async (skip = 0, limit = 100) => {
 
 export const getFlouringActivityById = async (flouringID) => {
     try {
-        return await axios.get(`${host}/secured/flouring_activity/${flouringID}`, {
+        return await api.get(`/secured/flouring_activity/${flouringID}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -63,7 +54,7 @@ export const updateFlouringActivity = async (flouringID, centralID, date, weight
             Time: time,
         };
 
-        return await axios.put(`${host}/secured/flouring_activity/update/${flouringID}`, flouringActivityDetails, {
+        return await api.put(`/secured/flouring_activity/update/${flouringID}`, flouringActivityDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -76,7 +67,7 @@ export const updateFlouringActivity = async (flouringID, centralID, date, weight
 
 export const deleteFlouringActivity = async (flouringID) => {
     try {
-        return await axios.delete(`${host}/secured/flouring_activity/delete/${flouringID}`, {
+        return await api.delete(`/secured/flouring_activity/delete/${flouringID}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -89,7 +80,7 @@ export const deleteFlouringActivity = async (flouringID) => {
 
 export const getFlouringActivities_byMachine = async (machine_id) => {
     try {
-        return await axios.get(`${host}/secured/flouring-activities/machine/${machine_id}`, {
+        return await api.get(`/secured/flouring-activities/machine/${machine_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

@@ -1,38 +1,41 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true;
+import { api } from '../contexts/api';
+
+
 
 export const createBatch = async (
-  description,
-  dryingID,
-  flouringID,
-  driedDate,
-  flouredDate
+  centraID,
+  driedID,
+  weight,
+  flouredDate,
+  shipped
 ) => {
   try {
     const batchDetails = {
-      Description: description,
-      DryingID: dryingID,
-      FlouringID: flouringID,
-      DriedDate: driedDate,
+      CentraID: centraID,
+      DriedID: driedID,
+      Weight: weight,
       FlouredDate: flouredDate,
+      Shipped: shipped,
     };
 
-    return axios.post(host + "/secured/batches", batchDetails, {
+    const response = await axios.post(host + "/secured/batches", batchDetails, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    return response.data;
   } catch (error) {
     console.log("Error creating batch: ", error);
     throw new Error(error);
   }
 };
 
+
 export const readBatches = async (skip = 0, limit = 100) => {
   try {
-    return axios.get(host + "/secured/batches", {
+    return api.get( "/secured/batches", {
       params: {
         skip: skip,
         limit: limit,
@@ -49,7 +52,7 @@ export const readBatches = async (skip = 0, limit = 100) => {
 
 export const readBatch = async (batchId) => {
   try {
-    return axios.get(host + `/secured/batches/${batchId}`, {
+    return api.get( `/secured/batches/${batchId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -68,7 +71,7 @@ export const readBatch = async (batchId) => {
 //             DryingID: dryingID,
 //         };
 
-//         return axios.put(host + `/secured/batches/${batchId}`, batchDetails, {
+//         return api.put(z `/secured/batches/${batchId}`, batchDetails, {
 //             headers: {
 //                 "Content-Type": "application/json",
 //             },
@@ -81,7 +84,7 @@ export const readBatch = async (batchId) => {
 
 export const BatchShipped = async (batches) => {
   try {
-    return axios.put(`${host}/secured/batchesShipped/`, batches, {
+    return api.put(`/secured/batchesShipped/`, batches, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -94,7 +97,7 @@ export const BatchShipped = async (batches) => {
 
 export const deleteBatch = async (batchId) => {
   try {
-    return axios.delete(host + `/secured/batches/${batchId}`, {
+    return api.delete(host + `/secured/batches/${batchId}`, {
       headers: {
         "Content-Type": "application/json",
       },

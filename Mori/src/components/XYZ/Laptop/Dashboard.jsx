@@ -14,15 +14,24 @@ import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { getAllWarehouses, getWarehouseDetails } from "../../../service/warehousesService";
 import { readExpeditions } from "../../../service/expeditionService";
+import { getAllCentras } from "../../../service/centras";
+import { getConvertionRate } from "../../../service/dashboard";
 
-const conversionRates = [
-  { id: 1, conversionRate: 87.1, wetToDry: 47.1, dryToFloured: 40, rateChange: 12.1 },
-  { id: 2, conversionRate: 85.0, wetToDry: 45.0, dryToFloured: 40, rateChange: 10.0 },
-  // Add more conversion rate data here...
-];
 
 const MainXYZ = () => {
-
+  const initialConvertionRate = {
+    id: 0,
+    conversionRate: 0,
+    wetToDry: 0,
+    dryToFloured: 0
+  };
+  const initialCentra = {
+    CentralID: 0, 
+    Address: ""
+  };
+  const [selectedConversionRate, setSelectedConversionRate] = useState(initialConvertionRate);
+  const [centras, setCentras] = useState([]);
+  const [selectedCentra, setSelectedCentra] = useState(initialCentra);
   const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState("Kupang");
@@ -44,8 +53,6 @@ const MainXYZ = () => {
     Missing: 0,
   });
 
-
-  const [selectedConversionRate, setSelectedConversionRate] = useState(conversionRates[0]);
   const [conversionRateDropdownVisible, setConversionRateDropdownVisible] = useState(false);
   
 
@@ -132,22 +139,44 @@ const MainXYZ = () => {
 
   useEffect(() => {
     fetchExpeditionsData();
+    fetchCentras();
+    fetchAllWarehouses();
   }, []);
 
+  const fetchCentras = async () => {
+    try {
+      const centras = await getAllCentras();
+
+      setCentras(centras.data); // Assuming getAllCentras returns the conversion rates
+      setSelectedCentra(centras.data[0]);
+    } catch (error) {
+      console.error("Error fetching centras data: ", error);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedCentra) {
+      const fetchConversionRate = async () => {
+        try {
+          const response = await getConvertionRate(selectedCentra.CentralID);
+          setSelectedConversionRate(response.data);
+        } catch (error) {
+          console.error("Error fetching conversion rate data: ", error);
+        }
+      };
+
+      fetchConversionRate();
+    }
+  }, [selectedCentra]);
   
   const toggleConversionRateDropdown = () => {
     setConversionRateDropdownVisible(!conversionRateDropdownVisible);
   };
 
-  const selectConversionRate = (conversionRate) => {
-    setSelectedConversionRate(conversionRate);
+  const selectConversionRate = (centra) => {
+    setSelectedCentra(centra);
     setConversionRateDropdownVisible(false);
   };
-
-
-  useEffect(() => {
-    fetchAllWarehouses(); // Fetch all warehouse details on component mount
-  }, []);
 
   useEffect(() => {
     if (warehouseId !== null) {
@@ -197,7 +226,6 @@ const MainXYZ = () => {
       },
     ],
   };
-
 
   const gaugeOptions = {
     cutout: '70%',
@@ -394,16 +422,16 @@ const MainXYZ = () => {
             ))}
           </ul>
           <div className="px-6 mt-10 mb-1">
-            <h2 className="text-sm font-semibold text-gray-700 ml-[-0.1rem]">
+            {/* <h2 className="text-sm font-semibold text-gray-700 ml-[-0.1rem]">
               SUPPORT
-            </h2>
+            </h2> */}
           </div>
           <ul>
             {[
-              {
-                name: "Settings",
-                icon: "M6.83971 15.3926C6.65311 15.3926 6.49522 15.3399 6.36603 15.2347C6.23684 15.1342 6.15072 14.9907 6.10766 14.8041L5.73445 13.2251C5.59569 13.1773 5.45933 13.127 5.32536 13.0744C5.19139 13.0218 5.06459 12.9667 4.94498 12.9093L3.56699 13.7562C3.40909 13.8519 3.24641 13.8926 3.07895 13.8782C2.91627 13.8639 2.77033 13.7921 2.64115 13.6629L1.72249 12.7443C1.5933 12.6151 1.51914 12.4643 1.5 12.2921C1.48565 12.1199 1.5311 11.9572 1.63636 11.8041L2.47608 10.4332C2.41866 10.3088 2.36364 10.1821 2.311 10.0529C2.25837 9.92368 2.21292 9.79449 2.17464 9.66531L0.58134 9.28492C0.394737 9.24664 0.251196 9.16291 0.150718 9.03373C0.0502392 8.90454 0 8.74664 0 8.56004V7.261C0 7.07918 0.0502392 6.92368 0.150718 6.79449C0.251196 6.66531 0.394737 6.58157 0.58134 6.5433L2.16029 6.16291C2.20335 6.01459 2.2512 5.87583 2.30383 5.74665C2.36124 5.61746 2.41388 5.49545 2.46172 5.38062L1.62201 3.98827C1.51675 3.83516 1.47129 3.67727 1.48565 3.51459C1.5 3.34712 1.57416 3.1988 1.70813 3.06961L2.64115 2.14377C2.77512 2.01937 2.91866 1.9476 3.07177 1.92846C3.22967 1.90932 3.38756 1.94521 3.54545 2.03612L4.9378 2.89736C5.05742 2.83516 5.18421 2.77775 5.31818 2.72511C5.45694 2.6677 5.59569 2.61507 5.73445 2.56722L6.10766 0.981095C6.15072 0.799277 6.23684 0.655736 6.36603 0.550473C6.49522 0.44521 6.65311 0.392578 6.83971 0.392578H8.16029C8.34689 0.392578 8.50478 0.44521 8.63397 0.550473C8.76316 0.655736 8.84689 0.799277 8.88517 0.981095L9.25837 2.58157C9.4067 2.62942 9.54545 2.67966 9.67464 2.73229C9.80861 2.78492 9.93301 2.84234 10.0478 2.90454L11.4545 2.03612C11.6124 1.94521 11.7679 1.91172 11.9211 1.93564C12.0742 1.95478 12.2177 2.02416 12.3517 2.14377L13.2919 3.06961C13.4258 3.1988 13.4976 3.34712 13.5072 3.51459C13.5215 3.67727 13.4785 3.83516 13.378 3.98827L12.5311 5.38062C12.5789 5.49545 12.6292 5.61746 12.6818 5.74665C12.7392 5.87583 12.7919 6.01459 12.8397 6.16291L14.4187 6.5433C14.6005 6.58157 14.7416 6.66531 14.8421 6.79449C14.9474 6.92368 15 7.07918 15 7.261V8.56004C15 8.74664 14.9474 8.90454 14.8421 9.03373C14.7416 9.16291 14.6005 9.24664 14.4187 9.28492L12.8254 9.66531C12.7823 9.79449 12.7345 9.92368 12.6818 10.0529C12.634 10.1821 12.5789 10.3088 12.5167 10.4332L13.3636 11.8041C13.4689 11.9572 13.512 12.1199 13.4928 12.2921C13.4785 12.4643 13.4067 12.6151 13.2775 12.7443L12.3517 13.6629C12.2225 13.7921 12.0742 13.8639 11.9067 13.8782C11.744 13.8926 11.5861 13.8519 11.433 13.7562L10.0478 12.9093C9.92823 12.9667 9.80144 13.0218 9.66746 13.0744C9.53349 13.127 9.39713 13.1773 9.25837 13.2251L8.88517 14.8041C8.84689 14.9907 8.76316 15.1342 8.63397 15.2347C8.50478 15.3399 8.34689 15.3926 8.16029 15.3926H6.83971ZM7.5 10.4261C7.96412 10.4261 8.38756 10.3112 8.77034 10.0816C9.1579 9.85191 9.46412 9.54569 9.689 9.16291C9.91866 8.77535 10.0335 8.34952 10.0335 7.8854C10.0335 7.42129 9.91866 7.00023 9.689 6.62224C9.46412 6.23947 9.1579 5.93325 8.77034 5.70358C8.38756 5.47392 7.96412 5.35909 7.5 5.35909C7.03589 5.35909 6.61244 5.47392 6.22967 5.70358C5.84689 5.93325 5.54067 6.23947 5.31101 6.62224C5.08134 7.00023 4.96651 7.42129 4.96651 7.8854C4.96651 8.34952 5.07895 8.77535 5.30383 9.16291C5.53349 9.54569 5.83971 9.85191 6.22249 10.0816C6.61005 10.3112 7.03589 10.4261 7.5 10.4261Z",
-              },
+              // {
+              //   name: "Settings",
+              //   icon: "M6.83971 15.3926C6.65311 15.3926 6.49522 15.3399 6.36603 15.2347C6.23684 15.1342 6.15072 14.9907 6.10766 14.8041L5.73445 13.2251C5.59569 13.1773 5.45933 13.127 5.32536 13.0744C5.19139 13.0218 5.06459 12.9667 4.94498 12.9093L3.56699 13.7562C3.40909 13.8519 3.24641 13.8926 3.07895 13.8782C2.91627 13.8639 2.77033 13.7921 2.64115 13.6629L1.72249 12.7443C1.5933 12.6151 1.51914 12.4643 1.5 12.2921C1.48565 12.1199 1.5311 11.9572 1.63636 11.8041L2.47608 10.4332C2.41866 10.3088 2.36364 10.1821 2.311 10.0529C2.25837 9.92368 2.21292 9.79449 2.17464 9.66531L0.58134 9.28492C0.394737 9.24664 0.251196 9.16291 0.150718 9.03373C0.0502392 8.90454 0 8.74664 0 8.56004V7.261C0 7.07918 0.0502392 6.92368 0.150718 6.79449C0.251196 6.66531 0.394737 6.58157 0.58134 6.5433L2.16029 6.16291C2.20335 6.01459 2.2512 5.87583 2.30383 5.74665C2.36124 5.61746 2.41388 5.49545 2.46172 5.38062L1.62201 3.98827C1.51675 3.83516 1.47129 3.67727 1.48565 3.51459C1.5 3.34712 1.57416 3.1988 1.70813 3.06961L2.64115 2.14377C2.77512 2.01937 2.91866 1.9476 3.07177 1.92846C3.22967 1.90932 3.38756 1.94521 3.54545 2.03612L4.9378 2.89736C5.05742 2.83516 5.18421 2.77775 5.31818 2.72511C5.45694 2.6677 5.59569 2.61507 5.73445 2.56722L6.10766 0.981095C6.15072 0.799277 6.23684 0.655736 6.36603 0.550473C6.49522 0.44521 6.65311 0.392578 6.83971 0.392578H8.16029C8.34689 0.392578 8.50478 0.44521 8.63397 0.550473C8.76316 0.655736 8.84689 0.799277 8.88517 0.981095L9.25837 2.58157C9.4067 2.62942 9.54545 2.67966 9.67464 2.73229C9.80861 2.78492 9.93301 2.84234 10.0478 2.90454L11.4545 2.03612C11.6124 1.94521 11.7679 1.91172 11.9211 1.93564C12.0742 1.95478 12.2177 2.02416 12.3517 2.14377L13.2919 3.06961C13.4258 3.1988 13.4976 3.34712 13.5072 3.51459C13.5215 3.67727 13.4785 3.83516 13.378 3.98827L12.5311 5.38062C12.5789 5.49545 12.6292 5.61746 12.6818 5.74665C12.7392 5.87583 12.7919 6.01459 12.8397 6.16291L14.4187 6.5433C14.6005 6.58157 14.7416 6.66531 14.8421 6.79449C14.9474 6.92368 15 7.07918 15 7.261V8.56004C15 8.74664 14.9474 8.90454 14.8421 9.03373C14.7416 9.16291 14.6005 9.24664 14.4187 9.28492L12.8254 9.66531C12.7823 9.79449 12.7345 9.92368 12.6818 10.0529C12.634 10.1821 12.5789 10.3088 12.5167 10.4332L13.3636 11.8041C13.4689 11.9572 13.512 12.1199 13.4928 12.2921C13.4785 12.4643 13.4067 12.6151 13.2775 12.7443L12.3517 13.6629C12.2225 13.7921 12.0742 13.8639 11.9067 13.8782C11.744 13.8926 11.5861 13.8519 11.433 13.7562L10.0478 12.9093C9.92823 12.9667 9.80144 13.0218 9.66746 13.0744C9.53349 13.127 9.39713 13.1773 9.25837 13.2251L8.88517 14.8041C8.84689 14.9907 8.76316 15.1342 8.63397 15.2347C8.50478 15.3399 8.34689 15.3926 8.16029 15.3926H6.83971ZM7.5 10.4261C7.96412 10.4261 8.38756 10.3112 8.77034 10.0816C9.1579 9.85191 9.46412 9.54569 9.689 9.16291C9.91866 8.77535 10.0335 8.34952 10.0335 7.8854C10.0335 7.42129 9.91866 7.00023 9.689 6.62224C9.46412 6.23947 9.1579 5.93325 8.77034 5.70358C8.38756 5.47392 7.96412 5.35909 7.5 5.35909C7.03589 5.35909 6.61244 5.47392 6.22967 5.70358C5.84689 5.93325 5.54067 6.23947 5.31101 6.62224C5.08134 7.00023 4.96651 7.42129 4.96651 7.8854C4.96651 8.34952 5.07895 8.77535 5.30383 9.16291C5.53349 9.54569 5.83971 9.85191 6.22249 10.0816C6.61005 10.3112 7.03589 10.4261 7.5 10.4261Z",
+              // },
             ].map((item) => (
               <li
                 key={item.name}
@@ -569,8 +597,8 @@ const MainXYZ = () => {
 
 
                 <div className="w-full lg:w-2/3 mt-6">
-                <div className="relative z-30">
-                  <button
+                <div className="relative">
+                  {/* <button
                     className="flex items-center text-[#A7AD6F] font-semibold"
                     onClick={toggleConversionRateDropdown}
                   >
@@ -589,32 +617,54 @@ const MainXYZ = () => {
                         </button>
                       ))}
                     </div>
-                  )}
+                  )} */}
+                  <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
+                    <div style={{ position: 'absolute', top: '2rem', right: '2rem' }}>
+                      <button
+                        className="flex items-center text-[#A7AD6F] font-semibold"
+                        onClick={toggleConversionRateDropdown}
+                      >
+                        {selectedCentra.Address}
+                        <img src={ArrowDown} alt="Arrow Down" className="ml-2 w-4" />
+                      </button>
+                      {conversionRateDropdownVisible && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-md z-40">
+                          {centras.map((centra) => (
+                            <button
+                              key={centra.CentralID}
+                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                              onClick={() => selectConversionRate(centra)}
+                            >
+                              {centra.Address}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
+                    <div className="flex items-center justify-center h-full">
+                      <div className="relative w-48 h-48">
+                        <Doughnut data={chartData} options={gaugeOptions} />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
+                          <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
+                          {/* <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span> */}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex mt-3 flex-wrap">
+                      <div className="flex items-center mr-4">
+                        <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
+                        <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
+                      </div>
+                      <div className="flex items-center mr-4">
+                        <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
+                        <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-      <div className="bg-white border border-gray-300 rounded-lg shadow-lg w-full p-6 lg:p-10">
-        <h3 className="text-xl font-semibold mb-3">Conversion Rate</h3>
-        <div className="flex items-center justify-center h-full">
-          <div className="relative w-48 h-48">
-            <Doughnut data={chartData} options={gaugeOptions} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center mt-20">
-              <span className="text-4xl font-bold">{selectedConversionRate.conversionRate}%</span>
-              <span className="text-[#A7AD6F] text-lg">^ {selectedConversionRate.rateChange}%</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex mt-3 flex-wrap">
-          <div className="flex items-center mr-4">
-            <span className="inline-block w-3 h-3 bg-[#176E76] rounded-full mr-2"></span>
-            <span className="text-gray-700">{selectedConversionRate.wetToDry}% Wet to Dry Leaves</span>
-          </div>
-          <div className="flex items-center mr-4">
-            <span className="inline-block w-3 h-3 bg-[#4D946D] rounded-full mr-2"></span>
-            <span className="text-gray-700">{selectedConversionRate.dryToFloured}% Dry to Floured Leaves</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                
+                </div>
               </div>
             </div>
           )}

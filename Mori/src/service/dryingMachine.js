@@ -1,7 +1,7 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { api } from '../contexts/api';
+
+
 
 export const addDryingMachine = async (centraId, capacity, status, duration) => {
     try {
@@ -12,7 +12,7 @@ export const addDryingMachine = async (centraId, capacity, status, duration) => 
             Duration: duration, // Ensure this matches the expected format
         };
 
-        return axios.post(host + "/secured/drying-machine/create/", machineDetails, {
+        return api.post( "/secured/drying-machine/create/", machineDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -25,7 +25,7 @@ export const addDryingMachine = async (centraId, capacity, status, duration) => 
 
 export const readDryingMachineStatus = async (machineId) => {
     try {
-        return axios.get(host + `/secured/drying_machines/${machineId}/status`, {
+        return api.get( `/secured/drying_machines/${machineId}/status`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -38,7 +38,7 @@ export const readDryingMachineStatus = async (machineId) => {
 
 export const readDryingMachines = async (skip = 0, limit = 100) => {
     try {
-        return axios.get(host + "/secured/drying_machines/", {
+        return api.get( "/secured/drying_machines/", {
             params: {
                 skip: skip,
                 limit: limit,
@@ -55,7 +55,7 @@ export const readDryingMachines = async (skip = 0, limit = 100) => {
 
 export const readDryingMachine = async (machineId) => {
     try {
-        return axios.get(host + `/secured/drying_machine/${machineId}`, {
+        return api.get( `/secured/drying_machine/${machineId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -68,7 +68,7 @@ export const readDryingMachine = async (machineId) => {
 
 export const startDryingMachine = async (machineId) => {
     try {
-        return axios.post(host + `/secured/drying_machines/${machineId}/start`, {}, {
+        return api.post( `/secured/drying_machines/${machineId}/start`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -81,7 +81,7 @@ export const startDryingMachine = async (machineId) => {
 
 export const stopDryingMachine = async (machineId) => {
     try {
-        return axios.post(host + `/secured/drying_machines/${machineId}/stop`, {}, {
+        return api.post( `/secured/drying_machines/${machineId}/stop`, {}, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -94,7 +94,7 @@ export const stopDryingMachine = async (machineId) => {
 
 export const deleteDryingMachine = async (machineId) => {
     try {
-        return axios.delete(host + `/secured/drying-machine/${machineId}`, {
+        return api.delete( `/secured/drying-machine/${machineId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -108,7 +108,7 @@ export const deleteDryingMachine = async (machineId) => {
 
 export const getDryingMachine_byCentra = async (centraId) => {
     try {
-        return axios.post(host + `/secured//drying_machines/centra/${centraId}`, {
+        return axios.get(host + `/secured/drying_machines/centra/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -122,9 +122,13 @@ export const getDryingMachine_byCentra = async (centraId) => {
 
 export const updateDryingMachineStatus = async (MachineID, new_status) => {
     try {
-        return axios.put(`${host}/secured/dryingmachine/${machineId}/status`, {
-            status: new_status
-        }, {
+        return axios.put(`${host}/secured/dryingmachine/status`, 
+            {
+                machine_id: MachineID,
+                status: new_status
+            },
+         
+        {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -134,6 +138,7 @@ export const updateDryingMachineStatus = async (MachineID, new_status) => {
         throw new Error(error);
     }
 };
+
 
 
 

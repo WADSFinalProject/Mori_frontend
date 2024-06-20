@@ -199,7 +199,7 @@ export default function CentraHome() {
               <div className="w-16 h-16 bg-black rounded-full"></div>
               <div className="">
                 <p className="text-lg text-white font-semibold">
-                  Selamat pagi,
+                  Welcome,
                 </p>
                 <p className="text-3xl text-white font-semibold">John Doe</p>
               </div>

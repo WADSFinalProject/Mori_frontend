@@ -1,7 +1,8 @@
-import axios from "axios";
-import { host } from "./config";
 
-axios.defaults.withCredentials = true
+import { api } from '../contexts/api';
+
+
+
 
 export const createPackageReceipt = async (expeditionID, totalWeight, timeAccepted, note, date) => {
     try {
@@ -39,7 +40,7 @@ export const readPackageReceipts = async (skip = 0, limit = 100) => {
             limit: limit
         };
 
-        return await axios.get(host + "/secured/package_receipts", {
+        return await api.get( "/secured/package_receipts", {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -57,7 +58,7 @@ export const getPackageReceiptDetails = async (receipt_id) => {
     }
   
     try {
-      const response = await axios.get(`${host}/secured/package_receipts/${receipt_id}`, {
+      const response = await api.get(`/secured/package_receipts/${receipt_id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,11 +82,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
             Date: date
         };
 
-        return await axios.put(host + `/secured/package_receipts/${receipt_id}`, receiptDetails, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return await api.put( `/secured/package_receipts/${receipt_id}`, receiptDetails, );
     } catch (error) {
         console.error(`Error updating package receipt ${receipt_id}: `, error);
         throw new Error(error);

@@ -118,28 +118,32 @@ export default function FlouringMachine() {
     const startTime = new Date().toISOString();
     localStorage.setItem(`flouringStartTime_${id}`, startTime);
     try {
-      const durationParsed = parseISODuration(duration);
-      const endTime = new Date(Date.now() + durationParsed * 1000).toISOString(); // Assuming duration is in seconds
-      const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString(); // Example for driedDate, adjust as needed
-  
-      console.log("Payload:", {
-        centralID: load.centralID,
-        date: startTime,
-        weight: load,
-        flouringMachineID: id,
-        endTime: endTime,
-        driedDate: driedDate,
-        inUse: true
-      });
-  
-      await addFlouringActivity(load.centralID, startTime, load.weight, id, endTime, driedDate, true);
-      await updateFlouringMachineStatus(id, "running");
-      setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
-      startTimer();
+        const durationParsed = parseISODuration(duration);
+        const endTime = new Date(Date.now() + durationParsed * 1000).toISOString();
+        const driedDate = new Date(Date.now() + durationParsed * 1000 * 2).toISOString();
+
+        const payload = {
+            CentralID: machineData.centraID,
+
+            Weight: machineData.load,
+            FlouringMachineID: id,
+            EndTime: endTime,
+            DriedDate: driedDate,
+            InUse: true
+        };
+
+        console.log("Payload:", payload);
+
+        await addFlouringActivity(payload);
+        await updateFlouringMachineStatus(id, "running");
+        
+        setMachineData(prevData => ({ ...prevData, status: "running", inuse: true }));
+        startTimer(durationParsed);
     } catch (error) {
-      console.error("Failed to start flouring process:", error.message);
+        console.error("Failed to start flouring process:", error.message);
     }
-  };
+};
+
   
 
   const startTimer = (totalSeconds = parseISODuration(duration)) => {
@@ -245,22 +249,25 @@ export default function FlouringMachine() {
     try {
         // Extract necessary details
         const description = "Flouring process completed";
-        const dryingID = null; // Assuming this value is not needed for now
+        const dryingID = machineData.dryingID; // Assuming this value is not needed for now
         const flouringID = id;
-        const driedDate = new Date(batchDetails.date).toISOString().split('T')[0]; // Ensure this is in YYYY-MM-DD format
+        const driedDate = new Date(batchDetails?.date).toISOString().split('T')[0]; // Ensure this is in YYYY-MM-DD format
         const flouredDate = new Date().toISOString().split('T')[0]; // Set to current date
+        const weight = parseFloat(batchDetails?.weight);
+        const centraID = machineData.centraID;
+        const shipped = false; // Assuming shipped status is initially false
 
         // Log the data to verify
         console.log("Data being sent to the API:", {
-            description,
+            centraID,
             dryingID,
-            flouringID,
-            driedDate,
-            flouredDate
+            weight,
+            flouredDate,
+            shipped
         });
 
         // Call the API function to save data to the database
-        await createBatch(description, dryingID, flouringID, driedDate, flouredDate);
+        await createBatch(centraID, dryingID, weight, flouredDate, shipped);
         console.log("Batch created successfully!");
 
         // Update the machine status to 'idle'
@@ -278,7 +285,9 @@ export default function FlouringMachine() {
             console.error("Response data:", error.response.data);
         }
     }
-};
+  };
+
+
 
 
   const handleCancelEdit = () => {
@@ -439,8 +448,8 @@ export default function FlouringMachine() {
         {timer === 0 && batchDetails && (
           <div className="bg-white p-4 mt-2" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             <div style={{ textAlign: 'left', width: '100%' }}>
-              <p className="text-xs mb-1">Date</p>
-              {editMode ? (
+              {/* <p className="text-xs mb-1">Date</p> */}
+              {/* {editMode ? (
                 <DatePicker
                   useRange={false}
                   asSingle={true}
@@ -452,10 +461,10 @@ export default function FlouringMachine() {
                 />
               ) : (
                 <p className="font-bold text-sm mb-2">{formatDate(batchDetails?.date)}</p>
-              )}
+              )} */}
 
-              <p className="text-xs mb-1">Time</p>
-              {editMode ? (
+              {/* <p className="text-xs mb-1">Time</p> */}
+              {/* {editMode ? (
                 <div className="relative max-w-sm flex items-center">
                   <div className="h-10 bg-[#EFEFEF] leading-none border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-gray-500 relative flex items-center justify-left">
                     <select
@@ -492,7 +501,7 @@ export default function FlouringMachine() {
                 </div>
               ) : (
                 <p className="font-bold text-sm mb-2">{formatTimeWithoutSeconds(batchDetails?.time)}</p>
-              )}
+              )} */}
 
               <p className="text-xs mb-1">Weight</p>
               {editMode ? (

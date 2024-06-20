@@ -129,6 +129,11 @@ export default function Processor() {
         const collections = response.data;
   
         let totalWetLeaves = 0;
+        const freshWetLeaves = collections.filter(collection => {
+          console.log("Collection Status:", collection.Status); // Debug: Log each status
+          return collection.Status === 'Fresh';
+        });
+  
         collections.forEach((collection) => {
           if (!collection.Expired) {
             totalWetLeaves += collection.Weight;
@@ -136,6 +141,8 @@ export default function Processor() {
         });
   
         console.log("Total Weight of Wet Leaves:", totalWetLeaves);
+        console.log("Fresh Wet Leaves:", freshWetLeaves); // Store or use this variable as needed
+  
         setTotalWetLeaves(totalWetLeaves);
   
         setWetLeavesData({
@@ -154,6 +161,7 @@ export default function Processor() {
   
     fetchWetLeavesData();
   }, []);
+  
   
   const distributeWetLeavesToMachines = (machinesWithProperties) => {
     if (!machinesWithProperties || machinesWithProperties.length === 0 || totalWetLeaves === 0) {
