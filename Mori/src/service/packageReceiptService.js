@@ -17,7 +17,7 @@ export const createPackageReceipt = async (expeditionID, totalWeight, timeAccept
 
         console.log('Sending receipt details:', receiptDetails);
 
-        const response = await axios.post(`${host}/secured/package_receipts`, receiptDetails, {
+        const response = await api.post(`/secured/package_receipts`, receiptDetails, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -91,7 +91,7 @@ export const updatePackageReceipt = async (receipt_id, userID, packageID, totalW
 
 export const deletePackageReceipt = async (receipt_id) => {
     try {
-        return await axios.delete(`${host}/secured/package_receipts/${receipt_id}`, {
+        return await api.delete(`/secured/package_receipts/${receipt_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

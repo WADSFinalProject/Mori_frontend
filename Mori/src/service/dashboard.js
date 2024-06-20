@@ -1,11 +1,11 @@
-import axios from "axios";
+import api from "../contexts/api";
 import { host } from "./config";
 
-axios.defaults.withCredentials = true
+
 
 export const getConvertionRate = async (centraId) => {
     try {
-        return axios.get(`${host}/secured/conversion_rates/${centraId}`, {
+        return api.get(`/secured/conversion_rates/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },

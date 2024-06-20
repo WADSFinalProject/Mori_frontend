@@ -5,7 +5,7 @@ import { api } from '../contexts/api';
 
 export const addFlouringActivity = async (payload) => {
     try {
-        return await axios.post(`${host}/secured/flouring_activity/create`, payload, {
+        return await api.post(`/secured/flouring_activity/create`, payload, {
             headers: {
                 "Content-Type": "application/json",
             },

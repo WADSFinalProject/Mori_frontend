@@ -56,7 +56,7 @@ export const readFlouringMachines = async (skip = 0, limit = 100) => {
 
 export const getFlouringMachines_byCentra = async (centraId) => {
     try {
-        return axios.get(host + `/secured/flouring_machines/centra/${centraId}`, {
+        return api.get( `/secured/flouring_machines/centra/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -110,8 +110,8 @@ export const deleteFlouringMachine = async (machineId) => {
 
 export const updateFlouringMachineStatus = async (machine_id, status) => {
     try {
-        return await axios.put(
-            `${host}/secured/flouringmachine/status`, 
+        return await api.put(
+            `/secured/flouringmachine/status`, 
             {
                 machine_id: machine_id,
                 status: status

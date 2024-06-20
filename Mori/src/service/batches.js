@@ -19,7 +19,7 @@ export const createBatch = async (
       Shipped: shipped,
     };
 
-    const response = await axios.post(host + "/secured/batches", batchDetails, {
+    const response = await api.post( "/secured/batches", batchDetails, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -97,7 +97,7 @@ export const BatchShipped = async (batches) => {
 
 export const deleteBatch = async (batchId) => {
   try {
-    return api.delete(host + `/secured/batches/${batchId}`, {
+    return api.delete(`/secured/batches/${batchId}`, {
       headers: {
         "Content-Type": "application/json",
       },

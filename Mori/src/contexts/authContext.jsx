@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -36,6 +35,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        const interval = setInterval(() => {
+            refreshAccessToken();
+        }, 4 * 60 * 1000); // Refresh the token every 4 minutes
+
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
         import('./api').then(apiModule => {
             apiModule.setupInterceptors(accessToken, saveAccessToken, refreshAccessToken);
         });
@@ -49,4 +56,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-

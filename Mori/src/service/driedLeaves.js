@@ -14,7 +14,7 @@ export const createDriedLeaf = async (centralId, weight, driedDate, floured, inM
             InMachine: inMachine,
         };
 
-        return await axios.post(host + "/secured/dried_leaves/", leafDetails, {
+        return await api.post( "/secured/dried_leaves/", leafDetails, {
             headers: {
                 "Content-Type": "application/json",
             },

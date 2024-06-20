@@ -108,7 +108,7 @@ export const deleteDryingMachine = async (machineId) => {
 
 export const getDryingMachine_byCentra = async (centraId) => {
     try {
-        return axios.get(host + `/secured/drying_machines/centra/${centraId}`, {
+        return api.get( `/secured/drying_machines/centra/${centraId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -122,7 +122,7 @@ export const getDryingMachine_byCentra = async (centraId) => {
 
 export const updateDryingMachineStatus = async (MachineID, new_status) => {
     try {
-        return axios.put(`${host}/secured/dryingmachine/status`, 
+        return api.put(`/secured/dryingmachine/status`, 
             {
                 machine_id: MachineID,
                 status: new_status
