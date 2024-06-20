@@ -9,6 +9,7 @@ export const createExpedition = async (
   totalPackages,
   TotalWeight,
   expeditionDate,
+  WarehouseID,
   expeditionServiceDetails,
   batches
 ) => {
@@ -18,6 +19,7 @@ export const createExpedition = async (
       EstimatedArrival: estimatedArrival,
       TotalWeight: TotalWeight,
       TotalPackages: totalPackages,
+      WarehouseID: WarehouseID,
       ExpeditionDate: expeditionDate,
       ExpeditionServiceDetails: expeditionServiceDetails,
     };
@@ -79,11 +81,6 @@ export const readExpeditions_byAWB = async (awb) => {
     throw new Error(error);
   }
 };
-
-
-
-
-
 
 export const getExpeditionDetails = async (expedition_id) => {
   try {
@@ -177,5 +174,28 @@ export const createCheckpointStatus = async (
   } catch (error) {
     console.error("Error creating checkpoint status: ", error);
     throw new Error(error);
+  }
+};
+
+export const updateWarehouseIDForExpedition = async (
+  airwayBill,
+  warehouseID
+) => {
+  try {
+    const response = await axios.put(
+      `${host}/secured/expedition/warehouse/${airwayBill}`,
+      {
+        warehouse_id: warehouseID,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        `HTTP error! Status: ${error.response.status}, Detail: ${error.response.data.detail}`
+      );
+    } else {
+      throw new Error("Network error! Could not connect to the server.");
+    }
   }
 };
