@@ -168,9 +168,7 @@ function App() {
         />
         <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />
         <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />} />
-          path="/dryingmachine/:machineNumber"
-          element={<DryingMachine />}
-        />
+        <Route  path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
         <Route
           path="/flouringmachine/:machineNumber"
           element={<FlouringMachine />}
