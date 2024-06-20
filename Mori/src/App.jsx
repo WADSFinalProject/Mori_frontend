@@ -1,6 +1,10 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes,  Navigate  } from "react-router-dom";
-
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 
 import Login from "./components/auth/Login";
 import SetPassword from "./components/auth/SetPassword";
@@ -45,157 +49,142 @@ import ShippingInformationGlobal from "./components/global/ShippingInformationGl
 import HarborShipDetails from "./components/HarborGuard/HarborShipDetails";
 import ChooseWarehouse from "./components/XYZ/Mobile/ChooseWarehouse";
 
-
-import { AuthProvider, useAuth } from './contexts/authContext';
-import { setupInterceptors } from './contexts/api';
-
-
-
-
-
+import { AuthProvider, useAuth } from "./contexts/authContext";
+import { setupInterceptors } from "./contexts/api";
 
 function App() {
   const { accessToken, saveAccessToken } = useAuth();
 
+  useEffect(() => {
+    setupInterceptors(accessToken, saveAccessToken);
+  }, [accessToken, saveAccessToken]);
 
-    useEffect(() => {
-        setupInterceptors(accessToken, saveAccessToken);
-    }, [accessToken, saveAccessToken]);
+  const RoleBasedRoute = ({ allowedRoles, children }) => {
+    const { userRole } = useAuth();
+    if (!accessToken) {
+      return <Navigate to="/" />;
+    }
 
-    const RoleBasedRoute = ({ allowedRoles, children }) => {
-      const { userRole } = useAuth();
-      if (!accessToken) {
-        return <Navigate to="/" />;
-      }
-    
-      // Check role authorization if roles are defined and redirect if not authorized
-      if (allowedRoles && !allowedRoles.includes(userRole)) {
-        return <Navigate to="/" />;
-      }
-    
-      // Return children if authenticated and authorized
-      return children;
-      // return allowedRoles.includes(userRole) ? children : <Navigate to="/" />;
+    // Check role authorization if roles are defined and redirect if not authorized
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
+      return <Navigate to="/" />;
+    }
+
+    // Return children if authenticated and authorized
+    return children;
+    // return allowedRoles.includes(userRole) ? children : <Navigate to="/" />;
   };
 
   return (
     <Routes>
-    
-       {/* AUTH */}
-        <Route path="/" element={<Login />} />
-        <Route path="/setpassword" element={<SetPassword />} />
-        <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/resetverification" element={<ResetVerification />} />
+      {/* AUTH */}
+      <Route path="/" element={<Login />} />
+      <Route path="/setpassword" element={<SetPassword />} />
+      <Route path="/resetpassword" element={<ResetPassword />} />
+      <Route path="/resetverification" element={<ResetVerification />} />
 
-        {/* CENTRA */}
-        <Route path="/centra/*" element={
-            <RoleBasedRoute allowedRoles={['Centra']}>
-              <Routes>
-                <Route path="home" element={<CentraHome />} />
-                <Route path="shipping" element={<Shipping />} />
-                <Route path="navigation" element={<CentraNavigation />} />
-                <Route path="editbatch" element={<EditBatch />} />
-                <Route path="collector" element={<CollectorMain />} />
-                <Route path="processor" element={<CentraProcessor />} />
-                <Route path="notification" element={<CentraNotif />} />
-                <Route path="arrangeshipment" element={<ArrangeShipment />} />
-                <Route path="shipdetails" element={<ShipDetails />} />
-              </Routes>
-            </RoleBasedRoute>
-           } />
+      {/* CENTRA */}
+      <Route
+        path="/centra/*"
+        element={
+          <RoleBasedRoute allowedRoles={["Centra"]}>
+            <Routes>
+              <Route path="home" element={<CentraHome />} />
+              <Route path="shipping" element={<Shipping />} />
+              <Route path="navigation" element={<CentraNavigation />} />
+              <Route path="editbatch" element={<EditBatch />} />
+              <Route path="collector" element={<CollectorMain />} />
+              <Route path="processor" element={<CentraProcessor />} />
+              <Route path="notification" element={<CentraNotif />} />
+              <Route path="arrangeshipment" element={<ArrangeShipment />} />
+              <Route path="shipdetails" element={<ShipDetails />} />
+            </Routes>
+          </RoleBasedRoute>
+        }
+      />
 
+      {/* HARBOUR GUARD */}
+      <Route
+        path="/harbor/*"
+        element={
+          <RoleBasedRoute allowedRoles={["HarbourGuard"]}>
+            <Routes>
+              <Route path="home" element={<HarborHome />} />
+              <Route path="confirmshipment" element={<ConfirmShipment />} />
+              <Route path="navigation" element={<HarborNavigation />} />
+              <Route path="notification" element={<HarborNotif />} />
+              <Route path="/harbornotif" element={<HarborNotif />} />
+            </Routes>
+          </RoleBasedRoute>
+        }
+      />
 
-        {/* HARBOUR GUARD */}
-        <Route path="/harbor/*" element= {
-           <RoleBasedRoute allowedRoles={['HarbourGuard']}>
-           <Routes>
-             <Route path="home" element={<HarborHome />} />
-             <Route path="confirmshipment" element={<ConfirmShipment />} />
-             <Route path="navigation" element={<HarborNavigation />} />
-             <Route path="notification" element={<HarborNotif />} />
-             <Route path="/harbornotif" element={<HarborNotif />} />
-           </Routes>
-         </RoleBasedRoute>
-       
-        }/>
-
-        {/* XYZ MOBILE */}
-        <Route path="/xyz/*"  element= {
-          <RoleBasedRoute allowedRoles={['XYZ']}>
+      {/* XYZ MOBILE */}
+      <Route
+        path="/xyz/*"
+        element={
+          <RoleBasedRoute allowedRoles={["XYZ"]}>
             <Routes>
               <Route path="/m/stockmanagement" element={<StockManagement />} />
               <Route path="/m/home" element={<XYZHome />} />
               <Route path="/m/notification" element={<XYZNotif />} />
               <Route path="/m/navigation" element={<XYZNavigation />} />
               <Route
-
                 path="/m/shippinginformation"
-                element={<XYZShippingInformation />}
+                element={<XYZShippingInformationMobile />}
               />
               <Route path="/m/schedulepickup" element={<SchedulePickup />} />
-              <Route path="/m/acceptedpackages" element={<AcceptedPackages />} />
-              <Route path="/d/xyz-dashboard" element={<Dashboard />} /> 
-
+              <Route
+                path="/m/acceptedpackages"
+                element={<AcceptedPackages />}
+              />
+              <Route path="/d/xyz-dashboard" element={<Dashboard />} />
             </Routes>
-            
-         </RoleBasedRoute>
-       
-        }/>
+          </RoleBasedRoute>
+        }
+      />
 
+      {/* ADMIN */}
 
-
-        {/* ADMIN */}
-
-        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
-        <Route path="/stockbooking" element={<StockBooking />} />
-        <Route path="/admin/*"  element= {
-          <RoleBasedRoute allowedRoles={['Admin']}>
+      <Route path="/acceptedpackages" element={<AcceptedPackages />} />
+      <Route path="/stockbooking" element={<StockBooking />} />
+      <Route
+        path="/admin/*"
+        element={
+          <RoleBasedRoute allowedRoles={["Admin"]}>
             <Routes>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
             </Routes>
-            
-         </RoleBasedRoute>
-       
-        }/>
+          </RoleBasedRoute>
+        }
+      />
 
-        <Route
-          path="/XYZShippingInformation"
-          element={<XYZShippingInformation />}
-        />
-        <Route
-          path="/xyz/m/arrivalconfirmation/:awb"
-          element={<ArrivalConfirmation />}
-        />
-        <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />
-        <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />} />
-        <Route  path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
-        <Route
-          path="/flouringmachine/:machineNumber"
-          element={<FlouringMachine />}
-        />
-        <Route path="/xyz/m/shipdetails/:awb" element={<XYZShipDetails />} />
-        <Route
-          path="xyz/m/choosewarehouse/:awb"
-          element={<ChooseWarehouse />}
-        />
+      <Route
+        path="/XYZShippingInformation"
+        element={<XYZShippingInformation />}
+      />
+      <Route
+        path="/xyz/m/arrivalconfirmation/:awb"
+        element={<ArrivalConfirmation />}
+      />
+      <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />
+      <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />} />
+      <Route path="/dryingmachine/:machineNumber" element={<DryingMachine />} />
+      <Route
+        path="/flouringmachine/:machineNumber"
+        element={<FlouringMachine />}
+      />
+      <Route path="/xyz/m/shipdetails/:awb" element={<XYZShipDetails />} />
+      <Route path="xyz/m/choosewarehouse/:awb" element={<ChooseWarehouse />} />
 
-        
-        <Route path="/invoice" element={<Invoice />} />
-        <Route path="/dashboardContent" element={<DashboardContent />} />
-        <Route
-          path="/centradetailsmachine"
-          element={<CentraDetailsMachine />}
-        />
-        <Route path="/stockdetail/:location" element={<StockDetail />} />
+      <Route path="/invoice" element={<Invoice />} />
+      <Route path="/dashboardContent" element={<DashboardContent />} />
+      <Route path="/centradetailsmachine" element={<CentraDetailsMachine />} />
+      <Route path="/stockdetail/:location" element={<StockDetail />} />
 
-        <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />
-
-
-          
+      <Route path="/tracking/:awb" element={<ShippingInformationGlobal />} />
     </Routes>
-    
 
-    
     // <Route path="/centra/home" element={<CentraHome />} />
     // <Route path="/centra/shipping" element={<Shipping />} />
     // <Route path="/centra/navigation" element={<CentraNavigation />} />
@@ -207,7 +196,6 @@ function App() {
     // {/* ini harus ngikutin shipment idnya */}
     // <Route path="/shipdetails" element={<ShipDetails />} />
 
-
     // <Route path="/harbor/home" element={<HarborHome />} />
     // <Route path="/harbor/confirmshipment" element={<ConfirmShipment />} />
     // <Route path="/harbor/navigation" element={<HarborNavigation />} />
@@ -216,7 +204,7 @@ function App() {
     // <Route path="/acceptedpackages" element={<AcceptedPackages />} />
     // <Route path="/schedulepickup" element={<SchedulePickup />} />
     // <Route path="/stockbooking" element={<StockBooking />} />
-       
+
     // <Route path="/xyz/m/stockmanagement" element={<StockManagement />} />
     // <Route path="/xyz/m/home" element={<XYZHome />} />
     // <Route path="/xyz/m/notification" element={<XYZNotif />} />
@@ -229,7 +217,6 @@ function App() {
     // <Route path="/acceptedpackages" element={<AcceptedPackages />} />
     // <Route path="/xyz-dashboard" element={<Dashboard />} />
     // <Route path="/admin-dashboard" element={<AdminDashboard />} />
-       
 
     // />
   );
