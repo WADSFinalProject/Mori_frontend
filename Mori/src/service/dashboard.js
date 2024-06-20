@@ -1,7 +1,7 @@
-import api from "../contexts/api";
-import { host } from "./config";
+// import api from "../contexts/api";
+// import { host } from "./config";
 
-
+import { api } from '../contexts/api';
 
 export const getConvertionRate = async (centraId) => {
     try {
