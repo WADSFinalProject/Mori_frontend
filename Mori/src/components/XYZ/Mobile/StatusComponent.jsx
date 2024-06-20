@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const StatusComponent = ({
   id,
@@ -8,16 +9,20 @@ const StatusComponent = ({
   collected,
   time,
 }) => {
+  const navigate = useNavigate();
+
   const getStatusBackgroundColor = (status) => {
     switch (status) {
-      case "To Deliver":
-        return "#4D946D"; // Light yellow for "To Receive"
-      case "Completed":
-        return "#838948"; // Green for "Completed"
-      case "Shipped":
-        return "#9AD1B3"; // Light blue for "Shipped"
+      case "Shipping":
+        return "#9AD1B3"; // Light blue for "Shipping"
+      case "Need Pickup":
+        return "#838948"; // Green for "Need Pickup"
       case "Missing":
         return "#EBB6B6"; // Light red for "Missing"
+      case "Picking Up":
+        return "#4D946D"; // Green for "Picking Up"
+      case "Completed":
+        return "#838948"; // Yellow for "Completed"
       default:
         return "#bec8fa"; // Default color if none of the cases match
     }
@@ -25,14 +30,16 @@ const StatusComponent = ({
 
   const getStatusFilter = (status) => {
     switch (status) {
-      case "To Deliver":
-        return "brightness(0) saturate(100%) invert(55%) sepia(17%) saturate(1015%) hue-rotate(94deg) brightness(90%) contrast(84%)"; // Light yellow for "To Receive"
-      case "Completed":
-        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Completed"
-      case "Shipped":
-        return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipped"
+      case "Shipping":
+        return "brightness(0) saturate(100%) invert(85%) sepia(14%) saturate(568%) hue-rotate(95deg) brightness(91%) contrast(91%)"; // Light blue for "Shipping"
+      case "Need Pickup":
+        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Green for "Need Pickup"
       case "Missing":
         return "brightness(0) saturate(100%) invert(69%) sepia(25%) saturate(651%) hue-rotate(311deg) brightness(118%) contrast(85%)"; // Light red for "Missing"
+      case "Picking Up":
+        return "brightness(0) saturate(100%) invert(55%) sepia(17%) saturate(1015%) hue-rotate(94deg) brightness(90%) contrast(84%)"; // Green for "Picking Up"
+      case "Completed":
+        return "brightness(0) saturate(100%) invert(49%) sepia(31%) saturate(610%) hue-rotate(26deg) brightness(98%) contrast(82%)"; // Yellow for "Completed"
       default:
         return "brightness(0) saturate(100%) invert(77%) sepia(5%) saturate(2116%) hue-rotate(195deg) brightness(103%) contrast(96%)"; // Default color if none of the cases match
     }
@@ -40,12 +47,22 @@ const StatusComponent = ({
 
   const statusBackgroundColor = getStatusBackgroundColor(status);
   const statusFilter = getStatusFilter(status);
+  const textColor = ["Need Pickup", "Picking Up", "Completed"].includes(status)
+    ? "white"
+    : "inherit";
+
+  const handleClick = () => {
+    if (status === "Need Pickup") {
+      navigate(`/xyz/m/choosewarehouse/${id}`, { state: { totalWeight, batches } });
+    } else {
+      navigate(`/xyz/m/shipdetails/${id}`);
+    }
+  };
 
   return (
     <div
-      className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-1.5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
-      // onclick go to shipment details page
-      onClick={null}
+      onClick={handleClick}
+      className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
     >
       <div className="w-full flex flex-row items-start justify-between text-lg">
         <div>
@@ -55,10 +72,12 @@ const StatusComponent = ({
           </div>
         </div>
 
-        {/* status when "To Receive" the bg is #F1E1A7 when "Completed" the bg is #A1C598 when "Shipped" the bg is #BEC8FA */}
         <div
           className="rounded-md flex flex-row items-center justify-center py-2 px-3 text-xs"
-          style={{ backgroundColor: statusBackgroundColor }}
+          style={{
+            backgroundColor: statusBackgroundColor,
+            color: textColor,
+          }}
         >
           <div className="relative font-medium font-vietnam">{status}</div>
         </div>
@@ -112,7 +131,7 @@ const StatusComponent = ({
             className="relative font-medium font-vietnam"
             style={{ color: statusBackgroundColor }}
           >
-            Preparing to ship
+            Shipment Details
           </b>
         </div>
         <svg

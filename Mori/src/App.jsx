@@ -43,6 +43,7 @@ import DashboardContent from "./components/Admin/DashboardContent";
 import CentraDetailsMachine from "./components/Admin/CentraDetailsMachine/CentraDetailsMachine";
 import ShippingInformationGlobal from "./components/global/ShippingInformationGlobal";
 import HarborShipDetails from "./components/HarborGuard/HarborShipDetails";
+import ChooseWarehouse from "./components/XYZ/Mobile/ChooseWarehouse";
 
 
 import { AuthProvider, useAuth } from './contexts/authContext';
@@ -145,6 +146,8 @@ function App() {
 
         {/* ADMIN */}
 
+        <Route path="/acceptedpackages" element={<AcceptedPackages />} />
+        <Route path="/stockbooking" element={<StockBooking />} />
         <Route path="/admin/*"  element= {
           <RoleBasedRoute allowedRoles={['Admin']}>
             <Routes>
@@ -155,17 +158,16 @@ function App() {
        
         }/>
 
-        
-         
-        
-
-     
-       
         <Route
           path="/XYZShippingInformation"
           element={<XYZShippingInformation />}
         />
         <Route
+          path="/xyz/m/arrivalconfirmation/:awb"
+          element={<ArrivalConfirmation />}
+        />
+        <Route path="xyz/m/schedulepickup/:awb" element={<SchedulePickup />} />
+        <Route path="/xyz/m/receptionnotes" element={<ReceptionNotes />} />
           path="/dryingmachine/:machineNumber"
           element={<DryingMachine />}
         />
@@ -173,11 +175,11 @@ function App() {
           path="/flouringmachine/:machineNumber"
           element={<FlouringMachine />}
         />
-        
-        
-        {/* <Route path="/xyz-stock-booking" element={<StockBooking />} /> */}
-
-      
+        <Route path="/xyz/m/shipdetails/:awb" element={<XYZShipDetails />} />
+        <Route
+          path="xyz/m/choosewarehouse/:awb"
+          element={<ChooseWarehouse />}
+        />
 
         
         <Route path="/invoice" element={<Invoice />} />
