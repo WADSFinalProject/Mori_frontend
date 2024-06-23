@@ -61,7 +61,7 @@ const XyzDetails = () => {
           phone: wh.phone,
           location: wh.location,
           stock: wh.TotalStock,
-          createdDate: "2024-01-01T12:34:56Z"
+          createdDate: wh.created_at
         })
       })
 
@@ -214,7 +214,9 @@ const XyzDetails = () => {
         warehouseData.email,
         warehouseData.phone,
         warehouseData.TotalStock,
-        warehouseData.location
+        warehouseData.location,
+        warehouseData.Capacity,
+        warehouseData.created_at
       )
         .then((res) => {
           console.log('Success add new warehouse');
