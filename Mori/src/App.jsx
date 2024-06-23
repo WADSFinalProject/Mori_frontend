@@ -114,7 +114,7 @@ function App() {
               <Route path="navigation" element={<HarborNavigation />} />
               <Route path="notification" element={<HarborNotif />} />
               <Route path="/harbornotif" element={<HarborNotif />} />
-              {/* <Route path="shipdetails/:awb" element={<ShipDetails />} /> */}
+              <Route path="harborshipdetails/:awb" element={<HarborShipDetails />} />
             </Routes>
           </RoleBasedRoute>
         }
