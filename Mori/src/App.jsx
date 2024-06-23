@@ -97,7 +97,7 @@ function App() {
               <Route path="processor" element={<CentraProcessor />} />
               <Route path="notification" element={<CentraNotif />} />
               <Route path="arrangeshipment" element={<ArrangeShipment />} />
-              <Route path="shipdetails" element={<ShipDetails />} />
+              <Route path="shipdetails/:awb" element={<ShipDetails />} />
             </Routes>
           </RoleBasedRoute>
         }
@@ -107,13 +107,14 @@ function App() {
       <Route
         path="/harbor/*"
         element={
-          <RoleBasedRoute allowedRoles={["HarbourGuard"]}>
+          <RoleBasedRoute allowedRoles={["Harbour Guard"]}>
             <Routes>
               <Route path="home" element={<HarborHome />} />
-              <Route path="confirmshipment" element={<ConfirmShipment />} />
+              <Route path="confirmshipment/:awb" element={<ConfirmShipment />} />
               <Route path="navigation" element={<HarborNavigation />} />
               <Route path="notification" element={<HarborNotif />} />
               <Route path="/harbornotif" element={<HarborNotif />} />
+              {/* <Route path="shipdetails/:awb" element={<ShipDetails />} /> */}
             </Routes>
           </RoleBasedRoute>
         }

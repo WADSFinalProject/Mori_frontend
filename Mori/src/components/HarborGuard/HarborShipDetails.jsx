@@ -8,13 +8,14 @@ import {
 
 const HarborShipDetails = () => {
   const { awb } = useParams();
-  const [shipmentDetails, setShipmentDetails] = useState(null);
+  const [shipmentDetails, setShipmentDetails] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchShipmentDetails = async () => {
       try {
         const response = await readExpeditions_byAWB(awb);
+        console.log(response.data)
         setShipmentDetails(response.data);
       } catch (error) {
         console.error("Error fetching shipment details: ", error);

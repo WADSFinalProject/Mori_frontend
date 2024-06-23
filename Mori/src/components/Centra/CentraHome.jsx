@@ -2,7 +2,7 @@ import React from "react";
 import { useWindowSize } from "react-use";
 import { Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import moriLogo from "../../assets/moriWhite.png";
 import bell from "../../assets/bell.png";
@@ -11,6 +11,11 @@ import bg from "../../assets/usercardBG.png";
 import collector from "../../assets/collectorLogo.png";
 import processor from "../../assets/processorLogo.png";
 import shipping from "../../assets/shippingLogo.png";
+import { readDryingMachines } from "../../service/dryingMachine";
+import { readFlouringMachines } from "../../service/flouringMachine";
+import { getCurrentUser } from "../../service/users";
+import { readWetLeavesCollections } from "../../service/wetLeaves";
+import { readBatches } from "../../service/batches";
 
 const gaugeOptions = {
   responsive: true,
@@ -28,37 +33,120 @@ const gaugeOptions = {
 export default function CentraHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
+  const [username, setUsername]= useState("");
 
-  const [machinesData, setMachines] = useState([
-    {
-      number: 1,
-      status: "FULL",
-      currentLoad: 24,
-      capacity: 30,
-      lastUpdated: "1 hour ago",
-    },
-    {
-      number: 2,
-      status: "FULL",
-      currentLoad: 30,
-      capacity: 30,
-      lastUpdated: "2 hours ago",
-    },
-    {
-      number: 3,
-      status: "EMPTY",
-      currentLoad: 10,
-      capacity: 30,
-      lastUpdated: "30 minutes ago",
-    },
-  ]);
+  const [dryMachinesData, setDryMachinesData] = useState([]);
+  const [flourMachinesData, setFlourMachinesData] = useState([]);
 
-  const renderMachines = () => {
-    return machinesData.map((machine, index) => (
+  const [statusCounts, setStatusCounts] = useState({
+    Fresh: 0,
+    'Near expiry': 0,
+    Exceeded: 0,
+    Expired: 0,
+    Processed: 0,
+  });
+
+  const [batchesToShip, setBatchesToShip] = useState(0);
+
+  useEffect(() => {
+    fetchMachines();
+    fetchWetLeavesCollections();
+    fetchBatches();
+    fetchUser();
+  }, []);
+  
+  const fetchMachines = async () => {
+    try {
+      const [dryResponse, flourResponse] = await Promise.all([
+        readDryingMachines(),
+        readFlouringMachines(),
+        // getCurrentUser(),
+      ]);
+
+      const transformedDryData = dryResponse.data.map((machine) => ({
+        number: machine.MachineID,
+        status: machine.Status,
+        currentLoad: machine.Load,
+        capacity: machine.Capacity,
+        // lastUpdated: machine.lastUpdated,
+      }));
+
+      const transformedFlourData = flourResponse.data.map((machine) => ({
+        number: machine.MachineID,
+        status: machine.Status,
+        currentLoad: machine.Load,
+        capacity: machine.Capacity,
+        // lastUpdated: machine.lastUpdated,
+      }));
+
+      console.log(flourResponse.data);
+
+      // setUsername(user.data.FirstName);
+      setDryMachinesData(transformedDryData);
+      setFlourMachinesData(transformedFlourData);
+    } catch (error) {
+      console.error("Error fetching machines data:", error);
+    }
+  };
+
+  const fetchWetLeavesCollections = async () => {
+    try {
+      const response = await readWetLeavesCollections();
+      // Count the statuses
+      const counts = {
+        Fresh: 0,
+        'Near expiry': 0,
+        Exceeded: 0,
+        Expired: 0,
+        Processed: 0,
+      };
+      response.data.forEach(collection => {
+        counts[collection.Status]++;
+      });
+      setStatusCounts(counts);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching wet leaves collections:", error);
+    }
+  };
+
+  const fetchBatches = async () => {
+    try {
+      const response = await readBatches();
+      const unshippedBatches = response.data.filter((batch) => !batch.Shipped);
+      setBatchesToShip(unshippedBatches.length);
+      console.log(unshippedBatches);
+    } catch (error) {
+      console.error("Error fetching batches: ", error);
+    }
+  };
+
+  const fetchUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      console.log("User data:", user);
+      setUsername(user.data.FirstName); 
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const renderDryMachines = () => {
+    return dryMachinesData.map((machine, index) => (
       <MachineCard
         key={machine.number}
         machine={machine}
-        extraMarginClass={index === machinesData.length - 1 ? "mb-10" : "mb-4"}
+        extraMarginClass={index === dryMachinesData.length - 1 ? "mb-10" : "mb-4"}
+      />
+    ));
+  };
+
+  const renderFlourMachines = () => {
+    return flourMachinesData.map((machine, index) => (
+      <MachineCard
+        key={machine.number}
+        machine={machine}
+        extraMarginClass={index === flourMachinesData.length - 1 ? "mb-10" : "mb-4"}
       />
     ));
   };
@@ -133,7 +221,7 @@ export default function CentraHome() {
             </div>
           </div>
         </div>
-        <div
+        {/* <div
           className="last-updated"
           style={{
             position: "absolute",
@@ -145,7 +233,7 @@ export default function CentraHome() {
         >
           <div>Last updated:</div>
           <div style={{ fontWeight: "bold" }}>{machine.lastUpdated}</div>
-        </div>
+        </div> */}
       </div>
     );
   };
@@ -201,7 +289,7 @@ export default function CentraHome() {
                 <p className="text-lg text-white font-semibold">
                   Welcome,
                 </p>
-                <p className="text-3xl text-white font-semibold">John Doe</p>
+                <p className="text-3xl text-white font-semibold">{username}</p>
               </div>
             </div>
           </header>
@@ -228,9 +316,13 @@ export default function CentraHome() {
                 </svg>
                 <div className="font-vietnam text-white flex flex-col">
                   <div className="text-sm font-bold">Collector</div>
-                  <div className="text-[8px] font-normal">
-                    2 Batch NEAR EXPIRY
-                  </div>
+                  {Object.entries(statusCounts).map(([status, count]) => (
+                    count > 0 && (
+                      <div key={status} className="text-[8px] font-normal">
+                        {count} Batch{count > 1 ? 'es' : ''} {status.toUpperCase()}
+                      </div>
+                    )
+                  ))}
                 </div>
               </Link>
               <Link to="/centra/processor" className="bg-[#4D946D] p-3 flex flex-col gap-3 w-1/3 h-24 rounded-lg">
@@ -268,19 +360,29 @@ export default function CentraHome() {
                 </svg>
                 <div className="font-vietnam text-white flex flex-col">
                   <div className="text-sm font-bold">Shipping</div>
-                  <div className="text-[8px] font-normal">3 Batch to ship</div>
+                  <div className="text-[8px] font-normal">{batchesToShip} Batch{batchesToShip > 1 ? "es" : ""} to ship</div>
                 </div>
               </Link>
             </div>
 
-            {/* Machine Stock Status */}
+            {/* Dry Machine Stock Status */}
             <div>
               <div>
                 <h2 className="text-gray-600 font-bold ">
-                  Machine Stock Status
+                  Drying Machine Stock Status
                 </h2>
               </div>
-              <div className="machine-status my-4">{renderMachines()}</div>
+              <div className="machine-status my-4">{renderDryMachines()}</div>
+            </div>
+
+            {/* Flour Machine Stock Status */}
+            <div>
+              <div>
+                <h2 className="text-gray-600 font-bold ">
+                  Flouring Machine Stock Status
+                </h2>
+              </div>
+              <div className="machine-status my-4">{renderFlourMachines()}</div>
             </div>
           </body>
 

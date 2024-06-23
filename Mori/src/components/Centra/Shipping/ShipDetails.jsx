@@ -4,13 +4,14 @@ import { readExpeditions_byAWB } from "../../../service/expeditionService";
 
 const ShipDetails = () => {
   const { awb } = useParams();
-  const [shipmentDetails, setShipmentDetails] = useState(null);
+  const [shipmentDetails, setShipmentDetails] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchShipmentDetails = async () => {
       try {
         const response = await readExpeditions_byAWB(awb);
+        console.log(response.data);
         setShipmentDetails(response.data);
       } catch (error) {
         console.error("Error fetching shipment details: ", error);
@@ -19,6 +20,7 @@ const ShipDetails = () => {
 
     fetchShipmentDetails();
   }, [awb]);
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -161,7 +163,7 @@ const ShipDetails = () => {
       </header>
 
       <main className="flex flex-col w-full">
-        {shipmentDetails && (
+      {Object.keys(shipmentDetails).length > 0 && (
           <>
             <div
               className="flex flex-row p-5 gap-3"

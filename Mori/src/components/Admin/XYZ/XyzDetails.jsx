@@ -169,6 +169,29 @@ const XyzDetails = () => {
     }));
   };
 
+  // const addWarehouse = () => {
+  //   if (
+  //     newWarehouse.stock &&
+  //     newWarehouse.email &&
+  //     newWarehouse.phone &&
+  //     newWarehouse.location
+  //   ) {
+  //     createWarehouse(newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
+  //       .then(res => {
+  //         console.log('Success add new warehouse')
+  //         setAddNewVisible(false);
+  //         setNewWarehouse(initialNewWarehouseState);
+  //         fetchData();
+  //         handleSearchAndSort([...data, newWarehouseEntry], sortKey);
+  //       })
+  //       .catch(err => {
+  //         alert(err)
+  //       });
+  //   } else {
+  //     alert('Please fill in all fields');
+  //   }
+  // };
+
   const addWarehouse = () => {
     if (
       newWarehouse.stock &&
@@ -176,22 +199,36 @@ const XyzDetails = () => {
       newWarehouse.phone &&
       newWarehouse.location
     ) {
-      createWarehouse(newWarehouse.email, newWarehouse.phone, newWarehouse.stock, newWarehouse.location)
-        .then(res => {
-          console.log('Success add new warehouse')
+      const currentDate = new Date().toISOString().substring(0, 10); // Get current date in YYYY-MM-DD format
+  
+      const warehouseData = {
+        email: newWarehouse.email,
+        phone: newWarehouse.phone,
+        TotalStock: newWarehouse.stock,
+        Capacity: 500, // Fixed value
+        location: newWarehouse.location,
+        created_at: currentDate,
+      };
+  
+      createWarehouse(
+        warehouseData.email,
+        warehouseData.phone,
+        warehouseData.TotalStock,
+        warehouseData.location
+      )
+        .then((res) => {
+          console.log('Success add new warehouse');
           setAddNewVisible(false);
           setNewWarehouse(initialNewWarehouseState);
           fetchData();
-          handleSearchAndSort([...data, newWarehouseEntry], sortKey);
         })
-        .catch(err => {
-          alert(err)
+        .catch((err) => {
+          alert(err);
         });
     } else {
       alert('Please fill in all fields');
     }
   };
-
   const updateWarehouse = () => {
     if (
       newWarehouse.stock &&
