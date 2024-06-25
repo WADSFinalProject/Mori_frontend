@@ -81,3 +81,18 @@ export const deleteUser = async (userId) => {
         throw new Error(error)
     }
 }
+
+export const getCurrentUser = async() => {
+    try {
+        const token = localStorage.getItem("token");
+        return api.get("/secured/user/", {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        console.log("Error reading user: ", error);
+        throw new Error(error);
+    }
+};

@@ -8,13 +8,14 @@ import {
 
 const HarborShipDetails = () => {
   const { awb } = useParams();
-  const [shipmentDetails, setShipmentDetails] = useState(null);
+  const [shipmentDetails, setShipmentDetails] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchShipmentDetails = async () => {
       try {
         const response = await readExpeditions_byAWB(awb);
+        console.log(response.data)
         setShipmentDetails(response.data);
       } catch (error) {
         console.error("Error fetching shipment details: ", error);
@@ -149,12 +150,12 @@ const HarborShipDetails = () => {
   };
 
   const isDeclareMissingDisabled =
-    shipmentDetails?.expedition.Status === "XYZ_PickingUp" ||
-    shipmentDetails?.expedition.Status === "Missing" ||
-    shipmentDetails?.expedition.Status === "XYZ_Completed";
+    shipmentDetails?.expedition?.Status === "XYZ_PickingUp" ||
+    shipmentDetails?.expedition?.Status === "Missing" ||
+    shipmentDetails?.expedition?.Status === "XYZ_Completed";
 
   const isConfirmShipmentDisabled =
-    shipmentDetails?.expedition.Status !== "PKG_Delivering";
+    shipmentDetails?.expedition?.Status !== "PKG_Delivering";
 
   const getCurrentWITATime = () => {
     const now = new Date();
@@ -198,6 +199,7 @@ const HarborShipDetails = () => {
     }
   };
 
+
   return (
     <div className="max-w-[425px] mx-auto h-screen flex flex-col items-start justify-start bg-white">
       <header className="w-full flex flex-row items-center justify-between gap-12 px-6 bg-white py-4">
@@ -239,7 +241,7 @@ const HarborShipDetails = () => {
       </header>
 
       <main className="flex flex-col w-full">
-        {shipmentDetails && (
+      {Object.keys(shipmentDetails).length > 0 && (
           <>
             <div
               className="flex flex-row p-5 gap-3"

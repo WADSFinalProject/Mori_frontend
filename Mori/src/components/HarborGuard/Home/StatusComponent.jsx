@@ -51,7 +51,7 @@ const StatusComponent = ({
 
   return (
     <Link
-      to={`/harbor/shipdetails/${id}`}
+      to={`/harbor/harborshipdetails/${id}`}
       state={{ awb: id }} // Passing the AWB as state to the route
       className="relative flex flex-col items-start justify-start p-6 gap-[8px] mx-5 my-3 rounded-md bg-white border-[#d9d9d9] cursor-pointer hover:bg-white/40"
     >

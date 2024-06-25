@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import moriLogo from "../../assets/XYZ/BlackMori.png";
 import semicircle from "../../assets/XYZ/semicircle.png";
@@ -21,6 +21,7 @@ import Invoice from "../XYZ/Laptop/Invoice";
 import DashboardContent from "./DashboardContent";
 import Users from "./Users";
 import UsersDetails from "./Users/UsersDetails";
+import { getCurrentUser } from "../../service/users";
 
 const MainXYZ = () => {
   const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'Dashboard');
@@ -30,18 +31,68 @@ const MainXYZ = () => {
     localStorage.setItem('activePage', page);
   };
   // Editable user state
-  const initialUserState = {
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    phone: "123123123",
-    gender: "Male",
-    birthdate: { day: "08", month: "December", year: "2004" },
-    role: "XYZ Admin",
-    location: "Bekasi",
+  // const initialUserState = {
+  //   name: "John Doe",
+  //   email: "johndoe@gmail.com",
+  //   phone: "123123123",
+  //   gender: "Male",
+  //   birthdate: { day: "08", month: "December", year: "2004" },
+  //   role: "XYZ Admin",
+  //   location: "Bekasi",
+  // };
+
+  
+
+  // const [initialUserState, setInitialUserState] = useState([]);
+
+
+  // const fetchUser = async () => {
+  //   try {
+  //     const user = await getCurrentUser();
+  //     console.log("User data:", user);
+  //     setInitialUserState(user.data); 
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchUser();
+  //   console.log(initialUserState)
+  // }, []);
+
+  // const [userState, setUserState] = useState(initialUserState.data);
+  // const [tempUserState, setTempUserState] = useState(initialUserState);
+
+  const [initialUserState, setInitialUserState] = useState(null); // Initialize with null
+  const [userState, setUserState] = useState(null); 
+  const [tempUserState, setTempUserState] = useState(null);
+
+  const fetchUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      console.log("User data:", user);
+      setInitialUserState(user.data); 
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
-  const [userState, setUserState] = useState(initialUserState);
-  const [tempUserState, setTempUserState] = useState(initialUserState);
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (initialUserState) {
+      setUserState(initialUserState);
+      setTempUserState(initialUserState);
+    }
+  }, [initialUserState]);
+
+  if (!initialUserState) {
+    return <div>Loading...</div>;
+  }
+
 
   const user = {
     ...userState,
@@ -58,6 +109,11 @@ const MainXYZ = () => {
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
   };
+
+  
+
+
+
 
   return (
     <div className="flex">
@@ -198,7 +254,7 @@ const MainXYZ = () => {
         <header className="flex items-center justify-between p-7 border-b-2 bg-white fixed top-0 left-64 right-0 z-10">
           <div>
             <h1 className="text-2xl font-bold ml-3">
-              Welcome back, {user.name}
+              Welcome back, {user.FirstName}
             </h1>
             <p className="text-sm text-gray-500 ml-3">{formattedDate}</p>
           </div>

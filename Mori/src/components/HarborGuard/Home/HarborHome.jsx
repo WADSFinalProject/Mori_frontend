@@ -7,39 +7,44 @@ import bg from "../../../assets/usercardBG.png";
 import { Link } from "react-router-dom";
 import StatusComponent from "./StatusComponent";
 import { readExpeditions } from "../../../service/expeditionService";
+import { getCurrentUser } from "../../../service/users";
 
 export default function HarborHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 1025;
+  const [username, setUsername]= useState("");
 
   const [sortOption, setSortOption] = useState("new-old");
   const [filterOption, setFilterOption] = useState("all");
   const [shipmentData, setShipmentData] = useState([]);
 
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await readExpeditions();
-        console.log("Fetched Expeditions Data:", response.data);
-        const expeditions = response.data.map((expedition) => ({
-          id: expedition.expedition.AirwayBill,
-          status: mapStatus(expedition.expedition.Status),
-          batches: expedition.batches.map((batch) => batch.BatchID),
-          totalWeight: expedition.expedition.TotalWeight,
-          collected: expedition.expedition.ExpeditionDate.split("T")[0],
-          time: expedition.expedition.ExpeditionDate.split("T")[1].split(
-            "."
-          )[0],
-        }));
-        console.log("Mapped Expeditions Data:", expeditions);
-        setShipmentData(expeditions);
-      } catch (error) {
-        console.error("Error fetching shipments: ", error);
-      }
-    };
-
+    fetchUser();
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await readExpeditions();
+      console.log("Fetched Expeditions Data:", response.data);
+      const expeditions = response.data.map((expedition) => ({
+        id: expedition.expedition.AirwayBill,
+        status: mapStatus(expedition.expedition.Status),
+        batches: expedition.batches.map((batch) => batch.BatchID),
+        totalWeight: expedition.expedition.TotalWeight,
+        collected: expedition.expedition.ExpeditionDate.split("T")[0],
+        time: expedition.expedition.ExpeditionDate.split("T")[1].split(
+          "."
+        )[0],
+      }));
+      console.log("Mapped Expeditions Data:", expeditions);
+      setShipmentData(expeditions);
+    } catch (error) {
+      console.error("Error fetching shipments: ", error);
+    }
+  };
+
 
   const mapStatus = (status) => {
     switch (status) {
@@ -76,6 +81,17 @@ export default function HarborHome() {
         return data;
     }
   };
+
+  const fetchUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      console.log("User data:", user);
+      setUsername(user.data.FirstName); 
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
 
   const filterData = (data, filterOption) => {
     if (filterOption === "all") return data;
@@ -134,7 +150,7 @@ export default function HarborHome() {
                 <p className="text-lg text-white font-semibold">
                   Selamat pagi,
                 </p>
-                <p className="text-3xl text-white font-semibold">John Doe</p>
+                <p className="text-3xl text-white font-semibold">{username}</p>
               </div>
             </div>
           </header>

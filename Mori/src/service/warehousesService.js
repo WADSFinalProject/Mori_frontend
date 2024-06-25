@@ -22,7 +22,7 @@ export const getAllWarehouses = async (skip = 0, limit = 100) => {
     }
 };
 
-export const createWarehouse = async (email, phone, stock, location) => {
+export const createWarehouse = async (email, phone, stock, location, Capacity, created_at) => {
     try {
         // const now = new Date();
         // const isoString = now.toISOString();
@@ -32,7 +32,8 @@ export const createWarehouse = async (email, phone, stock, location) => {
             phone: phone,
             TotalStock: stock,
             location: location,
-            // created_at: isoString
+            Capacity: Capacity,
+            created_at: created_at
         };
 
         return await api.post( "/secured/warehouses", warehouseDetails, );
