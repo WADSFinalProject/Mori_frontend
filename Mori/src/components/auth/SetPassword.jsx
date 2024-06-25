@@ -35,11 +35,19 @@ export default function SetPassword() {
         console.log("Error validating token:", error);
         setIsValid(false);
       });
-  }, []);
+  }, [urlToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const passwordRegex = /^(?=.*\d).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setErrorMessage("Password must be at least 8 characters long and contain at least one number.");
+      setSubmitting(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
