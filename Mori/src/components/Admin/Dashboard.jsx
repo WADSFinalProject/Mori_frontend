@@ -64,8 +64,8 @@ const MainXYZ = () => {
   // const [userState, setUserState] = useState(initialUserState.data);
   // const [tempUserState, setTempUserState] = useState(initialUserState);
 
-  // const [initialUserState, setInitialUserState] = useState(null); // Initialize with null
-  // const [userState, setUserState] = useState(null); 
+  const [initialUserState, setInitialUserState] = useState(null); // Initialize with null
+  const [userState, setUserState] = useState(null); 
   const [tempUserState, setTempUserState] = useState(null);
   const [username, setUsername]= useState("");
 
