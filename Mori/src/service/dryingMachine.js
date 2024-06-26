@@ -139,6 +139,22 @@ export const updateDryingMachineStatus = async (MachineID, new_status) => {
     }
 };
 
+export const updateDryingMachineLoad = async (MachineID, load) => {  // The load here will be added to the existing one on db
+                                                                     // so if want to reduce the load, just input negative load here   
+    try {
+        return api.put(`/secured/drying-machines/${MachineID}/load`, 
+            {
+                
+                load:load
+            });
+    } catch (error) {
+        console.log("Error updating drying machine load: ", error.response?.data || error.message);
+        throw new Error(error);
+    }
+};
+
+
+
 
 
 
