@@ -16,6 +16,7 @@ import truck from "../../../assets/shippingTruck.png";
 import StatusComponent from "./StatusComponent";
 import rightArrow from "../../../assets/rightArrow.png";
 import arrowDown from "../../../assets/arrowDown.png";
+import { getCurrentUser } from "../../../service/users";
 
 const shipmentData = [
   {
@@ -44,6 +45,7 @@ const gaugeOptions = {
 export default function XYZHome() {
   const { width } = useWindowSize();
   const isMobile = width <= 640;
+  const [username, setUsername]= useState("");
 
   const [warehouseId, setWarehouseId] = useState([]); // Default warehouseId to null
   const [machines, setMachines] = useState([]);
@@ -51,6 +53,7 @@ export default function XYZHome() {
 
   useEffect(() => {
     fetchAllWarehouses(); // Fetch all warehouse details on component mount
+    fetchUser();
   }, []);
 
   useEffect(() => {
@@ -98,6 +101,17 @@ export default function XYZHome() {
       // Handle error state if needed
     }
   };
+
+  const fetchUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      console.log("User data:", user);
+      setUsername(user.data.FirstName); 
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
 
   const renderMachine = () => {
     if (machines.length === 0) return null;
@@ -268,7 +282,7 @@ export default function XYZHome() {
                 <p className="text-lg text-white font-semibold">
                   Selamat pagi,
                 </p>
-                <p className="text-3xl text-white font-semibold">John Doe</p>
+                <p className="text-3xl text-white font-semibold">{username}</p>
               </div>
             </div>
             {/* <div className="mt-auto flex items-center justify-between px-10">
