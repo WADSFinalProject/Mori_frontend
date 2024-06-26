@@ -3,7 +3,7 @@ import { useWindowSize } from "react-use";
 import { useNavigate, useParams } from "react-router-dom";
 import scale from "../../../assets/scale.png";
 import { createPackageReceipt } from "../../../service/packageReceiptService";
-import { readExpeditions } from "../../../service/expeditionService";
+import { readExpeditions, updateExpeditionStatus  } from "../../../service/expeditionService";
 
 const ArrivalConfirmation = () => {
   const { width } = useWindowSize();
@@ -86,7 +86,9 @@ const ArrivalConfirmation = () => {
         note,
         date
       );
+      await updateExpeditionStatus(awb, "XYZ_Completed");
       alert("Package receipt created successfully!");
+      
       navigate("/xyz/m/shippinginformation");
       // Clear the form or perform any other necessary actions
     } catch (error) {

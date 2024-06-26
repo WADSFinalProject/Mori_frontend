@@ -98,7 +98,7 @@ export default function XYZNavigation() {
             </div>
 
             <div className="flex flex-col ml-10 mt-8">
-              <Link to="/collector" className="flex items-center">
+              <Link to="/" className="flex items-center">
                 <img
                   src={logoutNav}
                   alt="mori logo"

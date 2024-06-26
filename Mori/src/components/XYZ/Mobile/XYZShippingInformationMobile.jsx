@@ -103,7 +103,7 @@ const XYZShippingInformationMobile = () => {
             style={{ height: `${headerHeight}px` }}
           >
             <div className="flex flex-row justify-between mx-6 items-center">
-              <button onClick={() => navigate(-1)}>
+              <button onClick={() => navigate('/xyz/m/home')}>
                 <img src={back} alt="back" className="w-5 mr-2" />
               </button>
               <div className="font-vietnam text-xl font-bold select-none">

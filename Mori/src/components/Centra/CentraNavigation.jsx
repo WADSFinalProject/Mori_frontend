@@ -91,7 +91,7 @@ export default function CentraNavigation() {
                         </div>
 
                         <div className="flex flex-col ml-10 mt-8">
-                            <Link to="/collector" className="flex items-center">
+                            <Link to="/" className="flex items-center">
                                 <img src={logoutNav} alt="mori logo" className="text-6xl mt-3 font-bold text-gray-700 w-5" />
                                 <p className="text-l ml-4 mt-3">Log Out</p>
                             </Link>

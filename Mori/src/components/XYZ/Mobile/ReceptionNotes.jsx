@@ -68,7 +68,7 @@ const ArrivalConfirmation = () => {
           <main className="w-full mt-5 flex flex-col items-start justify-start px-5 flex-grow overflow-y-auto">
             <form id="shipment-form" className="w-full" onSubmit={handleSubmit}>
               <div className="w-full h-[27px] text-black text-lg font-semibold font-['Be Vietnam Pro']">
-                Recieved Package Information
+                Received Package Information
               </div>
               <hr className="w-full border-gray-300 mt-2" />
 
