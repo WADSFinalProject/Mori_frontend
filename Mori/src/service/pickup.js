@@ -1,7 +1,5 @@
-import axios from "axios";
-import { host } from "./config";
+import { api } from "../contexts/api"
 
-axios.defaults.withCredentials = true;
 
 export const createPickup = async (
   xyzID,
@@ -17,7 +15,7 @@ export const createPickup = async (
       pickup_time: pickupTime, // Ensure this matches the expected format
     };
 
-    return axios.post(host + "/secured/pickup/", pickupDetails, {
+    return api.post(host + "/secured/pickup/", pickupDetails, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -30,7 +28,7 @@ export const createPickup = async (
 
 export const readPickup = async (pickupId) => {
   try {
-    return axios.get(host + `/secured/pickup/${pickupId}`, {
+    return api.get(host + `/secured/pickup/${pickupId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,7 +41,7 @@ export const readPickup = async (pickupId) => {
 
 export const readPickups = async (skip = 0, limit = 100) => {
   try {
-    return axios.get(host + "/secured/pickup/", {
+    return api.get(host + "/secured/pickup/", {
       params: {
         skip: skip,
         limit: limit,
@@ -73,7 +71,7 @@ export const updatePickup = async (
       pickup_time: pickupTime, // Ensure this matches the expected format
     };
 
-    return axios.put(host + `/secured/pickup/${pickupId}`, pickupDetails, {
+    return api.put(host + `/secured/pickup/${pickupId}`, pickupDetails, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -86,7 +84,7 @@ export const updatePickup = async (
 
 export const deletePickup = async (pickupId) => {
   try {
-    return axios.delete(host + `/secured/pickup/${pickupId}`, {
+    return api.delete(host + `/secured/pickup/${pickupId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -108,7 +106,7 @@ export const createPickupByAWB = async (
       pickup_time: pickup_time,
     };
 
-    const response = await axios.post(
+    const response = await api.post(
       `${host}/secured/pickups/${airwaybill}`,
       pickupData,
       {

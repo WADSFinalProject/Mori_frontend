@@ -6,8 +6,6 @@ import back from '../../../assets/back.png';
 import { Doughnut } from 'react-chartjs-2';
 import DatePicker from "react-tailwindcss-datepicker";
 import { useWindowSize } from 'react-use';
-import axios from 'axios';
-import { host } from "../../../service/config.js";
 import { addDryingActivity, getDryingActivity_Bymachine } from "../../../service/dryingActivity.js";
 import { updateDryingMachineStatus } from "../../../service/dryingMachine.js";
 import { createDriedLeaf } from "../../../service/driedLeaves.js";

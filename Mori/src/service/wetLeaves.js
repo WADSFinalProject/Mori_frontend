@@ -1,5 +1,5 @@
 
-import { host } from "./config";
+
 import { api } from '../contexts/api';
 
 

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { host } from "./config";
 
+
+const host = "https://mori-backend-rho.vercel.app"
 
 export const registerUser = async (userDetails) => {
     try {
