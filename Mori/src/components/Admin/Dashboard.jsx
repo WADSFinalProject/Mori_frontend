@@ -82,16 +82,16 @@ const MainXYZ = () => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    if (initialUserState) {
-      setUserState(initialUserState);
-      setTempUserState(initialUserState);
-    }
-  }, [initialUserState]);
+  // useEffect(() => {
+  //   if (initialUserState) {
+  //     setUserState(initialUserState);
+  //     setTempUserState(initialUserState);
+  //   }
+  // }, [initialUserState]);
 
-  if (!initialUserState) {
-    return <div>Loading...</div>;
-  }
+  // if (!initialUserState) {
+  //   return <div>Loading...</div>;
+  // }
 
 
   const user = {
