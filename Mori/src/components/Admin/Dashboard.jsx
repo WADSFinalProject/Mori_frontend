@@ -64,19 +64,12 @@ const MainXYZ = () => {
   // const [userState, setUserState] = useState(initialUserState.data);
   // const [tempUserState, setTempUserState] = useState(initialUserState);
 
-  const [initialUserState, setInitialUserState] = useState(null); // Initialize with null
-  const [userState, setUserState] = useState(null); 
+  // const [initialUserState, setInitialUserState] = useState(null); // Initialize with null
+  // const [userState, setUserState] = useState(null); 
   const [tempUserState, setTempUserState] = useState(null);
+  const [username, setUsername]= useState("");
 
-  const fetchUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      console.log("User data:", user);
-      setInitialUserState(user.data); 
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  
 
   useEffect(() => {
     fetchUser();
@@ -93,6 +86,15 @@ const MainXYZ = () => {
   //   return <div>Loading...</div>;
   // }
 
+  const fetchUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      console.log("User data:", user);
+      setUsername(user.data.FirstName); 
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const user = {
     ...userState,
@@ -254,7 +256,7 @@ const MainXYZ = () => {
         <header className="flex items-center justify-between p-7 border-b-2 bg-white fixed top-0 left-64 right-0 z-10">
           <div>
             <h1 className="text-2xl font-bold ml-3">
-              Welcome back, {user.FirstName}
+              Welcome back, {username}
             </h1>
             <p className="text-sm text-gray-500 ml-3">{formattedDate}</p>
           </div>
