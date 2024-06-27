@@ -60,9 +60,12 @@ Step 4: Inspect the output to find the link of the localhost, to be able to add 
 
 ### Credentials for testing purposes
 
-Admin Account
+**Admin Account**
+
 Email: morimori@gmail.com
+
 Password: Mori12312
+
 
 Please contact our team for OTP code! :D 
 
