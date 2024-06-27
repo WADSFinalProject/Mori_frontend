@@ -56,3 +56,13 @@ npm run dev
 ```
 
 Step 4: Inspect the output to find the link of the localhost, to be able to add it to the backend code (for CORS purposes). 
+
+
+### Credentials for testing purposes
+
+Admin Account
+Email: morimori@gmail.com
+Password: Mori12312
+
+Please contact our team for OTP code! :D 
+
