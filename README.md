@@ -4,7 +4,7 @@
 
 
 [![Our App's Video](https://img.shields.io/badge/Our%20App's%20Promo%20Video-Watch-red?logo=youtube)](https://www.youtube.com/watch?v=NWyZfkSVxP8)
-[![Project Documentation]()](https://drive.google.com/file/d/1H2l_C8Pp526vc9zQG0F9yThzrXiQZu6I/view?usp=sharing)
+[![Project Documentation](https://img.shields.io/badge/Report-Read-blue?logo=microsoft-word)](https://drive.google.com/file/d/1H2l_C8Pp526vc9zQG0F9yThzrXiQZu6I/view?usp=sharing)
 
 
 ### What is Mori?
